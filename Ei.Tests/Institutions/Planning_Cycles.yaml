@@ -1,0 +1,93 @@
+﻿Id: cf5bb5f9-5a6a-4999-94ea-eeffd8c3d5d4
+Name: Planning Institution
+Description: Institution to test simple planning (action / resource based)
+Organisations:
+    - Id: government
+      Name: Government
+Roles:
+    - Id: citizen
+      Name: Citizen
+      Properties:
+        - Name: woodCount
+          Type: int
+        - Name: hasFire
+          Type: bool
+        - Name: hasFlint
+          Type: bool
+        - Name: hasRoastedFood
+          Type: bool
+Workflows:
+    - Id: 1
+      Name: Main
+      Stateless: true
+      Static: true
+      Start:
+        Id: entry
+        Open: true
+      End:
+        - Id: exit
+          Open: true
+      States:
+      Actions:
+        - !action
+            Id: makeFire
+        - !action
+            Id: collectWood
+        - !action
+            Id: findFlint
+        - !action
+            Id: eatPie
+      Connections:
+        - Join: [open,exit]
+        - Join: [open,open]
+          ActionId: makeFire
+          Allow:
+            - Conditions:
+                - a.woodCount >= 5
+                - a.hasFlint
+          Postconditions:
+            - Conditions:
+                - a.hasFire = true
+          Backtrack:
+            Allow:
+              - Conditions:
+                - a.hasFire
+            Postconditions:
+              - Conditions:
+                - a.woodCount = a.woodCount + 5
+                - a.hasFlint = true  
+                - a.hasFire = false
+        - Join: [open,open]
+          ActionId: collectWood 
+          AllowLoops: 5
+          Postconditions:
+            - Conditions:
+                - a.woodCount = a.woodCount + 1
+          Backtrack:
+            Allow:
+              - Conditions:
+                - a.woodCount > 0
+            Postconditions:
+              - Conditions:
+                - a.woodCount = a.woodCount - 1   
+        - Join: [open,open]
+          ActionId: findFlint
+          Postconditions:
+            - Conditions:
+                - a.hasFlint = true
+          Backtrack:
+            Allow:
+              - Conditions:
+                - a.hasFlint
+            Postconditions:
+              - Conditions:
+                - a.hasFlint = false    
+        - Join: [open,open]
+          ActionId: eatPie
+InitialWorkflow: 1
+Types:
+Authorisation:
+    - Organisation: citizens
+      Password:
+      Groups:
+        - RoleId: citizen

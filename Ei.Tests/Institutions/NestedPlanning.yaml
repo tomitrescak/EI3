@@ -1,0 +1,298 @@
+﻿Id: dddddddd-5a6a-4999-94ea-eeffd8c3d5d4
+Name: Aboriginal Simulation used for Planning with nested Workflows
+Description: Aboriginal Simulation With Physiology and Goals and Nested Workflows
+Organisations:
+    - Id: tribe
+      Name: Tribe
+Roles:
+    - Id: human
+      Name: Human
+      Properties:
+        - Name: wood
+          Type: int
+          DefaultValue: 0
+        - Name: fruit
+          Type: int
+          DefaultValue: 0
+        - Name: bark
+          Type: int
+          DefaultValue: 0
+        - Name: bone
+          Type: int
+          DefaultValue: 0
+        - Name: flint
+          Type: int
+          DefaultValue: 0
+        - Name: rock
+          Type: int
+          DefaultValue: 0
+        - Name: fish
+          Type: int
+          DefaultValue: 0
+        - Name: hasKnife
+          Type: bool
+          DefaultValue: false
+        - Name: hasSpear
+          Type: bool
+          DefaultValue: false
+        - Name: hasFire
+          Type: bool
+          DefaultValue: false
+        - Name: hasKangaroo
+          Type: bool
+          DefaultValue: false
+        - Name: hasCookedFood
+          Type: bool
+          DefaultValue: false
+        - Name: isHungry
+          Type: bool
+          DefaultValue: true
+        - Name: hunger
+          Type: int
+          DefaultValue: 20
+          MinValue: 0
+Globals:
+    Actions:
+        - !action
+          Id: findBark
+        - !action
+          Id: findWood
+        - !action
+          Id: findBone
+        - !action
+          Id: findRock
+        - !action
+          Id: findFruit
+        - !action
+          Id: eatCookedFood
+    Connections:
+        - Id: findBark
+          Join: [open,open]
+          ActionId: findBark
+          Postconditions:
+            - Conditions:
+                - a.bark = a.bark + 1
+          Backtrack:
+            Allow:
+              - Conditions:
+                 - a.bark > 0
+            Postconditions:
+              - Conditions:
+                 - a.bark = a.bark - 1
+        - Id: findWood
+          Join: [open,open]
+          ActionId: findWood
+          AllowLoops: 5
+          Postconditions:
+            - Conditions:
+                - a.wood = a.wood + 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.wood > 0
+            Postconditions:
+                - Conditions:
+                    - a.wood = a.wood - 1
+        - Id: findBone
+          Join: [open,open]
+          ActionId: findBone
+          Postconditions:
+            - Conditions:
+                - a.bone = a.bone + 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.bone > 0
+            Postconditions:
+                - Conditions:
+                    - a.bone = a.bone - 1
+        - Id: findRock
+          Join: [open,open]
+          ActionId: findRock
+          Postconditions:
+            - Conditions:
+                - a.rock = a.rock + 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.rock > 0
+            Postconditions:
+                - Conditions:
+                    - a.rock = a.rock - 1
+        - Id: findFruit
+          Join: [open,open]
+          ActionId: findFruit
+          Postconditions:
+            - Conditions:
+                - a.fruit = a.fruit + 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.fruit > 0
+            Postconditions:
+                - Conditions:
+                    - a.fruit = a.fruit - 1
+        - Id: eatCookedFood
+          Join: [open,open]
+          ActionId: eatCookedFood
+          Allow:
+            - Conditions:
+                - a.hasCookedFood
+                - a.isHungry
+          Postconditions:
+            - Conditions:
+                - a.hasCookedFood = false
+                - a.isHungry = false
+                - a.hunger = a.hunger - 30
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasCookedFood == true
+                    - a.isHungry == false
+            Postconditions:
+                - Conditions:
+                    - a.hasCookedFood = true
+                    - a.isHungry = true 
+Workflows:
+    - Id: main
+      Name: Main
+      Stateless: true
+      Static: true
+      Start:
+        Id: start
+        Open: true
+      End:
+        - Id: end
+      States:       
+      Actions:
+        - !workflow
+            Id: makeFireWorkflow
+            WorkflowId: makeFire  
+        - !workflow
+            Id: makeKnifeWorkflow
+            WorkflowId: makeKnife
+        - !workflow
+            Id: makeSpearWorkflow
+            WorkflowId: makeSpear  
+        - !workflow
+            Id: eatFishWorkflow
+            WorkflowId: eatFish  
+        - !workflow
+            Id: eatKangarooWorkflow
+            WorkflowId: eatKangaroo  
+        - !action
+          Id: eatFruit        
+      Connections:
+        - Join: [open,open]
+          ActionId: makeFireWorkflow
+          Effects:
+                - Conditions:
+                    - a.hasFire = true
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasFire
+            Postconditions:
+                - Conditions:
+                    - a.hasFire = false
+        - Join: [open,open]
+          ActionId: makeKnifeWorkflow 
+          Effects:
+                - Conditions:
+                    - a.hasKnife = true        
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasKnife
+            Postconditions:
+                - Conditions:
+                    - a.hasKnife = false
+        - Join: [open,open]
+          ActionId: makeSpearWorkflow
+          Effects:
+                - Conditions:
+                    - a.hasSpear = true
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasSpear
+            Postconditions:
+                - Conditions:
+                    - a.hasSpear = false 
+        - Join: [open,open]
+          ActionId: eatFishWorkflow
+          Allow:
+                - Conditions:
+                    - a.hasKnife      
+                    - a.hasSpear 
+                    - a.hasFire
+          Effects:
+                - Conditions:
+                    - a.isHungry = false
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasSpear
+                    - a.hasKnife
+                    - a.hasFire
+            Postconditions:
+                - Conditions:
+                    - a.hasFire = true
+                    - a.hasSpear = true
+                    - a.hasKnife = true
+                    - a.isHungry = true
+        - Join: [open,open]
+          ActionId: eatKangarooWorkflow
+          Allow:
+                - Conditions:
+                    - a.hasKnife      
+                    - a.hasSpear 
+                    - a.hasFire  
+          Effects:
+                - Conditions:
+                    - a.isHungry = false
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasSpear
+                    - a.hasKnife
+                    - a.hasFire
+            Postconditions:
+                - Conditions:
+                    - a.hasFire = true
+                    - a.hasSpear = true
+                    - a.hasKnife = true   
+                    - a.isHungry = true 
+        - Join: [open,open]
+          ActionId: eatFruit
+          Allow:
+            - Conditions:
+                - a.fruit > 0
+          Postconditions:
+            - Conditions:
+                - a.fruit = a.fruit - 1
+                - a.hunger = a.hunger - 5
+          Backtrack:
+            Postconditions:
+                - Conditions:
+                    - a.fruit = a.fruit + 1
+                    - a.hunger = a.hunger + 5  
+        
+    - Id: makeFire
+      Import: MakeFire
+    - Id: makeKnife
+      Import: MakeKnife
+    - Id: makeSpear
+      Import: MakeSpear
+    - Id: eatFish
+      Import: EatFish
+    - Id: eatKangaroo
+      Import: EatKangaroo
+
+InitialWorkflow: main
+Types:
+Authorisation:
+    - Organisation: tribe
+      Password:
+      Groups:
+        - RoleId: human

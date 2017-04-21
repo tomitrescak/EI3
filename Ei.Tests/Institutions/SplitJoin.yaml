@@ -1,0 +1,82 @@
+﻿Id: dddddddd-5a6a-4999-94ea-eeffd8c3d5d4
+Name: Split Join
+Description: Test of join and split
+Organisations:
+    - Id: 1
+      Name: Government
+Roles:
+    - Id: citizen
+      Name: Citizen
+      Properties:
+        - Name: testMax
+          Type: int
+          DefaultValue: 0
+          Consolidation: Maximum
+        - Name: testMin
+          Type: int
+          DefaultValue: 10
+          Consolidation: Minimum
+        - Name: testAvg
+          Type: int
+          DefaultValue: 2
+          Consolidation: Average
+        - Name: testOneTrue
+          Type: bool
+          DefaultValue: false
+          Consolidation: OneTrue
+        - Name: testAllTrue
+          Type: bool
+          DefaultValue: true
+          Consolidation: AllTrue
+Workflows:
+    - Id: main
+      Name: Main
+      Stateless: true
+      Static: true
+      Start:
+        Id: start
+      End:
+        - Id: end
+      States:
+        - Id: step
+      Transitions:
+        - !split
+          Id: shallowSplit
+          Shallow: true
+          Names:
+            - [join,hui]
+            - [step,lui]
+        - !split
+          Id: deepSplit
+          Shallow: false 
+        - !join
+          Id: join
+      Actions:
+        - !action
+          Id: fart   
+      Connections:
+        - Join: [start,shallowSplit]
+        - Join: [shallowSplit,join]
+        - Join: [shallowSplit,join]
+        - Join: [shallowSplit,step]         
+        - Join: [start,deepSplit]
+        - Join: [deepSplit,join]
+        - Join: [deepSplit,join]
+        - Join: [deepSplit,step] 
+        - Join: [step,join]
+          ActionId: fart
+          Postconditions:
+            - Conditions:
+                - a.testMax = 1
+                - a.testMin = 0
+                - a.testAvg = 5
+                - a.testOneTrue = true
+                - a.testAllTrue = false  
+        - Join: [join,end]
+InitialWorkflow: main
+Types:
+Authorisation:
+    - Organisation: citizens
+      Password:
+      Groups:
+        - RoleId: citizen

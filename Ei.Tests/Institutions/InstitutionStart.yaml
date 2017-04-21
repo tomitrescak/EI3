@@ -1,0 +1,61 @@
+﻿Id: cf5bb5f9-5a6a-4999-94ea-eeffd8c3d5d4
+Name: Institution
+Description: Desc
+Organisations:
+    - Id: 1
+      Name: Government
+      Properties:
+        - Name: orgParentParameter
+          Type: int
+    - Id: 2
+      Name: Fraction
+      Properties:
+        - Name: orgChildParameter
+          Type: int
+
+Roles:
+    - Id: 1
+      Name: Citizen
+      Properties:
+        - Name: parentParameter
+          Type: int
+    - Id: 2
+      Name: King
+      Properties:
+        - Name: childParameter
+          Type: int
+RoleRelations:
+    - Relation: [2,1]
+      Type: Inheritance
+OrganisationRelations:
+    - Relation: [2,1]
+      Type: Inheritance
+Workflows:
+    - Id: 1
+      Name: Main
+      Stateless: true
+      Static: true
+      Start:
+        Id: 1
+      End:
+        - Id: 2
+      States:
+      Connections:
+        - Join: [1,2]
+          Allow:
+            - Groups:
+                - OrganisationId: 1
+                  RoleId: 1
+InitialWorkflow: 1
+Types:
+Authorisation:
+    - Organisation: main
+      Password:
+      Groups:
+        - OrganisationId: 2
+          RoleId: 2
+    - User: user
+      Password: pass
+      Groups:
+        - OrganisationId: 1
+          RoleId: 1

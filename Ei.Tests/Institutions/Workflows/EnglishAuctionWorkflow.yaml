@@ -1,0 +1,84 @@
+﻿Roles:
+    - Id: user
+      Name: Participant
+    - Id: auctioneer
+      Name: Auctioneer
+    - Id: creditor
+      Name: Creditor 
+Types:
+    - Name: CreditCardInfo
+      Description: Information on credit card
+      Id: CreditCardInfo
+      Properties:
+        - Name: Number
+          Type: string
+        - Name: ExpirationDate
+          Type: string
+        - Name: Cvc
+          Type: int   
+Workflow:
+    Name: EnglishAuction
+    Properties:
+        - Name: Item
+          Type: AuctionItem
+        - Name: CurrentPrice
+          Type: float
+        - Name: WinnerName
+          Type: string
+        - Name: WinnerPaid
+          Type: bool
+    Stateless: false
+    Static: false
+    AllowCreate:
+        - Groups:
+            - RoleId: seller
+    Start: 
+      Id: start
+    End:
+      - Id: end
+        DenyExit:
+            - Conditions:
+                - w.WinnerName == a.name
+                - w.WinnerPaid == false
+    States:
+        - Id: timer
+          Timeout: 1000
+    Actions:
+        - !action
+            Id: bid
+            NotifyGroups:
+                - RoleId: buyer
+            Properties:
+                - DefaultValue: 0
+                  Name: bidValue
+                  Optional: false
+                  Type: float  
+        - !action
+            Id: pay
+            Properties:
+                - Name: creditCard
+                  Optional: false
+                  Type: CreditCardInfo
+        - !timeout
+            Id: timeout
+    Connections:
+        - Join: [start,timer]
+          Allow:
+            - Conditions:
+                - w.agentCount > 1
+        - Join: [timer,timer]
+          ActionId: bid
+          Allow:
+            - Conditions:
+                - this.bidValue > w.CurrentPrice
+          Postconditions:
+            - Conditions:
+                - w.CurrentPrice = this.bidValue
+                - w.WinnerName = a.name
+        - Join: [timer,end]
+          ActionId: timeout
+        - Join: [end,end]
+          ActionId: pay
+          Postconditions:
+                - Conditions:
+                    - w.WinnerPaid = true

@@ -1,0 +1,42 @@
+﻿Roles:
+Types:
+Workflow:
+    Name: MakeSpear
+    Stateless: true
+    Static: true
+    Start: 
+        Id: door
+        Open: true
+    End: 
+        - Id: exit
+    States:
+    Properties:
+    Actions:
+        - !action
+          Id: makeSpear
+    Connections:
+        - Import: findWood
+        - Import: findRock
+        - Import: findBark
+        - Join: [open,open]
+          ActionId: makeSpear
+          Allow:
+            - Conditions:
+                - a.wood > 0
+                - a.rock > 0
+                - a.bark > 0
+          Postconditions:
+            - Conditions:
+                - a.hasSpear = true
+                - a.wood = a.wood - 1
+                - a.rock = a.rock - 1
+                - a.bark = a.bark - 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasSpear
+            Postconditions:
+                - Conditions:
+                    - a.wood = a.wood + 1
+                    - a.rock = a.rock + 1
+                    - a.bark = a.bark + 1

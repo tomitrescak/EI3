@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{88C4005F-BC1B-4886-8CD2-4F582B57A786}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ei</RootNamespace>
+    <AssemblyName>Ei.Core</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>Ei.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>Ei.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Ei\Agents\RemoteAgent.cs" />
+    <Compile Include="Ei\Agents\IAgentRemote.cs" />
+    <Compile Include="Ei\Agents\IRemoteAgent.cs" />
+    <Compile Include="Ei\I18n.cs" />
+    <Compile Include="Ei\InstitutionCodes.cs" />
+    <Compile Include="Ei\Ontology\Access.cs" />
+    <Compile Include="Ei\Ontology\AccessCondition.cs" />
+    <Compile Include="Ei\Ontology\Actions\ActionExitWorkflow.cs" />
+    <Compile Include="Ei\Ontology\Actions\ActionParameter.cs" />
+    <Compile Include="Ei\Ontology\Actions\ActionParameters.cs" />
+    <Compile Include="Ei\Ontology\Actions\ActionTimeout.cs" />
+    <Compile Include="Ei\Ontology\IStateProvider.cs" />
+    <Compile Include="Ei\Ontology\RelationalEntity.cs" />
+    <Compile Include="Ei\Ontology\Transitions\TransitionJoin.cs" />
+    <Compile Include="Ei\Ontology\Transitions\TransitionSplit.cs" />
+    <Compile Include="Ei\Ontology\Actions\ActionStartWorkflow.cs" />
+    <Compile Include="Ei\Ontology\Connection.cs" />
+    <Compile Include="Ei\Ontology\Entity.cs" />
+    <Compile Include="Ei\Ontology\IValidable.cs" />
+    <Compile Include="Ei\Ontology\State.cs" />
+    <Compile Include="Ei\Ontology\Transitions\SimpleTransition.cs" />
+    <Compile Include="Ei\Ontology\Transitions\Transition.cs" />
+    <Compile Include="Ei\Ontology\WorkflowPosition.cs" />
+    <Compile Include="Ei\Ontology\Actions\ActionBase.cs" />
+    <Compile Include="Ei\Ontology\Transitions\TransitionBinaryDecision.cs" />
+    <Compile Include="Ei\Ontology\Actions\ActionMessage.cs" />
+    <Compile Include="Ei\Ontology\Actions\ActionJoinWorkflow.cs" />
+    <Compile Include="Ei\Ontology\IInstitutionManager.cs" />
+    <Compile Include="Ei\Ontology\Institution.cs" />
+    <Compile Include="Ei\Ontology\InstitutionManager.cs" />
+    <Compile Include="Ei\Ontology\Norm.cs" />
+    <Compile Include="Ei\Ontology\Organisation.cs" />
+    <Compile Include="Ei\Ontology\OrganisationRelation.cs" />
+    <Compile Include="Ei\Ontology\Group.cs" />
+    <Compile Include="Ei\Runtime\ActionInfo.cs" />
+    <Compile Include="Ei\Runtime\AgentExecutor.cs" />
+    <Compile Include="Ei\Runtime\AgentState.cs" />
+    <Compile Include="Ei\Runtime\Executor.cs" />
+    <Compile Include="Ei\Runtime\Expression.cs" />
+    <Compile Include="Ei\Runtime\IActionInfo.cs" />
+    <Compile Include="Ei\Runtime\IActivityPerformer.cs" />
+    <Compile Include="Ei\Runtime\IGovernorCallbacks.cs" />
+    <Compile Include="Ei\Ontology\Role.cs" />
+    <Compile Include="Ei\Ontology\Workflow.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ei\Runtime\Governor.cs" />
+    <Compile Include="Ei\Runtime\IEnvironmentState.cs" />
+    <Compile Include="Ei\Runtime\IGovernor.cs" />
+    <Compile Include="Ei\Runtime\IRuntimeManager.cs" />
+    <Compile Include="Ei\Runtime\Planning\AStarNode.cs" />
+    <Compile Include="Ei\Runtime\Planning\BinaryMap.cs" />
+    <Compile Include="Ei\Runtime\Planning\Costs\ICostManager.cs" />
+    <Compile Include="Ei\Runtime\Planning\Costs\TravelCostManager.cs" />
+    <Compile Include="Ei\Runtime\Planning\Costs\UnitCostManager.cs" />
+    <Compile Include="Ei\Runtime\Planning\Environment\AgentEnvironment.cs" />
+    <Compile Include="Ei\Runtime\Planning\Environment\AgentEnvironmentDefinition.cs" />
+    <Compile Include="Ei\Runtime\Planning\Environment\EnvironmentData.cs" />
+    <Compile Include="Ei\Runtime\Planning\Environment\EnvironmentDataDefinition.cs" />
+    <Compile Include="Ei\Runtime\Planning\Heuristics\IHeuristics.cs" />
+    <Compile Include="Ei\Runtime\Planning\Heuristics\ResourceBasedHeuristics.cs" />
+    <Compile Include="Ei\Runtime\Planning\Heuristics\StaticHeuristics.cs" />
+    <Compile Include="Ei\Runtime\Planning\IPlanner.cs" />
+    <Compile Include="Ei\Runtime\Planning\GoalState.cs" />
+    <Compile Include="Ei\Runtime\Planning\Storage\IStorage.cs" />
+    <Compile Include="Ei\Runtime\Planning\Planner.cs" />
+    <Compile Include="Ei\Runtime\Planning\Storage\ListStorage.cs" />
+    <Compile Include="Ei\Runtime\Planning\Strategies\BackwardSearch.cs" />
+    <Compile Include="Ei\Runtime\Planning\Strategies\ForwardSearch.cs" />
+    <Compile Include="Ei\Runtime\Planning\Strategies\IStrategy.cs" />
+    <Compile Include="Ei\Runtime\RuntimeManager.cs" />
+    <Compile Include="Ei\Runtime\WorkflowExecutor.cs" />
+    <Compile Include="Ei\Runtime\WorkflowInfo.cs" />
+    <Compile Include="Ei\Runtime\WorkflowInstance.cs" />
+    <Compile Include="Ei\Security.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Ei.ruleset" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Ei.Logs\Ei.Log.csproj">
+      <Project>{87e9fc9e-c969-4922-8222-d3d05a9d0a41}</Project>
+      <Name>Ei.Log</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,40 @@
+﻿Roles:
+    - Id: human
+      Name: Human
+      Properties:
+        - Name: hungerModifier
+          Type: float
+          DefaultValue: 1
+        - Name: hunger
+          Type: float
+        - Name: fatigueModifier
+          Type: float
+          DefaultValue: 1
+        - Name: fatigue
+          Type: float
+        - Name: thirstModifier
+          Type: float
+          DefaultValue: 1
+        - Name: thirst
+          Type: float
+Workflow:
+    Name: Physiology
+    Stateless: false
+    Static: false
+    Start: 
+        Id: door
+        Timeout: 1000
+    End: 
+        - Id: door
+    States:
+    Actions:
+        - !timeout
+            Id: timeout
+    Connections:
+        - Join: [door,door]
+          ActionId: timeout
+          Postconditions:
+            - Conditions:
+                - w.last.hunger = w.last.hungerModifier * (w.last.hunger + 0.05)
+                - w.last.thirst = w.last.thirstModifier * (w.last.thirst + 0.15)
+                - w.last.fatigue = w.last.fatigueModifier * (w.last.fatigue + 0.05)

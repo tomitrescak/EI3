@@ -1,0 +1,44 @@
+﻿Id: dddddddd-5a6a-4999-94ea-eeffd8c3d5d4
+Name: Open Institution
+Description: Test of open activities that have no connection
+Organisations:
+    - Id: 1
+      Name: Government
+Roles:
+    - Id: citizen
+      Name: Citizen
+Workflows:
+    - Id: main
+      Name: Main
+      Stateless: true
+      Static: true
+      Start:
+        Id: door
+      End:
+        - Id: exit
+      States:
+        - Id: state1
+          Open: true
+        - Id: state2
+        - Id: state3
+          Open: true
+      Actions:
+        - !action
+          Id: foo
+        - !action
+          Id: bar
+      Connections:
+        - Join: [door,state1]
+        - Join: [open,open]
+          ActionId: foo
+        - Join: [open,state2]
+          ActionId: bar
+        - Join: [state2,open]
+        - Join: [state2,exit]
+InitialWorkflow: main
+Types:
+Authorisation:
+    - Organisation: citizens
+      Password:
+      Groups:
+        - RoleId: citizen

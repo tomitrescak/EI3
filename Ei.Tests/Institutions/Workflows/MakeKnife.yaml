@@ -1,0 +1,42 @@
+﻿Roles:
+Types:
+Workflow:
+    Name: MakeKnife
+    Stateless: true
+    Static: true
+    Start: 
+        Id: door
+        Open: true
+    End: 
+        - Id: exit
+    States:
+    Properties:
+    Actions:
+        - !action
+          Id: makeKnife
+    Connections:
+        - Import: findWood
+        - Import: findBone
+        - Import: findBark
+        - Join: [open,open]
+          ActionId: makeKnife
+          Allow:
+            - Conditions:
+                - a.wood > 0
+                - a.bone > 0
+                - a.bark > 0
+          Postconditions:
+            - Conditions:
+                - a.hasKnife = true
+                - a.wood = a.wood - 1
+                - a.bone = a.bone - 1
+                - a.bark = a.bark - 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasKnife
+            Postconditions:
+                - Conditions:
+                    - a.wood = a.wood + 1
+                    - a.bone = a.bone + 1
+                    - a.bark = a.bark + 1

@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{50F9EEFE-90EC-4436-92B0-9BF579DDF588}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ei.Persistence</RootNamespace>
+    <AssemblyName>Ei.Persistence</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Persistence\AccessConditionDao.cs" />
+    <Compile Include="Persistence\AccessDao.cs" />
+    <Compile Include="Persistence\Actions\ActionDao.cs" />
+    <Compile Include="Persistence\Actions\ActionJoinWorkflowDao.cs" />
+    <Compile Include="Persistence\Actions\ActionMessageDao.cs" />
+    <Compile Include="Persistence\Actions\ActionStartAgentDao.cs" />
+    <Compile Include="Persistence\Actions\ActionStartWorkflowDao.cs" />
+    <Compile Include="Persistence\Actions\ActionTimeoutDao.cs" />
+    <Compile Include="Persistence\AuthorisationDao.cs" />
+    <Compile Include="Persistence\BackTrackDao.cs" />
+    <Compile Include="Persistence\BareConnectionDao.cs" />
+    <Compile Include="Persistence\ClassDao.cs" />
+    <Compile Include="Persistence\ConnectionDao.cs" />
+    <Compile Include="Persistence\EntityDao.cs" />
+    <Compile Include="Persistence\FunctionDao.cs" />
+    <Compile Include="Persistence\GlobalsDao.cs" />
+    <Compile Include="Persistence\GroupDao.cs" />
+    <Compile Include="Persistence\IDaoFactory.cs" />
+    <Compile Include="Persistence\IDataProvider.cs" />
+    <Compile Include="Persistence\InstitutionDao.cs" />
+    <Compile Include="Persistence\IWorkflowImportLoader.cs" />
+    <Compile Include="Persistence\OrganisationDao.cs" />
+    <Compile Include="Persistence\ParameterDao.cs" />
+    <Compile Include="Persistence\ParametricEntityDao.cs" />
+    <Compile Include="Persistence\PortDao.cs" />
+    <Compile Include="Persistence\RelationDao.cs" />
+    <Compile Include="Persistence\RoleDao.cs" />
+    <Compile Include="Persistence\StateDao.cs" />
+    <Compile Include="Persistence\Transitions\TransitionBinaryDecisionDao.cs" />
+    <Compile Include="Persistence\Transitions\TransitionDao.cs" />
+    <Compile Include="Persistence\Transitions\TransitionJoinDao.cs" />
+    <Compile Include="Persistence\Transitions\TransitionSplitDao.cs" />
+    <Compile Include="Persistence\WorkflowDao.cs" />
+    <Compile Include="Persistence\WorkflowImportDao.cs" />
+    <Compile Include="Persistence\WorkflowImportPathLoader.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ei\Ei.csproj">
+      <Project>{88C4005F-BC1B-4886-8CD2-4F582B57A786}</Project>
+      <Name>Ei</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,62 @@
+﻿Roles:
+Types:
+Workflow:
+    Name: EatKangaroo
+    Stateless: true
+    Static: true
+    Start: 
+        Id: door
+        Open: true
+    End: 
+        - Id: exit
+    States:
+    Properties:
+    Actions:
+        - !action
+          Id: huntKangaroo
+        - !action
+          Id: cookKangaroo
+    Connections:
+        - Join: [open,open]
+          ActionId: huntKangaroo
+          Allow:
+            - Conditions:
+                - a.hasSpear
+          Postconditions:
+            - Conditions:
+                - a.hasKangaroo = true
+                - a.hasSpear = a.hasSpear && randomBool(true)
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasKangaroo
+                    - a.hasSpear
+            Postconditions:
+                - Conditions:
+                    - a.hasKangaroo = false        
+        - Join: [open,open]
+          ActionId: cookKangaroo
+          Allow:
+            - Conditions:
+                - a.hasKangaroo
+                - a.hasFire
+                - a.hasKnife
+          Postconditions:
+            - Conditions:
+                - a.hasCookedFood = true
+                - a.hasFire = false
+                - a.hasKangaroo = false
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasCookedFood
+                    - a.hasKnife
+                    - a.hasFire
+            Postconditions:
+                - Conditions:
+                    - a.hasKangaroo = true
+                    - a.hasCookedFood = false
+                    - a.hasFire = true
+                    - a.hasKnife = true
+        - Join: [door,exit]
+          Import: eatCookedFood

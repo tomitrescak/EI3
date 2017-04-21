@@ -1,0 +1,54 @@
+﻿Roles:
+Types:
+Workflow:
+    Name: MakeFire
+    Stateless: true
+    Static: true
+    Start: 
+        Id: door
+        Open: true
+    End: 
+        - Id: exit
+    States:
+    Properties:
+    Actions:
+        - !action
+          Id: findFlint
+        - !action
+          Id: makeFire
+    Connections:
+        - Import: findWood
+        - Id: makeFire
+          Join: [open,open]
+          ActionId: makeFire
+          Allow:
+            - Conditions:
+                - a.wood > 4
+                - a.flint > 0
+          Postconditions:
+            - Conditions:
+                - a.hasFire = true
+                - a.wood = a.wood - 5
+                - a.flint = a.flint - randomInt(0, 1, 0)
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasFire
+                    - a.hasFlint
+            Postconditions:
+                - Conditions:
+                    - a.hasFire = false
+                    - a.wood = a.wood + 5
+        - Id: findFlint
+          Join: [open,open]
+          ActionId: findFlint
+          Postconditions:
+            - Conditions:
+                - a.flint = a.flint + 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.flint > 0
+            Postconditions:
+                - Conditions:
+                    - a.flint = a.flint - 1

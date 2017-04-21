@@ -1,0 +1,61 @@
+﻿Id: dddddddd-5a6a-4999-94ea-eeffd8c3d5d4
+Name: English Auction
+Description: Exemplary english auction with Rregistration multiple bidders and payment
+Organisations:
+    - Id: 1
+      Name: AuctionHouse
+Roles:
+    - Id: seller
+      Name: Seller
+    - Id: buyer
+      Name: Buyer
+Workflows:
+    - Id: main
+      Name: Main
+      Stateless: true
+      Static: true
+      Start:
+        Id: door
+      End:
+        - Id: exit
+      States:
+        - Id: wait
+      Actions:
+        - !workflow
+            Id: register
+            WorkflowId: registerWorkflow
+        - !workflow
+            Id: auction
+            WorkflowId: auctionWorkflow
+      Connections:
+        - Join: [door,exit]
+          ActionId: register
+          Allow:
+            - Groups:
+                - RoleId: seller
+        - Join: [door,wait]
+          ActionId: auction
+          Allow:
+            - Groups:
+                - RoleId: buyer
+        - Join: [wait,exit]
+        - Join: [wait,door]
+    - Id: registerWorkflow
+      Import: RegisterItemWorkflow
+      Properties:
+        - Name: WorkflowPath
+          Type: string
+          DefaultValue: ../auction
+    - Id: auctionWorkflow
+      Import: EnglishAuctionWorkflow
+InitialWorkflow: main
+Types:
+Authorisation:
+    - Organisation: sellers
+      Password: pass
+      Groups:
+        - RoleId: seller
+    - Organisation: buyers
+      Password: pass
+      Groups:
+        - RoleId: buyer

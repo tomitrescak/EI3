@@ -1,0 +1,369 @@
+﻿Id: dddddddd-5a6a-4999-94ea-eeffd8c3d5d4
+Name: Aboriginal Simulation
+Description: Aboriginal Simulation With Physiology and Goals
+Organisations:
+    - Id: tribe
+      Name: Tribe
+Roles:
+    - Id: human
+      Name: Human
+      Properties:
+        - Name: wood
+          Type: int
+          DefaultValue: 0
+        - Name: fruit
+          Type: int
+          DefaultValue: 0
+        - Name: bark
+          Type: int
+          DefaultValue: 0
+        - Name: bone
+          Type: int
+          DefaultValue: 0
+        - Name: flint
+          Type: int
+          DefaultValue: 0
+        - Name: rock
+          Type: int
+          DefaultValue: 0
+        - Name: fish
+          Type: int
+          DefaultValue: 0
+        - Name: hasKnife
+          Type: bool
+          DefaultValue: false
+        - Name: hasSpear
+          Type: bool
+          DefaultValue: false
+        - Name: hasFire
+          Type: bool
+          DefaultValue: false
+        - Name: hasKangaroo
+          Type: bool
+          DefaultValue: false
+        - Name: hasCookedFood
+          Type: bool
+          DefaultValue: false
+Workflows:
+    - Id: main
+      Name: Main
+      Stateless: true
+      Static: true
+      Start:
+        Id: start
+      End:
+        - Id: end
+      States:
+        - Id: wait
+          Open: true
+        - Id: physiology          
+      Transitions:
+        - !split
+          Id: shallowSplit
+          Shallow: true
+          Names:
+            - [wait, Main]
+            - [physiology, Physiology]
+        - !join
+          Id: join
+      Actions:
+        - !workflow
+            Id: physiology
+            WorkflowId: physiologyWorkflow
+        - !action
+          Id: findBark
+        - !action
+          Id: findWood
+        - !action
+          Id: findBone
+        - !action
+          Id: findRock
+        - !action
+          Id: findFruit
+        - !action
+          Id: findFlint
+        - !action
+          Id: makeKnife
+        - !action
+          Id: makeSpear
+        - !action
+          Id: makeFire
+        - !action
+          Id: huntKangaroo
+        - !action
+          Id: catchFish
+        - !action
+          Id: cookFish
+        - !action
+          Id: cookKangaroo
+        - !action
+          Id: eatFruit
+        - !action
+          Id: eatCookedFood
+      Connections:
+        - Join: [start,shallowSplit]
+        - Join: [shallowSplit,wait]
+        - Join: [shallowSplit,physiology]   
+          ActionId: physiology   
+        - Join: [wait,join]
+        - Join: [physiology,join]
+        - Join: [open,open]
+          ActionId: findBark
+          Postconditions:
+            - Conditions:
+                - a.bark = a.bark + 1
+          Backtrack:
+            Allow:
+              - Conditions:
+                 - a.bark > 0
+            Postconditions:
+              - Conditions:
+                 - a.bark = a.bark - 1
+        - Join: [open,open]
+          ActionId: findWood
+          Postconditions:
+            - Conditions:
+                - a.wood = a.wood + 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.wood > 0
+            Postconditions:
+                - Conditions:
+                    - a.wood = a.wood - 1
+        - Join: [open,open]
+          ActionId: findBone
+          Postconditions:
+            - Conditions:
+                - a.bone = a.bone + 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.bone > 0
+            Postconditions:
+                - Conditions:
+                    - a.bone = a.bone - 1
+        - Join: [open,open]
+          ActionId: findRock
+          Postconditions:
+            - Conditions:
+                - a.rock = a.rock + 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.rock > 0
+            Postconditions:
+                - Conditions:
+                    - a.rock = a.rock - 1
+        - Join: [open,open]
+          ActionId: findFruit
+          Postconditions:
+            - Conditions:
+                - a.fruit = a.fruit + 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.fruit > 0
+            Postconditions:
+                - Conditions:
+                    - a.fruit = a.fruit - 1
+        - Join: [open,open]
+          ActionId: findFlint
+          Postconditions:
+            - Conditions:
+                - a.flint = a.flint + 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.flint > 0
+            Postconditions:
+                - Conditions:
+                    - a.flint = a.flint - 1
+        - Join: [open,open]
+          ActionId: makeKnife
+          Allow:
+            - Conditions:
+                - a.wood > 0
+                - a.bone > 0
+                - a.bark > 0
+          Postconditions:
+            - Conditions:
+                - a.hasKnife = true
+                - a.wood = a.wood - 1
+                - a.bone = a.bone - 1
+                - a.bark = a.bark - 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasKnife
+            Postconditions:
+                - Conditions:
+                    - a.wood = a.wood + 1
+                    - a.bone = a.bone + 1
+                    - a.bark = a.bark + 1
+        - Join: [open,open]
+          ActionId: makeSpear
+          Allow:
+            - Conditions:
+                - a.wood > 0
+                - a.rock > 0
+                - a.bark > 0
+          Postconditions:
+            - Conditions:
+                - a.hasSpear = true
+                - a.wood = a.wood - 1
+                - a.rock = a.rock - 1
+                - a.bark = a.bark - 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasSpear
+            Postconditions:
+                - Conditions:
+                    - a.wood = a.wood + 1
+                    - a.rock = a.rock + 1
+                    - a.bark = a.bark + 1
+        - Join: [open,open]
+          ActionId: catchFish
+          Allow:
+            - Conditions:
+                - a.hasSpear
+          Postconditions:
+            - Conditions:
+                - a.fish = a.fish + 1
+                - a.hasSpear = a.hasSpear && randomBool()
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.fish > 0
+                    - a.hasSpear
+            Postconditions:
+                - Conditions:
+                    - a.hasSpear = true
+                    - a.fish = a.fish - 1
+        - Join: [open,open]
+          ActionId: huntKangaroo
+          Allow:
+            - Conditions:
+                - a.hasSpear
+          Postconditions:
+            - Conditions:
+                - a.hasKangaroo = true
+                - a.hasSpear = a.hasSpear && randomBool()
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasKangaroo
+                    - a.hasSpear
+            Postconditions:
+                - Conditions:
+                    - a.hasKangaroo = false
+        - Join: [open,open]
+          ActionId: makeFire
+          Allow:
+            - Conditions:
+                - a.wood > 4
+                - a.flint > 0
+          Postconditions:
+            - Conditions:
+                - a.hasFire = true
+                - a.wood = a.wood - 5
+                - a.flint = a.flint - randomInt(0, 1)
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasFire
+                    - a.hasFlint
+            Postconditions:
+                - Conditions:
+                    - a.hasFire = false
+                    - a.wood = a.wood + 5
+        - Join: [open,open]
+          ActionId: cookFish
+          Allow:
+            - Conditions:
+                - a.fish > 0
+                - a.hasFire
+                - a.hasKnife
+          Postconditions:
+            - Conditions:
+                - a.hasCookedFood = true
+                - a.hasFire = false
+                - a.fish = a.fish - 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasCookedFood
+                    - a.hasKnife
+                    - a.hasFire
+            Postconditions:
+                - Conditions:
+                    - a.hasCookedFood = false
+                    - a.hasFire = true
+                    - a.hasKnife = true
+                    - a.fish = a.fish + 1
+        - Join: [open,open]
+          ActionId: cookKangaroo
+          Allow:
+            - Conditions:
+                - a.hasKangaroo
+                - a.hasFire
+                - a.hasKnife
+          Postconditions:
+            - Conditions:
+                - a.hasCookedFood = true
+                - a.hasFire = false
+                - a.hasKangaroo = false
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasCookedFood
+                    - a.hasKnife
+                    - a.hasFire
+            Postconditions:
+                - Conditions:
+                    - a.hasCookedFood = false
+                    - a.hasFire = true
+                    - a.hasKnife = true
+                    - a.hasKanagaroo = true
+        - Join: [open,open]
+          ActionId: eatFruit
+          Allow:
+            - Conditions:
+                - a.fruit > 0
+          Postconditions:
+            - Conditions:
+                - a.fruit = a.fruit - 1
+                - a.hunger = a.hunger - 2
+                - a.thirst = a.thirst - 3
+          Backtrack:
+            Postconditions:
+                - Conditions:
+                    - a.fruit = a.fruit + 1
+        - Join: [open,open]
+          ActionId: eatCookedFood
+          Allow:
+            - Conditions:
+                - a.hasCookedFood
+          Postconditions:
+            - Conditions:
+                - a.hasCookedFood = false
+                - a.hunger = a.hunger - 70
+                - a.thirst = a.thirst - 20
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasCookedFood == false
+            Postconditions:
+                - Conditions:
+                    - a.hasCookedFood = true
+    - Id: physiologyWorkflow
+      Import: Physiology
+
+InitialWorkflow: main
+Types:
+Authorisation:
+    - Organisation: tribe
+      Password:
+      Groups:
+        - RoleId: human

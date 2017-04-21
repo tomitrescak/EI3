@@ -1,0 +1,63 @@
+﻿Roles:
+Types:
+Workflow:
+    Name: EatFish
+    Stateless: true
+    Static: true
+    Start: 
+        Id: door
+        Open: true
+    End: 
+        - Id: exit
+    States:
+    Properties:
+    Actions:        
+        - !action
+          Id: catchFish
+        - !action
+          Id: cookFish
+    Connections:
+        - Join: [open,open]
+          ActionId: catchFish
+          Allow:
+            - Conditions:
+                - a.hasSpear
+          Postconditions:
+            - Conditions:
+                - a.fish = a.fish + 1
+                - a.hasSpear = a.hasSpear && randomBool(true)
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.fish > 0
+                    - a.hasSpear
+            Postconditions:
+                - Conditions:
+                    - a.hasSpear = true
+                    - a.fish = a.fish - 1
+        - Join: [open,open]
+          ActionId: cookFish
+          Allow:
+            - Conditions:
+                - a.fish > 0
+                - a.hasFire
+                - a.hasKnife
+          Postconditions:
+            - Conditions:
+                - a.hasCookedFood = true
+                - a.hasFire = false
+                - a.fish = a.fish - 1
+          Backtrack:
+            Allow:
+                - Conditions:
+                    - a.hasCookedFood
+                    - a.hasKnife
+                    - a.hasFire
+            Postconditions:
+                - Conditions:
+                    - a.hasCookedFood = false
+                    - a.hasFire = true
+                    - a.hasKnife = true
+                    - a.fish = a.fish + 1
+        - Join: [door,exit]
+          Import: eatCookedFood

@@ -1,0 +1,56 @@
+﻿Roles:
+    - Id: seller
+      Name: Seller
+Types:
+    - Name: AuctionItem
+      Description: Information on auctioned item
+      Id: AuctionItem
+      Properties:
+        - Name: Name
+          Type: string
+        - Name: Description
+          Type: string
+        - Name: StartingPrice
+          Type: float
+Workflow:
+    Name: RegisterItem
+    Stateless: true
+    Static: true
+    Start: 
+        Id: door
+    End: 
+        - Id: exit
+    States:
+        - Id: state
+    Properties:
+        - Name: Item
+          Type: AuctionItem
+        - Name: WorkflowPath
+          Type: string
+    Actions:
+    - !action
+        Id: register
+        Properties:
+            - Name: item
+              Optional: false
+              Type: AuctionItem
+    - !startWorkflow
+        Id: startWorkflow
+        Path: w.WorkflowPath 
+        Properties:
+            - Name: Item
+              Type: string
+              DefaultValue: w.Item
+            - Name: CurrentPrice
+              Type: string
+              DefaultValue: w.Item.StartingPrice
+    Connections:
+        - Join: [door,state]
+          ActionId: register
+          Postconditions:
+            - Conditions:
+                - w.Item = this.item
+        - Join: [state,door]
+          ActionId: startWorkflow
+        - Join: [state,exit]
+        - Join: [door,exit]

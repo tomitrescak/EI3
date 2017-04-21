@@ -1,0 +1,125 @@
+﻿Name: Institution
+Description: Desc
+Roles:
+    - Id: 1
+      Name: Citizen
+      Description: Citizen Role
+      Properties:
+        - DefaultValue: 0
+          Name: Hunger
+          Optional: false
+          Type: float
+          AllowAccess:
+            - Groups:
+                - OrganisationId: 1
+                  RoleId: 0
+          DenyAccess:
+            - Groups:
+                - OrganisationId: 2
+                  RoleId: 0
+    - Id: 2
+      Name: Fisherman
+      Description: Fisherman
+Organisations:
+    - Id: 1
+      Name: Darug
+      Properties:
+        - Name: Leader
+          Type: agent
+    - Id: 2
+      Name: Settlers
+Workflows:
+    - Id: 1
+      Name: Main
+      Stateless: true
+      Static: true
+      Start:
+        Id: door
+      End:
+        - Id: exit
+      Actions:
+        - !action
+          Id: findBone
+          Name: Find Bone
+      States:
+      Transitions:
+        - !binaryDecision
+          Id: decision
+          Decision: 
+            - Groups:
+                - OrganisationId: 1
+                  RoleId: 0
+              Conditions:
+                - true
+      Connections:
+        - Join: [door,exit]
+        - Join: [door,decision]
+          ActionId: findBone
+          Allow:
+            - Groups:
+                - RoleId: 1
+              Conditions:
+                - a.test == true   
+          Deny:
+            - Groups:
+                - RoleId: 2
+              Conditions:
+                - a.test == true    
+          Postconditions:
+            - Groups:
+                - RoleId: 2
+              Conditions:
+                - a.test == true 
+        - Join: [decision,exit]
+        - Join: [decision,door]
+    - Id: 2
+      Name: Main
+      Stateless: true
+      Static: true
+      Start:
+        Id: 1
+      End:
+        - Id: 2
+      States:
+InitialWorkflow: 1
+Types:
+    - Description: Desc Type
+      Id: 1
+      Name: Type1
+      Properties:
+        - DefaultValue: def
+          Name: first
+          Optional: true
+          Type: string
+        - DefaultValue: 2
+          Name: second
+          Optional: true
+          Type: int
+        - DefaultValue: 3
+          Name: third
+          Optional: false
+          Type: float
+        - DefaultValue: 1/1/1970
+          Name: fourth
+          Optional: true
+          Type: date
+        - DefaultValue: true
+          Name: fifth
+          Optional: false
+          Type: bool
+Authorisation:
+    - User: user
+      Password: pass
+      Groups:
+        - OrganisationId: 1
+          RoleId: 1
+    - Organisation: org
+      Password: pass
+      Groups:
+        - OrganisationId: 1
+          RoleId: 1
+    - User: user_limited
+      Password: pass
+      Groups:
+        - OrganisationId: 1
+          RoleId: 1

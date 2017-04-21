@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{940D06D4-E518-4B7D-B13A-6FF9AD205143}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ei.Tests</RootNamespace>
+    <AssemblyName>Ei.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq.Sequences, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.Sequences.1.0.1.0\lib\net40\Moq.Sequences.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="TechTalk.SpecFlow, Version=1.9.0.77, Culture=neutral, PublicKeyToken=0778194805d6db41, processorArchitecture=MSIL">
+      <HintPath>..\packages\SpecFlow.1.9.0\lib\net35\TechTalk.SpecFlow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <Choose>
+    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
+    <Compile Include="Features\EnvironmentalPlanning.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EnvironmentalPlanning.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\NestedPlanning.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NestedPlanning.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\OpenActivities.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OpenActivities.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Planning.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Planning.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\SplitAndJoin.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SplitAndJoin.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\TribeInstitution.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TribeInstitution.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Steps\ActivitySteps.cs" />
+    <Compile Include="Steps\EnglishAuctionSteps.cs" />
+    <Compile Include="Features\EnglishAuction.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EnglishAuction.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\InstitutionConnection.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>InstitutionConnection.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\InstitutionManagement.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>InstitutionManagement.feature</DependentUpon>
+    </Compile>
+    <Content Include="Institutions\Workflows\RegisterItemWorkflow.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Compile Include="Steps\InstitutionConnectionSteps.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Steps\InstitutionManagementSteps.cs" />
+    <Compile Include="Steps\PlanningSteps.cs" />
+    <Compile Include="Steps\PlanningWithEnvironment.cs" />
+    <Compile Include="Unit\AccessConditionsTest.cs" />
+    <Compile Include="Unit\AccessTests.cs" />
+    <Compile Include="Unit\Data\YamlInstitutionFactoryTests.cs" />
+    <Compile Include="Unit\InstitutionTests.cs" />
+    <Compile Include="Unit\OrganisationRoleTests.cs" />
+    <Compile Include="Unit\ParameterTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Features\EnglishAuction.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>EnglishAuction.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\EnvironmentalPlanning.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>EnvironmentalPlanning.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\InstitutionConnection.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>InstitutionConnection.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\InstitutionManagement.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>InstitutionManagement.feature.cs</LastGenOutput>
+    </None>
+    <Content Include="Institutions\AllComponents.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\EnglishAuctionFlat.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\InstitutionStart.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\Workflows\EnglishAuctionWorkflow.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Features\NestedPlanning.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>NestedPlanning.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\OpenActivities.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>OpenActivities.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\Planning.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Planning.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\SplitAndJoin.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>SplitAndJoin.feature.cs</LastGenOutput>
+    </None>
+    <Content Include="Institutions\SplitJoin.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\OpenInstitution.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\Planning_MakeFire.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\Planning_Cycles.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Features\TribeInstitution.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>TribeInstitution.feature.cs</LastGenOutput>
+    </None>
+    <Content Include="Institutions\Tribes.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\Workflows\Physiology.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\NestedPlanning.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\Workflows\MakeFire.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\Workflows\MakeKnife.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\Workflows\MakeSpear.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\Workflows\EatFish.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Institutions\Workflows\EatKangaroo.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ei.Data.Yaml\Ei.Data.Yaml.csproj">
+      <Project>{fd45ccfa-36b5-46e5-b9ed-addc9d4da523}</Project>
+      <Name>Ei.Data.Yaml</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ei.Logs\Ei.Log.csproj">
+      <Project>{87e9fc9e-c969-4922-8222-d3d05a9d0a41}</Project>
+      <Name>Ei.Log</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ei\Ei.csproj">
+      <Project>{88c4005f-bc1b-4886-8cd2-4f582b57a786}</Project>
+      <Name>Ei</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
