@@ -5,9 +5,9 @@ using Ei.Runtime;
 
 namespace Ei.Ontology.Actions
 {
-    public class ActionMessage: ActionBase
+    public abstract class ActionMessage: ActionBase
     {
-        private ActionParameters parameters;
+        private VariableState parameters;
 
         // constructor
 
@@ -19,9 +19,7 @@ namespace Ei.Ontology.Actions
             }
             if (notifyAgents != null) {
                 this.NotifyAgents = new ReadOnlyCollection<string>(notifyAgents);
-            }
-            
-            
+            }  
         }
 
         #region Properties
@@ -29,7 +27,7 @@ namespace Ei.Ontology.Actions
 
         public ReadOnlyCollection<string> NotifyAgents { get; }
 
-        protected override IActionInfo PerformAction(Governor performer, Connection connection, ActionParameters parameters)
+        protected override IActionInfo PerformAction(Governor performer, Connection connection, VariableState parameters)
         {
             this.parameters = parameters;
             return ActionInfo.Ok;

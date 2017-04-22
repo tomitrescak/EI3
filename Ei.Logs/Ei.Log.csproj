@@ -44,12 +44,6 @@
     <Compile Include="Logs\LogMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Ei.Dictionary\Ei.Dictionary.csproj">
-      <Project>{2555496d-e20b-4f90-bd34-bfdc4a78fda9}</Project>
-      <Name>Ei.Dictionary</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

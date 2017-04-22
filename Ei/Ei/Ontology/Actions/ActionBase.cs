@@ -13,13 +13,17 @@
 
         // abstract methods
 
-        protected abstract IActionInfo PerformAction(Governor performer, Connection connection, ActionParameters parameters);
+        public virtual VariableState ParseParameters(VariableInstance[] properties) {
+            return null;
+        }
+
+        protected abstract IActionInfo PerformAction(Governor performer, Connection connection, VariableState parameters);
 
         protected virtual void Performed(Governor performer) { }
 
         // public methods
 
-        public IActionInfo Perform(Governor agent, Connection connection, ActionParameters parameters)
+        public IActionInfo Perform(Governor agent, Connection connection, VariableState parameters)
         {
             // perform Action
             var result = this.PerformAction(agent, connection, parameters);

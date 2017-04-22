@@ -260,7 +260,7 @@ namespace Ei.Runtime
             return result.IsOk ? clone.Move(positionId) : result;
         }
 
-        public IActionInfo Move(string positionId, ActionParameters parameters = null)
+        public IActionInfo Move(string positionId, VariableState parameters = null)
         {
             var target = this.FindPosition(positionId);
             if (target.Length == 0)
@@ -279,7 +279,7 @@ namespace Ei.Runtime
             return connection.Pass(this, parameters);
         }
 
-        public IActionInfo PerformAction(string cloneName, string actionId, ActionParameters parameters)
+        public IActionInfo PerformAction(string cloneName, string actionId, VariableInstance[] parameters)
         {
             Governor clone;
             var result = this.FindClone(cloneName, out clone);
@@ -290,7 +290,7 @@ namespace Ei.Runtime
 //        {
 //        }
 
-        public IActionInfo PerformAction(string activityId, ActionParameters parameters = null)
+        public IActionInfo PerformAction(string activityId, VariableInstance[] parameters = null)
         {
             // find actions
             var action = this.Workflow.Actions.FirstOrDefault(w => w.Id == activityId);
@@ -301,16 +301,19 @@ namespace Ei.Runtime
 
             // otherwise we have to find a feasible connection
             // check if Action can be performed
-            var connections = this.FindConnection(activityId, parameters);
+            var connections = this.FindConnection(activityId);
             if (connections.Length == 0)
             {
                 return ActionInfo.FailedPreconditions;
             }
 
-            Log.Info(this.Name, "Performing " + activityId);
+            if (Log.IsInfo) Log.Info(this.Name, "Performing " + activityId);
+
+            // parse parameters
+            var parsedParameters = action.ParseParameters(parameters);
 
             // perform this Action
-            var result = connections[0].Pass(this, parameters);
+            var result = connections[0].Pass(this, parsedParameters);
 
             if (!result.IsAcceptable)
             {
@@ -321,26 +324,57 @@ namespace Ei.Runtime
                     activityId,
                     parameters == null ? null : parameters.ToString());
 
-                this.NotifyActivityFailed(this.Workflow, this.Name, activityId, parameters);
+                this.NotifyActivityFailed(this.Workflow, this.Name, activityId, parsedParameters);
             }
             else
             {
+                this.NotifyActivity(this.Workflow, this.Name, activityId, parsedParameters);
+            }
+            return result;
+        }
+
+        public IActionInfo PerformAction(ActionBase action, VariableState parameters = null) {
+
+
+            // otherwise we have to find a feasible connection
+            // check if Action can be performed
+            var activityId = action.Id;
+            var connections = this.FindConnection(activityId);
+            if (connections.Length == 0) {
+                return ActionInfo.FailedPreconditions;
+            }
+
+            if (Log.IsInfo) Log.Info(this.Name, "Performing " + activityId);
+
+            // perform this Action
+            var result = connections[0].Pass(this, parameters);
+
+            if (!result.IsAcceptable) {
+                this.LogAction(
+                    InstitutionCodes.ActivityFailed,
+                    this.Name,
+                    this.Name,
+                    activityId,
+                    parameters == null ? null : parameters.ToString());
+
+                this.NotifyActivityFailed(this.Workflow, this.Name, activityId, parameters);
+            } else {
                 this.NotifyActivity(this.Workflow, this.Name, activityId, parameters);
             }
             return result;
         }
 
-        public WorkflowInfo[] GetWorkflowInfos(string cloneName, string activityId, ActionParameters parameters)
+        public WorkflowInfo[] GetWorkflowInfos(string cloneName, string activityId)
         {
             Governor clone;
             var result = this.FindClone(cloneName, out clone);
-            return result.IsOk ? clone.GetWorkflowInfos(activityId, parameters) : new WorkflowInfo[0];
+            return result.IsOk ? clone.GetWorkflowInfos(activityId) : new WorkflowInfo[0];
         }
 
-        public WorkflowInfo[] GetWorkflowInfos(string activityId, ActionParameters parameters)
+        public WorkflowInfo[] GetWorkflowInfos(string activityId)
         {
             
-            var connections = this.FindConnection(activityId, parameters);
+            var connections = this.FindConnection(activityId);
             if (connections.Length == 0)
             {
                 // return empty set
@@ -464,9 +498,9 @@ namespace Ei.Runtime
             return this.Position.ViableConnections(this).Where(w => w.To.Id == positionId).ToArray();
         }
 
-        private Connection[] FindConnection(string activityId, ActionParameters parameters)
+        private Connection[] FindConnection(string activityId)
         {
-            var connections = this.Position.ViableConnections(this, activityId, parameters);
+            var connections = this.Position.ViableConnections(this, activityId);
             if (connections.Length > 1) 
             {
                 throw new ApplicationException("Ambiguous actions, more than one action is available: " + activityId);
@@ -476,7 +510,7 @@ namespace Ei.Runtime
 
         public void LogAction(InstitutionCodes code, params string[] parameters)
         {
-            Log.Info(this.Name, code, parameters);
+            if (Log.IsInfo) Log.Info(this.Name, code, parameters);
         }
 
         private IActionInfo FindClone(string cloneName, out Governor clone)

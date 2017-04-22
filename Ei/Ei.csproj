@@ -45,8 +45,6 @@
     <Compile Include="Ei\Ontology\Access.cs" />
     <Compile Include="Ei\Ontology\AccessCondition.cs" />
     <Compile Include="Ei\Ontology\Actions\ActionExitWorkflow.cs" />
-    <Compile Include="Ei\Ontology\Actions\ActionParameter.cs" />
-    <Compile Include="Ei\Ontology\Actions\ActionParameters.cs" />
     <Compile Include="Ei\Ontology\Actions\ActionTimeout.cs" />
     <Compile Include="Ei\Ontology\IStateProvider.cs" />
     <Compile Include="Ei\Ontology\RelationalEntity.cs" />
@@ -73,7 +71,9 @@
     <Compile Include="Ei\Ontology\Group.cs" />
     <Compile Include="Ei\Runtime\ActionInfo.cs" />
     <Compile Include="Ei\Runtime\AgentExecutor.cs" />
-    <Compile Include="Ei\Runtime\AgentState.cs" />
+    <Compile Include="Ei\Runtime\VariableDefinition.cs" />
+    <Compile Include="Ei\Runtime\VariableInstance.cs" />
+    <Compile Include="Ei\Runtime\VariableState.cs" />
     <Compile Include="Ei\Runtime\Executor.cs" />
     <Compile Include="Ei\Runtime\Expression.cs" />
     <Compile Include="Ei\Runtime\IActionInfo.cs" />

@@ -81,12 +81,12 @@ namespace Ei.Ontology
             return this.ins.Where(w => w.CanBacktrack(groups, state)).ToArray();
         }
 
-        public Connection[] ViableConnections(Governor agent, string actionId, VariableState parameters)
+        public Connection[] ViableConnections(Governor agent, string actionId)
         {
-            return this.ViableConnections(agent.Groups, agent.VariableState, actionId, parameters);
+            return this.ViableConnections(agent.Groups, agent.VariableState, actionId);
         }
 
-        public Connection[] ViableConnections(Group[] groups, VariableState state, string actionId, VariableState parameters)
+        public Connection[] ViableConnections(Group[] groups, VariableState state, string actionId)
         {
             return this.outs.Where(w => w.CanPass(groups, state) && w.Action != null && w.Action.Id == actionId).ToArray();
         }

@@ -101,7 +101,7 @@ namespace Ei.Ontology
                 AccessCondition.CheckHasActivityParameters(this.Postconditions);
         }
 
-        public IActionInfo Pass(Governor agent, ActionParameters parameters = null)
+        public IActionInfo Pass(Governor agent, VariableState parameters = null)
         {
             if (!this.CanPass(agent.Groups, agent.VariableState))
             {

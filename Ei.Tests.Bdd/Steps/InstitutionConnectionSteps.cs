@@ -1,21 +1,16 @@
-﻿using Ei.Logs;
-using NUnit.Framework;
-
-namespace Ei.Tests.Steps
+﻿namespace Ei.Tests.Steps
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Ei.Data.Yaml;
-    using Ei.Ontology;
-    using Ei.Runtime;
-
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     using Moq;
-
     using TechTalk.SpecFlow;
+
+    using Logs;
+    using Ontology;
+    using Runtime;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [Binding]
     public class InstitutionConnectionSteps
@@ -38,7 +33,7 @@ namespace Ei.Tests.Steps
             Log.Register(logMock.Object);
 
             // start institution
-            managerMock.Object.Start(YamlInstitutionFactory.Instance.LoadFromFile("Institutions/" + path + ".yaml"));
+            // managerMock.Object.Start(YamlInstitutionFactory.Instance.LoadFromFile("Institutions/" + path + ".yaml"));
 
             ScenarioContext.Current.Set<Mock<ILog>>(logMock);
             ScenarioContext.Current.Set<Mock<InstitutionManager>>(managerMock);

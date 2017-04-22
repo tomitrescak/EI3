@@ -18,7 +18,7 @@ namespace Ei.Runtime.Planning
     {
         // fields
 
-        private IVariableProvider variableProvider;
+        private IVariableDefinition variableProvider;
 
         public string Name;
         public object Value;
@@ -26,7 +26,7 @@ namespace Ei.Runtime.Planning
 
         // constructors
 
-        public GoalState(string name, object value, StateGoalStrategy strategy, IVariableProvider variableProvider)
+        public GoalState(string name, object value, StateGoalStrategy strategy, IVariableDefinition variableProvider)
         {
             this.Name = name;
             this.Value = value;

@@ -13,15 +13,10 @@ namespace Ei.Ontology.Actions
     {
         // parameters
 
-        public class Parameters : ActionParameters
+        public class Parameters : VariableState
         {
+            // fields
             public int InstanceId { get; set; }
-
-            public override void Apply(VariableState institutionState, VariableState workflowState, VariableState agentState) { 
-            }
-
-            public override void Parse(ActionParameter1[] parameters) {
-            }
         }
 
         // fields
@@ -68,7 +63,7 @@ namespace Ei.Ontology.Actions
 //            this.WorkflowId = workflow.Id;
 //        }
 
-        public Workflow Create(Governor performer, ActionParameters parameters = null)
+        public Workflow Create(Governor performer, VariableState parameters = null)
         {
  //           Console.WriteLine("[THREAD] Creating workflow ...: " + Thread.CurrentThread.ManagedThreadId);
 
@@ -77,7 +72,7 @@ namespace Ei.Ontology.Actions
             // initialise parameters
             if (parameters != null)
             {
-                parameters.Apply(this.ei.VariableState, newWorkflow.VariableState, performer.VariableState);
+                newWorkflow.VariableState.Merge(parameters);
             }
 
             // set owner to the agent that created this workflow
@@ -85,7 +80,7 @@ namespace Ei.Ontology.Actions
 
             this.Workflows.Add(newWorkflow);
 
-            Log.Info(newWorkflow.Name, InstitutionCodes.WorkflowStarted, 
+            if (Log.IsInfo) Log.Info(newWorkflow.Name, InstitutionCodes.WorkflowStarted, 
                 newWorkflow.Name, 
                 newWorkflow.Id, 
                 newWorkflow.ToString());
@@ -93,7 +88,7 @@ namespace Ei.Ontology.Actions
             return newWorkflow;
         }
 
-        protected override IActionInfo PerformAction(Governor agent, Connection connection, ActionParameters parameters)
+        protected override IActionInfo PerformAction(Governor agent, Connection connection, VariableState parameters)
         {
             var workflow = ei.GetWorkflow(this.WorkflowId);
             var joinParameters = parameters as ActionJoinWorkflow.Parameters;
@@ -152,6 +147,10 @@ namespace Ei.Ontology.Actions
         public WorkflowInfo[] GetWorkflows(Governor governor)
         {
             return this.Workflows.Select(w => w.GetInfo(governor)).ToArray();
+        }
+
+        public override VariableState ParseParameters(VariableInstance[] properties) {
+            return new Parameters().Parse(properties);
         }
     }
 }

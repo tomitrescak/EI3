@@ -142,7 +142,7 @@ namespace Ei.Ontology
 
         private void Timedout(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            Log.Info("State", InstitutionCodes.TimeOut, this.workflow.Id, this.workflow.InstanceId.ToString(), this.Id);
+            if (Log.IsInfo) Log.Info("State", InstitutionCodes.TimeOut, this.workflow.Id, this.workflow.InstanceId.ToString(), this.Id);
 
             // find timeout connection
             var connection = this.Outs.FirstOrDefault(w => w.Action is ActionTimeout);

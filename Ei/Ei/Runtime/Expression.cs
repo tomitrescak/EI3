@@ -10,7 +10,7 @@ using Ei.Ontology;
 namespace Ei.Runtime
 {
 
-    public abstract class Expression
+    public abstract class EiExpression
     {
         private const string GetReg = @"([a-zA-Z]\w*\.\w+(\.\w*)*)";
         private const string GetReplacement = "get('$1')";

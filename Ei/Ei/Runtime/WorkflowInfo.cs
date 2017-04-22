@@ -8,9 +8,9 @@
 
         public string Name { get; }
 
-        public VariableProperty[] Parameters { get; }
+        public VariableInstance[] Parameters { get; }
 
-        public WorkflowInfo(string id, int instanceId, string name, VariableProperty[] parameters)
+        public WorkflowInfo(string id, int instanceId, string name, VariableInstance[] parameters)
         {
             this.Id = id;
             this.InstanceId = instanceId;

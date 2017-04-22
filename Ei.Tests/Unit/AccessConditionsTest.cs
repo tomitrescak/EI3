@@ -22,7 +22,7 @@ namespace Ei.Tests.Unit
         //[TestCase("x.y[3] + 3", "get('x','y',3) + 3")]
         public void Access_ParseExpression_ReturnsCorrectExpression(string expression, string parsedExpression)
         {
-            var pe = Expression.ParseExpression(null, expression);
+            var pe = EiExpression.ParseExpression(null, expression);
             Assert.AreEqual(parsedExpression, pe);
         }
     }

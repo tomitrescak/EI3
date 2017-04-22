@@ -96,7 +96,7 @@ namespace Ei.Ontology
                 this.state.EnterWorkflow();
 
                 // log state change
-                Log.Info(this.Id, InstitutionCodes.WorkflowChangedState,
+                if (Log.IsInfo) Log.Info(this.Id, InstitutionCodes.WorkflowChangedState,
                     this.state.Id,
                     this.Id,
                     this.InstanceId.ToString());
@@ -272,7 +272,7 @@ namespace Ei.Ontology
 
         public void NotifyParameterChanged(string parameterName, object newValue) {
             // log the result
-            Log.Info(this.Id, InstitutionCodes.WorkflowParameterChanged, this.Id, this.InstanceId.ToString(), parameterName, newValue.ToString());
+            if (Log.IsInfo) Log.Info(this.Id, InstitutionCodes.WorkflowParameterChanged, this.Id, this.InstanceId.ToString(), parameterName, newValue.ToString());
 
             // notify all agents
             for (int i = this.agents.Count - 1; i >= 0; i--) {

@@ -20,9 +20,9 @@ namespace Ei.Runtime.Planning.Environment
         public Governor Owner;
 
         [NonSerialized]
-        public Dictionary<string, VariableProperty[]> Parameters;
+        public Dictionary<string, VariableInstance[]> Parameters;
 
-        public EnvironmentData(EnvironmentDataDefinition definition, int x, int y, Dictionary<string, VariableProperty[]> parameters = null, Governor owner = null)
+        public EnvironmentData(EnvironmentDataDefinition definition, int x, int y, Dictionary<string, VariableInstance[]> parameters = null, Governor owner = null)
         {
             this.uses = new Dictionary<string, int>();
             this.Id = definition.NewId();
@@ -33,7 +33,7 @@ namespace Ei.Runtime.Planning.Environment
             this.Parameters = parameters;
         }
 
-        public EnvironmentData(string id, string actionName, int x, int y, int destroyAfter = 0, Dictionary<string, VariableProperty[]> parameters = null, Governor owner = null)
+        public EnvironmentData(string id, string actionName, int x, int y, int destroyAfter = 0, Dictionary<string, VariableInstance[]> parameters = null, Governor owner = null)
         {
             this.uses = new Dictionary<string, int>();
             this.Id = id;

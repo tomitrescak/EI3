@@ -31,7 +31,7 @@
         private List<Connection> globalConnections;
         private List<Role> roles;
         private List<Organisation> organisations;
-        private List<Expression> expressions;
+        private List<EiExpression> expressions;
         private Timer expressionTimer;
 
         #endregion
@@ -50,8 +50,6 @@
 
         public ReadOnlyCollection<Workflow> Workflows { get; protected set; }
 
-        public new string Id { get; protected set; }
-
         public string MainWorkflowId { get; protected set; }
 
         public Security CreatePermissions { get; protected set; }
@@ -65,14 +63,18 @@
         public ManualResetEvent Pauser { get; private set; }
 
         public InstitutionState VariableState { get; protected set; }
-        
+
         #endregion
 
         // constructor
 
-        public Institution()
+        protected Institution(string id, string name, string description) : base(id, name, description) {
+        }
+
+        protected Institution(string id): base(id)
         {
-            Log.Info("Institution instantiated ...");
+            if (Log.IsInfo) Log.Info("Institution instantiated ...");
+
             this.CreatePermissions = new Security();
             this.VariableState = new InstitutionState(this);
         }

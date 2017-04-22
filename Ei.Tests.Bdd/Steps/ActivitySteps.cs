@@ -10,7 +10,6 @@ using Ei.Ontology.Actions;
 using Ei.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Newtonsoft.Json.Linq;
 using TechTalk.SpecFlow;
 
 namespace Ei.Tests.Steps
@@ -77,11 +76,12 @@ namespace Ei.Tests.Steps
         [Then(@"Clone '(.*)' of '(.*)' cannot join workflow '(.*)' with '(.*)'")]
         public void ThenCloneOfAgentCannotJoinWorkflowWith(string cloneName, string agentName, string activityName, string activityParameters)
         {
+            var ei = ScenarioContext.Current.Get<Mock<InstitutionManager>>().Object.Ei;
             var agent = Governors[agentName];
 
             // build parameters
             var parsplt = string.IsNullOrEmpty(activityParameters) ? new string[0] : activityParameters.Split(';');
-            var parameters = parsplt.Select(pair => new ActionParameter(pair.Split('=')[0], pair.Split('=')[1])).ToArray();
+            var parameters = parsplt.Select(pair => new VariableInstance(pair.Split('=')[0], pair.Split('=')[1])).ToArray();
 
             var result = string.IsNullOrEmpty(cloneName) ?
                 agent.Object.PerformAction(activityName, parameters) :
@@ -98,7 +98,7 @@ namespace Ei.Tests.Steps
 
             // build parameters
             var parsplt = string.IsNullOrEmpty(activityParameters) ? new string[0] : activityParameters.Split(';');
-            var parameters = parsplt.Select(pair => new ActionParameter(pair.Split('=')[0], pair.Split('=')[1])).ToArray();
+            var parameters = parsplt.Select(pair => new VariableInstance(pair.Split('=')[0], pair.Split('=')[1])).ToArray();
 
             var result = string.IsNullOrEmpty(cloneName) ?
                 agent.Object.PerformAction(activityName, parameters) :
@@ -121,7 +121,7 @@ namespace Ei.Tests.Steps
 
             // build parameters
             var parsplt = activityParameters.Split(';');
-            var parameters = parsplt.Select(pair => new ActionParameter(pair.Split('=')[0], pair.Split('=')[1])).ToArray();
+            var parameters = parsplt.Select(pair => new VariableInstance(pair.Split('=')[0], pair.Split('=')[1])).ToArray();
 
             var result = agent.Object.PerformAction(activityName, parameters);
 
@@ -163,18 +163,10 @@ namespace Ei.Tests.Steps
         private object GetParameter(string agentName, string paramName)
         {
             var agent = Governors[agentName];
-
-            var paramSplit = paramName.Split('.');
-            var obj = agent.Object.Properties[paramSplit[0]];
-            for (var i = 1; i < paramSplit.Length - 1; i++)
-            {
-                obj = (ParameterProvider)obj[paramSplit[i]];
-            }
-
-            var key = paramSplit[paramSplit.Length - 1];
-
-            Assert.IsTrue(obj.HasKey(key));
-            return obj[key];
+            var obj = agent.Object.VariableState.FindByName(paramName);
+            
+            Assert.IsNotNull(obj);
+            return obj.Value(agent.Object.VariableState);
         }
 
         [When(@"Agent '(.*)' automatically continues")]
@@ -223,7 +215,7 @@ namespace Ei.Tests.Steps
         public void ThenAgentExitsWorkflowVia(string agentName, string fromId, string toId)
         {
             var callback = Callbacks[agentName];
-            callback.Verify(w => w.ExitedWorkflow(fromId, It.IsAny<string>(), toId, It.IsAny<string>(), It.IsAny<ParameterInstance[]>()));
+            callback.Verify(w => w.ExitedWorkflow(fromId, It.IsAny<string>(), toId, It.IsAny<string>()));
         }
 
         [Then(@"Agent '(.*)' exits institution")]
@@ -294,8 +286,9 @@ namespace Ei.Tests.Steps
                 workflowId, 
                 It.IsAny<int>(), 
                 fromAgentName, 
-                activityId, 
-                It.Is<ParameterInstance[]>(z => parameters == string.Join(";", z.Select(i => i.ToString())))
+                activityId,
+                It.IsAny<VariableState>()
+            // It.Is<VariableState>(z => parameters == string.Join(";", z.Select(i => i.ToString())))
             ));
         }  
 
@@ -351,7 +344,7 @@ namespace Ei.Tests.Steps
         public void ThenGovernorEntersWorkflowWithIdAndName(string agentName, string id, string name)
         {
             var callback = Callbacks[agentName];
-            callback.Verify(w => w.EnteredWorkflow(It.IsAny<string>(), id, name, It.IsAny<ParameterInstance[]>()));
+            callback.Verify(w => w.EnteredWorkflow(It.IsAny<string>(), id, name));
         }
 
         [Then(@"Agent '(.*)' notifies change position to '(.*)' in workflow '(.*)'")]
@@ -369,7 +362,7 @@ namespace Ei.Tests.Steps
             toName = toName == "null" ? null : toName;
             toId = toId == "null" ? null : toId;
 
-            callback.Verify(w => w.ExitedWorkflow(fromId, fromName, toId, toName, It.IsAny<ParameterInstance[]>()));
+            callback.Verify(w => w.ExitedWorkflow(fromId, fromName, toId, toName));
         }
 
         [Then(@"Agent '(.*)' notifies institution exit '(.*)' id '(.*)'")]
@@ -383,7 +376,7 @@ namespace Ei.Tests.Steps
         public void WhenAgentParameterIsSetTo(string agentName, string parameterName, string parameterValue)
         {
             var agent = Governors[agentName];
-            agent.Object.Properties.SetParameterValue(parameterName, int.Parse(parameterValue));
+            agent.Object.VariableState.Descriptors.First(d => d.Name == parameterName).Update(agent.Object.VariableState, int.Parse(parameterValue));
         }
 
 
@@ -391,7 +384,7 @@ namespace Ei.Tests.Steps
         public void ThenAgentHasParameter(string agentName, string parameterName)
         {
             var agent = Governors[agentName];
-            Assert.IsTrue(agent.Object.Properties["a"].HasKey(parameterName), "Agent does not have parameter: " + parameterName);
+            Assert.IsTrue(agent.Object.VariableState.Descriptors.Any(d => d.Name == parameterName), "Agent does not have parameter: " + parameterName);
         }
 
 

@@ -249,7 +249,7 @@ namespace Ei.Runtime.Planning.Environment
             this.AddObject(id, this.RandomX, this.RandomY);
         }
 
-        public void AddObject(string id, int x, int y, Dictionary<string, VariableProperty[]> parameters = null, Governor owner = null)
+        public void AddObject(string id, int x, int y, Dictionary<string, VariableInstance[]> parameters = null, Governor owner = null)
         {
             var definition = this.definition.Elements.First(w => w.Id == id);
             var data = new EnvironmentData(definition, x, y, parameters, owner);

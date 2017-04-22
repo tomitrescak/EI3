@@ -11,7 +11,7 @@ namespace Ei.Ontology
     public abstract class AccessCondition
     {
         // fields
-        private readonly Expression expression;
+        private readonly EiExpression expression;
         private readonly Institution ei;
         private readonly Group group;
 
@@ -24,7 +24,7 @@ namespace Ei.Ontology
 
         // ctor
 
-        public AccessCondition(Institution ei, Group group, Expression expression) {
+        public AccessCondition(Institution ei, Group group, EiExpression expression) {
             this.ei = ei;
             this.group = group;
             this.expression = expression;
