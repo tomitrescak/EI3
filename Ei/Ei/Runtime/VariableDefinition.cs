@@ -19,6 +19,7 @@ namespace Ei.Runtime
     {
         string Name { get; }
         object DefaultValue { get; }
+        VariableAccess Access { get; }
         bool CanAccess(Group[] groups, VariableState state);
         object Value(VariableState state);
         void Update(VariableState state, object value);
@@ -27,13 +28,19 @@ namespace Ei.Runtime
 
     public class Variable : System.Attribute
     {
+        public object DefaultValue { get; set; } 
+        public VariableAccess Access { get; set; }
 
+        public Variable(VariableAccess access, object defaultValue = null) {
+            this.Access = access;
+            this.DefaultValue = defaultValue;
+        }
     }
 
     public struct VariableDefinition<T, V> : IVariableDefinition where V : VariableState
     {
         public string Name { get; private set; }
-        public VariableAccess Access;
+        public VariableAccess Access { get; private set; }
         public T Default;
 
         public delegate T ParseDelegate(string value);
@@ -53,13 +60,31 @@ namespace Ei.Runtime
             this.selector = BuildTypedGetter(parameter);
             this.updater = BuildTypedSetter(parameter);
 
+            // find custom attributes
+            foreach (var ca in parameter.GetCustomAttributes(false)) {
+                var variable = ca as Variable;
+                if (variable != null) {
+                    this.Access = variable.Access;
+                    if (variable.DefaultValue != null) {
+                        this.Default = (T) variable.DefaultValue;
+                    }
+                }
+            }
+
             // find parse method
             MethodInfo parseMethod = typeof(T).GetMethod("Parse",
                 BindingFlags.Static | BindingFlags.Public,
                 null,
                 new Type[] { typeof(string) },
                 null);
-            this.parser = (ParseDelegate)Delegate.CreateDelegate(typeof(ParseDelegate), parseMethod);
+            if (parseMethod != null) {
+                this.parser = (ParseDelegate) Delegate.CreateDelegate(typeof(ParseDelegate), parseMethod);
+            } else if (typeof(T) == typeof(String)) {
+                this.parser = Identity;
+            } else {
+                throw new Exception("DataType needs to define a Parse method");
+            }
+            
         }
 
         public VariableDefinition(string name, VariableAccess access, T defaultValue, ParseDelegate parser, Func<V, T> selector, Action<V, T> updater = null) {
@@ -114,6 +139,10 @@ namespace Ei.Runtime
 
         public T Parse(string value) {
             return this.parser(value);
+        }
+
+        public static T Identity(object value) {
+            return (T) value;
         }
 
         public static Action<V, T> BuildTypedSetter(PropertyInfo propertyInfo) {

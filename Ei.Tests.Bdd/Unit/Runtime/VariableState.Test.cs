@@ -23,11 +23,20 @@ namespace Ei.Tests.Bdd.Unit.Runtime
 
         public class ChildVariableState : ParentVariableState
         {
-            public int Bar { get; set; }
+            public string Bar { get; set; }
 
             public ChildVariableState() { }
             public ChildVariableState(VariableState state): base(state) {}
             public ChildVariableState(VariableInstance[] variables) : base(variables) { }
+        }
+
+        public class StateWithAttributes : VariableState
+        {
+            [Variable(VariableAccess.Public)]
+            public int Public { get; set; }
+
+            [Variable(VariableAccess.Private, "8")]
+            public string Private { get; set; }
         }
 
         [TestCase]
@@ -72,26 +81,26 @@ namespace Ei.Tests.Bdd.Unit.Runtime
         public void InitialisesInheritedPropertyDescriptors() {
             var childState = new ChildVariableState();
             childState.Foo = 4;
-            childState.Bar = 5;
+            childState.Bar = "5";
 
             Assert.AreEqual(childState.Descriptors.Length, 2);
             Assert.AreEqual(4, childState.FindByName("Foo").Value(childState));
-            Assert.AreEqual(5, childState.FindByName("Bar").Value(childState));
+            Assert.AreEqual("5", childState.FindByName("Bar").Value(childState));
         }
 
         [TestCase]
         public void Clone_CanBeCloned() {
             var childState = new ChildVariableState();
             childState.Foo = 4;
-            childState.Bar = 5;
+            childState.Bar = "5";
 
             var clonedState = (ChildVariableState) childState.Clone();
 
             Assert.AreEqual(clonedState.Descriptors.Length, 2);
             Assert.AreEqual(4, clonedState.Foo);
             Assert.AreEqual(4, clonedState.FindByName("Foo").Value(clonedState));
-            Assert.AreEqual(5, clonedState.Bar);
-            Assert.AreEqual(5, clonedState.FindByName("Bar").Value(clonedState));
+            Assert.AreEqual("5", clonedState.Bar);
+            Assert.AreEqual("5", clonedState.FindByName("Bar").Value(clonedState));
         }
 
         [TestCase]
@@ -103,7 +112,7 @@ namespace Ei.Tests.Bdd.Unit.Runtime
             var childState = new ChildVariableState(variables);
             
             Assert.AreEqual(7, childState.Foo);
-            Assert.AreEqual(9, childState.Bar);
+            Assert.AreEqual("9", childState.Bar);
         }
 
         [TestCase]
@@ -111,14 +120,14 @@ namespace Ei.Tests.Bdd.Unit.Runtime
             
             var state1 = new ChildVariableState();
             state1.Foo = 3;
-            state1.Bar = 4;
+            state1.Bar = "4";
             var state2 = new ChildVariableState();
             state2.Foo = 10;
 
             state1.Merge(state2);
 
             Assert.AreEqual(10, state1.Foo);
-            Assert.AreEqual(4, state1.Bar);
+            Assert.AreEqual("4", state1.Bar);
         }
 
         [TestCase]
@@ -141,7 +150,7 @@ namespace Ei.Tests.Bdd.Unit.Runtime
             Assert.AreEqual(2, goalState.Length);
 
             Assert.AreEqual("Bar", goalState[0].Name);
-            Assert.AreEqual(0, goalState[0].Value);
+            Assert.AreEqual(null, goalState[0].Value);
             Assert.AreEqual(StateGoalStrategy.Equal, goalState[0].Strategy);
 
             Assert.AreEqual("Foo", goalState[1].Name);
@@ -179,6 +188,17 @@ namespace Ei.Tests.Bdd.Unit.Runtime
 
             var goalState = state.ToGoalState(true);
             Assert.AreEqual(0, goalState.Length);
+        }
+
+        [TestCase]
+        public void VariableState__Variables_Can_Be_Controlled_By_Properties() {
+
+            // find all
+
+            var state = new StateWithAttributes();
+            
+            Assert.AreEqual(VariableAccess.Private, state.GetVariableDefiniton("Private").Access);
+            Assert.AreEqual("8", state.Private);
         }
     }
 }

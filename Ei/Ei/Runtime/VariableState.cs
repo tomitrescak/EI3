@@ -101,7 +101,8 @@ namespace Ei.Runtime
         public void Merge(VariableState state, bool clone = false ) {
             foreach (var variable in state.Descriptors) {
                 // only merge non default values
-                if (clone || !variable.DefaultValue.Equals(variable.Value(state))) {
+                if (clone 
+                    || variable.DefaultValue != null && !variable.DefaultValue.Equals(variable.Value(state))) {
                     variable.Update(this, variable.Value(state));
                 }
             }
@@ -146,7 +147,9 @@ namespace Ei.Runtime
 
             for (int i = 0; i < this.DefaultValues.Count; i++) {
                 // we either return dirty ones or all of them
-                if (!onlyDirty || !this.DefaultValues[i].Equals(this.Descriptors[i].Value(this))) {
+                if (!onlyDirty
+                    || this.DefaultValues[i] == null && this.Descriptors[i].Value(this) != null
+                    || this.DefaultValues[i] != null && !this.DefaultValues[i].Equals(this.Descriptors[i].Value(this))) {
                     list.Add(new GoalState(this.Descriptors[i].Name, this.Descriptors[i].Value(this), StateGoalStrategy.Equal, this.Descriptors[i]));
                 }
             }
