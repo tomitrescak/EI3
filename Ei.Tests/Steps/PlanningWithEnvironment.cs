@@ -78,10 +78,11 @@ namespace Ei.Tests.Steps
         [When(@"Agent '(.*)' plans state '(.*)' with environment '(.*)'")]
         public void WhenAgentPlansStateWithEnvironment(string agentName, string stateDescription, string environment)
         {
-            var agent = Governors[agentName];
-            var goalState = GoalState.ParseStringGoals(agent.Object, stateDescription);
+            throw new NotImplementedException();
+            //var agent = Governors[agentName];
+            //var goalState = GoalState.ParseStringGoals(agent.Object, stateDescription);
 
-            plan = agent.Object.PlanGoalState(goalState, PlanStrategy.ForwardSearch, new TravelCostManager(agent.Object, environments[environment], 0, 0));
+            //plan = agent.Object.PlanGoalState(goalState, PlanStrategy.ForwardSearch, new TravelCostManager(agent.Object, environments[environment], 0, 0));
 
         }
 

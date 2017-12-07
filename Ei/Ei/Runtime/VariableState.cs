@@ -66,7 +66,7 @@ namespace Ei.Runtime
                     var genericListType = typeof(VariableDefinition<,>);
                     var specificListType = genericListType.MakeGenericType(properties[i].PropertyType, this.GetType());
 
-                    variableDefinitions[i] = (IVariableDefinition) Activator.CreateInstance(specificListType, new object[] { properties[i].Name });
+                    variableDefinitions[i] = (IVariableDefinition) Activator.CreateInstance(specificListType, new object[] { this, properties[i].Name });
                 }
 
                 typeDescriptors[this.GetType()] = variableDefinitions;

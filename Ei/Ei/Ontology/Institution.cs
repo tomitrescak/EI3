@@ -73,7 +73,7 @@
 
         protected Institution(string id): base(id)
         {
-            if (Log.IsInfo) Log.Info("Institution instantiated ...");
+            Log.Info("Institution instantiated ...");
 
             this.CreatePermissions = new Security();
             this.VariableState = new InstitutionState(this);

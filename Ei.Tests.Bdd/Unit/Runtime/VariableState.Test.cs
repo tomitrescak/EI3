@@ -50,8 +50,10 @@ namespace Ei.Tests.Bdd.Unit.Runtime
 
         [TestCase]
         public void InitialisesPropertyDescriptors() {
-            var parentState = new ParentVariableState();
-            parentState.Foo = 4;
+            var parentState = new ParentVariableState
+            {
+                Foo = 4
+            };
 
             Assert.AreEqual(1, parentState.Descriptors.Length);
 
@@ -79,20 +81,28 @@ namespace Ei.Tests.Bdd.Unit.Runtime
 
         [TestCase]
         public void InitialisesInheritedPropertyDescriptors() {
-            var childState = new ChildVariableState();
-            childState.Foo = 4;
-            childState.Bar = "5";
+            var childState = new ChildVariableState
+            {
+                Foo = 4,
+                Bar = "5"
+            };
 
             Assert.AreEqual(childState.Descriptors.Length, 2);
+
             Assert.AreEqual(4, childState.FindByName("Foo").Value(childState));
             Assert.AreEqual("5", childState.FindByName("Bar").Value(childState));
+
+            childState.Foo = 10;
+            Assert.AreEqual(10, childState.FindByName("Foo").Value(childState));
         }
 
         [TestCase]
         public void Clone_CanBeCloned() {
-            var childState = new ChildVariableState();
-            childState.Foo = 4;
-            childState.Bar = "5";
+            var childState = new ChildVariableState
+            {
+                Foo = 4,
+                Bar = "5"
+            };
 
             var clonedState = (ChildVariableState) childState.Clone();
 
@@ -117,12 +127,16 @@ namespace Ei.Tests.Bdd.Unit.Runtime
 
         [TestCase]
         public void Merge_MergesTwoVariableStates() {
-            
-            var state1 = new ChildVariableState();
-            state1.Foo = 3;
-            state1.Bar = "4";
-            var state2 = new ChildVariableState();
-            state2.Foo = 10;
+
+            var state1 = new ChildVariableState
+            {
+                Foo = 3,
+                Bar = "4"
+            };
+            var state2 = new ChildVariableState
+            {
+                Foo = 10
+            };
 
             state1.Merge(state2);
 
@@ -133,8 +147,10 @@ namespace Ei.Tests.Bdd.Unit.Runtime
         [TestCase]
         public void GetValue_AllowsTOretreiveValueOfParameterByName() {
 
-            var state = new ChildVariableState();
-            state.Foo = 3;         
+            var state = new ChildVariableState
+            {
+                Foo = 3
+            };
             Assert.AreEqual(3, state.GetValue("Foo"));
         }
 
@@ -143,8 +159,10 @@ namespace Ei.Tests.Bdd.Unit.Runtime
 
             // find all
 
-            var state = new ChildVariableState();
-            state.Foo = 3;
+            var state = new ChildVariableState
+            {
+                Foo = 3
+            };
 
             var goalState = state.ToGoalState();
             Assert.AreEqual(2, goalState.Length);
@@ -163,8 +181,10 @@ namespace Ei.Tests.Bdd.Unit.Runtime
 
             // find all
 
-            var state = new ChildVariableState();
-            state.Foo = 3;
+            var state = new ChildVariableState
+            {
+                Foo = 3
+            };
 
             var goalState = state.ToGoalState(true);
             Assert.AreEqual(1, goalState.Length);
@@ -179,8 +199,10 @@ namespace Ei.Tests.Bdd.Unit.Runtime
 
             // find all
 
-            var state = new ChildVariableState();
-            state.Foo = 3;
+            var state = new ChildVariableState
+            {
+                Foo = 3
+            };
 
             // after reset nothing should be there
 

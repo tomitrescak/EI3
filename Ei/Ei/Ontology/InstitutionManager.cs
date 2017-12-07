@@ -19,7 +19,9 @@ namespace Ei.Ontology
         #endregion
 
 
-        public InstitutionManager() { }
+        public InstitutionManager() {
+            this.agents = new List<Governor>();
+        }
 
         // static
 
@@ -40,6 +42,7 @@ namespace Ei.Ontology
         public bool Start(Institution ei)
         {
             this.Ei = ei;
+            this.agents.Clear();
 
             this.MainWorkflow = this.Ei.CreateWorkflow(this.Ei.MainWorkflowId, null);
             this.agents = new List<Governor>();
