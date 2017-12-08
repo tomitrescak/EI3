@@ -307,7 +307,7 @@ namespace Ei.Runtime.Planning
         }
 
         private AStarNode CreateNode(Connection connection,
-            VariableState state, 
+            Governor.GovernorVariableState state, 
             AStarNode currentNode, 
             float tentativeGScore,
             string costData)

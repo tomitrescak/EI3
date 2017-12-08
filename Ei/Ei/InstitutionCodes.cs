@@ -37,6 +37,7 @@
         WorkflowInstanceNotRunning,
         WorkflowParameterChanged,
         WorkflowStarted,
-        AmbiguousOrganisation
+        AmbiguousOrganisation,
+        StateNotReachable
     }  
 } 

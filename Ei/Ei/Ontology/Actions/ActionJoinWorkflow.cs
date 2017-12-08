@@ -23,20 +23,20 @@ namespace Ei.Ontology.Actions
 
         private Institution ei;
         private int instanceId;
-        private Workflow testWorkflow;
+        private Workflow.Instance testWorkflow;
 
         // properties
 
         public string WorkflowId { get; }
-        public List<Workflow> Workflows { get; }
+        public List<Workflow.Instance> Workflows { get; }
 
-        public Workflow TestWorkflow
+        public Workflow.Instance TestWorkflow
         {
             get
             {
                 if (this.testWorkflow == null)
                 {
-                    this.testWorkflow = this.ei.CreateWorkflow(this.WorkflowId, null, 0);
+                    this.testWorkflow = this.ei.CreateWorkflow(this.WorkflowId, null);
                 }
                 return this.testWorkflow;
             }
@@ -52,7 +52,7 @@ namespace Ei.Ontology.Actions
             // get the workflow
             
             this.WorkflowId = workflowId;
-            this.Workflows = new List<Workflow>();
+            this.Workflows = new List<Workflow.Instance>();
 
             // add default parameter
             this.instanceId = -1;
@@ -63,11 +63,11 @@ namespace Ei.Ontology.Actions
 //            this.WorkflowId = workflow.Id;
 //        }
 
-        public Workflow Create(Governor performer, VariableState parameters = null)
+        public Workflow.Instance Create(Governor performer, VariableState parameters = null)
         {
  //           Console.WriteLine("[THREAD] Creating workflow ...: " + Thread.CurrentThread.ManagedThreadId);
 
-            var newWorkflow = this.ei.CreateWorkflow(this.WorkflowId, performer.Workflow, this.instanceId++);
+            var newWorkflow = this.ei.CreateWorkflow(this.WorkflowId, performer.Workflow);
             
             // initialise parameters
             if (parameters != null)
@@ -105,7 +105,7 @@ namespace Ei.Ontology.Actions
 
             // handle static workflow
 
-            if (this.Workflows.Count == 1 && this.Workflows[0].Static)
+            if (this.Workflows.Count == 1 && this.Workflows[0].Workflow.Static)
             {
                 agent.EnterWorkflow(connection, this.Workflows[0]);
 

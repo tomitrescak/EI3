@@ -73,7 +73,8 @@ namespace Ei.Runtime
         this.parser = Identity;
       }
       else {
-        throw new Exception("DataType needs to define a Parse method");
+        this.parser = null;
+        // throw new Exception("DataType needs to define a Parse method");
       }
 
       // find custom attributes

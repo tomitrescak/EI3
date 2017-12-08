@@ -13,7 +13,6 @@ namespace Ei.Runtime
         VariableState Instance(VariableState cloneFrom);
     }
 
-
     public class VariableStateCreator<T>: IVariableStateCreator where T : VariableState
     {
         private static Func<VariableState, T> _new;
@@ -123,7 +122,7 @@ namespace Ei.Runtime
         public VariableInstance[] FilterByAccess(Governor governor) {
             // TODO: Further optimisations possible, by caching results
             return this.Descriptors
-                .Where(p => p.CanAccess(governor.Groups, governor.VariableState))
+                .Where(p => p.CanAccess(governor.Groups, governor.VariableState.FindProvider(p.Name)))
                 .Select(p => new VariableInstance(p.Name, p.Value(this).ToString()))
                 .ToArray();
         }

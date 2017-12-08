@@ -13,7 +13,7 @@ namespace Ei.Runtime.Planning.Strategies
         
         protected Group[] Groups { get; set; }
 
-        internal ForwardSearch(WorkflowPosition agentPosition, VariableState agentState, Group[] agentGroups)
+        internal ForwardSearch(WorkflowPosition agentPosition, Governor.GovernorVariableState agentState, Group[] agentGroups)
         {
             this.Groups = agentGroups;
 
@@ -80,23 +80,17 @@ namespace Ei.Runtime.Planning.Strategies
                 foreach (var postcondition in node.Arc.Postconditions)
                 {
                     // check if arc is constrained to the agent role
-                    if (postcondition.AppliesTo(this.Groups))
-                    {                      
-                        postcondition.ApplyPostconditions(node.VariableState, true);
-                    }
+                    postcondition.ApplyPostconditions(node.VariableState, true);
                 }
             }
         }
 
         public void ApplyEffect(AStarNode node, AccessCondition effect)
         {
-            if (effect.AppliesTo(this.Groups))
-            {
-                effect.ApplyPostconditions(node.VariableState, true);
-            }
+            effect.ApplyPostconditions(node.VariableState, true);
         }
 
-        public IStrategy CreateNested(AStarNode currentNode, Workflow workflow, Connection conn)
+        public IStrategy CreateNested(AStarNode currentNode, Workflow.Instance workflow, Connection conn)
         {
             // the start state is the current state
             var nestedInitialState = currentNode.VariableState.Clone();

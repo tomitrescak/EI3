@@ -17,14 +17,22 @@ namespace Ei.Tests.Steps
     [Binding]
     public class ActivitySteps
     {
-        static Dictionary<string, Mock<Governor>> Governors => ScenarioContext.Current.Get<Dictionary<string, Mock<Governor>>>();
-        static Dictionary<string, Mock<IGovernorCallbacks>> Callbacks => ScenarioContext.Current.Get<Dictionary<string, Mock<IGovernorCallbacks>>>();
-        static Mock<ILog> Logger => ScenarioContext.Current.Get<Mock<ILog>>();
+        Dictionary<string, Mock<Governor>> Governors => this.scenarioContext.Get<Dictionary<string, Mock<Governor>>>();
+        Dictionary<string, Mock<IGovernorCallbacks>> Callbacks => this.scenarioContext.Get<Dictionary<string, Mock<IGovernorCallbacks>>>();
+        Mock<ILog> Logger => this.scenarioContext.Get<Mock<ILog>>();
+
+        private readonly ScenarioContext scenarioContext;
+
+        public ActivitySteps(ScenarioContext scenarioContext) {
+            if (scenarioContext == null) throw new ArgumentNullException("scenarioContext");
+            this.scenarioContext = scenarioContext;
+        }
+
 
         [Then(@"Agent '(.*)' plays role '(.*)' and belong to the started institution")]
         public void ThenAgentPlaysRoleInInstitution(string agentName, string roles)
         {
-            var ei = ScenarioContext.Current.Get<Mock<InstitutionManager>>().Object.Ei;
+            var ei = this.scenarioContext.Get<Mock<InstitutionManager>>().Object.Ei;
             var agent = Governors[agentName];
 
             // check name
@@ -76,7 +84,7 @@ namespace Ei.Tests.Steps
         [Then(@"Clone '(.*)' of '(.*)' cannot join workflow '(.*)' with '(.*)'")]
         public void ThenCloneOfAgentCannotJoinWorkflowWith(string cloneName, string agentName, string activityName, string activityParameters)
         {
-            var ei = ScenarioContext.Current.Get<Mock<InstitutionManager>>().Object.Ei;
+            var ei = this.scenarioContext.Get<Mock<InstitutionManager>>().Object.Ei;
             var agent = Governors[agentName];
 
             // build parameters
@@ -163,10 +171,13 @@ namespace Ei.Tests.Steps
         private object GetParameter(string agentName, string paramName)
         {
             var agent = Governors[agentName];
-            var obj = agent.Object.VariableState.FindByName(paramName);
+            var provider = agent.Object.VariableState.FindProvider(paramName);
+            Assert.IsNotNull(provider);
+
+            var obj = provider.FindByName(paramName);
             
             Assert.IsNotNull(obj);
-            return obj.Value(agent.Object.VariableState);
+            return obj.Value(provider);
         }
 
         [When(@"Agent '(.*)' automatically continues")]
@@ -184,6 +195,14 @@ namespace Ei.Tests.Steps
                 w => w.Log(It.Is<ILogMessage>(i => i.Code == actionName && string.Join(";", i.Parameters) == message)), string.Format("Failed for {0} and parameters '{1}'", actionName, message));
         }
 
+        [Then(@"Agent '(.*)' cannot move to '(.*)'")]
+        public void AgentCannotMoveTo(string agentName, string positionId) {
+            var agent = Governors[agentName];
+            var result = agent.Object.Move(positionId);
+
+            Assert.AreEqual(result.Code, ActionInfo.StateNotReachable.Code);
+        }
+
         [When(@"Agent '(.*)' moves to '(.*)'")]
         [Then(@"Agent '(.*)' moves to '(.*)'")]
         public void ThenAgentMovesTo(string agentName, string positionId)
@@ -191,7 +210,7 @@ namespace Ei.Tests.Steps
             var agent = Governors[agentName];
             var result = agent.Object.Move(positionId);  
 
-            Assert.IsTrue(result.IsAcceptable);
+            Assert.AreEqual(result.Code, ActionInfo.Ok.Code);
         }
 
         [Then(@"Agent '(.*)' has '(.*)' possibilities")]
@@ -376,7 +395,8 @@ namespace Ei.Tests.Steps
         public void WhenAgentParameterIsSetTo(string agentName, string parameterName, string parameterValue)
         {
             var agent = Governors[agentName];
-            agent.Object.VariableState.Descriptors.First(d => d.Name == parameterName).Update(agent.Object.VariableState, int.Parse(parameterValue));
+            var provider = agent.Object.VariableState.FindProvider(parameterName);
+            provider.Descriptors.First(d => d.Name == parameterName).Update(provider, int.Parse(parameterValue));
         }
 
 
@@ -384,7 +404,8 @@ namespace Ei.Tests.Steps
         public void ThenAgentHasParameter(string agentName, string parameterName)
         {
             var agent = Governors[agentName];
-            Assert.IsTrue(agent.Object.VariableState.Descriptors.Any(d => d.Name == parameterName), "Agent does not have parameter: " + parameterName);
+            var provider = agent.Object.VariableState.FindProvider(parameterName);
+            Assert.IsTrue(provider.Descriptors.Any(d => d.Name == parameterName), "Agent does not have parameter: " + parameterName);
         }
 
 

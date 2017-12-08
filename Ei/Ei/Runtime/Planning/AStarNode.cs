@@ -18,9 +18,9 @@ namespace Ei.Runtime.Planning
 
         public Connection Arc { get; }
 
-        public VariableState VariableState { get; set; }
+        public Governor.GovernorVariableState VariableState { get; set; }
 
-        public VariableState OriginalState { get; set; }
+        public Governor.GovernorVariableState OriginalState { get; set; }
 
         public int Visited { get; set; }
 

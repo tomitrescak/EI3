@@ -12,16 +12,16 @@ namespace Ei.Runtime.Planning.Strategies
     internal class BackwardSearch : IStrategy
     {
         protected Connection StartConnection { get; private set; }
-        public VariableState VariableState { get; private set; }
+        public Governor.GovernorVariableState VariableState { get; private set; }
         protected Group[] Groups { get; private set; }
         protected WorkflowPosition Position { get; private set; }
-        protected Workflow Workflow { get; private set; }
+        protected Workflow.Instance Workflow { get; private set; }
         public bool ExpandEffects { get { return false; } }
         
 
         private GoalState[] startState;
 
-        private BackwardSearch(Workflow workflow, VariableState agentState, Group[] agentGroups, WorkflowPosition position)
+        private BackwardSearch(Workflow.Instance workflow, Governor.GovernorVariableState agentState, Group[] agentGroups, WorkflowPosition position)
         {
             this.VariableState = agentState;
             this.Groups = agentGroups;
@@ -85,7 +85,7 @@ namespace Ei.Runtime.Planning.Strategies
         /// <summary>
         /// Make sure that initial state is cloned state used to construct heuristic goals!
         /// </summary>
-        public BackwardSearch(Workflow workflow, VariableState agentState, Group[] agentGroups, WorkflowPosition position, Connection startConnection, GoalState[] startState) :
+        public BackwardSearch(Workflow.Instance workflow, Governor.GovernorVariableState agentState, Group[] agentGroups, WorkflowPosition position, Connection startConnection, GoalState[] startState) :
             this(workflow, agentState, agentGroups, position)
         {
             this.startState = startState;
@@ -133,7 +133,7 @@ namespace Ei.Runtime.Planning.Strategies
             }
         }
 
-        public IStrategy CreateNested(AStarNode currentNode, Workflow workflow, Connection conn)
+        public IStrategy CreateNested(AStarNode currentNode, Workflow.Instance workflow, Connection conn)
         {
 
             // all other plan elements are trying to satisfy backtracking preconditions on the connection
@@ -150,7 +150,7 @@ namespace Ei.Runtime.Planning.Strategies
             conn.ApplyBacktrackPostconditions(this.Groups, nestedInitialState);
 
             // we need to find a way of how to get from "Start" node to the goal state
-            var goals = Governor.FindGoals(workflow, nestedInitialState, this.Groups, nestedStart);
+            var goals = Governor.FindGoals(workflow.Workflow, nestedInitialState, this.Groups, nestedStart);
             return new BackwardSearch(workflow, nestedInitialState, this.Groups, workflow.Start, goals[0].Connection, this.startState);
 
 
@@ -164,10 +164,7 @@ namespace Ei.Runtime.Planning.Strategies
 
         public void ApplyEffect(AStarNode node, AccessCondition effect)
         {
-            if (effect.AppliesTo(this.Groups))
-            {
-                effect.ApplyPostconditions(node.VariableState, true);
-            }
+            effect.ApplyPostconditions(node.VariableState, true);
         }
 
         

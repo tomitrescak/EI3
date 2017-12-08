@@ -1,6 +1,6 @@
 ﻿namespace Ei.Runtime
 {
-    struct ActionInfo : IActionInfo
+    public struct ActionInfo : IActionInfo
     {
         public InstitutionCodes Code { get; private set; }
         public object[] Parameters { get; private set; }
@@ -41,6 +41,7 @@
         public static IActionInfo Failed = new ActionInfo(InstitutionCodes.Failed);
         //public static IActionInfo WaitingToJoin = new ActionInfo(InstitutionCodes.WaitingToJoin);
         public static IActionInfo AgentNotCloned = new ActionInfo(InstitutionCodes.AgentNotCloned);
-        
+        public static IActionInfo StateNotReachable = new ActionInfo(InstitutionCodes.StateNotReachable);
+
     }
 }

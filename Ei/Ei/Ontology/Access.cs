@@ -52,7 +52,7 @@
         /// </summary>
         /// <param name="agentOrganisationalRoles">Roles to check</param>
         /// <param name="agentState"></param>
-        public bool CanAccess(Group[] agentOrganisationalRoles, VariableState agentState)
+        public bool CanAccess(Group[] agentOrganisationalRoles, Governor.GovernorVariableState agentState)
         {
             if (this.allow == null && this.deny == null)
             {
@@ -61,13 +61,13 @@
 
             if (this.allow != null && this.allow.Count > 0)
             {
-                return this.allow.Any(condition => condition.AppliesTo(agentOrganisationalRoles) && condition.CheckConditions(agentState));
+                return this.allow.Any(condition => condition.CheckConditions(agentState));
             }
 
-            // check denied roles
+            // check denied rolesp[\]
             if (this.deny != null && this.deny.Count > 0)
             {
-                return this.deny.All(condition => !condition.AppliesTo(agentOrganisationalRoles) || !condition.CheckConditions(agentState));
+                return this.deny.All(condition => !condition.CheckConditions(agentState));
             }
 
             return false;

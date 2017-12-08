@@ -3,7 +3,7 @@ using Ei.Runtime;
 
 namespace Ei.Ontology
 {
-    public class Organisation: RelationalEntity
+    public abstract class Organisation: RelationalEntity
     {
         // constructor
 
@@ -12,6 +12,8 @@ namespace Ei.Ontology
         public Organisation(string id, string name, string description) : base(id, name, description)
         {
         }
+
+        public abstract VariableState CreateState();
 
     }
 }

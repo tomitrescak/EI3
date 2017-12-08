@@ -13,7 +13,7 @@ namespace Ei.Ontology
         #region Fields
         public Institution Ei { get; set; }
 
-        public Workflow MainWorkflow { get; private set; }
+        public Workflow.Instance MainWorkflow { get; private set; }
 
         private List<Governor> agents;
         #endregion
@@ -66,7 +66,7 @@ namespace Ei.Ontology
                 return InstitutionCodes.NotRunning;
             }
 
-            var user = this.Ei.CreatePermissions.Authenticate(organisation, username, password);
+            var user = this.Ei.AuthenticationPermissions.Authenticate(organisation, username, password);
             if (user.IsEmpty)
             {
                 return InstitutionCodes.AuthentificationFailed;

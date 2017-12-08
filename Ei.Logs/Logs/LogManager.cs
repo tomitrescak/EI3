@@ -24,7 +24,7 @@ namespace Ei.Logs
 
         public static bool IsDebug { get { return LogLevel == Level.Debug; } }
 
-        public static bool IsInfo { get { return LogLevel == Level.Info; } }
+        public static bool IsInfo { get { return LogLevel <= Level.Info; } }
 
         public static void Register(ILog log)
         {

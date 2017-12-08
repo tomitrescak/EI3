@@ -7,8 +7,10 @@ namespace Ei.Ontology
 {
 
 
-    public class Role : RelationalEntity
+    public abstract class Role : RelationalEntity
     {
         public Role(string id): base(id) { }
+
+        public abstract VariableState CreateState();
     }
 }

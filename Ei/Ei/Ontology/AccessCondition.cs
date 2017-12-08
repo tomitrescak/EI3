@@ -2,71 +2,21 @@
 namespace Ei.Ontology
 {
     using Ei.Runtime;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    /// <summary>
-    /// Contains a list of applicable organisation roles and a list of string conditions 
-    /// </summary>
     public abstract class AccessCondition
     {
-        // fields
-        private readonly EiExpression expression;
-        private readonly Institution ei;
-        private readonly Group group;
+        public virtual bool HasActivityParameter { get { return false; } }
+        public virtual bool HasAgentParameter { get { return false; } }
+        public virtual bool IsRuntimeExpression { get { return false; } }
 
-        private System.Object lockThis = new System.Object();
+        // abstract methods
 
-        // properties
-
-        public bool HasActivityParameter { get { return this.expression != null && this.expression.HasActivityParameters; } }
-        public bool HasAgentParameter { get { return this.expression != null && this.expression.HasAgentParameters; } }
-
-        // ctor
-
-        public AccessCondition(Institution ei, Group group, EiExpression expression) {
-            this.ei = ei;
-            this.group = group;
-            this.expression = expression;
-        }
-
-
-        // EXPRESSIONS
-
-        public abstract bool CheckConditions(VariableState state);
-
-        public void ApplyPostconditions(VariableState state, bool planningMode) {
-            // we do not consider runtime expressions
-            // runtime expressions contain function parameters, owners ...
-            if (planningMode && this.expression.IsRuntimeExpression) {
-                return;
-            }
-
-            // consider locking
-            lock (lockThis) {
-                this.expression.Evaluate(state, planningMode);
-            }
-        }
-
-        /// <summary>
-        /// Checks whether this Access condition applies to agent with give groups
-        /// </summary>
-        /// <param name="groups"></param>
-        /// <returns></returns>
-        public bool AppliesTo(IEnumerable<Group> groups) {
-            return this.group == null ||
-                groups != null &&
-                groups.Any(agentRole => IsInGroup(agentRole, this.group));
-        }
-
-        public override string ToString() {
-            return (this.group == null
-                        ? string.Empty
-                        : this.group.ToString()) + " " +
-                   (this.expression == null
-                        ? string.Empty
-                        : this.expression.ToString());
-        }
+        public virtual bool CheckConditions(Governor.GovernorVariableState agent) { return true; }
+        public virtual void ApplyPostconditions(Governor.GovernorVariableState agent, bool testMode) { }
+        public virtual void ApplyPostconditions(VariableState ei, Workflow.WorkflowVariableState state) { }
 
         // static methods
 
@@ -88,5 +38,77 @@ namespace Ei.Ontology
         public static bool CheckHasActivityParameters(IEnumerable<AccessCondition> checkConditions) {
             return checkConditions != null && checkConditions.Any(c => c.HasActivityParameter);
         }
+    }
+
+    public abstract class AccessCondition<I, W> : AccessCondition
+        where I : Institution.InstitutionState
+        where W : Workflow.WorkflowVariableState
+    {
+        public override void ApplyPostconditions(VariableState ei, Workflow.WorkflowVariableState state) {
+            this.CheckPostconditions((I)ei, (W)state);
+        }
+        public abstract void CheckPostconditions(I institutionState, W workflowState);
+    }
+
+    /// <summary>
+    /// Contains a list of applicable organisation roles and a list of string conditions 
+    /// </summary>
+    public abstract class AccessCondition<I, W, O, G> : AccessCondition
+        where I : Institution.InstitutionState
+        where W : Workflow.WorkflowVariableState
+        where O : VariableState
+        where G : VariableState
+    {
+        // EXPRESSIONS
+        public override bool CheckConditions(Governor.GovernorVariableState state) {
+            var result = true;
+            foreach (var group in state.Roles) {
+                if (group.Organisation is O && group.Role is G) {
+                    if (this.CheckConditions(
+                        (I)state.Governor.Manager.Ei.VariableState,
+                        (W)state.Governor.Workflow.VariableState,
+                        (O)group.Organisation,
+                        (G)group.Role)) {
+
+                        return true;
+                    }
+                    else {
+                        // we still check the rest of the conditions
+                        result = false;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public virtual bool CheckConditions(I institutionState, W workflowState, O organisationState, G roleState) { return true; }
+
+        public virtual void CheckPostconditions(I institutionState, W workflowState, O organisationState, G roleState) { }
+
+        public override void ApplyPostconditions(Governor.GovernorVariableState agent, bool planningMode) {
+            foreach (var group in agent.Roles) {
+                if (group.Organisation is O && group.Role is G) {
+                    this.ApplyPostconditions(
+                        (I) agent.Governor.Manager.Ei.VariableState,
+                        (W)agent.Governor.Workflow.VariableState,
+                        (O)group.Organisation,
+                        (G)group.Role,
+                        planningMode);
+                }
+            }
+        }
+
+        public void ApplyPostconditions(I institutionState, W workflowState, O organisationState, G roleState, bool planningMode) {
+            // we do not consider runtime expressions
+            // runtime expressions contain function parameters, owners ...
+            if (planningMode && this.IsRuntimeExpression) {
+                return;
+            }
+
+            // consider locking
+            this.CheckPostconditions(institutionState, workflowState, organisationState, roleState);
+        }
+
+
     }
 }
