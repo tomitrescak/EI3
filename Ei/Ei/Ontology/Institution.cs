@@ -31,7 +31,7 @@
 
         #region Properties
 
-        public abstract VariableState VariableState { get; }
+        public abstract Institution.InstitutionState VariableState { get; }
 
         public ReadOnlyCollection<Role> Roles { get; protected set; }
 

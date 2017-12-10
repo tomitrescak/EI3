@@ -99,7 +99,7 @@ namespace Ei.Ontology
     }
 
     public Connection[] ViableTransitions(Group[] groups, Governor.GovernorVariableState state) {
-      return this.outs.Where(w => w.To is Transition && w.CanPass(groups, state)).ToArray();
+      return this.outs.Where(w => w.To is Transition && w.CanPass(state)).ToArray();
     }
 
     public Connection[] ViableConnections(Governor agent) {
@@ -107,19 +107,19 @@ namespace Ei.Ontology
     }
 
     public Connection[] ViableConnections(Group[] groups, Governor.GovernorVariableState state) {
-      return this.outs.Where(w => w.CanPass(groups, state)).ToArray();
+      return this.outs.Where(w => w.CanPass(state)).ToArray();
     }
 
-    public Connection[] ViableInputs(Group[] groups, Governor.GovernorVariableState state) {
-      return this.ins.Where(w => w.CanBacktrack(groups, state)).ToArray();
-    }
+    //public Connection[] ViableInputs(Group[] groups, Governor.GovernorVariableState state) {
+    //  return this.ins.Where(w => w.CanBacktrack(state)).ToArray();
+    //}
 
     public Connection[] ViableConnections(Governor agent, string actionId) {
       return this.ViableConnections(agent.Groups, agent.VariableState, actionId);
     }
 
     public Connection[] ViableConnections(Group[] groups, Governor.GovernorVariableState state, string actionId) {
-      return this.outs.Where(w => w.CanPass(groups, state) && w.Action != null && w.Action.Id == actionId).ToArray();
+      return this.outs.Where(w => w.CanPass(state) && w.Action != null && w.Action.Id == actionId).ToArray();
     }
 
     public virtual bool CanEnter(Governor agent) {

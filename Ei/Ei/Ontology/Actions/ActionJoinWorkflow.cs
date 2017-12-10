@@ -128,7 +128,7 @@ namespace Ei.Ontology.Actions
 
             // 2. create new workflow instance
 
-            else if (workflow.CreatePermissions.CanAccess(agent.Groups, agent.VariableState))
+            else if (workflow.CreatePermissions.CanAccess(agent.VariableState))
             {
                 var newWorkflow = this.Create(agent);
                 agent.EnterWorkflow(connection, newWorkflow);

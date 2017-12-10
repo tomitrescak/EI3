@@ -67,7 +67,7 @@ namespace Ei.Runtime.Planning.Costs
             //var totalCost = 0d;
             foreach (var connection in wf.Connections)
             {
-                if (connection.Action != null && connection.CanPass(this.agent.Groups, state))
+                if (connection.Action != null && connection.CanPass(state))
                 {
                     if (connection.Action is ActionMessage)
                     {

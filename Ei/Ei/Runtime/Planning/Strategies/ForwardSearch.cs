@@ -75,19 +75,15 @@ namespace Ei.Runtime.Planning.Strategies
 
         public virtual void ApplyPostConditions(AStarNode node)
         {
-            if (node.Arc != null && node.Arc.Postconditions != null && node.Arc.Postconditions.Length > 0)
+            if (node.Arc != null)
             {
-                foreach (var postcondition in node.Arc.Postconditions)
-                {
-                    // check if arc is constrained to the agent role
-                    postcondition.ApplyPostconditions(node.VariableState, true);
-                }
+                node.Arc.ApplyPostconditions(node.VariableState, null, true);
             }
         }
 
         public void ApplyEffect(AStarNode node, AccessCondition effect)
         {
-            effect.ApplyPostconditions(node.VariableState, true);
+            effect.ApplyPostconditions(node.VariableState, null, true);
         }
 
         public IStrategy CreateNested(AStarNode currentNode, Workflow.Instance workflow, Connection conn)
@@ -96,7 +92,6 @@ namespace Ei.Runtime.Planning.Strategies
             var nestedInitialState = currentNode.VariableState.Clone();
 
             // apply backward preconditions
-            //tu
             currentNode.Arc.ApplyBacktrackPostconditions(this.Groups, nestedInitialState);
 
             // we need to find a way of how to get from "Start" node to the goal state
@@ -111,7 +106,7 @@ namespace Ei.Runtime.Planning.Strategies
             var finalState = currentNode.VariableState.Clone();
 
             // we apply postcondition on the workflow node
-            currentNode.Arc.ApplyExpectedEffects(this.Groups, finalState, currentNode.AppliedEffect);
+            currentNode.Arc.ApplyExpectedEffects(finalState, currentNode.AppliedEffect);
 
             // we create this as a goal state
             GoalState[] nestedFinish = finalState.ToGoalState();

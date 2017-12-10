@@ -67,7 +67,7 @@ namespace Ei.Tests.Bdd.Institutions
             }
         }
 
-        public override VariableState VariableState { get { return new InstitutionState(this); } }
+        public override Institution.InstitutionState VariableState { get { return new InstitutionState(this); } }
     }
     #endregion
 
@@ -104,15 +104,6 @@ namespace Ei.Tests.Bdd.Institutions
     }
     #endregion
 
-    #region Conditions
-    public class StartStopAccessCondition : AccessCondition<Institution.InstitutionState, MainWorkflow.Properties, DefaultOrganisation.State, CitizenRole.State>
-    {
-        public override bool CheckConditions(InstitutionState institutionState, MainWorkflow.Properties workflowState, DefaultOrganisation.State organisationState, CitizenRole.State agentState) {
-            return agentState.ParentParameter > 0;
-        }
-    }
-    #endregion
-
     #region class MainWorkflow
     public class MainWorkflow : Workflow
     {
@@ -141,7 +132,6 @@ namespace Ei.Tests.Bdd.Institutions
 
         public override bool Static { get { return true; } }
 
-
         public override Access CreatePermissions { get { return null; } }
 
         public override WorkflowVariableState CreateState() {
@@ -162,16 +152,20 @@ namespace Ei.Tests.Bdd.Institutions
                 endState
             });
 
-            var connection = new Connection(ei, startState, endState, null) {
-                Preconditions = new Access(ei,
-                    new[] {
-                        new StartStopAccessCondition()
-                    }, null)
-            };
+            var connection = new Connection(ei, startState, endState, null)
+                .Condition(new AccessCondition<Institution.InstitutionState, MainWorkflow.Properties, DefaultOrganisation.State, CitizenRole.State, VariableState>()
+                    .Allow(
+                        (i, w, o, r, a) => {
+                            return r.ParentParameter > 0;
+                        }
+                     ));
+
+            
+
 
             // IMPORTANT: this needs to be called to initialise connections
             this.Init();
         }
-    } 
+    }
     #endregion
 }

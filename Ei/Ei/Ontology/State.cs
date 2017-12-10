@@ -69,20 +69,17 @@ namespace Ei.Ontology
         if (connection == null) {
           throw new ApplicationException("There is no timeout connection!");
         }
-        if (!connection.Preconditions.IsEmpty) {
+        if (connection.Access == null || connection.Access.IsEmpty) {
           throw new ApplicationException("Timeout connection cannot contain preconditions!");
         }
-        if (connection.HasActivityParameters || connection.HasAgentParameters) {
+        if (connection.Access.HasActivityParameters || connection.Access.HasAgentParameters) {
           throw new ApplicationException("Timeout connections cannot contain agent or action parameters!");
         }
 
         // apply postconditions
-        if (connection.Postconditions != null) {
-          foreach (var postcondition in connection.Postconditions) {
-            postcondition.ApplyPostconditions(workflow.Workflow.Institution.VariableState, workflow.VariableState);
-          }
-        }
 
+        connection.Access.ApplyPostconditions(workflow.Workflow.Institution.VariableState, workflow.VariableState);
+        
         workflow.State = connection.To;
       }
     }
@@ -128,7 +125,7 @@ namespace Ei.Ontology
 
     public override bool CanEnter(Governor agent) {
       // we add default values of parameters we are checking for
-      return this.EntryRules.CanAccess(agent.Groups, agent.VariableState);
+      return this.EntryRules.CanAccess(agent.VariableState);
     }
 
     public override IActionInfo EnterAgent(Governor agent) {
@@ -153,7 +150,7 @@ namespace Ei.Ontology
 
     public override bool CanExit(Governor agent) {
       // we add default values of parameters we are checking for
-      return this.ExitRules.CanAccess(agent.Groups, agent.VariableState);
+      return this.ExitRules.CanAccess(agent.VariableState);
     }
 
     //        public override string ToString()

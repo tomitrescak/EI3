@@ -70,7 +70,7 @@ namespace Ei.Runtime.Planning
         internal List<AStarNode> Plan(IHeuristics heuristics, IStrategy strategy, ICostManager costManager, int maxPlanLegth = 20)
         {
             this.visited = 1;
-            this.reverse = !(strategy is BackwardSearch); // we will reverse plan only if it is a forward search
+            this.reverse = true; // !(strategy is BackwardSearch); // we will reverse plan only if it is a forward search
             this.heuristics = heuristics;
             this.strategy = strategy;
             this.costManager = costManager;

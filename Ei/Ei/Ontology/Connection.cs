@@ -12,13 +12,12 @@ namespace Ei.Ontology
         #region Properties
 
         public string Id { get; private set; }
-        public Access Preconditions { get; set; }
-        public AccessCondition[] Postconditions { get; set; }
-        public AccessCondition[] GeneratedNestedEffects { get; set; }
+        public Access Access { get; private set; }
 
-        public Access BacktrackPreconditions { get; set; }
-        public AccessCondition[] BacktrackPostconditions { get; set; }
+        public AccessCondition[] GeneratedNestedEffects { get; set; }
         public AccessCondition[] ExpectedEffects { get; set; }
+        public AccessCondition[] BacktrackPreconditions { get; set; }
+        public AccessCondition[] BacktrackPostconditions { get; set; }
 
         public WorkflowPosition From { get; private set; }
         public WorkflowPosition To { get; private set; }
@@ -44,8 +43,7 @@ namespace Ei.Ontology
         /// or it has to provide input
         /// </summary>
 
-        public bool HasAgentParameters { get; private set; }
-        public bool HasActivityParameters { get; private set; }
+       
 
         #endregion
 
@@ -72,35 +70,28 @@ namespace Ei.Ontology
         public Connection(WorkflowPosition from, WorkflowPosition to, Connection conn) : this(from, to) {
             this.Id = conn.Id;
             this.Action = conn.Action;
-            this.Preconditions = conn.Preconditions;
-            this.Postconditions = conn.Postconditions;
-            this.BacktrackPreconditions = conn.BacktrackPreconditions;
-            this.BacktrackPostconditions = conn.BacktrackPostconditions;
-            this.ExpectedEffects = conn.ExpectedEffects;
-            this.HasActivityParameters = conn.HasActivityParameters;
-            this.HasAgentParameters = conn.HasAgentParameters;
-            this.GeneratedNestedEffects = conn.GeneratedNestedEffects;
+            this.Access = conn.Access;
             this.AllowLoops = conn.AllowLoops;
         }
 
         public Connection(Institution ei, WorkflowPosition from, WorkflowPosition to, ActionBase action) : this(from, to) {
             this.Action = action;
-
-            // check all conditions
-            // auto connections can only contain workflow wariables (w.*) not Action (this.*) nor agent variables (a.*)
-            this.HasAgentParameters = 
-                this.Preconditions != null 
-                && (this.Preconditions.HasAgentParameter 
-                    || AccessCondition.CheckHasAgentParameters(this.Postconditions)
-                );
-
-            this.HasActivityParameters = this.Preconditions != null 
-                && (this.Preconditions.HasActivityParameter 
-                    || AccessCondition.CheckHasActivityParameters(this.Postconditions));
         }
 
+        // constructor helpers
+
+        public Connection Condition(AccessCondition condition) {
+            if (this.Access == null) {
+                this.Access = new Access();
+            }
+            this.Access.Add(condition);
+            return this;
+        }
+
+        // methods
+
         public IActionInfo Pass(Governor agent, VariableState parameters = null) {
-            if (!this.CanPass(agent.Groups, agent.VariableState)) {
+            if (!this.CanPass(agent.VariableState)) {
                 return ActionInfo.FailedPreconditions;
             }
 
@@ -120,7 +111,9 @@ namespace Ei.Ontology
             }
 
             // apply postconditions on connection
-            agent.ApplyPostconditions(this.Postconditions);
+            if (this.Access != null) {
+                this.Access.ApplyPostconditions(agent.VariableState, parameters);
+            }
 
             // open connections have To set to null, so we stay n the same state
             if (this.To == null) {
@@ -136,17 +129,20 @@ namespace Ei.Ontology
         //            return this.CanPass(agent.Groups, agent.Properties);
         //        }
 
-        public bool CanPass(Group[] groups, Governor.GovernorVariableState state) {
-            return this.Preconditions == null ||
-                   this.Preconditions.CanAccess(groups, state);
+        public bool CanPass(Governor.GovernorVariableState state) {
+            if (this.Access == null) {
+                return true;
+            }
+            return this.Access.CanAccess(state);
+
         }
 
-        public bool CanBacktrack(Group[] groups, Governor.GovernorVariableState state) {
-            // TODO: Also check if this is a workflow action if agent can join the workflow or create a new instance
+        //public bool CanBacktrack(Group[] groups, Governor.GovernorVariableState state) {
+        //    // TODO: Also check if this is a workflow action if agent can join the workflow or create a new instance
 
-            return this.BacktrackPreconditions == null ||
-                   this.BacktrackPreconditions.CanAccess(groups, state);
-        }
+        //    return this.BacktrackPreconditions == null ||
+        //           this.BacktrackPreconditions.CanAccess(groups, state);
+        //}
 
         //        public bool CanPassBinary(Governor agent, bool backtrack)
         //        {
@@ -167,34 +163,30 @@ namespace Ei.Ontology
         }
 
 
-        public void ApplyPostconditions(Governor agent, Governor.GovernorVariableState state) {
-            this.ApplyPostconditions(agent.Groups, state, false);
+        public void ApplyPostconditions(Governor.GovernorVariableState state, VariableState actionParameters, bool planningMode = false) {
+            if (this.Access == null) {
+                return;
+            }
+            this.Access.ApplyPostconditions(state, actionParameters, planningMode);
         }
 
-        public void ApplyPostconditions(Group[] groups, Governor.GovernorVariableState state, bool planningMode) {
-            if (Postconditions != null && Postconditions.Length > 0) {
-                foreach (var postcondition in this.Postconditions) {
-                    postcondition.ApplyPostconditions(state, planningMode);
-                }
-            }
-        }
 
         public void ApplyBacktrackPostconditions(Group[] groups, Governor.GovernorVariableState state) {
             if (this.BacktrackPostconditions != null) {
                 foreach (var postcondition in this.BacktrackPostconditions) {
                     // check if arc is constrained to the agent role
-                    postcondition.ApplyPostconditions(state, true);
+                    postcondition.ApplyPostconditions(state, null, true);
                 }
             }
         }
 
-        public void ApplyExpectedEffects(Group[] groups, Governor.GovernorVariableState state, AccessCondition effect) {
+        public void ApplyExpectedEffects(Governor.GovernorVariableState state, AccessCondition effect) {
             // we can either apply a single effect
             // or all of them
 
             if (effect != null) {
                 state.ResetDirty();
-                effect.ApplyPostconditions(state, true);
+                effect.ApplyPostconditions(state, null, true);
             }
 
 
@@ -203,16 +195,16 @@ namespace Ei.Ontology
 
                 foreach (var postcondition in this.ExpectedEffects) {
                     // check if arc is constrained to the agent role
-                    postcondition.ApplyPostconditions(state, true);
+                    postcondition.ApplyPostconditions(state, null, true);
                 }
             }
         }
 
-        public void ApplyGeneratedBacktrackEffects(Group[] groups, Governor.GovernorVariableState state) {
+        public void ApplyGeneratedBacktrackEffects(Governor.GovernorVariableState state) {
             if (this.GeneratedNestedEffects != null) {
                 foreach (var postcondition in this.GeneratedNestedEffects) {
                     // check if arc is constrained to the agent role
-                    postcondition.ApplyPostconditions(state, true);
+                    postcondition.ApplyPostconditions(state, null, true);
                 }
             }
         }

@@ -9,41 +9,67 @@
 
     public class Access
     {
+        // static methods
+
+        public static bool IsInGroup(Group checkRole, IEnumerable<Group> allowRoles) {
+            return allowRoles.Any(allowedOrgRole =>
+                (allowedOrgRole.Organisation == null || (checkRole.Organisation != null && checkRole.Organisation.Is(allowedOrgRole.Organisation))) &&
+                (allowedOrgRole.Role == null || (checkRole.Role != null && checkRole.Role.Is(allowedOrgRole.Role))));
+        }
+
         // fields
 
-        private readonly ReadOnlyCollection<AccessCondition> allow;
-        private readonly ReadOnlyCollection<AccessCondition> deny;
+        private List<AccessCondition> conditions;
+
+        // ctor
+
+        public Access() {
+            this.conditions = new List<AccessCondition>();
+        }
 
         // properties
 
-        public bool IsEmpty { get { return this.allow == null && this.deny == null; } }
-        public bool HasActivityParameter {
-            get {
-                return AccessCondition.CheckHasActivityParameters(this.allow) ||
-                       AccessCondition.CheckHasActivityParameters(this.deny);
+        public virtual bool HasAgentParameters { get { return this.conditions.Any(c => c.HasAgentParameters); } }
+        public virtual bool HasActivityParameters { get { return this.conditions.Any(c => c.HasActivityParameters); } }
+        public virtual bool HasRuntimeParameters { get { return this.conditions.Any(c => c.HasRuntimeParameters); } }
+
+        public bool IsEmpty { get { return this.conditions.Count == 0; } }
+
+        public bool CanAccess(Governor.GovernorVariableState agentState) {
+            if (this.conditions.Count == 1) {
+                this.conditions[0].CanAccess(agentState);
             }
-        }
-        public bool HasAgentParameter {
-            get {
-                return AccessCondition.CheckHasAgentParameters(this.allow) ||
-                       AccessCondition.CheckHasAgentParameters(this.deny);
-            }
+            return this.conditions.Any(c => c.CanAccess(agentState));
         }
 
-        // constructor
-
-        public Access(Institution ei, AccessCondition[] allow, AccessCondition[] deny)
-        {
-            if (allow != null)
-            {
-                this.allow = Array.AsReadOnly(allow);
+        public void ApplyPostconditions(Governor.GovernorVariableState agent, VariableState parameters, bool planningMode = false) {
+            if (this.conditions.Count == 1) {
+                this.conditions[0].ApplyPostconditions(agent, parameters, planningMode);
             }
-
-            if (deny != null)
-            {
-                this.deny = Array.AsReadOnly(deny);
-            }
+            this.conditions.Any(c => c.ApplyPostconditions(agent, parameters, planningMode));
         }
+
+        public void ApplyPostconditions(Institution.InstitutionState institutionState, Workflow.WorkflowVariableState workflowState) {
+            if (this.conditions.Count == 1) {
+                this.conditions[0].ApplyPostconditions(institutionState, workflowState);
+            }
+            this.conditions.Any(c => c.ApplyPostconditions(institutionState, workflowState));
+        }
+
+        public Access Add(AccessCondition condition) {
+            this.conditions.Add(condition);
+            return this;
+        }
+    }
+
+    public abstract class AccessCondition
+    {
+        // properties
+
+        public virtual bool HasAgentParameters { get { return false; } }
+        public virtual bool HasActivityParameters { get { return false; } }
+        public virtual bool HasRuntimeParameters { get { return false; } }
+
 
         /// <summary>
         /// If organisations or roles are specified, access is limited only to them.
@@ -52,48 +78,205 @@
         /// </summary>
         /// <param name="agentOrganisationalRoles">Roles to check</param>
         /// <param name="agentState"></param>
-        public bool CanAccess(Group[] agentOrganisationalRoles, Governor.GovernorVariableState agentState)
-        {
-            if (this.allow == null && this.deny == null)
-            {
-                return true;
-            }
+        public abstract bool CanAccess(Governor.GovernorVariableState agentState);
 
-            if (this.allow != null && this.allow.Count > 0)
-            {
-                return this.allow.Any(condition => condition.CheckConditions(agentState));
-            }
+        public abstract bool ApplyPostconditions(Governor.GovernorVariableState agent, VariableState parameters, bool planningMode = false);
 
-            // check denied rolesp[\]
-            if (this.deny != null && this.deny.Count > 0)
-            {
-                return this.deny.All(condition => !condition.CheckConditions(agentState));
-            }
-
-            return false;
-        }
-
-        public override string ToString()
-        {
-            if (this.IsEmpty) return null;
-
-            var result = string.Empty;
-            if (this.allow != null)
-            {
-                result +=  "Allow: " + string.Join("; ", this.allow.Select(w => w.ToString()).ToArray());
-            }
-            
-            if (this.deny != null)
-            {
-                if (!string.IsNullOrEmpty(result))
-                {
-                    result += "\n";
-                }
-                result += "Deny: " + string.Join("; ", this.deny.Select(w => w.ToString()).ToArray());
-            }
-            return result;
-        }
+        public abstract bool ApplyPostconditions(Institution.InstitutionState institutionState, Workflow.WorkflowVariableState workflowState);
     }
 
-    
+
+    public class AccessCondition<I, W, O, G, A> : AccessCondition
+        where I : Institution.InstitutionState
+        where W : Workflow.WorkflowVariableState
+        where O : VariableState
+        where G : VariableState
+        where A : VariableState
+    {
+
+        public delegate bool Precondition(I institutionState, W workflowState, O organisationState, G groupState, A actionParameters = null);
+        public delegate void Postcondition(I institutionState, W workflowState, O organisationState, G groupState, A actionParameters = null);
+
+        #region class Condition
+        public class Condition
+        {
+            private Precondition allow;
+            private Precondition deny;
+            private Postcondition action;
+
+            public bool HasRuntimeParameters { get; private set; }
+
+            internal Condition(Precondition allow, Precondition deny, Postcondition action, bool hasRuntimeParameters = false) {
+                this.allow = allow;
+                this.deny = deny;
+                this.action = action;
+                this.HasRuntimeParameters = hasRuntimeParameters;
+            }
+
+            internal bool CanAccess(Governor.GovernorVariableState agentState) {
+                if (this.allow == null && this.deny == null) {
+                    return true;
+                }
+
+                if (this.allow != null) {
+                    return this.CheckConditions(agentState, allow);
+                }
+
+                // check denied rolesp[\]
+                if (this.deny != null) {
+                    return !this.CheckConditions(agentState, deny);
+                }
+
+                return false;
+            }
+
+            internal bool Access(Governor.GovernorVariableState agentState, VariableState actionParameters, bool planningMode) {
+
+                if (this.allow != null) {
+                    return this.ApplyConditions(agentState, allow, actionParameters, planningMode);
+                }
+
+                // check denied rolesp[\]
+                if (this.deny != null) {
+                    return !this.ApplyConditions(agentState, deny, actionParameters, planningMode);
+                }
+
+                return this.ApplyConditions(agentState, null, actionParameters, planningMode);
+            }
+
+            internal bool Access(Institution.InstitutionState eiState, Workflow.WorkflowVariableState workflowState) {
+
+                if (this.allow != null) {
+                    return this.ApplyConditions(eiState, workflowState, allow);
+                }
+
+                // check denied rolesp[\]
+                if (this.deny != null) {
+                    return !this.ApplyConditions(eiState, workflowState, deny);
+                }
+
+                return this.ApplyConditions(eiState, workflowState, null);
+            }
+
+            // private methods
+
+            private bool ApplyConditions(Governor.GovernorVariableState state, Precondition condition, VariableState actionParameters, bool planningMode) {
+                foreach (var group in state.Roles) {
+                    if (group.Organisation is O && group.Role is G) {
+                        // check first successful condition
+                        if (condition == null || condition(
+                                (I)state.Governor.Manager.Ei.VariableState,
+                                (W)state.Governor.Workflow.VariableState,
+                                (O)group.Organisation,
+                                (G)group.Role,
+                                actionParameters != null ? (A)actionParameters : null
+                                )) {
+                            // apply action
+                            if (this.action != null && (!planningMode || !this.HasRuntimeParameters)) {
+                                this.action(
+                                    (I)state.Governor.Manager.Ei.VariableState,
+                                    (W)state.Governor.Workflow.VariableState,
+                                    (O)group.Organisation,
+                                    (G)group.Role,
+                                    actionParameters == null ? null : (A)actionParameters);
+                            }
+
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            private bool ApplyConditions(Institution.InstitutionState eiState, Workflow.WorkflowVariableState workflowState, Precondition condition) {
+                // check first successful condition
+                if (condition == null || condition((I)eiState, (W)workflowState, null, null, null)) {
+                    // apply action
+                    if (this.action != null) {
+                        this.action((I)eiState, (W)workflowState, null, null, null);
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+
+            private bool CheckConditions(Governor.GovernorVariableState state, Precondition condition, VariableState actionParameters = null) {
+                foreach (var group in state.Roles) {
+                    if (group.Organisation is O && group.Role is G) {
+                        if (condition(
+                            (I)state.Governor.Manager.Ei.VariableState,
+                            (W)state.Governor.Workflow.VariableState,
+                            (O)group.Organisation,
+                            (G)group.Role,
+                            actionParameters != null ? (A)actionParameters : null
+                            )) {
+
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+        #endregion
+
+        private List<Condition> conditions;
+
+        // properties
+
+        public bool IsEmpty { get { return this.conditions.Count == 0; } }
+
+        // constructor
+
+        public AccessCondition() {
+            this.conditions = new List<Condition>();
+        }
+
+        // constructor helpers
+
+        public AccessCondition<I, W, O, G, A> Allow(Precondition allow, Postcondition action = null) {
+            this.conditions.Add(new Condition(allow, null, action));
+            return this;
+        }
+
+        public AccessCondition<I, W, O, G, A> Deny(Precondition deny, Postcondition action = null) {
+            this.conditions.Add(new Condition(null, deny, action));
+            return this;
+        }
+
+        // postconditions
+
+        public override bool ApplyPostconditions(Governor.GovernorVariableState agentState, VariableState actionParameters, bool planningMode) {
+            if (this.conditions.Count == 0) {
+                return false;
+            }
+            return this.conditions.Any(c => c.Access(agentState, actionParameters, planningMode));
+        }
+
+        public override bool ApplyPostconditions(Institution.InstitutionState institutionState, Workflow.WorkflowVariableState workflowState) {
+            if (this.conditions.Count == 0) {
+                return false;
+            }
+            return this.conditions.Any(c => c.Access(institutionState, workflowState));
+        }
+
+        // general access
+
+        public override bool CanAccess(Governor.GovernorVariableState agentState) {
+            if (this.conditions.Count == 0) {
+                return true;
+            }
+            return this.conditions.Any(c => c.CanAccess(agentState));
+        }
+
+
+    }
+
+    public class AccessCondition<I, W> : AccessCondition<I, W, VariableState, VariableState, VariableState>
+        where I : Institution.InstitutionState
+        where W : Workflow.WorkflowVariableState
+    {
+
+    }
 }

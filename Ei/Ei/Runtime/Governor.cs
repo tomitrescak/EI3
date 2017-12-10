@@ -432,7 +432,7 @@ namespace Ei.Runtime
         }
 
         internal bool IsInGroup(IEnumerable<Group> notifyRoles) {
-            return this.Groups.Any(w => AccessCondition.IsInGroup(w, notifyRoles));
+            return this.Groups.Any(w => Access.IsInGroup(w, notifyRoles));
         }
 
         internal void Join(List<Governor> inagents) {
@@ -512,16 +512,16 @@ namespace Ei.Runtime
             return ActionInfo.Ok;
         }
 
-        public void ApplyPostconditions(AccessCondition[] postconditions) {
+        //public void ApplyPostconditions(AccessCondition[] postconditions) {
 
-            if (postconditions != null && postconditions.Length > 0) {
-                foreach (var postcondition in postconditions) {
-                    //if (postcondition.AppliesTo(this.Groups)) {
-                        postcondition.ApplyPostconditions(this.VariableState, false);
-                    //}
-                }
-            }
-        }
+        //    if (postconditions != null && postconditions.Length > 0) {
+        //        foreach (var postcondition in postconditions) {
+        //            //if (postcondition.AppliesTo(this.Groups)) {
+        //                postcondition.ApplyPostconditions(this.VariableState, false);
+        //            //}
+        //        }
+        //    }
+        //}
 
         public IActionInfo Continue() {
             // we may have exited the institution
@@ -635,7 +635,7 @@ namespace Ei.Runtime
                 var state = agentState.Clone();
 
                 // apply postconditions
-                conn.ApplyPostconditions(groups, state, true);
+                conn.ApplyPostconditions(state, null, true);
 
                 // check 100% fulfilling goals
 
@@ -658,7 +658,7 @@ namespace Ei.Runtime
 
                     foreach (var effect in conn.GeneratedNestedEffects) {
                         state = agentState.Clone();
-                        effect.ApplyPostconditions(state, true);
+                        effect.ApplyPostconditions(state, null, true);
 
                         maxRatio = CalculateRatio(goalState, agentState, state);
                         if (maxRatio >= 1) {
@@ -716,14 +716,14 @@ namespace Ei.Runtime
             switch (strategy) {
                 case PlanStrategy.ForwardSearch:
                     return planner.Plan(h, new ForwardSearch(this.Position, state, this.Groups), costManager);
-                case PlanStrategy.BackwardSearch:
-                    var startConnection = this.Workflow.Connections.First(w => w.Action != null && w.Action.Id == actionName);
-                    var startState = state.ToGoalState();
-                    var bh = new ResourceBasedHeuristics(startState);
+                //case PlanStrategy.BackwardSearch:
+                //    var startConnection = this.Workflow.Connections.First(w => w.Action != null && w.Action.Id == actionName);
+                //    var startState = state.ToGoalState();
+                //    var bh = new ResourceBasedHeuristics(startState);
 
-                    // TODO: Use floyd-warshall from workflow to make sure that action is accessible
+                //    // TODO: Use floyd-warshall from workflow to make sure that action is accessible
 
-                    return planner.Plan(bh, new BackwardSearch(this.Workflow, state, this.Groups, this.Position, startConnection, startState), costManager);
+                //    return planner.Plan(bh, new BackwardSearch(this.Workflow, state, this.Groups, this.Position, startConnection, startState), costManager);
             }
 
             throw new NotImplementedException("Strategy not implemented: " + strategy);
@@ -746,12 +746,12 @@ namespace Ei.Runtime
                     var s = new ForwardSearch(this.Position, state, this.Groups);
                     var h = new ResourceBasedHeuristics(goals);
                     return planner.Plan(h, s, costManager);
-                case PlanStrategy.BackwardSearch:
-                    var goal = Governor.FindGoals(this.Workflow.Workflow, state, Groups, goals, 1);
+                //case PlanStrategy.BackwardSearch:
+                //    var goal = Governor.FindGoals(this.Workflow.Workflow, state, Groups, goals, 1);
 
-                    var bs = new BackwardSearch(this.Workflow, state, this.Groups, this.Position, goal[0].Connection, goals);
-                    var bh = new ResourceBasedHeuristics(state.ToGoalState());
-                    return planner.Plan(bh, bs, costManager);
+                //    var bs = new BackwardSearch(this.Workflow, state, this.Groups, this.Position, goal[0].Connection, goals);
+                //    var bh = new ResourceBasedHeuristics(state.ToGoalState());
+                //    return planner.Plan(bh, bs, costManager);
             }
 
             throw new NotImplementedException("Strategy not implmented: " + strategy);

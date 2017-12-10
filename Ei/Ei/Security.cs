@@ -71,7 +71,7 @@ namespace Ei
     }
 
     public static bool Authorise(AuthorisationInfo user, ICollection<Group> roles) {
-      return roles.All(role => AccessCondition.IsInGroup(role, user.Groups));
+      return roles.All(role => Access.IsInGroup(role, user.Groups));
     }
 
 
