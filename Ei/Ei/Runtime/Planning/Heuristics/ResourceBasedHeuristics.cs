@@ -22,12 +22,12 @@ namespace Ei.Runtime.Planning.Heuristics
             double heuristic = 0;
             foreach (var goal in goals)
             {
-                var difference = goal.Difference(from.VariableState);
+                var difference = goal.Difference(from.Resources);
 
                 if (difference > 0)
                 {
                     if (Log.IsDebug) {
-                        if (Log.IsDebug) Log.Debug("Planner", string.Format("Heuristic for '{0}': {1} [Now: {2} -> Goal: {3}]", goal.Name, difference * 10, goal.CurrentValue(from.VariableState), goal.Value));
+                        if (Log.IsDebug) Log.Debug("Planner", string.Format("Heuristic for '{0}': {1} [Now: {2} -> Goal: {3}]", goal.Name, difference * 10, goal.CurrentValue(from.Resources), goal.Value));
                     }
                 }
 
@@ -75,7 +75,7 @@ namespace Ei.Runtime.Planning.Heuristics
 
         public bool CheckGoal(AStarNode currentNode)
         {
-            return this.goals.All(goal => goal.IsValid(currentNode.VariableState));
+            return this.goals.All(goal => goal.IsValid(currentNode.Resources));
         }
     }
 }

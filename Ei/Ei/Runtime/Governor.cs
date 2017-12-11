@@ -31,12 +31,12 @@ namespace Ei.Runtime
         }
         #endregion
 
-        public class GovernorVariableState
+        public class ResourceState
         {
             public struct Group
             {
-                public ResourceState Organisation;
-                public ResourceState Role;
+                public Runtime.ResourceState Organisation;
+                public Runtime.ResourceState Role;
             } 
             private List<Group> groups;
             public int CreatedInstanceId;
@@ -45,13 +45,13 @@ namespace Ei.Runtime
 
             public List<Group> Roles { get { return this.groups; } }
 
-            public GovernorVariableState(Governor agent) {
+            public ResourceState(Governor agent) {
                 this.Name = agent.Name;
                 this.Governor = agent;
 
                 this.groups = new List<Group>();
 
-                var addedRoles = new Dictionary<Role, ResourceState>();
+                var addedRoles = new Dictionary<Role, Runtime.ResourceState>();
 
                 foreach (var group in agent.Groups) {
                     if (!addedRoles.ContainsKey(group.Role)) {
@@ -61,7 +61,7 @@ namespace Ei.Runtime
                 }
             }
 
-            public ResourceState FindProvider(string name) {
+            public Runtime.ResourceState FindProvider(string name) {
                 if (this.groups.Count == 1) {
                     return this.groups[0].Role;
                 }
@@ -81,12 +81,12 @@ namespace Ei.Runtime
                 }
             }
 
-            public ResourceState Clone(ResourceState state) {
+            public Runtime.ResourceState Clone(Runtime.ResourceState state) {
                 throw new NotImplementedException();
                 // return this.Clone(state as GovernorVariableState);
             }
 
-            public GovernorVariableState Clone(GovernorVariableState clone = null) {
+            public ResourceState Clone(ResourceState clone = null) {
                 throw new NotImplementedException();
                 //if (clone == null) { clone = new GovernorVariableState(this.Governor); }
                 //clone.CreatedInstanceId = this.CreatedInstanceId;
@@ -102,7 +102,7 @@ namespace Ei.Runtime
         #endregion
 
         #region Properties
-        public GovernorVariableState VariableState { get; private set; }
+        public ResourceState Resources { get; private set; }
 
         public string Name { get; set; }
         public Group[] Groups { get; private set; }
@@ -162,10 +162,10 @@ namespace Ei.Runtime
 
             // clone properties
             if (shallowClone) {
-                this.VariableState = governor.VariableState;
+                this.Resources = governor.Resources;
             }
             else {
-                this.VariableState = governor.VariableState.Clone();
+                this.Resources = governor.Resources.Clone();
 
             }
         }
@@ -190,13 +190,13 @@ namespace Ei.Runtime
             this.Manager = manager;
 
             this.contextStack = new Stack<Context>();
-            this.VariableState = new GovernorVariableState(this);
+            this.Resources = new ResourceState(this);
         }
 
         // runtime
 
         public void Start() {
-            this.VariableState = new GovernorVariableState(this);
+            this.Resources = new ResourceState(this);
             this.EnterInstitution();
             this.EnterWorkflow(null, this.Manager.MainWorkflow);
         }
@@ -274,7 +274,7 @@ namespace Ei.Runtime
             return result.IsOk ? clone.Move(positionId) : result;
         }
 
-        public IActionInfo Move(string positionId, ResourceState parameters = null) {
+        public IActionInfo Move(string positionId, Runtime.ResourceState parameters = null) {
             var target = this.FindPosition(positionId);
             if (target.Length == 0) {
                 return ActionInfo.StateNotReachable;
@@ -338,7 +338,7 @@ namespace Ei.Runtime
             return result;
         }
 
-        public IActionInfo PerformAction(ActionBase action, ResourceState parameters = null) {
+        public IActionInfo PerformAction(ActionBase action, Runtime.ResourceState parameters = null) {
 
 
             // otherwise we have to find a feasible connection
@@ -530,7 +530,7 @@ namespace Ei.Runtime
             }
 
             // filter output arcs
-            var viableArcs = this.Position.ViableTransitions(this.Groups, this.VariableState);
+            var viableArcs = this.Position.ViableTransitions(this.Groups, this.Resources);
 
             if (viableArcs.Length == 0) {
                 return ActionInfo.Ok;
@@ -585,12 +585,12 @@ namespace Ei.Runtime
             this.callbacks.NotifyWorkflowParameterChanged(this.Name, workflowId, workflowInstanceId, parameterName, value);
         }
 
-        internal void NotifyActivity(Workflow.Instance workflow, string agentName, string activityId, ResourceState parameters) {
+        internal void NotifyActivity(Workflow.Instance workflow, string agentName, string activityId, Runtime.ResourceState parameters) {
             this.callbacks.NotifyActivity(this.Name, workflow.Id, workflow.InstanceId, agentName, activityId, parameters);
             //Console.WriteLine("[CB NotifyActivity] {0},{1},{2},{3},{4}", workflow.Id, workflow.InstanceId, agentName, actionId, string.Join(";", parameters.Select(i => i.ToString()).ToArray()));
         }
 
-        internal void NotifyActivityFailed(Workflow.Instance workflow, string agentName, string activityId, ResourceState parameters) {
+        internal void NotifyActivityFailed(Workflow.Instance workflow, string agentName, string activityId, Runtime.ResourceState parameters) {
             this.callbacks.NotifyActivityFailed(this.Name, workflow.Id, workflow.InstanceId, agentName, activityId, parameters);
             //Console.WriteLine("[CB NotifyActivity] {0},{1},{2},{3},{4}", workflow.Id, workflow.InstanceId, agentName, actionId, string.Join(";", parameters.Select(i => i.ToString()).ToArray()));
         }
@@ -625,7 +625,7 @@ namespace Ei.Runtime
             }
         }
 
-        public static List<GoalDescription> FindGoals(Workflow workflow, Governor.GovernorVariableState agentState, Group[] groups, GoalState[] goalState, int maxGoals = int.MaxValue) {
+        public static List<GoalDescription> FindGoals(Workflow workflow, Governor.ResourceState agentState, Group[] groups, GoalState[] goalState, int maxGoals = int.MaxValue) {
             var result = new List<GoalDescription>();
 
             // browse all connections and 
@@ -687,7 +687,7 @@ namespace Ei.Runtime
             return result;
         }
 
-        private static float CalculateRatio(GoalState[] goals, Governor.GovernorVariableState startState, Governor.GovernorVariableState changedState) {
+        private static float CalculateRatio(GoalState[] goals, Governor.ResourceState startState, Governor.ResourceState changedState) {
             var maxRatio = 0f;
             foreach (var goal in goals) {
                 var ratio = goal.GetDeltaRatio(startState, changedState);
@@ -711,7 +711,7 @@ namespace Ei.Runtime
 
             this.Planner = planner;
 
-            var state = this.VariableState.Clone();
+            var state = this.Resources.Clone();
 
             switch (strategy) {
                 case PlanStrategy.ForwardSearch:
@@ -735,7 +735,7 @@ namespace Ei.Runtime
             }
 
             var planner = new Planner(this);
-            var state = this.VariableState.Clone();
+            var state = this.Resources.Clone();
 
             this.Planner = planner;
 

@@ -91,7 +91,7 @@ namespace Ei.Ontology
         // methods
 
         public IActionInfo Pass(Governor agent, ResourceState parameters = null) {
-            if (!this.CanPass(agent.VariableState)) {
+            if (!this.CanPass(agent.Resources)) {
                 return ActionInfo.FailedPreconditions;
             }
 
@@ -112,7 +112,7 @@ namespace Ei.Ontology
 
             // apply postconditions on connection
             if (this.Access != null) {
-                this.Access.ApplyPostconditions(agent.VariableState, parameters);
+                this.Access.ApplyPostconditions(agent.Resources, parameters);
             }
 
             // open connections have To set to null, so we stay n the same state
@@ -129,7 +129,7 @@ namespace Ei.Ontology
         //            return this.CanPass(agent.Groups, agent.Properties);
         //        }
 
-        public bool CanPass(Governor.GovernorVariableState state) {
+        public bool CanPass(Governor.ResourceState state) {
             if (this.Access == null) {
                 return true;
             }
@@ -163,7 +163,7 @@ namespace Ei.Ontology
         }
 
 
-        public void ApplyPostconditions(Governor.GovernorVariableState state, ResourceState actionParameters, bool planningMode = false) {
+        public void ApplyPostconditions(Governor.ResourceState state, ResourceState actionParameters, bool planningMode = false) {
             if (this.Access == null) {
                 return;
             }
@@ -171,7 +171,7 @@ namespace Ei.Ontology
         }
 
 
-        public void ApplyBacktrackPostconditions(Group[] groups, Governor.GovernorVariableState state) {
+        public void ApplyBacktrackPostconditions(Group[] groups, Governor.ResourceState state) {
             if (this.BacktrackPostconditions != null) {
                 foreach (var postcondition in this.BacktrackPostconditions) {
                     // check if arc is constrained to the agent role
@@ -180,7 +180,7 @@ namespace Ei.Ontology
             }
         }
 
-        public void ApplyExpectedEffects(Governor.GovernorVariableState state, AccessCondition effect) {
+        public void ApplyExpectedEffects(Governor.ResourceState state, AccessCondition effect) {
             // we can either apply a single effect
             // or all of them
 
@@ -200,7 +200,7 @@ namespace Ei.Ontology
             }
         }
 
-        public void ApplyGeneratedBacktrackEffects(Governor.GovernorVariableState state) {
+        public void ApplyGeneratedBacktrackEffects(Governor.ResourceState state) {
             if (this.GeneratedNestedEffects != null) {
                 foreach (var postcondition in this.GeneratedNestedEffects) {
                     // check if arc is constrained to the agent role

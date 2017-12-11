@@ -37,11 +37,11 @@ namespace Ei.Runtime.Planning
 
         // methods
 
-        public object CurrentValue(Governor.GovernorVariableState state) {
+        public object CurrentValue(Governor.ResourceState state) {
             return this.variableProvider.Value(state.FindProvider(this.Name));
         }
 
-        public float Difference(Governor.GovernorVariableState state) {
+        public float Difference(Governor.ResourceState state) {
             return this.ParameterDifference(this.variableProvider.Value(state.FindProvider(this.Name)));
         }
 
@@ -96,7 +96,7 @@ namespace Ei.Runtime.Planning
             throw new NotImplementedException("This strategy is not implemented");
         }
 
-        public bool IsValid(Governor.GovernorVariableState state)
+        public bool IsValid(Governor.ResourceState state)
         {
             var difference = this.Difference(state);
 
@@ -131,7 +131,7 @@ namespace Ei.Runtime.Planning
         /// <param name="changedState"></param>
         /// <returns>
         /// </returns>
-        public float GetDeltaRatio(Governor.GovernorVariableState startState, Governor.GovernorVariableState changedState)
+        public float GetDeltaRatio(Governor.ResourceState startState, Governor.ResourceState changedState)
         {
             var before = this.Difference(startState);
             var after = this.Difference(changedState);

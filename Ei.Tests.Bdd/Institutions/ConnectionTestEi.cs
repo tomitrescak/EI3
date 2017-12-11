@@ -97,7 +97,7 @@ namespace Ei.Tests.Bdd.Institutions
     public class MainWorkflow : Workflow
     {
         // 
-        public class Resources : WorkflowVariableState
+        public class Resources : ResourceState
         {
             public Resources(Workflow workflow) : base(workflow) {
             }
@@ -123,7 +123,7 @@ namespace Ei.Tests.Bdd.Institutions
 
         public override Access CreatePermissions { get { return null; } }
 
-        public override WorkflowVariableState CreateState() {
+        public override ResourceState CreateState() {
             return new Resources(this);
         }
 

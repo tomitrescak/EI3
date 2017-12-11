@@ -13,13 +13,13 @@ namespace Ei.Runtime.Planning.Strategies
         
         protected Group[] Groups { get; set; }
 
-        internal ForwardSearch(WorkflowPosition agentPosition, Governor.GovernorVariableState agentState, Group[] agentGroups)
+        internal ForwardSearch(WorkflowPosition agentPosition, Governor.ResourceState agentState, Group[] agentGroups)
         {
             this.Groups = agentGroups;
 
             this.InitialNode = new AStarNode(new Connection(null, agentPosition));
             this.InitialNode.Parent = null;
-            this.InitialNode.VariableState = agentState;
+            this.InitialNode.Resources = agentState;
         }
 
         // properties
@@ -37,7 +37,7 @@ namespace Ei.Runtime.Planning.Strategies
 
         public virtual Connection[] ViableConnections(AStarNode node)
         {            
-            var list = node.Arc.To.ViableConnections(this.Groups, node.VariableState);  
+            var list = node.Arc.To.ViableConnections(this.Groups, node.Resources);  
             
             // check for loops
             return FilterByLoops(node, list);
@@ -77,19 +77,19 @@ namespace Ei.Runtime.Planning.Strategies
         {
             if (node.Arc != null)
             {
-                node.Arc.ApplyPostconditions(node.VariableState, null, true);
+                node.Arc.ApplyPostconditions(node.Resources, null, true);
             }
         }
 
         public void ApplyEffect(AStarNode node, AccessCondition effect)
         {
-            effect.ApplyPostconditions(node.VariableState, null, true);
+            effect.ApplyPostconditions(node.Resources, null, true);
         }
 
         public IStrategy CreateNested(AStarNode currentNode, Workflow.Instance workflow, Connection conn)
         {
             // the start state is the current state
-            var nestedInitialState = currentNode.VariableState.Clone();
+            var nestedInitialState = currentNode.Resources.Clone();
 
             // apply backward preconditions
             currentNode.Arc.ApplyBacktrackPostconditions(this.Groups, nestedInitialState);
@@ -103,7 +103,7 @@ namespace Ei.Runtime.Planning.Strategies
         public bool ExpandEffects { get { return true; } }
         public IHeuristics CreateHeuristicsForNestedSearch(AStarNode currentNode)
         {
-            var finalState = currentNode.VariableState.Clone();
+            var finalState = currentNode.Resources.Clone();
 
             // we apply postcondition on the workflow node
             currentNode.Arc.ApplyExpectedEffects(finalState, currentNode.AppliedEffect);

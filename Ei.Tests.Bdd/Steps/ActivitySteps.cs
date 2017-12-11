@@ -171,7 +171,7 @@ namespace Ei.Tests.Steps
         private object GetParameter(string agentName, string paramName)
         {
             var agent = Governors[agentName];
-            var provider = agent.Object.VariableState.FindProvider(paramName);
+            var provider = agent.Object.Resources.FindProvider(paramName);
             Assert.IsNotNull(provider);
 
             var obj = provider.FindByName(paramName);
@@ -395,7 +395,7 @@ namespace Ei.Tests.Steps
         public void WhenAgentParameterIsSetTo(string agentName, string parameterName, string parameterValue)
         {
             var agent = Governors[agentName];
-            var provider = agent.Object.VariableState.FindProvider(parameterName);
+            var provider = agent.Object.Resources.FindProvider(parameterName);
             provider.Descriptors.First(d => d.Name == parameterName).Update(provider, int.Parse(parameterValue));
         }
 
@@ -404,7 +404,7 @@ namespace Ei.Tests.Steps
         public void ThenAgentHasParameter(string agentName, string parameterName)
         {
             var agent = Governors[agentName];
-            var provider = agent.Object.VariableState.FindProvider(parameterName);
+            var provider = agent.Object.Resources.FindProvider(parameterName);
             Assert.IsTrue(provider.Descriptors.Any(d => d.Name == parameterName), "Agent does not have parameter: " + parameterName);
         }
 

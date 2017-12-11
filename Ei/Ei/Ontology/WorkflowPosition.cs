@@ -94,19 +94,19 @@ namespace Ei.Ontology
 
     // finding connections
 
-    public Connection[] ViableTransitions(Governor.GovernorVariableState agent) {
+    public Connection[] ViableTransitions(Governor.ResourceState agent) {
       return this.ViableTransitions(agent.Governor.Groups, agent);
     }
 
-    public Connection[] ViableTransitions(Group[] groups, Governor.GovernorVariableState state) {
+    public Connection[] ViableTransitions(Group[] groups, Governor.ResourceState state) {
       return this.outs.Where(w => w.To is Transition && w.CanPass(state)).ToArray();
     }
 
     public Connection[] ViableConnections(Governor agent) {
-      return this.ViableConnections(agent.Groups, agent.VariableState);
+      return this.ViableConnections(agent.Groups, agent.Resources);
     }
 
-    public Connection[] ViableConnections(Group[] groups, Governor.GovernorVariableState state) {
+    public Connection[] ViableConnections(Group[] groups, Governor.ResourceState state) {
       return this.outs.Where(w => w.CanPass(state)).ToArray();
     }
 
@@ -115,10 +115,10 @@ namespace Ei.Ontology
     //}
 
     public Connection[] ViableConnections(Governor agent, string actionId) {
-      return this.ViableConnections(agent.Groups, agent.VariableState, actionId);
+      return this.ViableConnections(agent.Groups, agent.Resources, actionId);
     }
 
-    public Connection[] ViableConnections(Group[] groups, Governor.GovernorVariableState state, string actionId) {
+    public Connection[] ViableConnections(Group[] groups, Governor.ResourceState state, string actionId) {
       return this.outs.Where(w => w.CanPass(state) && w.Action != null && w.Action.Id == actionId).ToArray();
     }
 

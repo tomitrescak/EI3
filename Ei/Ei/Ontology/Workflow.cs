@@ -14,15 +14,15 @@ namespace Ei.Ontology
 
     public abstract class Workflow : Entity
     {
-        #region class WorkflowVariableState
-        public class WorkflowVariableState : ResourceState
+        #region class ResourceState
+        public class ResourceState : Runtime.ResourceState
         {
 
             // fields
 
             private int agentCount;
-            private Governor.GovernorVariableState last;
-            private Governor.GovernorVariableState owner;
+            private Governor.ResourceState last;
+            private Governor.ResourceState owner;
             private Workflow workflow;
 
             // properties
@@ -37,7 +37,7 @@ namespace Ei.Ontology
                 }
             }
 
-            public Governor.GovernorVariableState Last {
+            public Governor.ResourceState Last {
                 get {
                     return last;
                 }
@@ -47,7 +47,7 @@ namespace Ei.Ontology
                 }
             }
 
-            public Governor.GovernorVariableState Owner {
+            public Governor.ResourceState Owner {
                 get {
                     return owner;
                 }
@@ -59,7 +59,7 @@ namespace Ei.Ontology
 
             // ctors
 
-            public WorkflowVariableState(Workflow workflow) {
+            public ResourceState(Workflow workflow) {
                 this.workflow = workflow;
             }
 
@@ -77,7 +77,7 @@ namespace Ei.Ontology
             private WorkflowPosition state;
             private readonly List<Governor> agents;
             private Workflow workflow;
-            private WorkflowVariableState variableState;
+            private ResourceState resources;
 
             // helper properties
 
@@ -97,7 +97,7 @@ namespace Ei.Ontology
 
             // properties
 
-            public WorkflowVariableState VariableState { get { return this.variableState; } }
+            public ResourceState Resources { get { return this.resources; } }
 
             public ReadOnlyCollection<Governor> Agents { get; }
 
@@ -144,10 +144,10 @@ namespace Ei.Ontology
                 this.state = this.workflow.Start;
 
                 // init state
-                this.variableState = this.workflow.CreateState();
-                this.VariableState.AgentCount = 0;
-                this.VariableState.Last = null;
-                this.VariableState.Owner = null;
+                this.resources = this.workflow.CreateState();
+                this.Resources.AgentCount = 0;
+                this.Resources.Last = null;
+                this.Resources.Owner = null;
             }
 
             // methods
@@ -157,7 +157,7 @@ namespace Ei.Ontology
                     this.workflow.Id,
                     this.InstanceId,
                     this.Name,
-                    this.VariableState.FilterByAccess(agent));
+                    this.Resources.FilterByAccess(agent));
             }
 
 
@@ -179,7 +179,7 @@ namespace Ei.Ontology
                 state.EnterAgent(governor);
 
                 // remember this agent
-                this.VariableState.Last = governor.VariableState;
+                this.Resources.Last = governor.Resources;
 
                 return true;
             }
@@ -201,7 +201,7 @@ namespace Ei.Ontology
                 }
             }
 
-            public void NotifyRoles(IEnumerable<Group> notifyRoles, string agentName, string activityId, ResourceState parameters) {
+            public void NotifyRoles(IEnumerable<Group> notifyRoles, string agentName, string activityId, Runtime.ResourceState parameters) {
                 foreach (var agent in this.agents.ToArray()) {
                     if (agent.IsInGroup(notifyRoles)) {
                         agent.NotifyActivity(this, agentName, activityId, parameters);
@@ -209,7 +209,7 @@ namespace Ei.Ontology
                 }
             }
 
-            public void NotifyAgents(IEnumerable<string> notifyAgents, string name, ResourceState parameters) {
+            public void NotifyAgents(IEnumerable<string> notifyAgents, string name, Runtime.ResourceState parameters) {
                 throw new NotImplementedException();
             }
             //
@@ -223,12 +223,12 @@ namespace Ei.Ontology
                 if (this.agents.Contains(governor)) {
                     this.agents.Remove(governor);
                 }
-                this.VariableState.AgentCount = this.agents.Count;
+                this.Resources.AgentCount = this.agents.Count;
             }
 
             public void AddAgent(Governor governor) {
                 this.agents.Add(governor);
-                this.VariableState.AgentCount = this.agents.Count;
+                this.Resources.AgentCount = this.agents.Count;
             }
 
             public WorkflowPosition FindPosition(string id) {
@@ -344,7 +344,7 @@ namespace Ei.Ontology
 
         public abstract Access CreatePermissions { get; }
 
-        public abstract WorkflowVariableState CreateState();
+        public abstract ResourceState CreateState();
 
         public abstract bool Stateless { get; }
 

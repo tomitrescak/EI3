@@ -23,7 +23,7 @@ namespace Ei.Ontology.Actions
             var wf = this.joinAction.Create(agent, this.parameters);
 
             // set parameter
-            agent.VariableState.CreatedInstanceId = wf.InstanceId;
+            agent.Resources.CreatedInstanceId = wf.InstanceId;
 
             return ActionInfo.Ok;
         }

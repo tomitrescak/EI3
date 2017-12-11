@@ -8,12 +8,12 @@ using System.Linq.Expressions;
 
 namespace Ei.Runtime
 {
-    public interface IVariableStateCreator
+    public interface IResourceStateCreator
     {
         ResourceState Instance(ResourceState cloneFrom);
     }
 
-    public class VariableStateCreator<T>: IVariableStateCreator where T : ResourceState
+    public class ResourceStateCreator<T>: IResourceStateCreator where T : ResourceState
     {
         private static Func<ResourceState, T> _new;
         public static Func<ResourceState, T> New {
@@ -52,7 +52,7 @@ namespace Ei.Runtime
 
         // ctor
         static Dictionary<Type, IVariableDefinition[]> typeDescriptors = new Dictionary<Type, IVariableDefinition[]>();
-        static Dictionary<Type, IVariableStateCreator> stateCreators = new Dictionary<Type, IVariableStateCreator>();
+        static Dictionary<Type, IResourceStateCreator> stateCreators = new Dictionary<Type, IResourceStateCreator>();
 
         public ResourceState() {
             // get type descriptors from cache
@@ -122,7 +122,7 @@ namespace Ei.Runtime
         public VariableInstance[] FilterByAccess(Governor governor) {
             // TODO: Further optimisations possible, by caching results
             return this.Descriptors
-                .Where(p => p.CanAccess(governor.Groups, governor.VariableState.FindProvider(p.Name)))
+                .Where(p => p.CanAccess(governor.Groups, governor.Resources.FindProvider(p.Name)))
                 .Select(p => new VariableInstance(p.Name, p.Value(this).ToString()))
                 .ToArray();
         }
@@ -134,9 +134,9 @@ namespace Ei.Runtime
             state = state == null ? this : state;
             // we cache instance creators for increased performance
             if (!stateCreators.ContainsKey(state.GetType())) {
-                var genericType = typeof(VariableStateCreator<>);
+                var genericType = typeof(ResourceStateCreator<>);
                 var specificType = genericType.MakeGenericType(state.GetType());
-                stateCreators[state.GetType()] = (IVariableStateCreator) Activator.CreateInstance(specificType); 
+                stateCreators[state.GetType()] = (IResourceStateCreator) Activator.CreateInstance(specificType); 
             }
             return stateCreators[state.GetType()].Instance(this);
         }

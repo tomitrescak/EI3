@@ -49,7 +49,7 @@ namespace Ei.Runtime.Planning.Costs
             if (toConnection.Action is ActionJoinWorkflow && this.agentEnvironment.NoLocationInfo(toConnection.Action.Id) != null)
             {
                 var allCosts = new List<double>();
-                ComputeWorkflowCost(agent, fromNode, from, toConnection, allCosts, fromNode.VariableState);
+                ComputeWorkflowCost(agent, fromNode, from, toConnection, allCosts, fromNode.Resources);
                 return new CostData(allCosts.Count == 0 ? float.PositiveInfinity : (float)allCosts.Average(), toConnection.Action.Id);
             }
 
@@ -58,7 +58,7 @@ namespace Ei.Runtime.Planning.Costs
 
         }
 
-        private void ComputeWorkflowCost(Governor agent, AStarNode fromNode, string from, Connection toConnection, List<double> allCosts, Governor.GovernorVariableState state)
+        private void ComputeWorkflowCost(Governor agent, AStarNode fromNode, string from, Connection toConnection, List<double> allCosts, Governor.ResourceState state)
         {
             // compute average distance
             var wf = ((ActionJoinWorkflow)toConnection.Action).TestWorkflow;

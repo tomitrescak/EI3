@@ -93,7 +93,7 @@ namespace Ei.Runtime.Planning
             }
 
             Log("Starting a new plan with " + currentNode);
-            Log("State: " + currentNode.VariableState);
+            Log("State: " + currentNode.Resources);
 
             // apend to the initial node
 
@@ -126,7 +126,7 @@ namespace Ei.Runtime.Planning
                 Log("\n========================================");
                 Log("CURRENT NODE: " + currentNode);
                 Log("Neighbours: " + neighbours.Length);
-                Log("State: " + currentNode.VariableState);
+                Log("State: " + currentNode.Resources);
                 Log("========================================\n");
 
                 this.checkedNodes ++;
@@ -209,7 +209,7 @@ namespace Ei.Runtime.Planning
                     //       Replicate the Context stack functionality as in governor "ExitWorkflow"
 
                     AStarNode newNode = this.CreateNode(connection, 
-                        currentNode.VariableState.Clone(),
+                        currentNode.Resources.Clone(),
                         currentNode, 
                         tentativeGScore,
                         costData.Data);
@@ -227,7 +227,7 @@ namespace Ei.Runtime.Planning
                     }
 
                     Log("\n- ADDED: " + newNode);
-                    Log("- State: " + currentNode.VariableState);
+                    Log("- State: " + currentNode.Resources);
 
                     currentNode.Children.Add(newNode);
 
@@ -239,13 +239,13 @@ namespace Ei.Runtime.Planning
                             foreach (var effect in connection.ExpectedEffects)
                             {
                                 AStarNode effectNode = this.CreateNode(connection,
-                                    currentNode.VariableState.Clone(),
+                                    currentNode.Resources.Clone(),
                                     currentNode,
                                     tentativeGScore,
                                     costData.Data);
 
                                 //Console.WriteLine("----------------------\nBefore: \n" + newNode.State);
-                                effectNode.OriginalState = currentNode.VariableState.Clone();
+                                effectNode.OriginalResources = currentNode.Resources.Clone();
                                 
                                 strategy.ApplyEffect(effectNode, effect);
                                 effectNode.AppliedEffect = effect;
@@ -256,7 +256,7 @@ namespace Ei.Runtime.Planning
                                 effectNode.F_Score = effectNode.G_Score + effectNode.Heuristic;
 
                                 Log("\n- ADDED EFFECT " + effect + ": " + effectNode);
-                                Log("- effectNode: " + currentNode.VariableState);
+                                Log("- effectNode: " + currentNode.Resources);
 
                                 currentNode.Children.Add(effectNode);
 
@@ -307,7 +307,7 @@ namespace Ei.Runtime.Planning
         }
 
         private AStarNode CreateNode(Connection connection,
-            Governor.GovernorVariableState state, 
+            Governor.ResourceState state, 
             AStarNode currentNode, 
             float tentativeGScore,
             string costData)
@@ -316,7 +316,7 @@ namespace Ei.Runtime.Planning
 
             newNode.G_Score = tentativeGScore;
             newNode.Parent = currentNode;
-            newNode.VariableState = state;
+            newNode.Resources = state;
             newNode.CostData = costData;
             
             this.Storage.AddToOpenList(newNode);
@@ -345,9 +345,9 @@ namespace Ei.Runtime.Planning
                     Log("\n\n------------------------\nCONSTRUCTING SUB PLAN FOR: " + wa.WorkflowId + "\n------------------------\n");
 
                     // switch to original state (unaffected by effects)
-                    if (currentNode.OriginalState != null)
+                    if (currentNode.OriginalResources != null)
                     {
-                        currentNode.VariableState = currentNode.OriginalState;
+                        currentNode.Resources = currentNode.OriginalResources;
                     }
 
                     // mark this node as the successfull one

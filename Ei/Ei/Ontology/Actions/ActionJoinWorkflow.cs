@@ -72,11 +72,11 @@ namespace Ei.Ontology.Actions
             // initialise parameters
             if (parameters != null)
             {
-                newWorkflow.VariableState.Merge(parameters);
+                newWorkflow.Resources.Merge(parameters);
             }
 
             // set owner to the agent that created this workflow
-            newWorkflow.VariableState.Owner = performer.VariableState;
+            newWorkflow.Resources.Owner = performer.Resources;
 
             this.Workflows.Add(newWorkflow);
 
@@ -128,7 +128,7 @@ namespace Ei.Ontology.Actions
 
             // 2. create new workflow instance
 
-            else if (workflow.CreatePermissions.CanAccess(agent.VariableState))
+            else if (workflow.CreatePermissions.CanAccess(agent.Resources))
             {
                 var newWorkflow = this.Create(agent);
                 agent.EnterWorkflow(connection, newWorkflow);

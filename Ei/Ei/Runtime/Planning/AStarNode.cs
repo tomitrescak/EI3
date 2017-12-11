@@ -18,9 +18,9 @@ namespace Ei.Runtime.Planning
 
         public Connection Arc { get; }
 
-        public Governor.GovernorVariableState VariableState { get; set; }
+        public Governor.ResourceState Resources { get; set; }
 
-        public Governor.GovernorVariableState OriginalState { get; set; }
+        public Governor.ResourceState OriginalResources { get; set; }
 
         public int Visited { get; set; }
 
@@ -73,7 +73,7 @@ namespace Ei.Runtime.Planning
 
         public IEnumerable<Connection> ViableConnections(Governor agent, bool binary)
         {
-            return this.Arc.To.ViableConnections(agent.Groups, this.VariableState);
+            return this.Arc.To.ViableConnections(agent.Groups, this.Resources);
         }
     }
 }

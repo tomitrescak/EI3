@@ -78,7 +78,7 @@ namespace Ei.Ontology
 
                 // apply postconditions
 
-                connection.Access.ApplyPostconditions(workflow.Workflow.Institution.Resources, workflow.VariableState);
+                connection.Access.ApplyPostconditions(workflow.Workflow.Institution.Resources, workflow.Resources);
 
                 workflow.State = connection.To;
             }
@@ -126,7 +126,7 @@ namespace Ei.Ontology
 
         public override bool CanEnter(Governor agent) {
             // we add default values of parameters we are checking for
-            return this.EntryRules.CanAccess(agent.VariableState);
+            return this.EntryRules.CanAccess(agent.Resources);
         }
 
         public override IActionInfo EnterAgent(Governor agent) {
@@ -151,7 +151,7 @@ namespace Ei.Ontology
 
         public override bool CanExit(Governor agent) {
             // we add default values of parameters we are checking for
-            return this.ExitRules == null || this.ExitRules.CanAccess(agent.VariableState);
+            return this.ExitRules == null || this.ExitRules.CanAccess(agent.Resources);
         }
 
         //        public override string ToString()
