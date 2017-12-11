@@ -10,30 +10,30 @@ namespace Ei.Runtime
 {
     public interface IVariableStateCreator
     {
-        VariableState Instance(VariableState cloneFrom);
+        ResourceState Instance(ResourceState cloneFrom);
     }
 
-    public class VariableStateCreator<T>: IVariableStateCreator where T : VariableState
+    public class VariableStateCreator<T>: IVariableStateCreator where T : ResourceState
     {
-        private static Func<VariableState, T> _new;
-        public static Func<VariableState, T> New {
+        private static Func<ResourceState, T> _new;
+        public static Func<ResourceState, T> New {
             get {
                 if (_new == null) {
-                    var constructor = typeof(T).GetConstructor(new[] { typeof(VariableState) });
-                    var parameter = Expression.Parameter(typeof(VariableState), "variableState");
+                    var constructor = typeof(T).GetConstructor(new[] { typeof(ResourceState) });
+                    var parameter = Expression.Parameter(typeof(ResourceState), "variableState");
                     var constructorExpression = Expression.New(constructor, parameter);
-                    _new = Expression.Lambda<Func<VariableState, T>>(constructorExpression, parameter).Compile();
+                    _new = Expression.Lambda<Func<ResourceState, T>>(constructorExpression, parameter).Compile();
                 }
                 return _new;
             }
         }
 
-        public VariableState Instance(VariableState cloneFrom) {
+        public ResourceState Instance(ResourceState cloneFrom) {
             return New(cloneFrom);
         }
     }
 
-    public abstract class VariableState
+    public abstract class ResourceState
     {
         // fields
         private List<object> defaultValues;
@@ -54,7 +54,7 @@ namespace Ei.Runtime
         static Dictionary<Type, IVariableDefinition[]> typeDescriptors = new Dictionary<Type, IVariableDefinition[]>();
         static Dictionary<Type, IVariableStateCreator> stateCreators = new Dictionary<Type, IVariableStateCreator>();
 
-        public VariableState() {
+        public ResourceState() {
             // get type descriptors from cache
             if (!typeDescriptors.ContainsKey(this.GetType())) {
                 var properties = this.GetType().GetProperties().Where(p => p.Name != "Descriptors").ToArray();
@@ -74,30 +74,30 @@ namespace Ei.Runtime
             this.Descriptors = typeDescriptors[this.GetType()];
         }
 
-        public VariableState(IVariableDefinition[] descriptors) {
+        public ResourceState(IVariableDefinition[] descriptors) {
             this.Descriptors = descriptors;
         }
 
-        public VariableState(VariableState state) {
+        public ResourceState(ResourceState state) {
             this.Descriptors = state.Descriptors;
             this.Merge(state, true);
         }
 
-        public VariableState(VariableInstance[] variables): this() {
+        public ResourceState(VariableInstance[] variables): this() {
             this.Parse(variables);
         }
 
 
         // public methods
 
-        public VariableState Parse(VariableInstance[] properties) {
+        public ResourceState Parse(VariableInstance[] properties) {
             foreach (var property in properties) {
                 this.GetVariableDefiniton(property.Name).Parse(this, property.Value);
             }
             return this;
         }
 
-        public void Merge(VariableState state, bool clone = false ) {
+        public void Merge(ResourceState state, bool clone = false ) {
             foreach (var variable in state.Descriptors) {
                 // only merge non default values
                 if (clone 
@@ -127,7 +127,7 @@ namespace Ei.Runtime
                 .ToArray();
         }
 
-        public virtual VariableState Clone(VariableState state = null) {
+        public virtual ResourceState Clone(ResourceState state = null) {
             // IMPORTANT: for bigger performance, inherited methods can override clone behaviours
             // and set values manually
 

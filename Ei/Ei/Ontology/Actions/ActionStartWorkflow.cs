@@ -9,15 +9,15 @@ namespace Ei.Ontology.Actions
     {
 
         private readonly ActionJoinWorkflow joinAction;
-        private readonly VariableState parameters;
+        private readonly ResourceState parameters;
 
-        public ActionStartWorkflow(string id, Institution ei, ActionJoinWorkflow joinAction, VariableState parameters) : base(ei, id)
+        public ActionStartWorkflow(string id, Institution ei, ActionJoinWorkflow joinAction, ResourceState parameters) : base(ei, id)
         {
             this.joinAction = joinAction;
             this.parameters = parameters;
         }
 
-        protected override IActionInfo PerformAction(Governor agent, Connection connection, VariableState parameters)
+        protected override IActionInfo PerformAction(Governor agent, Connection connection, ResourceState parameters)
         {
             // launch a new instance of the workflow
             var wf = this.joinAction.Create(agent, this.parameters);

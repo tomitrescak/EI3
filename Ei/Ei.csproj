@@ -73,7 +73,7 @@
     <Compile Include="Ei\Runtime\AgentExecutor.cs" />
     <Compile Include="Ei\Runtime\VariableDefinition.cs" />
     <Compile Include="Ei\Runtime\VariableInstance.cs" />
-    <Compile Include="Ei\Runtime\VariableState.cs" />
+    <Compile Include="Ei\Runtime\Resources.cs" />
     <Compile Include="Ei\Runtime\Executor.cs" />
     <Compile Include="Ei\Runtime\Expression.cs" />
     <Compile Include="Ei\Runtime\IActionInfo.cs" />

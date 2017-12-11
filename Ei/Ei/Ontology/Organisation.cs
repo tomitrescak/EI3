@@ -13,7 +13,7 @@ namespace Ei.Ontology
         {
         }
 
-        public abstract VariableState CreateState();
+        public abstract ResourceState CreateState();
 
     }
 }

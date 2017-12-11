@@ -15,8 +15,8 @@ namespace Ei.Runtime
         void NotifyWorkflowParameterChanged(string name, string workflowId, int workflowInstanceId, string parameterName, object value);
         void NotifyAgentParameterChanged(string name, string parameterName, object value);
         void Blocked();
-        void NotifyActivity(string name, string workflowId, int workflowInstanceId, string agentName, string activityId, VariableState parameters);
-        void NotifyActivityFailed(string name, string id, int instanceId, string agentName, string activityId, VariableState values);
+        void NotifyActivity(string name, string workflowId, int workflowInstanceId, string agentName, string activityId, ResourceState parameters);
+        void NotifyActivityFailed(string name, string id, int instanceId, string agentName, string activityId, ResourceState values);
         void Split(Governor[] clones, bool shallowClone);
         void Joined();
         

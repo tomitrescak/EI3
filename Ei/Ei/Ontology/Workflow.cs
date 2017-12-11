@@ -15,7 +15,7 @@ namespace Ei.Ontology
     public abstract class Workflow : Entity
     {
         #region class WorkflowVariableState
-        public class WorkflowVariableState : VariableState
+        public class WorkflowVariableState : ResourceState
         {
 
             // fields
@@ -201,7 +201,7 @@ namespace Ei.Ontology
                 }
             }
 
-            public void NotifyRoles(IEnumerable<Group> notifyRoles, string agentName, string activityId, VariableState parameters) {
+            public void NotifyRoles(IEnumerable<Group> notifyRoles, string agentName, string activityId, ResourceState parameters) {
                 foreach (var agent in this.agents.ToArray()) {
                     if (agent.IsInGroup(notifyRoles)) {
                         agent.NotifyActivity(this, agentName, activityId, parameters);
@@ -209,7 +209,7 @@ namespace Ei.Ontology
                 }
             }
 
-            public void NotifyAgents(IEnumerable<string> notifyAgents, string name, VariableState parameters) {
+            public void NotifyAgents(IEnumerable<string> notifyAgents, string name, ResourceState parameters) {
                 throw new NotImplementedException();
             }
             //

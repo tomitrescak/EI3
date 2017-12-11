@@ -35,8 +35,8 @@ namespace Ei.Runtime
         {
             public struct Group
             {
-                public VariableState Organisation;
-                public VariableState Role;
+                public ResourceState Organisation;
+                public ResourceState Role;
             } 
             private List<Group> groups;
             public int CreatedInstanceId;
@@ -51,7 +51,7 @@ namespace Ei.Runtime
 
                 this.groups = new List<Group>();
 
-                var addedRoles = new Dictionary<Role, VariableState>();
+                var addedRoles = new Dictionary<Role, ResourceState>();
 
                 foreach (var group in agent.Groups) {
                     if (!addedRoles.ContainsKey(group.Role)) {
@@ -61,7 +61,7 @@ namespace Ei.Runtime
                 }
             }
 
-            public VariableState FindProvider(string name) {
+            public ResourceState FindProvider(string name) {
                 if (this.groups.Count == 1) {
                     return this.groups[0].Role;
                 }
@@ -81,7 +81,7 @@ namespace Ei.Runtime
                 }
             }
 
-            public VariableState Clone(VariableState state) {
+            public ResourceState Clone(ResourceState state) {
                 throw new NotImplementedException();
                 // return this.Clone(state as GovernorVariableState);
             }
@@ -274,7 +274,7 @@ namespace Ei.Runtime
             return result.IsOk ? clone.Move(positionId) : result;
         }
 
-        public IActionInfo Move(string positionId, VariableState parameters = null) {
+        public IActionInfo Move(string positionId, ResourceState parameters = null) {
             var target = this.FindPosition(positionId);
             if (target.Length == 0) {
                 return ActionInfo.StateNotReachable;
@@ -338,7 +338,7 @@ namespace Ei.Runtime
             return result;
         }
 
-        public IActionInfo PerformAction(ActionBase action, VariableState parameters = null) {
+        public IActionInfo PerformAction(ActionBase action, ResourceState parameters = null) {
 
 
             // otherwise we have to find a feasible connection
@@ -585,12 +585,12 @@ namespace Ei.Runtime
             this.callbacks.NotifyWorkflowParameterChanged(this.Name, workflowId, workflowInstanceId, parameterName, value);
         }
 
-        internal void NotifyActivity(Workflow.Instance workflow, string agentName, string activityId, VariableState parameters) {
+        internal void NotifyActivity(Workflow.Instance workflow, string agentName, string activityId, ResourceState parameters) {
             this.callbacks.NotifyActivity(this.Name, workflow.Id, workflow.InstanceId, agentName, activityId, parameters);
             //Console.WriteLine("[CB NotifyActivity] {0},{1},{2},{3},{4}", workflow.Id, workflow.InstanceId, agentName, actionId, string.Join(";", parameters.Select(i => i.ToString()).ToArray()));
         }
 
-        internal void NotifyActivityFailed(Workflow.Instance workflow, string agentName, string activityId, VariableState parameters) {
+        internal void NotifyActivityFailed(Workflow.Instance workflow, string agentName, string activityId, ResourceState parameters) {
             this.callbacks.NotifyActivityFailed(this.Name, workflow.Id, workflow.InstanceId, agentName, activityId, parameters);
             //Console.WriteLine("[CB NotifyActivity] {0},{1},{2},{3},{4}", workflow.Id, workflow.InstanceId, agentName, actionId, string.Join(";", parameters.Select(i => i.ToString()).ToArray()));
         }

@@ -306,7 +306,7 @@ namespace Ei.Tests.Steps
                 It.IsAny<int>(), 
                 fromAgentName, 
                 activityId,
-                It.IsAny<VariableState>()
+                It.IsAny<ResourceState>()
             // It.Is<VariableState>(z => parameters == string.Join(";", z.Select(i => i.ToString())))
             ));
         }  

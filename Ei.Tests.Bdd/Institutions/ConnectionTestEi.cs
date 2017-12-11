@@ -12,9 +12,9 @@ using static Ei.Ontology.Institution;
 namespace Ei.Tests.Bdd.Institutions
 {
     #region class ConnectionTestEi
-    public class ConnectionTestEi : Institution<InstitutionState>
+    public class ConnectionTestEi : Institution<Institution.ResourceState>
     {
-        private InstitutionState state;
+        private ResourceState state;
 
         public ConnectionTestEi() : base("ConnectionTest") {
             // init basic properties
@@ -22,41 +22,29 @@ namespace Ei.Tests.Bdd.Institutions
             this.Description = "Connection Test Description";
 
             // init state
-            this.state = new InstitutionState(this);
+            this.state = new ResourceState(this);
 
             // init organisations
-            this.InitOrganisations();
+            this.AddOrganisations(
+                new DefaultOrganisation()
+            );
 
             // init components
-            this.InitRoles();
+            this.AddRoles(
+                new CitizenRole()
+            );
 
             // init workflows
-            this.InitWorkflows();
+            this.AddWorkflows(
+                new MainWorkflow(this)
+            );
+            this.MainWorkflowId = this.Workflows[0].Id;
 
             // init security
             this.AuthenticationPermissions.Init(new List<AuthorisationInfo> {
                 new AuthorisationInfo(this, "user", null, null, new [] { this.GroupByName(new [] { "Citizen" } )}),
                 new AuthorisationInfo(this, "user", "org", "Default", new [] { this.GroupByName(new [] { "Citizen" } )})
             }, this);
-        }
-
-        // init institutional parts
-
-        private void InitRoles() {
-            var citizenRole = new CitizenRole();
-            this.Roles = new ReadOnlyCollection<Role>(new[] { citizenRole });
-        }
-
-        private void InitOrganisations() {
-            var defaultOrganisation = new DefaultOrganisation("default");
-            this.Organisations = new ReadOnlyCollection<Organisation>(new[] { defaultOrganisation });
-        }
-
-        private void InitWorkflows() {
-            this.MainWorkflowId = "main";
-            this.Workflows = new ReadOnlyCollection<Workflow>(new[] {
-                new MainWorkflow(this)
-            });
         }
 
         // abstract implementation 
@@ -67,20 +55,21 @@ namespace Ei.Tests.Bdd.Institutions
             }
         }
 
-        public override Institution.InstitutionState VariableState { get { return new InstitutionState(this); } }
+        public override Institution.ResourceState Resources { get { return new ResourceState(this); } }
     }
     #endregion
 
     #region class DefaultOrganisation
     public class DefaultOrganisation : Organisation
     {
-        public DefaultOrganisation(string id) : base(id) {
+        public DefaultOrganisation() : base("default") {
             this.Name = "Default";
         }
 
-        public class State : VariableState { }
-        public override VariableState CreateState() {
-            return new State();
+        public class Resources : Ei.Runtime.ResourceState { }
+
+        public override Ei.Runtime.ResourceState CreateState() {
+            return new Resources();
         }
     }
     #endregion
@@ -93,11 +82,11 @@ namespace Ei.Tests.Bdd.Institutions
             this.Description = null;
         }
 
-        public override VariableState CreateState() {
-            return new State();
+        public override Ei.Runtime.ResourceState CreateState() {
+            return new Resources();
         }
 
-        public class State : VariableState
+        public class Resources : Runtime.ResourceState
         {
             public int ParentParameter { get; set; }
         }
@@ -108,9 +97,9 @@ namespace Ei.Tests.Bdd.Institutions
     public class MainWorkflow : Workflow
     {
         // 
-        public class Properties : WorkflowVariableState
+        public class Resources : WorkflowVariableState
         {
-            public Properties(Workflow workflow) : base(workflow) {
+            public Resources(Workflow workflow) : base(workflow) {
             }
         }
 
@@ -135,7 +124,7 @@ namespace Ei.Tests.Bdd.Institutions
         public override Access CreatePermissions { get { return null; } }
 
         public override WorkflowVariableState CreateState() {
-            return new Properties(this);
+            return new Resources(this);
         }
 
         // constructor
@@ -154,7 +143,7 @@ namespace Ei.Tests.Bdd.Institutions
             });
 
             this.Connect(startState, endState)
-                .Condition(new AccessCondition<Institution.InstitutionState, MainWorkflow.Properties, DefaultOrganisation.State, CitizenRole.State, VariableState>()
+                .Condition(new AccessCondition<Institution.ResourceState, Resources, DefaultOrganisation.Resources, CitizenRole.Resources, Runtime.ResourceState>()
                     .Allow(
                         (i, w, o, r, a) => {
                             return r.ParentParameter > 0;
@@ -162,7 +151,7 @@ namespace Ei.Tests.Bdd.Institutions
                      ));
 
             this.Connect(startState, incState)
-                .Condition(new AccessCondition<Institution.InstitutionState, MainWorkflow.Properties, DefaultOrganisation.State, CitizenRole.State, VariableState>()
+                .Condition(new AccessCondition<Institution.ResourceState, Resources, DefaultOrganisation.Resources, CitizenRole.Resources, Runtime.ResourceState>()
                     .Action((i, w, o, r, a) => {
                         r.ParentParameter++;
                  }));

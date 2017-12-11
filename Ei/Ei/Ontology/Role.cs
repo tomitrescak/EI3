@@ -11,6 +11,6 @@ namespace Ei.Ontology
     {
         public Role(string id): base(id) { }
 
-        public abstract VariableState CreateState();
+        public abstract ResourceState CreateState();
     }
 }

@@ -78,7 +78,7 @@ namespace Ei.Ontology
 
                 // apply postconditions
 
-                connection.Access.ApplyPostconditions(workflow.Workflow.Institution.VariableState, workflow.VariableState);
+                connection.Access.ApplyPostconditions(workflow.Workflow.Institution.Resources, workflow.VariableState);
 
                 workflow.State = connection.To;
             }

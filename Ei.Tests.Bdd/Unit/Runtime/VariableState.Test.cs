@@ -12,21 +12,21 @@ namespace Ei.Tests.Bdd.Unit.Runtime
     [TestFixture]
     class VariableState_Test
     {
-        public class OtherVariableState : VariableState
+        public class OtherVariableState : ResourceState
         {
             public int Boo { get; set; }
 
             public OtherVariableState() { }
-            public OtherVariableState(VariableState state) : base(state) { }
+            public OtherVariableState(ResourceState state) : base(state) { }
             public OtherVariableState(VariableInstance[] variables) : base(variables) { }
         }
 
-        public class ParentVariableState : VariableState
+        public class ParentVariableState : ResourceState
         {
             public int Foo { get; set; }
 
             public ParentVariableState() { }
-            public ParentVariableState(VariableState state): base(state) { }
+            public ParentVariableState(ResourceState state): base(state) { }
             public ParentVariableState(VariableInstance[] variables) : base(variables) { }
         }
 
@@ -35,11 +35,11 @@ namespace Ei.Tests.Bdd.Unit.Runtime
             public string Bar { get; set; }
 
             public ChildVariableState() { }
-            public ChildVariableState(VariableState state): base(state) {}
+            public ChildVariableState(ResourceState state): base(state) {}
             public ChildVariableState(VariableInstance[] variables) : base(variables) { }
         }
 
-        public class StateWithAttributes : VariableState
+        public class StateWithAttributes : ResourceState
         {
             [Variable(VariableAccess.Public)]
             public int Public { get; set; }

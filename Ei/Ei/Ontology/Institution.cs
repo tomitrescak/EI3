@@ -13,10 +13,10 @@
 
     public abstract class Institution : Entity, IStateProvider
     {
-        public class InstitutionState : VariableState
+        public class ResourceState : Runtime.ResourceState
         {
             private Institution ei;
-            public InstitutionState(Institution ei) {
+            public ResourceState(Institution ei) {
                 this.ei = ei;
 
             }
@@ -26,28 +26,30 @@
 
         #region Fields
         private int idProvider;
-
+        private List<Role> roles;
+        private List<Organisation> organisations;
+        private List<Workflow> workflows;
         #endregion
 
         #region Properties
 
-        public abstract Institution.InstitutionState VariableState { get; }
+        public abstract Institution.ResourceState Resources { get; }
 
-        public ReadOnlyCollection<Role> Roles { get; protected set; }
+        public ReadOnlyCollection<Role> Roles { get; }
 
-        public ReadOnlyCollection<Organisation> Organisations { get; protected set; }
+        public ReadOnlyCollection<Organisation> Organisations { get; }
 
-        public ReadOnlyCollection<Connection> GlobalConnections { get; protected set; }
+        public ReadOnlyCollection<Connection> GlobalConnections { get; }
 
-        public ReadOnlyCollection<ActionBase> GlobalActions { get; protected set; }
+        public ReadOnlyCollection<ActionBase> GlobalActions { get; }
 
-        public Dictionary<string, string> GlobalFunctions { get; protected set; }
+        public Dictionary<string, string> GlobalFunctions { get; }
 
-        public ReadOnlyCollection<Workflow> Workflows { get; protected set; }
+        public ReadOnlyCollection<Workflow> Workflows { get;}
 
         public string MainWorkflowId { get; protected set; }
 
-        public Security AuthenticationPermissions { get; protected set; }
+        public Security AuthenticationPermissions { get; }
 
         public abstract Institution Instance { get; }
 
@@ -65,6 +67,29 @@
             Log.Info("Institution instantiated ...");
 
             this.AuthenticationPermissions = new Security();
+
+            this.roles = new List<Role>();
+            this.Roles = new ReadOnlyCollection<Role>(this.roles);
+
+            this.organisations = new List<Organisation>();
+            this.Organisations = new ReadOnlyCollection<Organisation>(this.organisations);
+
+            this.workflows = new List<Workflow>();
+            this.Workflows = new ReadOnlyCollection<Workflow>(this.workflows);
+        }
+
+        // constructor helpers
+
+        public void AddRoles(params Role[] role) {
+            this.roles.AddRange(role);
+        }
+
+        public void AddOrganisations(params Organisation[] organisation) {
+            this.organisations.AddRange(organisation);
+        }
+
+        public void AddWorkflows(params Workflow[] workflows) {
+            this.workflows.AddRange(workflows);
         }
 
         // public methods
@@ -145,7 +170,7 @@
         }
     }
 
-    public abstract class Institution<T> : Institution where T : Institution.InstitutionState
+    public abstract class Institution<T> : Institution where T : Institution.ResourceState
     {
         // fields
 
@@ -181,12 +206,12 @@
 
                 this.expressionTimer.Elapsed += (sender, args) => {
                     foreach (var expression in this.Expressions) {
-                        expression((T) this.VariableState);
+                        expression((T)this.Resources);
                     }
                 };
 
                 this.expressionTimer.Start();
             }
         }
-    } 
+    }
 }

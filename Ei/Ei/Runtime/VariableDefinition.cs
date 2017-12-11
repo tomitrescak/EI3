@@ -20,10 +20,10 @@ namespace Ei.Runtime
     string Name { get; }
     object DefaultValue { get; }
     VariableAccess Access { get; }
-    bool CanAccess(Group[] groups, VariableState state);
-    object Value(VariableState state);
-    void Update(VariableState state, object value);
-    void Parse(VariableState state, string value);
+    bool CanAccess(Group[] groups, ResourceState state);
+    object Value(ResourceState state);
+    void Update(ResourceState state, object value);
+    void Parse(ResourceState state, string value);
   }
 
   public class Variable : System.Attribute
@@ -37,7 +37,7 @@ namespace Ei.Runtime
     }
   }
 
-  public struct VariableDefinition<T, V> : IVariableDefinition where V : VariableState
+  public struct VariableDefinition<T, V> : IVariableDefinition where V : ResourceState
   {
     public string Name { get; private set; }
     public VariableAccess Access { get; private set; }
@@ -49,9 +49,9 @@ namespace Ei.Runtime
     private Action<V, T> updater;
     private ParseDelegate parser;
 
-    public VariableDefinition(VariableState state, string name) : this(state, name, default(T), VariableAccess.Public) { }
+    public VariableDefinition(ResourceState state, string name) : this(state, name, default(T), VariableAccess.Public) { }
 
-    public VariableDefinition(VariableState state, string name, T defaultValue, VariableAccess access = VariableAccess.Public) {
+    public VariableDefinition(ResourceState state, string name, T defaultValue, VariableAccess access = VariableAccess.Public) {
       this.Name = name;
       this.Access = access;
       this.Default = defaultValue;
@@ -113,7 +113,7 @@ namespace Ei.Runtime
       get { return this.Default; }
     }
 
-    public object Value(VariableState state) {
+    public object Value(ResourceState state) {
       return this.Value((V)state);
     }
 
@@ -121,14 +121,14 @@ namespace Ei.Runtime
       return this.selector(state);
     }
 
-    public bool CanAccess(Group[] groups, VariableState state) {
+    public bool CanAccess(Group[] groups, ResourceState state) {
       if (this.Access == VariableAccess.Protected) {
         throw new NotImplementedException();
       }
       return this.Access == VariableAccess.Public; // || this.Access.CanAccess(groups, state);
     }
 
-    public void Update(VariableState state, object value) {
+    public void Update(ResourceState state, object value) {
       this.Update((V)state, (T)value);
     }
 
@@ -136,7 +136,7 @@ namespace Ei.Runtime
       this.updater(state, (T)value);
     }
 
-    public void Parse(VariableState state, string value) {
+    public void Parse(ResourceState state, string value) {
       this.Parse((V)state, value);
     }
 

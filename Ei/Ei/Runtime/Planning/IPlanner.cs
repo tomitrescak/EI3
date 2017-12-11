@@ -5,6 +5,6 @@ namespace Ei.Runtime.Planning
 {
     interface IPlanner
     {
-        List<Connection> CreatePlan(Governor agent, VariableState desiredState);
+        List<Connection> CreatePlan(Governor agent, ResourceState desiredState);
     }
 }

@@ -42,7 +42,7 @@
             return this.conditions.Any(c => c.CanAccess(agentState));
         }
 
-        public void ApplyPostconditions(Governor.GovernorVariableState agent, VariableState parameters, bool planningMode = false) {
+        public void ApplyPostconditions(Governor.GovernorVariableState agent, ResourceState parameters, bool planningMode = false) {
             if (this.conditions.Count == 1) {
                 this.conditions[0].ApplyPostconditions(agent, parameters, planningMode);
                 return;
@@ -50,7 +50,7 @@
             this.conditions.Any(c => c.ApplyPostconditions(agent, parameters, planningMode));
         }
 
-        public void ApplyPostconditions(Institution.InstitutionState institutionState, Workflow.WorkflowVariableState workflowState) {
+        public void ApplyPostconditions(Institution.ResourceState institutionState, Workflow.WorkflowVariableState workflowState) {
             if (this.conditions.Count == 1) {
                 this.conditions[0].ApplyPostconditions(institutionState, workflowState);
                 return;
@@ -82,18 +82,18 @@
         /// <param name="agentState"></param>
         public abstract bool CanAccess(Governor.GovernorVariableState agentState);
 
-        public abstract bool ApplyPostconditions(Governor.GovernorVariableState agent, VariableState parameters, bool planningMode = false);
+        public abstract bool ApplyPostconditions(Governor.GovernorVariableState agent, ResourceState parameters, bool planningMode = false);
 
-        public abstract bool ApplyPostconditions(Institution.InstitutionState institutionState, Workflow.WorkflowVariableState workflowState);
+        public abstract bool ApplyPostconditions(Institution.ResourceState institutionState, Workflow.WorkflowVariableState workflowState);
     }
 
 
     public class AccessCondition<I, W, O, G, A> : AccessCondition
-        where I : Institution.InstitutionState
+        where I : Institution.ResourceState
         where W : Workflow.WorkflowVariableState
-        where O : VariableState
-        where G : VariableState
-        where A : VariableState
+        where O : ResourceState
+        where G : ResourceState
+        where A : ResourceState
     {
 
         public delegate bool Precondition(I institutionState, W workflowState, O organisationState, G groupState, A actionParameters = null);
@@ -132,7 +132,7 @@
                 return false;
             }
 
-            internal bool Access(Governor.GovernorVariableState agentState, VariableState actionParameters, bool planningMode) {
+            internal bool Access(Governor.GovernorVariableState agentState, ResourceState actionParameters, bool planningMode) {
 
                 if (this.allow != null) {
                     return this.ApplyConditions(agentState, allow, actionParameters, planningMode);
@@ -146,7 +146,7 @@
                 return this.ApplyConditions(agentState, null, actionParameters, planningMode);
             }
 
-            internal bool Access(Institution.InstitutionState eiState, Workflow.WorkflowVariableState workflowState) {
+            internal bool Access(Institution.ResourceState eiState, Workflow.WorkflowVariableState workflowState) {
 
                 if (this.allow != null) {
                     return this.ApplyConditions(eiState, workflowState, allow);
@@ -162,12 +162,12 @@
 
             // private methods
 
-            private bool ApplyConditions(Governor.GovernorVariableState state, Precondition condition, VariableState actionParameters, bool planningMode) {
+            private bool ApplyConditions(Governor.GovernorVariableState state, Precondition condition, ResourceState actionParameters, bool planningMode) {
                 foreach (var group in state.Roles) {
                     if (group.Organisation is O && group.Role is G) {
                         // check first successful condition
                         if (condition == null || condition(
-                                (I)state.Governor.Manager.Ei.VariableState,
+                                (I)state.Governor.Manager.Ei.Resources,
                                 (W)state.Governor.Workflow.VariableState,
                                 (O)group.Organisation,
                                 (G)group.Role,
@@ -176,7 +176,7 @@
                             // apply action
                             if (this.action != null && (!planningMode || !this.HasRuntimeParameters)) {
                                 this.action(
-                                    (I)state.Governor.Manager.Ei.VariableState,
+                                    (I)state.Governor.Manager.Ei.Resources,
                                     (W)state.Governor.Workflow.VariableState,
                                     (O)group.Organisation,
                                     (G)group.Role,
@@ -190,7 +190,7 @@
                 return false;
             }
 
-            private bool ApplyConditions(Institution.InstitutionState eiState, Workflow.WorkflowVariableState workflowState, Precondition condition) {
+            private bool ApplyConditions(Institution.ResourceState eiState, Workflow.WorkflowVariableState workflowState, Precondition condition) {
                 // check first successful condition
                 if (condition == null || condition((I)eiState, (W)workflowState, null, null, null)) {
                     // apply action
@@ -203,11 +203,11 @@
                 return false;
             }
 
-            private bool CheckConditions(Governor.GovernorVariableState state, Precondition condition, VariableState actionParameters = null) {
+            private bool CheckConditions(Governor.GovernorVariableState state, Precondition condition, ResourceState actionParameters = null) {
                 foreach (var group in state.Roles) {
                     if (group.Organisation is O && group.Role is G) {
                         if (condition(
-                            (I)state.Governor.Manager.Ei.VariableState,
+                            (I)state.Governor.Manager.Ei.Resources,
                             (W)state.Governor.Workflow.VariableState,
                             (O)group.Organisation,
                             (G)group.Role,
@@ -254,14 +254,14 @@
 
         // postconditions
 
-        public override bool ApplyPostconditions(Governor.GovernorVariableState agentState, VariableState actionParameters, bool planningMode) {
+        public override bool ApplyPostconditions(Governor.GovernorVariableState agentState, ResourceState actionParameters, bool planningMode) {
             if (this.conditions.Count == 0) {
                 return false;
             }
             return this.conditions.Any(c => c.Access(agentState, actionParameters, planningMode));
         }
 
-        public override bool ApplyPostconditions(Institution.InstitutionState institutionState, Workflow.WorkflowVariableState workflowState) {
+        public override bool ApplyPostconditions(Institution.ResourceState institutionState, Workflow.WorkflowVariableState workflowState) {
             if (this.conditions.Count == 0) {
                 return false;
             }
@@ -280,8 +280,8 @@
 
     }
 
-    public class AccessCondition<I, W> : AccessCondition<I, W, VariableState, VariableState, VariableState>
-        where I : Institution.InstitutionState
+    public class AccessCondition<I, W> : AccessCondition<I, W, ResourceState, ResourceState, ResourceState>
+        where I : Institution.ResourceState
         where W : Workflow.WorkflowVariableState
     {
 

@@ -7,7 +7,7 @@ namespace Ei.Ontology.Actions
 {
     public abstract class ActionMessage: ActionBase
     {
-        private VariableState parameters;
+        private ResourceState parameters;
 
         // constructor
 
@@ -27,7 +27,7 @@ namespace Ei.Ontology.Actions
 
         public ReadOnlyCollection<string> NotifyAgents { get; }
 
-        protected override IActionInfo PerformAction(Governor performer, Connection connection, VariableState parameters)
+        protected override IActionInfo PerformAction(Governor performer, Connection connection, ResourceState parameters)
         {
             this.parameters = parameters;
             return ActionInfo.Ok;

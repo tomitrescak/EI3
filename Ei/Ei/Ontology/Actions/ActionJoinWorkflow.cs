@@ -13,7 +13,7 @@ namespace Ei.Ontology.Actions
     {
         // parameters
 
-        public class Parameters : VariableState
+        public class Parameters : ResourceState
         {
             // fields
             public int InstanceId { get; set; }
@@ -63,7 +63,7 @@ namespace Ei.Ontology.Actions
 //            this.WorkflowId = workflow.Id;
 //        }
 
-        public Workflow.Instance Create(Governor performer, VariableState parameters = null)
+        public Workflow.Instance Create(Governor performer, ResourceState parameters = null)
         {
  //           Console.WriteLine("[THREAD] Creating workflow ...: " + Thread.CurrentThread.ManagedThreadId);
 
@@ -88,7 +88,7 @@ namespace Ei.Ontology.Actions
             return newWorkflow;
         }
 
-        protected override IActionInfo PerformAction(Governor agent, Connection connection, VariableState parameters)
+        protected override IActionInfo PerformAction(Governor agent, Connection connection, ResourceState parameters)
         {
             var workflow = ei.GetWorkflow(this.WorkflowId);
             var joinParameters = parameters as ActionJoinWorkflow.Parameters;
@@ -149,7 +149,7 @@ namespace Ei.Ontology.Actions
             return this.Workflows.Select(w => w.GetInfo(governor)).ToArray();
         }
 
-        public override VariableState ParseParameters(VariableInstance[] properties) {
+        public override ResourceState ParseParameters(VariableInstance[] properties) {
             return new Parameters().Parse(properties);
         }
     }

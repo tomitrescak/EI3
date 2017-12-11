@@ -90,7 +90,7 @@ namespace Ei.Ontology
 
         // methods
 
-        public IActionInfo Pass(Governor agent, VariableState parameters = null) {
+        public IActionInfo Pass(Governor agent, ResourceState parameters = null) {
             if (!this.CanPass(agent.VariableState)) {
                 return ActionInfo.FailedPreconditions;
             }
@@ -163,7 +163,7 @@ namespace Ei.Ontology
         }
 
 
-        public void ApplyPostconditions(Governor.GovernorVariableState state, VariableState actionParameters, bool planningMode = false) {
+        public void ApplyPostconditions(Governor.GovernorVariableState state, ResourceState actionParameters, bool planningMode = false) {
             if (this.Access == null) {
                 return;
             }
