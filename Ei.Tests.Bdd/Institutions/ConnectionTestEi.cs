@@ -146,13 +146,14 @@ namespace Ei.Tests.Bdd.Institutions
             // add states
             var startState = new State("start", "Start", "", this, false, 0, null, null, true, false);
             var endState = new State("end", "End", "", this, false, 0, null, null, false, true);
+            var incState = new State("inc", "Inc", "", this);
 
             this.states.AddRange(new[] {
                 startState,
                 endState
             });
 
-            var connection = new Connection(ei, startState, endState, null)
+            this.Connect(startState, endState)
                 .Condition(new AccessCondition<Institution.InstitutionState, MainWorkflow.Properties, DefaultOrganisation.State, CitizenRole.State, VariableState>()
                     .Allow(
                         (i, w, o, r, a) => {
@@ -160,7 +161,14 @@ namespace Ei.Tests.Bdd.Institutions
                         }
                      ));
 
-            
+            this.Connect(startState, incState)
+                .Condition(new AccessCondition<Institution.InstitutionState, MainWorkflow.Properties, DefaultOrganisation.State, CitizenRole.State, VariableState>()
+                    .Action((i, w, o, r, a) => {
+                        r.ParentParameter++;
+                 }));
+
+            this.Connect(incState, startState);
+
 
 
             // IMPORTANT: this needs to be called to initialise connections

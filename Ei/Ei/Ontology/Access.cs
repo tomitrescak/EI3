@@ -37,7 +37,7 @@
 
         public bool CanAccess(Governor.GovernorVariableState agentState) {
             if (this.conditions.Count == 1) {
-                this.conditions[0].CanAccess(agentState);
+                return this.conditions[0].CanAccess(agentState);
             }
             return this.conditions.Any(c => c.CanAccess(agentState));
         }
@@ -45,6 +45,7 @@
         public void ApplyPostconditions(Governor.GovernorVariableState agent, VariableState parameters, bool planningMode = false) {
             if (this.conditions.Count == 1) {
                 this.conditions[0].ApplyPostconditions(agent, parameters, planningMode);
+                return;
             }
             this.conditions.Any(c => c.ApplyPostconditions(agent, parameters, planningMode));
         }
@@ -52,6 +53,7 @@
         public void ApplyPostconditions(Institution.InstitutionState institutionState, Workflow.WorkflowVariableState workflowState) {
             if (this.conditions.Count == 1) {
                 this.conditions[0].ApplyPostconditions(institutionState, workflowState);
+                return;
             }
             this.conditions.Any(c => c.ApplyPostconditions(institutionState, workflowState));
         }
@@ -237,6 +239,11 @@
 
         public AccessCondition<I, W, O, G, A> Allow(Precondition allow, Postcondition action = null) {
             this.conditions.Add(new Condition(allow, null, action));
+            return this;
+        }
+
+        public AccessCondition<I, W, O, G, A> Action(Postcondition action = null) {
+            this.conditions.Add(new Condition(null, null, action));
             return this;
         }
 

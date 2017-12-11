@@ -15,14 +15,17 @@ Scenario: Successfull connection, Agent in and out
 	Then Logs 'EnteredWorkflow' with 'user;main;Main'
 	Then Agent 'user' notifies workflow entry with id 'main' and name 'Main'
 	Then Agent 'user' cannot move to 'end'
-	Then Agent 'user' moves to 'incrementParent'
-	Then Agent 'user' moves to 'end'
-	Then Logs 'ChangedState' with 'user;2;1;0'
-	Then Agent 'user' notifies change position to '2' in workflow '1'
-	Then Logs 'ExitedWorkflow' with 'user;1;Main;;'
-	Then Agent 'user' notifies workflow exit 'Main' id '1' to 'null' id 'null'
-	Then Logs 'ExitedInstitution' with 'user;cf5bb5f9-5a6a-4999-94ea-eeffd8c3d5d4;Institution'
-	Then Agent 'user' notifies institution exit 'Institution' id 'cf5bb5f9-5a6a-4999-94ea-eeffd8c3d5d4' 
+	
+	When Agent 'user' moves to 'inc'
+	Then Agent 'user' int parameter 'ParentParameter' is equal to '1'
+	And Logs 'ChangedState' with 'user;inc;main;0'
+
+	When Agent 'user' moves to 'start'
+	When Agent 'user' moves to 'end'
+	Then Logs 'ExitedWorkflow' with 'user;main;Main;;'
+	Then Agent 'user' notifies workflow exit 'Main' id 'main' to 'null' id 'null'
+	Then Logs 'ExitedInstitution' with 'user;ConnectionTest;Connection Test'
+	Then Agent 'user' notifies institution exit 'Connection Test' id 'ConnectionTest' 
 	Then Institution has '0' agents     
 	
 Scenario: Role inherits properties from parent
