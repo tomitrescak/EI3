@@ -14,16 +14,15 @@ namespace Ei.Ontology
 
     public abstract class Workflow : Entity
     {
-        #region class ResourceState
-        public class ResourceState : Runtime.ResourceState
+        #region class WorkflowState
+        public class WorkflowState : Runtime.ResourceState
         {
-
             // fields
 
             private int agentCount;
-            private Governor.ResourceState last;
-            private Governor.ResourceState owner;
-            private Workflow workflow;
+            private Governor.GovernorState last;
+            private Governor.GovernorState owner;
+            // private Workflow workflow;
 
             // properties
 
@@ -37,7 +36,7 @@ namespace Ei.Ontology
                 }
             }
 
-            public Governor.ResourceState Last {
+            public Governor.GovernorState Last {
                 get {
                     return last;
                 }
@@ -47,7 +46,7 @@ namespace Ei.Ontology
                 }
             }
 
-            public Governor.ResourceState Owner {
+            public Governor.GovernorState Owner {
                 get {
                     return owner;
                 }
@@ -59,9 +58,9 @@ namespace Ei.Ontology
 
             // ctors
 
-            public ResourceState(Workflow workflow) {
-                this.workflow = workflow;
-            }
+            //public ResourceState(Workflow workflow) {
+            //    this.workflow = workflow;
+            //}
 
             // methods
 
@@ -77,7 +76,7 @@ namespace Ei.Ontology
             private WorkflowPosition state;
             private readonly List<Governor> agents;
             private Workflow workflow;
-            private ResourceState resources;
+            private WorkflowState resources;
 
             // helper properties
 
@@ -97,7 +96,7 @@ namespace Ei.Ontology
 
             // properties
 
-            public ResourceState Resources { get { return this.resources; } }
+            public WorkflowState Resources { get { return this.resources; } }
 
             public ReadOnlyCollection<Governor> Agents { get; }
 
@@ -144,7 +143,7 @@ namespace Ei.Ontology
                 this.state = this.workflow.Start;
 
                 // init state
-                this.resources = this.workflow.CreateState();
+                this.resources = (WorkflowState) this.workflow.State.Clone();
                 this.Resources.AgentCount = 0;
                 this.Resources.Last = null;
                 this.Resources.Owner = null;
@@ -160,6 +159,13 @@ namespace Ei.Ontology
                     this.Resources.FilterByAccess(agent));
             }
 
+            public void Close() {
+                for (var i = this.Agents.Count - 1; i >= 0; i--) {
+                    // also remove all agents that can be removed
+                    this.Agents[i].ExitWorkflow();
+                }
+                this.Workflow.RemoveInstance(this.InstanceId);
+            }
 
             public bool Join(Governor governor) {
                 var state = this.State as State;
@@ -309,13 +315,24 @@ namespace Ei.Ontology
                 }
             }
         }
+
+        private void RemoveInstance(int instanceId) {
+            this.instances.Remove(instanceId);
+        }
         #endregion
 
         // fields
         private bool initialised;
         private Institution institution;
         private List<State> openStates;
-        private Dictionary<int, Instance> instances;
+        private readonly Dictionary<int, Instance> instances;
+        private readonly List<Connection> connections;
+        private readonly List<State> states;
+        private readonly List<ActionBase> actions;
+        private Access joinPermissions;
+        private Access joinPermissionsOnWorkflowState;
+        private Access joinPermissionsOnAgentState;
+
         private int lastIndex;
 
         // properties
@@ -336,15 +353,9 @@ namespace Ei.Ontology
 
         // abstract
 
-        protected abstract List<Connection> WorkflowConnections { get; }
+        public Access JoinPermissions { get { return this.joinPermissions; } }
 
-        protected abstract List<State> WorkflowStates { get; }
-
-        protected abstract List<ActionBase> WorkflowActions { get; }
-
-        public abstract Access CreatePermissions { get; }
-
-        public abstract ResourceState CreateState();
+        public virtual WorkflowState State { get; protected set; }
 
         public abstract bool Stateless { get; }
 
@@ -356,16 +367,40 @@ namespace Ei.Ontology
             this.institution = institution;
             this.lastIndex = 0;
             this.instances = new Dictionary<int, Instance>();
+
+            this.connections = new List<Connection>();
+            this.Connections = new ReadOnlyCollection<Connection>(this.connections);
+            this.states = new List<State>();
+            this.States = new ReadOnlyCollection<State>(this.states);
+            this.actions = new List<ActionBase>();
+            this.Actions = new ReadOnlyCollection<ActionBase>(actions);
+            this.State = new WorkflowState();
+        }
+
+        public Access AddJoinPermissions(AccessCondition condition) {
+            if (this.joinPermissions == null) {
+                this.joinPermissions = new Access();
+            }
+            this.joinPermissions.Add(condition);
+            return this.joinPermissions;
+        }
+
+        public void AddStates(params State[] states) {
+            this.states.AddRange(states);
+        }
+
+        public void AddActions(params ActionBase[] actions) {
+            this.actions.AddRange(actions);
         }
 
         public Connection Connect(WorkflowPosition from, WorkflowPosition to, ActionBase action = null) {
-            return new Connection(this.Institution, from, to, null);
+            var conn = new Connection(this.Institution, from, to, action);
+            this.connections.Add(conn);
+            return conn;
         }
 
         public void Init() {
-            this.Connections = new ReadOnlyCollection<Connection>(this.WorkflowConnections);
-            this.States = new ReadOnlyCollection<State>(this.WorkflowStates);
-            this.Actions = new ReadOnlyCollection<ActionBase>(this.WorkflowActions);
+            
 
             // init states
             if (this.States != null) {
@@ -399,18 +434,19 @@ namespace Ei.Ontology
             // 3. connections open OUT are connected TO any open state 
 
             if (this.Connections != null) {
-                foreach (var conn in this.Connections) {
+                for (var i=this.connections.Count - 1; i>=0; i--) {
+                    var conn = this.Connections[i];
                     if (conn.OpenIn && conn.OpenOut) {
                         this.openStates.ForEach(w => {
                             var c = conn.Clone(w, w);
-                            this.WorkflowConnections.Add(c);
+                            this.connections.Add(c);
                         });
                     }
                     else if (conn.OpenIn) {
                         this.openStates.ForEach(w => {
                             if (w != conn.To) {
                                 var c = conn.Clone(w, conn.To);
-                                this.WorkflowConnections.Add(c);
+                                this.connections.Add(c);
                             }
                         });
                     }
@@ -418,7 +454,7 @@ namespace Ei.Ontology
                         this.openStates.ForEach(w => {
                             if (w != conn.From) {
                                 var c = conn.Clone(conn.From, w);
-                                this.WorkflowConnections.Add(c);
+                                this.connections.Add(c);
                             }
                         });
                     }
@@ -427,7 +463,10 @@ namespace Ei.Ontology
         }
 
         public Workflow.Instance GetInstance(int id) {
-            return this.instances[id];
+            if (this.instances.ContainsKey(id)) {
+                return this.instances[id];
+            }
+            return null;
         }
 
         public Workflow.Instance StartWorkflow(Workflow.Instance parent = null) {

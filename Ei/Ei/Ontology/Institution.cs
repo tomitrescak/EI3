@@ -13,10 +13,10 @@
 
     public abstract class Institution : Entity, IStateProvider
     {
-        public class ResourceState : Runtime.ResourceState
+        public class InstitutionState : Runtime.ResourceState
         {
             private Institution ei;
-            public ResourceState(Institution ei) {
+            public InstitutionState(Institution ei) {
                 this.ei = ei;
 
             }
@@ -33,7 +33,7 @@
 
         #region Properties
 
-        public abstract Institution.ResourceState Resources { get; }
+        public abstract Institution.InstitutionState Resources { get; }
 
         public ReadOnlyCollection<Role> Roles { get; }
 
@@ -101,7 +101,10 @@
         }
 
         public Workflow.Instance CreateWorkflow(string id, Workflow.Instance parentWorkflow) {
-            var workflow = this.Workflows.First(w => w.Id == id);
+            var workflow = this.Workflows.FirstOrDefault(w => w.Id == id);
+            if (workflow == null) {
+                throw new Exception("This workflow does not exist: " + id);
+            }
             return workflow.StartWorkflow(parentWorkflow);
         }
 
@@ -115,7 +118,7 @@
                 this.Roles.FirstOrDefault(w => w.Id == roleId);
         }
 
-        public Group GroupByName(string[] role) {
+        public Group GroupByName(params string[] role) {
             if (role.Length == 1) {
 
                 if (this.Organisations.Count == 0) {
@@ -148,11 +151,22 @@
             return null;
         }
 
+        public Group[] RolesByName(params string[] roleNames) {
+            var roleList = new Group[roleNames.Length / 2];
+            for (int i = 0; i < roleNames.Length / 2; i++) {
+                // in case there is only one organisation we allow users to specify only a role with no organisation
+                var orgRole = this.GroupByName(roleNames[i*2], roleNames[i * 2 + 1]);
+                if (orgRole == null) return null;
+                roleList[i] = orgRole;
+            }
+            return roleList;
+        }
+
         public Group[] RolesByName(string[][] roleNames) {
             var roleList = new Group[roleNames.Length];
             for (int i = 0; i < roleNames.Length; i++) {
                 // in case there is only one organisation we allow users to specify only a role with no organisation
-                var orgRole = this.GroupByName(roleNames[i]);
+                var orgRole = this.GroupByName(roleNames[i][0], roleNames[i][1]);
                 if (orgRole == null) return null;
                 roleList[i] = orgRole;
             }
@@ -170,7 +184,7 @@
         }
     }
 
-    public abstract class Institution<T> : Institution where T : Institution.ResourceState
+    public abstract class Institution<T> : Institution where T : Institution.InstitutionState
     {
         // fields
 

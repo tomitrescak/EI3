@@ -94,11 +94,11 @@ namespace Ei.Ontology
 
     // finding connections
 
-    public Connection[] ViableTransitions(Governor.ResourceState agent) {
+    public Connection[] ViableTransitions(Governor.GovernorState agent) {
       return this.ViableTransitions(agent.Governor.Groups, agent);
     }
 
-    public Connection[] ViableTransitions(Group[] groups, Governor.ResourceState state) {
+    public Connection[] ViableTransitions(Group[] groups, Governor.GovernorState state) {
       return this.outs.Where(w => w.To is Transition && w.CanPass(state)).ToArray();
     }
 
@@ -106,7 +106,7 @@ namespace Ei.Ontology
       return this.ViableConnections(agent.Groups, agent.Resources);
     }
 
-    public Connection[] ViableConnections(Group[] groups, Governor.ResourceState state) {
+    public Connection[] ViableConnections(Group[] groups, Governor.GovernorState state) {
       return this.outs.Where(w => w.CanPass(state)).ToArray();
     }
 
@@ -118,7 +118,7 @@ namespace Ei.Ontology
       return this.ViableConnections(agent.Groups, agent.Resources, actionId);
     }
 
-    public Connection[] ViableConnections(Group[] groups, Governor.ResourceState state, string actionId) {
+    public Connection[] ViableConnections(Group[] groups, Governor.GovernorState state, string actionId) {
       return this.outs.Where(w => w.CanPass(state) && w.Action != null && w.Action.Id == actionId).ToArray();
     }
 

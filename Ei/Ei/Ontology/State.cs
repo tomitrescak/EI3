@@ -34,12 +34,13 @@ namespace Ei.Ontology
             }
 
             public override IActionInfo EnterPosition() {
-                for (var i = this.Agents.Count - 1; i >= 0; i--) {
-                    // also remove all agents that can be removed
-                    if (this.state.IsEnd && this.state.CanExit(this.Agents[i])) {
-                        this.Agents[i].ExitWorkflow();
-                    }
+                // if we hit the end state finish the instance
+                if (this.state.IsEnd) {
+                    var currentWorkflow = this.Agents[0].Workflow;
+                    currentWorkflow.Close();
+                    return ActionInfo.Ok;
                 }
+                
 
                 // handle timeout
 
@@ -50,7 +51,7 @@ namespace Ei.Ontology
                         timer.Elapsed += this.Timedout;
                     }
                     timer.Stop();
-                    timer.Interval = state.Timeout;
+                    timer.Interval = (state.Timeout / 1000f);
                     timer.Start();
                     timer.Enabled = true;
 
@@ -69,16 +70,17 @@ namespace Ei.Ontology
                 if (connection == null) {
                     throw new ApplicationException("There is no timeout connection!");
                 }
-                if (connection.Access == null || connection.Access.IsEmpty) {
+                if (connection.Access != null && connection.Access.HasPreconditions) {
                     throw new ApplicationException("Timeout connection cannot contain preconditions!");
                 }
-                if (connection.Access.HasActivityParameters || connection.Access.HasAgentParameters) {
+                if (connection.Access != null && (connection.Access.HasActivityParameters || connection.Access.HasAgentParameters)) {
                     throw new ApplicationException("Timeout connections cannot contain agent or action parameters!");
                 }
 
                 // apply postconditions
-
-                connection.Access.ApplyPostconditions(workflow.Workflow.Institution.Resources, workflow.Resources);
+                if (connection.Access != null) {
+                    connection.Access.ApplyPostconditions(workflow.Workflow.Institution.Resources, workflow.Resources);
+                }
 
                 workflow.State = connection.To;
             }
@@ -126,7 +128,7 @@ namespace Ei.Ontology
 
         public override bool CanEnter(Governor agent) {
             // we add default values of parameters we are checking for
-            return this.EntryRules.CanAccess(agent.Resources);
+            return this.EntryRules == null || this.EntryRules.CanAccess(agent.Resources);
         }
 
         public override IActionInfo EnterAgent(Governor agent) {

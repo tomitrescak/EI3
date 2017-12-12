@@ -11,6 +11,16 @@ namespace Ei.Ontology.Transitions
         private bool shallowClone;
         private string[][] names;
 
+        
+        /// <summary>
+        /// Creates a new transition
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        /// <param name="shallow"></param>
+        /// <param name="names">[[toId,name]]</param>
+        /// <param name="workflow"></param>        
         public TransitionSplit(string id, string name, string description, bool shallow, string[][] names, Workflow workflow)
             : base(id, name, description, workflow)
         {

@@ -62,11 +62,20 @@ namespace Ei.Tests.Steps
             var agent = Governors[agentName];
             var result = agent.Object.PerformAction(activityName);
 
-            Assert.AreEqual(InstitutionCodes.Ok, result.Code);
+            Assert.AreEqual(true, result.IsOk, string.Join(",", result.Parameters));
 
             // continue execution
             // agent.Object.Continue();
         }
+
+        [Then(@"Agent '(.*)' cannot perform '(.*)' with '(.*)'")]
+        public void ThenAgentCannotPerformWith(string agentName, string activityName, string code) {
+            var agent = Governors[agentName];
+            var result = agent.Object.PerformAction(activityName);
+
+            Assert.AreEqual(code, result.Code.ToString(), string.Join(",", result.Parameters));
+        }
+
 
         [When(@"Agent '(.*)' joins workflow '(.*)' with '(.*)'")]
         [When(@"Agent '(.*)' performs action '(.*)' with '(.*)'")]
@@ -122,9 +131,25 @@ namespace Ei.Tests.Steps
             }
         }
 
+        [When(@"Clone '(.*)' of '(.*)' moves to '(.*)'")]
+        [Then(@"Clone '(.*)' of '(.*)' moves to '(.*)'")]
+        public void ThenAgentMovesTo(string cloneName, string agentName, string positionId) {
+            var agent = Governors[agentName];
+            var result = agent.Object.Move(cloneName, positionId);
+
+            if (!result.IsAcceptable) {
+                Assert.AreEqual(result.Code, ActionInfo.Ok.Code);
+            }
+        }
+
         [Then(@"Agent '(.*)' fails action '(.*)' with '(.*)'")]
         public void ThenAgentFailsActivityWith(string agentName, string activityName, string activityParameters)
         {
+            this.ThenAgentFailsActivityWithMessage(agentName, activityName, activityParameters, null);
+        }
+
+        [Then(@"Agent '(.*)' fails '(.*)' with '(.*)' and message '(.*)'")]
+        public void ThenAgentFailsActivityWithMessage(string agentName, string activityName, string activityParameters, string message) {
             var agent = Governors[agentName];
 
             // build parameters
@@ -134,11 +159,14 @@ namespace Ei.Tests.Steps
             var result = agent.Object.PerformAction(activityName, parameters);
 
             Assert.AreNotEqual(InstitutionCodes.Ok, result.Code);
+            if (message != null) {
+                Assert.AreEqual(message, string.Join(",", result.Parameters));
+            }
 
             // continue execution
             agent.Object.Continue();
         }
-         
+
 
         [Then(@"Agent '(.*)' parameter '(.*)' is equal to '(.*)'")]
         public void ThenWorkflowHasParameterWithParameterEqualTo(string agentName, string paramName, string propertyValue)
@@ -208,7 +236,18 @@ namespace Ei.Tests.Steps
         public void ThenAgentMovesTo(string agentName, string positionId)
         {
             var agent = Governors[agentName];
-            var result = agent.Object.Move(positionId);  
+            var result = agent.Object.Move(positionId);
+
+            if (!result.IsAcceptable) {
+                Assert.AreEqual(result.Code, ActionInfo.Ok.Code);
+            }
+        }
+
+        [When(@"Agent '(.*)' exits workflow")]
+        [Then(@"Agent '(.*)' exits workflow")]
+        public void ThenAgentExitsWorkflow(string agentName) {
+            var agent = Governors[agentName];
+            var result = agent.Object.ExitWorkflow();
 
             Assert.AreEqual(result.Code, ActionInfo.Ok.Code);
         }
@@ -282,13 +321,12 @@ namespace Ei.Tests.Steps
                 if (Log.IsDebug) Log.Debug("[AGENT ALREADY THERE] " + agent.Object.Name + " - " + agent.Object.Workflow.Id + "." + agent.Object.Position.Id);
                 waiter.Set();
             }
-            catch 
-            {
+            catch {
                 if (Log.IsDebug) Log.Debug("[NO CALL]");
             }
 
             //Console.WriteLine("[WAITING]"); 
-            var result = waiter.WaitOne(2000);
+            var result = waiter.WaitOne(1000);
 
             //Console.WriteLine("[AGENT POSITION 2] " + agent.Object.Name + " - " + agent.Object.Workflow.Id + "." + agent.Object.Port.Action.Id + "." + agent.Object.Port.Id);
 

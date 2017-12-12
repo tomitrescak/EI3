@@ -61,12 +61,12 @@
 
         [When(@"Agent '(.*)' connects to organisation '(.*)'")]
         public void WhenAgentConnectsWithOrganisation(string name, string organisation) {
-            this.WhenAgentConnectsWithOrganisationPassword(name, organisation, null);
+            this.WhenAgentConnectsWithPasswordInOrganisation(name, null, organisation);
         }
 
 
-        [When(@"Agent '(.*)' connects with organisation '(.*)' password '(.*)'")]
-        public void WhenAgentConnectsWithOrganisationPassword(string name, string organisation, string password) {
+        [When(@"Agent '(.*)' connects with '(.*)' to organisation '(.*)'")]
+        public void WhenAgentConnectsWithPasswordInOrganisation(string name, string password, string organisation) {
             var governor = new Mock<Governor>() { CallBase = true };
             var callback = new Mock<IGovernorCallbacks>();
 

@@ -91,25 +91,39 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.Then("Agent \'user\' notifies workflow entry with id \'main\' and name \'Main\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 17
  testRunner.Then("Agent \'user\' cannot move to \'end\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 19
- testRunner.When("Agent \'user\' moves to \'inc\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 20
- testRunner.Then("Agent \'user\' int parameter \'ParentParameter\' is equal to \'1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 21
- testRunner.And("Logs \'ChangedState\' with \'user;inc;main;0\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("Agent \'user\' moves to \'inc\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 22
+ testRunner.Then("Agent \'user\' int parameter \'ParentParameter\' is equal to \'1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 23
- testRunner.When("Agent \'user\' moves to \'start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 24
- testRunner.When("Agent \'user\' moves to \'end\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 25
- testRunner.Then("Logs \'ExitedWorkflow\' with \'user;main;Main;;\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 26
- testRunner.Then("Agent \'user\' notifies workflow exit \'Main\' id \'main\' to \'null\' id \'null\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 27
- testRunner.Then("Logs \'ExitedInstitution\' with \'user;ConnectionTest;Connection Test\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.And("Logs \'ChangedState\' with \'user;inc;main;0\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 28
- testRunner.Then("Agent \'user\' notifies institution exit \'Connection Test\' id \'ConnectionTest\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.When("Agent \'user\' moves to \'inc\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 29
+ testRunner.Then("Agent \'user\' int parameter \'ParentParameter\' is equal to \'0\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 31
+ testRunner.When("Agent \'user\' moves to \'inc\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 32
+ testRunner.Then("Agent \'user\' int parameter \'ParentParameter\' is equal to \'0\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 36
+ testRunner.When("Agent \'user\' moves to \'open\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 37
+ testRunner.When("Agent \'user\' moves to \'inc\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 38
+ testRunner.Then("Agent \'user\' int parameter \'ParentParameter\' is equal to \'3\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 42
+ testRunner.When("Agent \'user\' moves to \'start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 43
+ testRunner.When("Agent \'user\' moves to \'end\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 44
+ testRunner.Then("Logs \'ExitedWorkflow\' with \'user;main;Main;;\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 45
+ testRunner.Then("Agent \'user\' notifies workflow exit \'Main\' id \'main\' to \'null\' id \'null\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 46
+ testRunner.Then("Logs \'ExitedInstitution\' with \'user;ConnectionTest;Connection Test\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 47
+ testRunner.Then("Agent \'user\' notifies institution exit \'Connection Test\' id \'ConnectionTest\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 48
  testRunner.Then("Institution has \'0\' agents", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -120,15 +134,15 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void RoleInheritsPropertiesFromParent()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Role inherits properties from parent", ((string[])(null)));
-#line 31
+#line 50
 this.ScenarioSetup(scenarioInfo);
-#line 32
+#line 51
  testRunner.Given("That institution \'InstitutionStart\' is launched", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 33
+#line 52
  testRunner.When("Agent \'user\' connects to organisation \'Default\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 34
+#line 53
  testRunner.Then("Agent \'user\' plays role \'Citizen\' and belong to the started institution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 35
+#line 54
  testRunner.And("Agent \'user\' has parameter \'ParentParameter\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();

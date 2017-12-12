@@ -16,6 +16,29 @@ namespace Ei.Runtime.Planning
 
     public class GoalState
     {
+        // static method
+
+        public static GoalState[] ParseStringGoals(Governor agent, string goals) {
+            return goals.Split('|').Select(goal => ParseGoal(agent, goal)).ToArray();
+        }
+
+        public static GoalState ParseGoal(Governor agent, string goal) {
+            var str = goal.Split('=');
+
+            // get the agent parameter and use it to parse the string value
+            var name = str[0];
+            var desc = str[1].Split(';');
+            var strategy = desc.Length == 2 ? (StateGoalStrategy)Enum.Parse(typeof(StateGoalStrategy), desc[0]) : StateGoalStrategy.Equal;
+
+            var strexpression = desc.Length == 2 ? desc[1] : desc[0];
+            var provider = agent.Resources.FindProvider(name);
+            var variableDefintion = provider.GetVariableDefiniton(name);
+            var value = variableDefintion.ParseValue(strexpression);
+
+            return new GoalState(str[0], value, strategy, variableDefintion);
+
+        }
+
         // fields
 
         private IVariableDefinition variableProvider;
@@ -37,11 +60,11 @@ namespace Ei.Runtime.Planning
 
         // methods
 
-        public object CurrentValue(Governor.ResourceState state) {
+        public object CurrentValue(Governor.GovernorState state) {
             return this.variableProvider.Value(state.FindProvider(this.Name));
         }
 
-        public float Difference(Governor.ResourceState state) {
+        public float Difference(Governor.GovernorState state) {
             return this.ParameterDifference(this.variableProvider.Value(state.FindProvider(this.Name)));
         }
 
@@ -96,7 +119,7 @@ namespace Ei.Runtime.Planning
             throw new NotImplementedException("This strategy is not implemented");
         }
 
-        public bool IsValid(Governor.ResourceState state)
+        public bool IsValid(Governor.GovernorState state)
         {
             var difference = this.Difference(state);
 
@@ -131,7 +154,7 @@ namespace Ei.Runtime.Planning
         /// <param name="changedState"></param>
         /// <returns>
         /// </returns>
-        public float GetDeltaRatio(Governor.ResourceState startState, Governor.ResourceState changedState)
+        public float GetDeltaRatio(Governor.GovernorState startState, Governor.GovernorState changedState)
         {
             var before = this.Difference(startState);
             var after = this.Difference(changedState);

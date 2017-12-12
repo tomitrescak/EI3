@@ -19,24 +19,12 @@
 
         protected abstract IActionInfo PerformAction(Governor performer, Connection connection, ResourceState parameters);
 
-        protected virtual void Performed(Governor performer) { }
-
         // public methods
 
         public IActionInfo Perform(Governor agent, Connection connection, ResourceState parameters)
         {
             // perform Action
-            var result = this.PerformAction(agent, connection, parameters);
-
-            if (!result.IsAcceptable)
-            {
-                return result;
-            }
-
-            // post process Action, e.g. notify users
-            this.Performed(agent);
-
-            return result;
+            return this.PerformAction(agent, connection, parameters);
         }
 
         public virtual IActionInfo GetInfo()

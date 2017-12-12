@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Ei.Ontology;
+using Ei.Ontology.Actions;
 
 namespace Ei.Runtime.Planning
 {
@@ -18,9 +19,9 @@ namespace Ei.Runtime.Planning
 
         public Connection Arc { get; }
 
-        public Governor.ResourceState Resources { get; set; }
+        public Governor.GovernorState Resources { get; set; }
 
-        public Governor.ResourceState OriginalResources { get; set; }
+        public Governor.GovernorState OriginalResources { get; set; }
 
         public int Visited { get; set; }
 
@@ -59,6 +60,9 @@ namespace Ei.Runtime.Planning
 
         public override string ToString()
         {
+            if (this.Arc.Action != null && this.Arc.Action is ActionExitWorkflow) {
+                return "Exit workflow";
+            }
             var name = this.Arc.ToChainString();
             var parent = this.Parent;
             while (parent != null)

@@ -15,47 +15,38 @@ namespace Ei.Tests.Bdd.Unit.Runtime
         public class OtherVariableState : ResourceState
         {
             public int Boo { get; set; }
-
-            public OtherVariableState() { }
-            public OtherVariableState(ResourceState state) : base(state) { }
-            public OtherVariableState(VariableInstance[] variables) : base(variables) { }
+           
         }
 
         public class ParentVariableState : ResourceState
         {
             public int Foo { get; set; }
-
-            public ParentVariableState() { }
-            public ParentVariableState(ResourceState state): base(state) { }
-            public ParentVariableState(VariableInstance[] variables) : base(variables) { }
+            
         }
 
         public class ChildVariableState : ParentVariableState
         {
             public string Bar { get; set; }
-
-            public ChildVariableState() { }
-            public ChildVariableState(ResourceState state): base(state) {}
-            public ChildVariableState(VariableInstance[] variables) : base(variables) { }
+            
         }
 
         public class StateWithAttributes : ResourceState
         {
-            [Variable(VariableAccess.Public)]
+            [Variable]
             public int Public { get; set; }
 
-            [Variable(VariableAccess.Private, "8")]
+            [Variable(Access = VariableAccess.Private, DefaultValue = "8")]
             public string Private { get; set; }
         }
 
-        [TestCase]
-        public void InitialisesFromAllParameters() {
-            Func<ParentVariableState, int> selector = (ParentVariableState s) => s.Foo;
-            Action<ParentVariableState, int> updater = (ParentVariableState s, int value) => s.Foo = value;
+        //[TestCase]
+        //public void InitialisesFromAllParameters() {
+        //    Func<ParentVariableState, int> selector = (ParentVariableState s) => s.Foo;
+        //    Action<ParentVariableState, int> updater = (ParentVariableState s, int value) => s.Foo = value;
 
-            var prop = new VariableDefinition<int, ParentVariableState>("Test", VariableAccess.Private, 5, int.Parse, selector, updater);
+        //    var prop = new VariableDefinition<int, ParentVariableState>("Test", VariableAccess.Private, 5, int.Parse, selector, updater);
 
-        }
+        //}
 
         [TestCase]
         public void InitialisesPropertyDescriptors() {
@@ -128,8 +119,10 @@ namespace Ei.Tests.Bdd.Unit.Runtime
                 new VariableInstance("Foo", "7"),
                 new VariableInstance("Bar", "9")
             };
-            var childState = new ChildVariableState(variables);
-            
+            var childState = new ChildVariableState();
+            childState.Parse(variables);
+
+
             Assert.AreEqual(7, childState.Foo);
             Assert.AreEqual("9", childState.Bar);
         }

@@ -1,5 +1,6 @@
 ﻿using Ei.Ontology;
 using Ei.Ontology.Actions;
+using Ei.Ontology.Transitions;
 using Ei.Runtime;
 using System;
 using System.Collections.Generic;
@@ -12,17 +13,17 @@ using static Ei.Ontology.Institution;
 namespace Ei.Tests.Bdd.Institutions
 {
     #region class ConnectionTestEi
-    public class ConnectionTestEi : Institution<Institution.ResourceState>
+    public class ConnectionTestEi : Institution<Institution.InstitutionState>
     {
-        private ResourceState state;
+        private InstitutionState state;
 
         public ConnectionTestEi() : base("ConnectionTest") {
             // init basic properties
             this.Name = "Connection Test";
-            this.Description = "Connection Test Description";
+            this.Description = "Connection Test Description";  
 
             // init state
-            this.state = new ResourceState(this);
+            this.state = new InstitutionState(this);
 
             // init organisations
             this.AddOrganisations(
@@ -36,14 +37,15 @@ namespace Ei.Tests.Bdd.Institutions
 
             // init workflows
             this.AddWorkflows(
-                new MainWorkflow(this)
+                new MainWorkflow(this),
+                new SubWorkflow(this)
             );
             this.MainWorkflowId = this.Workflows[0].Id;
 
             // init security
             this.AuthenticationPermissions.Init(new List<AuthorisationInfo> {
                 new AuthorisationInfo(this, "user", null, null, new [] { this.GroupByName(new [] { "Citizen" } )}),
-                new AuthorisationInfo(this, "user", "org", "Default", new [] { this.GroupByName(new [] { "Citizen" } )})
+                new AuthorisationInfo(this, null, "123", "Default", new [] { this.GroupByName(new [] { "Citizen" } )})
             }, this);
         }
 
@@ -55,7 +57,7 @@ namespace Ei.Tests.Bdd.Institutions
             }
         }
 
-        public override Institution.ResourceState Resources { get { return new ResourceState(this); } }
+        public override Institution.InstitutionState Resources { get { return new InstitutionState(this); } }
     }
     #endregion
 
@@ -66,10 +68,10 @@ namespace Ei.Tests.Bdd.Institutions
             this.Name = "Default";
         }
 
-        public class Resources : Ei.Runtime.ResourceState { }
+        public class DefaultResources : Ei.Runtime.ResourceState { }
 
-        public override Ei.Runtime.ResourceState CreateState() {
-            return new Resources();
+        protected override Ei.Runtime.ResourceState CreateState() {
+            return new DefaultResources();
         }
     }
     #endregion
@@ -83,12 +85,24 @@ namespace Ei.Tests.Bdd.Institutions
         }
 
         public override Ei.Runtime.ResourceState CreateState() {
-            return new Resources();
+            return new CitizenResources();
         }
 
-        public class Resources : Runtime.ResourceState
+        public class CitizenResources : Runtime.ResourceState
         {
             public int ParentParameter { get; set; }
+        }
+    }
+    #endregion
+
+    #region AccessFactory
+    static class AccessFactory
+    {
+        public static AccessCondition<Institution.InstitutionState, MainWorkflow.WorkflowState, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, Runtime.ResourceState> MainDefaultCitizen {
+            get { return new AccessCondition<Institution.InstitutionState, MainWorkflow.WorkflowState, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, Runtime.ResourceState>(); }
+        }
+        public static AccessCondition<Institution.InstitutionState, SubWorkflow.Resources, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, Runtime.ResourceState> SubWorkflowDefaultCitizen {
+            get { return new AccessCondition<Institution.InstitutionState, SubWorkflow.Resources, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, Runtime.ResourceState>(); }
         }
     }
     #endregion
@@ -96,54 +110,74 @@ namespace Ei.Tests.Bdd.Institutions
     #region class MainWorkflow
     public class MainWorkflow : Workflow
     {
-        // 
-        public class Resources : ResourceState
+
+
+        // action parameters
+
+        class SubWorkflowParameters : ResourceState
         {
-            public Resources(Workflow workflow) : base(workflow) {
+            int Granite { get; set; }
+
+            public override string Validate() {
+                if (Granite < 0) {
+                    return "Granite needs to be bigger then 0";
+                }
+                return null;
             }
-        }
 
-        // variables must be initialised here as readonly values are done in constructor
-
-        List<Connection> connections = new List<Connection>();
-        List<State> states = new List<State>();
-        List<ActionBase> actions = new List<ActionBase>();
+            public override ResourceState Clone(ResourceState state = null) {
+                // improving performance
+                return new SubWorkflowParameters().Merge(this, true);
+            }
+        } 
 
         // properties
-
-        protected override List<Connection> WorkflowConnections { get { return this.connections; } }
-
-        protected override List<State> WorkflowStates { get { return this.states; } }
-
-        protected override List<ActionBase> WorkflowActions { get { return this.actions; } }
 
         public override bool Stateless { get { return true; } }
 
         public override bool Static { get { return true; } }
-
-        public override Access CreatePermissions { get { return null; } }
-
-        public override ResourceState CreateState() {
-            return new Resources(this);
-        }
 
         // constructor
 
         public MainWorkflow(Institution ei, string id = "main") : base(ei, id) {
             this.Name = "Main";
 
+            // add actions
+            var joinSubworkflow = new ActionJoinWorkflow("joinSubWorkflow", ei, SubWorkflow.ID);
+            var startSubWorkflow = new ActionStartWorkflow("startSubWorkflow", ei, joinSubworkflow, new SubWorkflowParameters());
+
+            this.AddActions(
+                joinSubworkflow,
+                startSubWorkflow
+            );
+
             // add states
             var startState = new State("start", "Start", "", this, false, 0, null, null, true, false);
             var endState = new State("end", "End", "", this, false, 0, null, null, false, true);
             var incState = new State("inc", "Inc", "", this);
 
-            this.states.AddRange(new[] {
+            var s1State = new State("s1", "Left", "", this);
+            var s2State = new State("s2", "Right", "", this);
+            var joinedState = new State("joined", "Joined", "", this);
+
+            var multiState = new State("actions", "Actions", "", this);
+            var openState = new State("open", "Open", "", this, true);
+            var workflowState = new State("workflow", "Workflow", "", this);
+            var split = new TransitionSplit("split", "Split", "", true, new[] { new[] { "s1", "Left" }, new[] { "s2", "Right" } }, this);
+            var join = new TransitionJoin("join", "Join", "", this);
+      
+            this.AddStates(
                 startState,
-                endState
-            });
+                endState,
+                incState,
+                multiState,
+                openState
+            );
+
+            // add connections
 
             this.Connect(startState, endState)
-                .Condition(new AccessCondition<Institution.ResourceState, Resources, DefaultOrganisation.Resources, CitizenRole.Resources, Runtime.ResourceState>()
+                .Condition(AccessFactory.MainDefaultCitizen
                     .Allow(
                         (i, w, o, r, a) => {
                             return r.ParentParameter > 0;
@@ -151,14 +185,133 @@ namespace Ei.Tests.Bdd.Institutions
                      ));
 
             this.Connect(startState, incState)
-                .Condition(new AccessCondition<Institution.ResourceState, Resources, DefaultOrganisation.Resources, CitizenRole.Resources, Runtime.ResourceState>()
+                .Condition(AccessFactory.MainDefaultCitizen
                     .Action((i, w, o, r, a) => {
                         r.ParentParameter++;
-                 }));
+                    }));
+
+            this.Connect(incState, incState)
+                .Condition(AccessFactory.MainDefaultCitizen
+                    .Action(
+                        (i, w, o, r, a) => {
+                            return r.ParentParameter == 0;
+                        },
+                        (i, w, o, r, a) => {
+                            r.ParentParameter += 10;
+                        })
+                    .Action((i, w, o, r, a) => {
+                        return r.ParentParameter > 0;
+                    }, (i, w, o, r, a) => {
+                        r.ParentParameter = 0;
+                    }));
 
             this.Connect(incState, startState);
+            this.Connect(incState, null);
+            this.Connect(null, incState)
+                .Condition(AccessFactory.MainDefaultCitizen
+                    .Action((i, w, o, r, a) => {
+                        r.ParentParameter=3;
+                    })
+                );
 
+            this.Connect(startState, startState, startSubWorkflow);
+            this.Connect(startState, incState, joinSubworkflow);
 
+            // check joins
+            this.Connect(incState, split);
+            this.Connect(split, s1State);
+            this.Connect(split, s2State);
+            this.Connect(s1State, join);
+            this.Connect(s2State, join);
+            this.Connect(join, joinedState);
+
+            // IMPORTANT: this needs to be called to initialise connections
+            this.Init();
+        }
+    }
+    #endregion
+
+    #region class SubWorkflow
+    public class SubWorkflow : Workflow {
+        public const string ID = "subWorkflow";
+
+        #region class Resources
+        public class Resources : WorkflowState {
+            public int Stones { get; set; }
+        }
+        private Resources resources = new Resources();
+        #endregion
+
+        class SendActionParameters : WorkflowState {
+            public int Stones { get; set; }
+            public int Weight { get; set; }
+
+            public override string Validate() {
+                if (Stones == 0) {
+                    return string.Format("Stones: Value Required", this.Stones);
+                }
+                if (Weight > 10) {
+                    return string.Format("Weight needs to be max 10", this.Weight);
+                }
+                return null;
+            }
+        }
+
+        // properties
+
+        public override bool Stateless { get { return false; } }
+
+        public override bool Static { get { return false; } }
+
+        public override WorkflowState State { get { return this.resources; } }
+
+        // constructor
+
+        public SubWorkflow(Institution ei) : base(ei, SubWorkflow.ID) {
+            this.Name = "Main";
+
+            // define actions
+
+            var sendAction = new ActionMessage("send", ei, new SendActionParameters(), ei.RolesByName("Default", "Citizen"), null);
+            var timeout = new ActionTimeout("timeout", ei);
+
+            this.AddActions(
+                sendAction
+            );
+
+            // add states
+
+            var startState = new State("start", "Start", "", this, false, 0, null, null, true, false);
+            var waitState = new State("wait", "Wait", "", this, false, 1);
+            var midState = new State("mid", "Mid", "", this);
+            var yieldState = new State("yield", "Yield", "", this);
+            var endState = new State("end", "End", "", this, false, 0, null, null, false, true);
+
+            this.AddStates(
+                startState,
+                endState
+            );
+
+            // define connections
+
+            this.Connect(startState, midState, sendAction)
+                .Condition(new AccessCondition<Institution.InstitutionState, SubWorkflow.Resources, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, SendActionParameters>()
+                    .Action((i, w, o, r, a) => {
+                        w.Stones = a.Stones;
+                    }));
+
+            this.Connect(midState, waitState);
+            this.Connect(waitState, yieldState, timeout);
+            this.Connect(yieldState, endState);
+
+            // define constraints
+
+            this.AddJoinPermissions(AccessFactory.SubWorkflowDefaultCitizen
+                .Allow((i, w, o, r, a) => {
+                    return w.AgentCount < 2 || w.Stones > 2;
+                })    
+            );
+                
 
             // IMPORTANT: this needs to be called to initialise connections
             this.Init();

@@ -36,6 +36,7 @@ namespace Ei.Runtime.Planning
         private int checkedNodes;
         private Governor agent;
         private int visited;
+        private AStarNode parent;
 
         //public IHeuristics Heuristics { get; set; }
 
@@ -67,9 +68,8 @@ namespace Ei.Runtime.Planning
             // Ei.Logs.if (Log.IsDebug) Log.Debug(LogSource, message);
         }
 
-        internal List<AStarNode> Plan(IHeuristics heuristics, IStrategy strategy, ICostManager costManager, int maxPlanLegth = 20)
+        internal List<AStarNode> Plan(IHeuristics heuristics, IStrategy strategy, ICostManager costManager, int cycles = 2, int maxPlanLegth = 4)
         {
-            this.visited = 1;
             this.reverse = true; // !(strategy is BackwardSearch); // we will reverse plan only if it is a forward search
             this.heuristics = heuristics;
             this.strategy = strategy;
@@ -111,7 +111,19 @@ namespace Ei.Runtime.Planning
                 // the node in openset having the lowest f_score[] value
                 currentNode = this.Storage.RemoveCheapestOpenNode();
                 currentNode.Status = 1;
-                currentNode.Visited = this.visited++;
+
+                // calculate how many cycles we have and break if necessary
+                this.parent = currentNode.Parent;
+                while (parent != null) {
+                    if (currentNode.Arc == parent.Arc) {
+                        currentNode.Visited++;
+                    }
+                    parent = parent.Parent;
+                }
+                if (currentNode.Visited >= cycles) {
+                    Log("Reached maximum cycle length: " + cycles);
+                    continue;
+                }
 
                 // break the execution once planning reaches treshold
                 if (currentNode.Length > maxPlanLegth)
@@ -307,7 +319,7 @@ namespace Ei.Runtime.Planning
         }
 
         private AStarNode CreateNode(Connection connection,
-            Governor.ResourceState state, 
+            Governor.GovernorState state, 
             AStarNode currentNode, 
             float tentativeGScore,
             string costData)

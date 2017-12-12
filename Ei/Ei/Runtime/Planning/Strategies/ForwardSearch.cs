@@ -13,7 +13,7 @@ namespace Ei.Runtime.Planning.Strategies
         
         protected Group[] Groups { get; set; }
 
-        internal ForwardSearch(WorkflowPosition agentPosition, Governor.ResourceState agentState, Group[] agentGroups)
+        internal ForwardSearch(WorkflowPosition agentPosition, Governor.GovernorState agentState, Group[] agentGroups)
         {
             this.Groups = agentGroups;
 

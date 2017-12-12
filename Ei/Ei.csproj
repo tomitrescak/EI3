@@ -46,6 +46,7 @@
     <Compile Include="Ei\Ontology\AccessCondition.cs" />
     <Compile Include="Ei\Ontology\Actions\ActionExitWorkflow.cs" />
     <Compile Include="Ei\Ontology\Actions\ActionTimeout.cs" />
+    <Compile Include="Ei\Ontology\Actions\ActionWithParameters.cs" />
     <Compile Include="Ei\Ontology\IStateProvider.cs" />
     <Compile Include="Ei\Ontology\RelationalEntity.cs" />
     <Compile Include="Ei\Ontology\Transitions\TransitionJoin.cs" />

@@ -58,7 +58,7 @@ namespace Ei.Runtime.Planning.Costs
 
         }
 
-        private void ComputeWorkflowCost(Governor agent, AStarNode fromNode, string from, Connection toConnection, List<double> allCosts, Governor.ResourceState state)
+        private void ComputeWorkflowCost(Governor agent, AStarNode fromNode, string from, Connection toConnection, List<double> allCosts, Governor.GovernorState state)
         {
             // compute average distance
             var wf = ((ActionJoinWorkflow)toConnection.Action).TestWorkflow;

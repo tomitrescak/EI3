@@ -38,6 +38,8 @@
         WorkflowParameterChanged,
         WorkflowStarted,
         AmbiguousOrganisation,
-        StateNotReachable
+        StateNotReachable,
+        InvalidParameters,
+        AccessDenied
     }  
 } 

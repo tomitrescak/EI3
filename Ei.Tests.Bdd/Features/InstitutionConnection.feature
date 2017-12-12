@@ -15,10 +15,29 @@ Scenario: Successfull connection, Agent in and out
 	Then Logs 'EnteredWorkflow' with 'user;main;Main'
 	Then Agent 'user' notifies workflow entry with id 'main' and name 'Main'
 	Then Agent 'user' cannot move to 'end'
+
+	# Single condition
 	
 	When Agent 'user' moves to 'inc'
 	Then Agent 'user' int parameter 'ParentParameter' is equal to '1'
 	And Logs 'ChangedState' with 'user;inc;main;0'
+	#TODO: Agent notification about changing state
+
+	# Multiple conditions
+
+	When Agent 'user' moves to 'inc'
+	Then Agent 'user' int parameter 'ParentParameter' is equal to '0'
+
+	When Agent 'user' moves to 'inc'
+	Then Agent 'user' int parameter 'ParentParameter' is equal to '0'
+
+	# Open states
+
+	When Agent 'user' moves to 'open'
+	When Agent 'user' moves to 'inc'
+	Then Agent 'user' int parameter 'ParentParameter' is equal to '3'
+
+	# Exit 
 
 	When Agent 'user' moves to 'start'
 	When Agent 'user' moves to 'end'
@@ -33,6 +52,8 @@ Scenario: Role inherits properties from parent
 	When Agent 'user' connects to organisation 'Default' 
 	Then Agent 'user' plays role 'Citizen' and belong to the started institution
 	And Agent 'user' has parameter 'ParentParameter'
+
+
 
 	
 

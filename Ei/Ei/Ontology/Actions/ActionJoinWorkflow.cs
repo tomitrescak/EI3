@@ -24,11 +24,13 @@ namespace Ei.Ontology.Actions
         private Institution ei;
         private int instanceId;
         private Workflow.Instance testWorkflow;
+        private Workflow workflow;
 
         // properties
 
         public string WorkflowId { get; }
-        public List<Workflow.Instance> Workflows { get; }
+        public List<int> Workflows { get; }
+
 
         public Workflow.Instance TestWorkflow
         {
@@ -52,7 +54,7 @@ namespace Ei.Ontology.Actions
             // get the workflow
             
             this.WorkflowId = workflowId;
-            this.Workflows = new List<Workflow.Instance>();
+            this.Workflows = new List<int>();
 
             // add default parameter
             this.instanceId = -1;
@@ -65,10 +67,10 @@ namespace Ei.Ontology.Actions
 
         public Workflow.Instance Create(Governor performer, ResourceState parameters = null)
         {
- //           Console.WriteLine("[THREAD] Creating workflow ...: " + Thread.CurrentThread.ManagedThreadId);
-
+            //           Console.WriteLine("[THREAD] Creating workflow ...: " + Thread.CurrentThread.ManagedThreadId);
+            this.workflow = this.ei.GetWorkflow(this.WorkflowId);
             var newWorkflow = this.ei.CreateWorkflow(this.WorkflowId, performer.Workflow);
-            
+
             // initialise parameters
             if (parameters != null)
             {
@@ -78,7 +80,7 @@ namespace Ei.Ontology.Actions
             // set owner to the agent that created this workflow
             newWorkflow.Resources.Owner = performer.Resources;
 
-            this.Workflows.Add(newWorkflow);
+            this.Workflows.Add(newWorkflow.InstanceId);
 
             if (Log.IsInfo) Log.Info(newWorkflow.Name, InstitutionCodes.WorkflowStarted, 
                 newWorkflow.Name, 
@@ -90,7 +92,7 @@ namespace Ei.Ontology.Actions
 
         protected override IActionInfo PerformAction(Governor agent, Connection connection, ResourceState parameters)
         {
-            var workflow = ei.GetWorkflow(this.WorkflowId);
+            this.workflow = ei.GetWorkflow(this.WorkflowId);
             var joinParameters = parameters as ActionJoinWorkflow.Parameters;
 
             // lazily load
@@ -105,48 +107,65 @@ namespace Ei.Ontology.Actions
 
             // handle static workflow
 
-            if (this.Workflows.Count == 1 && this.Workflows[0].Workflow.Static)
-            {
-                agent.EnterWorkflow(connection, this.Workflows[0]);
+            Workflow.Instance workflowInstance = null;
 
-                return ActionInfo.OkButDoNotContinue;
+            if (this.Workflows.Count == 1 && this.workflow.Static)
+            {
+                workflowInstance = this.workflow.GetInstance(this.Workflows[0]); 
             }
 
             // handle statefull workflow
 
             // 1. join existing workflow
 
-            if (joinParameters.InstanceId >= 0) {
+            else if (joinParameters.InstanceId >= 0) {
                 var workflowInstanceId = joinParameters.InstanceId;
-                var workflowInstance = this.Workflows.Find(w => w.InstanceId == workflowInstanceId);
+                workflowInstance = this.workflow.GetInstance(workflowInstanceId);
 
                 if (workflowInstance == null) {
                     return new ActionInfo(InstitutionCodes.WorkflowInstanceNotRunning);
                 }
+            }
+
+            if (workflowInstance != null) {
+
+                // check access conditions
+
+                if (workflowInstance.Workflow.JoinPermissions != null && 
+                    !workflowInstance.Workflow.JoinPermissions.CanAccess(agent.Resources, workflowInstance.Resources)) {
+                    return ActionInfo.AccessDenied;
+                }
                 agent.EnterWorkflow(connection, workflowInstance);
+                return ActionInfo.OkButDoNotContinue;
             }
 
-            // 2. create new workflow instance
+            //// 2. create new workflow instance
 
-            else if (workflow.CreatePermissions.CanAccess(agent.Resources))
-            {
-                var newWorkflow = this.Create(agent);
-                agent.EnterWorkflow(connection, newWorkflow);
+            //else if (workflow.CreatePermissions.CanAccess(agent.Resources))
+            //{
+            //    var newWorkflow = this.Create(agent);
+            //    agent.EnterWorkflow(connection, newWorkflow);
+            //}
+
+            //// 3. agent cannot enter the requested workflow
+
+            //else
+            //{
+            //    return ActionInfo.Failed;
+            //}
+
+            //return ActionInfo.OkButDoNotContinue;
+
+            if (this.Workflows.Count == 0) {
+                return new ActionInfo(InstitutionCodes.WorkflowInstanceNotRunning);
             }
 
-            // 3. agent cannot enter the requested workflow
-
-            else
-            {
-                return ActionInfo.Failed;
-            }
-            
-            return ActionInfo.OkButDoNotContinue;
+            return ActionInfo.Failed;
         }
 
         public WorkflowInfo[] GetWorkflows(Governor governor)
         {
-            return this.Workflows.Select(w => w.GetInfo(governor)).ToArray();
+            return this.Workflows.Select(w => this.workflow.GetInstance(w).GetInfo(governor)).ToArray();
         }
 
         public override ResourceState ParseParameters(VariableInstance[] properties) {

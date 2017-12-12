@@ -27,6 +27,8 @@
             }
         }
 
+        public static IActionInfo AccessDenied = new ActionInfo(InstitutionCodes.AccessDenied);
+
         public ActionInfo(InstitutionCodes code, params object[] parameters)
         {
             this.Code = code;

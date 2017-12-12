@@ -31,21 +31,38 @@ namespace Ei.Runtime
         }
         #endregion
 
-        public class ResourceState
+        public class GovernorState
         {
             public struct Group
             {
                 public Runtime.ResourceState Organisation;
                 public Runtime.ResourceState Role;
-            } 
+            }
             private List<Group> groups;
             public int CreatedInstanceId;
             public string Name;
-            public Governor Governor;       
+            public Governor Governor;
 
             public List<Group> Roles { get { return this.groups; } }
 
-            public ResourceState(Governor agent) {
+            public GovernorState(GovernorState cloneFrom) {
+                this.Name = cloneFrom.Name;
+                this.Governor = cloneFrom.Governor;
+
+                this.groups = new List<Group>();
+           
+                foreach (var group in cloneFrom.groups) {
+                    var organisation = this.groups.FindIndex(g => g.Organisation.GetType() == group.Organisation.GetType());
+                    var role = this.groups.FindIndex(g => g.Role.GetType() == group.Role.GetType());
+
+                    this.groups.Add(new Group {
+                        Organisation = organisation == -1 ? group.Organisation.Clone() : this.groups[organisation].Organisation,
+                        Role = role == -1 ? group.Role.Clone() : this.groups[role].Role
+                    });
+                }
+            }
+
+            public GovernorState(Governor agent) {
                 this.Name = agent.Name;
                 this.Governor = agent;
 
@@ -57,7 +74,7 @@ namespace Ei.Runtime
                     if (!addedRoles.ContainsKey(group.Role)) {
                         addedRoles.Add(group.Role, group.Role.CreateState());
                     }
-                    this.groups.Add(new Group { Organisation = group.Organisation.CreateState(), Role = addedRoles[group.Role] });
+                    this.groups.Add(new Group { Organisation = group.Organisation.Resources, Role = addedRoles[group.Role] });
                 }
             }
 
@@ -81,16 +98,22 @@ namespace Ei.Runtime
                 }
             }
 
-            public Runtime.ResourceState Clone(Runtime.ResourceState state) {
-                throw new NotImplementedException();
-                // return this.Clone(state as GovernorVariableState);
-            }
+            //public Runtime.ResourceState Clone(Runtime.ResourceState state) {
+            //    throw new NotImplementedException();
+            //    // return this.Clone(state as GovernorVariableState);
+            //}
 
-            public ResourceState Clone(ResourceState clone = null) {
-                throw new NotImplementedException();
+            public GovernorState Clone() {
+
                 //if (clone == null) { clone = new GovernorVariableState(this.Governor); }
                 //clone.CreatedInstanceId = this.CreatedInstanceId;
                 //return clone;
+
+                return new GovernorState(this);
+            }
+
+            public override string ToString() {
+                return string.Join("\n", this.groups.Select(g => g.Role.ToString()).ToArray());
             }
         }
 
@@ -102,7 +125,7 @@ namespace Ei.Runtime
         #endregion
 
         #region Properties
-        public ResourceState Resources { get; private set; }
+        public GovernorState Resources { get; private set; }
 
         public string Name { get; set; }
         public Group[] Groups { get; private set; }
@@ -190,13 +213,13 @@ namespace Ei.Runtime
             this.Manager = manager;
 
             this.contextStack = new Stack<Context>();
-            this.Resources = new ResourceState(this);
+            this.Resources = new GovernorState(this);
         }
 
         // runtime
 
         public void Start() {
-            this.Resources = new ResourceState(this);
+            this.Resources = new GovernorState(this);
             this.EnterInstitution();
             this.EnterWorkflow(null, this.Manager.MainWorkflow);
         }
@@ -296,15 +319,11 @@ namespace Ei.Runtime
             return result.IsOk ? clone.PerformAction(actionId, parameters) : result;
         }
 
-        //        public IActionInfo PerformAction(string activityId, params ParameterInstance[] parameters)
-        //        {
-        //        }
-
         public IActionInfo PerformAction(string activityId, VariableInstance[] parameters = null) {
             // find actions
             var action = this.Workflow.Actions.FirstOrDefault(w => w.Id == activityId);
             if (action == null) {
-                return new ActionInfo(InstitutionCodes.Failed, "Action does not exist!");
+                return new ActionInfo(InstitutionCodes.Failed, string.Format("Action '{0}' does not exist!", activityId));
             }
 
             // otherwise we have to find a feasible connection
@@ -625,7 +644,7 @@ namespace Ei.Runtime
             }
         }
 
-        public static List<GoalDescription> FindGoals(Workflow workflow, Governor.ResourceState agentState, Group[] groups, GoalState[] goalState, int maxGoals = int.MaxValue) {
+        public static List<GoalDescription> FindGoals(Workflow.Instance workflow, Governor.GovernorState agentState, Group[] groups, GoalState[] goalState, int maxGoals = int.MaxValue) {
             var result = new List<GoalDescription>();
 
             // browse all connections and 
@@ -687,7 +706,7 @@ namespace Ei.Runtime
             return result;
         }
 
-        private static float CalculateRatio(GoalState[] goals, Governor.ResourceState startState, Governor.ResourceState changedState) {
+        private static float CalculateRatio(GoalState[] goals, Governor.GovernorState startState, Governor.GovernorState changedState) {
             var maxRatio = 0f;
             foreach (var goal in goals) {
                 var ratio = goal.GetDeltaRatio(startState, changedState);
@@ -716,14 +735,14 @@ namespace Ei.Runtime
             switch (strategy) {
                 case PlanStrategy.ForwardSearch:
                     return planner.Plan(h, new ForwardSearch(this.Position, state, this.Groups), costManager);
-                //case PlanStrategy.BackwardSearch:
-                //    var startConnection = this.Workflow.Connections.First(w => w.Action != null && w.Action.Id == actionName);
-                //    var startState = state.ToGoalState();
-                //    var bh = new ResourceBasedHeuristics(startState);
+                    //case PlanStrategy.BackwardSearch:
+                    //    var startConnection = this.Workflow.Connections.First(w => w.Action != null && w.Action.Id == actionName);
+                    //    var startState = state.ToGoalState();
+                    //    var bh = new ResourceBasedHeuristics(startState);
 
-                //    // TODO: Use floyd-warshall from workflow to make sure that action is accessible
+                    //    // TODO: Use floyd-warshall from workflow to make sure that action is accessible
 
-                //    return planner.Plan(bh, new BackwardSearch(this.Workflow, state, this.Groups, this.Position, startConnection, startState), costManager);
+                    //    return planner.Plan(bh, new BackwardSearch(this.Workflow, state, this.Groups, this.Position, startConnection, startState), costManager);
             }
 
             throw new NotImplementedException("Strategy not implemented: " + strategy);
@@ -746,12 +765,12 @@ namespace Ei.Runtime
                     var s = new ForwardSearch(this.Position, state, this.Groups);
                     var h = new ResourceBasedHeuristics(goals);
                     return planner.Plan(h, s, costManager);
-                //case PlanStrategy.BackwardSearch:
-                //    var goal = Governor.FindGoals(this.Workflow.Workflow, state, Groups, goals, 1);
+                    //case PlanStrategy.BackwardSearch:
+                    //    var goal = Governor.FindGoals(this.Workflow.Workflow, state, Groups, goals, 1);
 
-                //    var bs = new BackwardSearch(this.Workflow, state, this.Groups, this.Position, goal[0].Connection, goals);
-                //    var bh = new ResourceBasedHeuristics(state.ToGoalState());
-                //    return planner.Plan(bh, bs, costManager);
+                    //    var bs = new BackwardSearch(this.Workflow, state, this.Groups, this.Position, goal[0].Connection, goals);
+                    //    var bh = new ResourceBasedHeuristics(state.ToGoalState());
+                    //    return planner.Plan(bh, bs, costManager);
             }
 
             throw new NotImplementedException("Strategy not implmented: " + strategy);

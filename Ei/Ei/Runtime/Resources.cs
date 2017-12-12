@@ -8,36 +8,68 @@ using System.Linq.Expressions;
 
 namespace Ei.Runtime
 {
+    //public interface IResourceStateCreator
+    //{
+    //    ResourceState Instance(ResourceState cloneFrom);
+    //}
+
+    //public class ResourceStateCreator<T>: IResourceStateCreator where T : ResourceState
+    //{
+    //    private static Func<ResourceState, T> _new;
+    //    public static Func<ResourceState, T> New {
+    //        get {
+    //            if (_new == null) {
+    //                var constructor = typeof(T).GetConstructor(new[] { typeof(ResourceState) });
+    //                var parameter = Expression.Parameter(typeof(ResourceState), "variableState");
+    //                var constructorExpression = Expression.New(constructor, parameter);
+    //                _new = Expression.Lambda<Func<ResourceState, T>>(constructorExpression, parameter).Compile();
+    //            }
+    //            return _new;
+    //        }
+    //    }
+
+    //    public ResourceState Instance(ResourceState cloneFrom) {
+    //        return New(cloneFrom);
+    //    }
+    //}
+
     public interface IResourceStateCreator
     {
-        ResourceState Instance(ResourceState cloneFrom);
+        ResourceState Instance();
     }
 
-    public class ResourceStateCreator<T>: IResourceStateCreator where T : ResourceState
+    public class ResourceStateCreator<T> : IResourceStateCreator where T : ResourceState
     {
-        private static Func<ResourceState, T> _new;
-        public static Func<ResourceState, T> New {
+        private static Func<T> _new;
+        public static Func<T> New {
             get {
                 if (_new == null) {
-                    var constructor = typeof(T).GetConstructor(new[] { typeof(ResourceState) });
-                    var parameter = Expression.Parameter(typeof(ResourceState), "variableState");
-                    var constructorExpression = Expression.New(constructor, parameter);
-                    _new = Expression.Lambda<Func<ResourceState, T>>(constructorExpression, parameter).Compile();
+                    var constructor = typeof(T).GetConstructor(new Type[0]);
+                    // var parameter = Expression.Parameter(typeof(ResourceState), "variableState");
+                    var constructorExpression = Expression.New(constructor);
+                    _new = Expression.Lambda<Func<T>>(constructorExpression).Compile();
                 }
                 return _new;
             }
         }
 
-        public ResourceState Instance(ResourceState cloneFrom) {
-            return New(cloneFrom);
+        public ResourceState Instance() {
+            return New();
         }
+    }
+
+    public struct ValidationError
+    {
+        public string VariableName { get; set; }
+        public object CurrentValue { get; set; }
+        public string ErrorMessage { get; set; }
     }
 
     public abstract class ResourceState
     {
         // fields
         private List<object> defaultValues;
-
+  
         // properties
 
         public IVariableDefinition[] Descriptors { get; private set; }
@@ -74,38 +106,45 @@ namespace Ei.Runtime
             this.Descriptors = typeDescriptors[this.GetType()];
         }
 
-        public ResourceState(IVariableDefinition[] descriptors) {
-            this.Descriptors = descriptors;
-        }
+        //public ResourceState(IVariableDefinition[] descriptors) {
+        //    this.Descriptors = descriptors;
+        //}
 
-        public ResourceState(ResourceState state) {
-            this.Descriptors = state.Descriptors;
-            this.Merge(state, true);
-        }
+        //public ResourceState(ResourceState state) {
+        //    this.Descriptors = state.Descriptors;
+        //    this.Merge(state, true);
+        //}
 
-        public ResourceState(VariableInstance[] variables): this() {
-            this.Parse(variables);
-        }
+        //public ResourceState(VariableInstance[] variables): this() {
+        //    this.Parse(variables);
+        //}
 
 
         // public methods
 
         public ResourceState Parse(VariableInstance[] properties) {
-            foreach (var property in properties) {
-                this.GetVariableDefiniton(property.Name).Parse(this, property.Value);
+            if (properties != null) {
+                foreach (var property in properties) {
+                    this.GetVariableDefiniton(property.Name).Parse(this, property.Value);
+                }
             }
             return this;
         }
 
-        public void Merge(ResourceState state, bool clone = false ) {
+        public ResourceState Merge(ResourceState state, bool clone = false) {
             foreach (var variable in state.Descriptors) {
-                // only merge non default values
-                if (clone 
+                // only merge values from "state" that are different from the default value in "state"
+                if (clone
                     || variable.DefaultValue != null && !variable.DefaultValue.Equals(variable.Value(state))) {
                     variable.Update(this, variable.Value(state));
                 }
             }
+            return this;
         }
+
+        public virtual string Validate() {
+            return null;
+        } 
 
         public object GetValue(string name) {
             return this.Descriptors.First(d => d.Name == name).Value(this);
@@ -138,7 +177,7 @@ namespace Ei.Runtime
                 var specificType = genericType.MakeGenericType(state.GetType());
                 stateCreators[state.GetType()] = (IResourceStateCreator) Activator.CreateInstance(specificType); 
             }
-            return stateCreators[state.GetType()].Instance(this);
+            return stateCreators[this.GetType()].Instance().Merge(state, true);
         }
 
         public GoalState[] ToGoalState(bool onlyDirty = false) {
@@ -157,6 +196,10 @@ namespace Ei.Runtime
 
         public void ResetDirty() {
             this.defaultValues = this.Descriptors.Select(d => d.Value(this)).ToList();
+        }
+
+        public override string ToString() {
+            return string.Join(",", this.Descriptors.Select(d => d.Name + ": " + d.Value(this)).ToArray());
         }
     }
 }

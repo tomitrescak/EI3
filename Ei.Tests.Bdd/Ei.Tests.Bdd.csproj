@@ -75,22 +75,42 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Features\Actions.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Actions.feature</DependentUpon>
+    </Compile>
     <Compile Include="Features\InstitutionConnection.feature.cs">
       <DependentUpon>InstitutionConnection.feature</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="Features\OneLevelPlanning.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OneLevelPlanning.feature</DependentUpon>
+    </Compile>
     <Compile Include="Institutions\ConnectionTestEi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steps\ActivitySteps.cs" />
     <Compile Include="Steps\InstitutionConnectionSteps.cs" />
+    <Compile Include="Steps\PlanningSteps.cs" />
+    <Compile Include="Steps\PlanningWithEnvironment.cs" />
     <Compile Include="Unit\Runtime\VariableState.Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Features\Actions.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Actions.feature.cs</LastGenOutput>
+    </None>
     <None Include="Features\InstitutionConnection.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>InstitutionConnection.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\OneLevelPlanning.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>OneLevelPlanning.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
