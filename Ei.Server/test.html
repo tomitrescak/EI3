@@ -24,6 +24,7 @@
         <input id="sendMessage" disabled />
         <button id="sendButton" type="submit" disabled>Send</button>
         <button id="closeButton" disabled>Close Socket</button>
+        <button id="clearButton">Clear</button>
     </div>
 
     <h2>Communication Log</h2>
@@ -48,6 +49,7 @@
         var sendButton = document.getElementById("sendButton");
         var sendForm = document.getElementById("sendForm");
         var commsLog = document.getElementById("commsLog");
+        var clearButton = document.getElementById("clearButton");
         var socket;
         var scheme = document.location.protocol == "https:" ? "wss" : "ws";
         var port = document.location.port ? (":" + document.location.port) : "";
@@ -93,6 +95,9 @@
                         break;
                 }
             }
+        }
+        clearButton.onclick = function () {
+            commsLog.innerHTML = '';
         }
         closeButton.onclick = function () {
             if (!socket || socket.readyState != WebSocket.OPEN) {

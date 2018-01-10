@@ -12,7 +12,10 @@ namespace Ei.Server
         static void Main(string[] args) {
             var host = new WebHostBuilder()
                 .UseKestrel()
-                .UseUrls("http://10.211.55.4:5000", "http://localhost:5000")
+                .UseUrls(
+                    // "http://10.211.55.4:5000", 
+                    "http://localhost:5000"
+                )
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
