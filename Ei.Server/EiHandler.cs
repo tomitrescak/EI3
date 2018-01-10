@@ -52,7 +52,7 @@ namespace Ei.Server
             try
             {
                 var ei = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Files/AllComponents.json"));
-                await InvokeClientMethodToAllAsync("observer", queryId, ei);
+                await InvokeClientMethodToAllAsync("queryResult", queryId, ei);
             }
             catch (Exception ex)
             {
