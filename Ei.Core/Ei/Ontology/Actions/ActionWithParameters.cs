@@ -9,17 +9,17 @@ namespace Ei.Ontology.Actions
 {
     public abstract class ActionWithParameters : ActionBase
     {
-        private Runtime.ResourceState parameters;
+        private ParameterState parameters;
 
-        protected ActionWithParameters(Institution ei, string id, Runtime.ResourceState parameters) : base(ei, id) {
+        protected ActionWithParameters(Institution ei, string id, ParameterState parameters) : base(ei, id) {
             this.parameters = parameters;
         }
 
-        public override Runtime.ResourceState ParseParameters(VariableInstance[] properties) {
+        public override ParameterState ParseParameters(VariableInstance[] properties) {
             if (this.parameters == null) {
                 return null;
             }
-            return parameters.Clone().Parse(properties);
+            return parameters.Parse(properties);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Ei.Runtime.Planning.Strategies
 
         // methods
 
-        public virtual ResourceState CloneProperties(ResourceState source)
+        public virtual SearchableState CloneProperties(SearchableState source)
         {
             return source.Clone();
         }

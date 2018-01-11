@@ -12,7 +12,7 @@ namespace Ei.Ontology.Actions
         {
         }
 
-        protected override IActionInfo PerformAction(Governor performer, Connection connection, ResourceState parameters)
+        protected override IActionInfo PerformAction(Governor performer, Connection connection, ParameterState parameters)
         {
             return performer.ExitWorkflow();
         }

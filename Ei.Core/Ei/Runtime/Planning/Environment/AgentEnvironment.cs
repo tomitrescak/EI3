@@ -11,7 +11,7 @@ namespace Ei.Runtime.Planning.Environment
 {
     public class AgentEnvironment
     {
-        private int period = 0;
+        // private int period = 0;
 
         private AgentEnvironmentDefinition definition;
 
@@ -383,7 +383,7 @@ namespace Ei.Runtime.Planning.Environment
             {
                 environmentData = this.objects.FirstOrDefault(w => w.Id == itemId);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 environmentData = new EnvironmentData();
             }

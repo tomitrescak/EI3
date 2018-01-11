@@ -9,13 +9,13 @@ namespace Ei.Ontology
 
     public abstract class Role : RelationalEntity
     {
-        private ResourceState resources;
+        private SearchableState resources;
 
         public Role(string id): base(id) { }
 
-        public abstract ResourceState CreateState();
+        public abstract SearchableState CreateState();
 
-        public virtual ResourceState Resources {
+        public virtual SearchableState Resources {
             get {
                 if (this.resources == null) {
                     this.resources = this.CreateState();

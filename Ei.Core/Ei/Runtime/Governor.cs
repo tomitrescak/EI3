@@ -35,8 +35,8 @@ namespace Ei.Runtime
         {
             public struct Group
             {
-                public Runtime.ResourceState Organisation;
-                public Runtime.ResourceState Role;
+                public SearchableState Organisation;
+                public SearchableState Role;
             }
             private List<Group> groups;
             public int CreatedInstanceId;
@@ -68,7 +68,7 @@ namespace Ei.Runtime
 
                 this.groups = new List<Group>();
 
-                var addedRoles = new Dictionary<Role, Runtime.ResourceState>();
+                var addedRoles = new Dictionary<Role, Runtime.SearchableState>();
 
                 foreach (var group in agent.Groups) {
                     if (!addedRoles.ContainsKey(group.Role)) {
@@ -78,11 +78,11 @@ namespace Ei.Runtime
                 }
             }
 
-            public Runtime.ResourceState FindProvider(string name) {
+            public SearchableState FindProvider(string name) {
                 if (this.groups.Count == 1) {
                     return this.groups[0].Role;
                 }
-                return this.groups.Find(f => f.Role.Descriptors.Any(r => r.Name == name)).Role;
+                return this.groups.Find(f => f.Role.Contains(name)).Role;
             }
 
             public GoalState[] ToGoalState(bool onlyDirty = false) {
@@ -297,7 +297,7 @@ namespace Ei.Runtime
             return result.IsOk ? clone.Move(positionId) : result;
         }
 
-        public IActionInfo Move(string positionId, Runtime.ResourceState parameters = null) {
+        public IActionInfo Move(string positionId, ParameterState parameters = null) {
             var target = this.FindPosition(positionId);
             if (target.Length == 0) {
                 return ActionInfo.StateNotReachable;
@@ -319,6 +319,8 @@ namespace Ei.Runtime
             return result.IsOk ? clone.PerformAction(actionId, parameters) : result;
         }
 
+        static VariableInstance[] emptyParameters = new VariableInstance[0];
+
         public IActionInfo PerformAction(string activityId, VariableInstance[] parameters = null) {
             // find actions
             var action = this.Workflow.Actions.FirstOrDefault(w => w.Id == activityId);
@@ -336,6 +338,10 @@ namespace Ei.Runtime
             if (Log.IsInfo) Log.Info(this.Name, "Performing " + activityId);
 
             // parse parameters
+  
+            if (parameters == null) {
+                parameters = emptyParameters;
+            }
             var parsedParameters = action.ParseParameters(parameters);
 
             // perform this Action
@@ -357,7 +363,7 @@ namespace Ei.Runtime
             return result;
         }
 
-        public IActionInfo PerformAction(ActionBase action, Runtime.ResourceState parameters = null) {
+        public IActionInfo PerformAction(ActionBase action, ParameterState parameters = null) {
 
 
             // otherwise we have to find a feasible connection
@@ -604,12 +610,12 @@ namespace Ei.Runtime
             this.callbacks.NotifyWorkflowParameterChanged(this.Name, workflowId, workflowInstanceId, parameterName, value);
         }
 
-        internal void NotifyActivity(Workflow.Instance workflow, string agentName, string activityId, Runtime.ResourceState parameters) {
+        internal void NotifyActivity(Workflow.Instance workflow, string agentName, string activityId, ParameterState parameters) {
             this.callbacks.NotifyActivity(this.Name, workflow.Id, workflow.InstanceId, agentName, activityId, parameters);
             //Console.WriteLine("[CB NotifyActivity] {0},{1},{2},{3},{4}", workflow.Id, workflow.InstanceId, agentName, actionId, string.Join(";", parameters.Select(i => i.ToString()).ToArray()));
         }
 
-        internal void NotifyActivityFailed(Workflow.Instance workflow, string agentName, string activityId, Runtime.ResourceState parameters) {
+        internal void NotifyActivityFailed(Workflow.Instance workflow, string agentName, string activityId, ParameterState parameters) {
             this.callbacks.NotifyActivityFailed(this.Name, workflow.Id, workflow.InstanceId, agentName, activityId, parameters);
             //Console.WriteLine("[CB NotifyActivity] {0},{1},{2},{3},{4}", workflow.Id, workflow.InstanceId, agentName, actionId, string.Join(";", parameters.Select(i => i.ToString()).ToArray()));
         }

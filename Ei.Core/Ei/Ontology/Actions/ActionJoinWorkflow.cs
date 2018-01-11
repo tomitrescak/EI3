@@ -13,16 +13,32 @@ namespace Ei.Ontology.Actions
     {
         // parameters
 
-        public class Parameters : ResourceState
+        public class Parameters : ParameterState
         {
             // fields
+            public static Parameters Instance = new Parameters();
+
             public int InstanceId { get; set; }
+
+            public override ParameterState Parse(VariableInstance[] properties) {
+                var parameters = new Parameters();
+
+                foreach (var property in properties) {
+                    switch (property.Name) {
+                        case "InstanceId":
+                            parameters.InstanceId = int.Parse(property.Value);
+                            break;
+                        default:
+                            throw new Exception("Invalid Parameter" + property.Name);
+                    }
+                }
+                return parameters;
+            }
         }
 
         // fields
 
         private Institution ei;
-        private int instanceId;
         private Workflow.Instance testWorkflow;
         private Workflow workflow;
 
@@ -55,17 +71,9 @@ namespace Ei.Ontology.Actions
             
             this.WorkflowId = workflowId;
             this.Workflows = new List<int>();
-
-            // add default parameter
-            this.instanceId = -1;
         }
 
-//        private ActionJoinWorkflow(Workflow workflow)
-//        {
-//            this.WorkflowId = workflow.Id;
-//        }
-
-        public Workflow.Instance Create(Governor performer, ResourceState parameters = null)
+        public Workflow.Instance Create(Governor performer, ParameterState parameters = null)
         {
             //           Console.WriteLine("[THREAD] Creating workflow ...: " + Thread.CurrentThread.ManagedThreadId);
             this.workflow = this.ei.GetWorkflow(this.WorkflowId);
@@ -90,7 +98,7 @@ namespace Ei.Ontology.Actions
             return newWorkflow;
         }
 
-        protected override IActionInfo PerformAction(Governor agent, Connection connection, ResourceState parameters)
+        protected override IActionInfo PerformAction(Governor agent, Connection connection, ParameterState parameters)
         {
             this.workflow = ei.GetWorkflow(this.WorkflowId);
             var joinParameters = parameters as ActionJoinWorkflow.Parameters;
@@ -168,8 +176,8 @@ namespace Ei.Ontology.Actions
             return this.Workflows.Select(w => this.workflow.GetInstance(w).GetInfo(governor)).ToArray();
         }
 
-        public override ResourceState ParseParameters(VariableInstance[] properties) {
-            return new Parameters().Parse(properties);
+        public override ParameterState ParseParameters(VariableInstance[] properties) {
+            return Parameters.Instance.Parse(properties);
         }
     }
 }

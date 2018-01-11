@@ -44,7 +44,7 @@
             return this.conditions.Any(c => c.CanAccess(agentState, workflow));
         }
 
-        public void ApplyPostconditions(Governor.GovernorState agent, ResourceState parameters, bool planningMode = false) {
+        public void ApplyPostconditions(Governor.GovernorState agent, ParameterState parameters, bool planningMode = false) {
             if (this.conditions.Count == 1) {
                 this.conditions[0].ApplyPostconditions(agent, parameters, planningMode);
                 return;
@@ -86,7 +86,7 @@
         /// <param name="agentState"></param>
         public abstract bool CanAccess(Governor.GovernorState agentState, Workflow.WorkflowState workflowState);
 
-        public abstract void ApplyPostconditions(Governor.GovernorState agent, ResourceState parameters, bool planningMode = false);
+        public abstract void ApplyPostconditions(Governor.GovernorState agent, ParameterState parameters, bool planningMode = false);
 
         public abstract void ApplyPostconditions(Institution.InstitutionState institutionState, Workflow.WorkflowState workflowState);
     }
@@ -95,9 +95,9 @@
     public class AccessCondition<I, W, O, G, A> : AccessCondition
         where I : Institution.InstitutionState
         where W : Workflow.WorkflowState
-        where O : ResourceState
-        where G : ResourceState
-        where A : ResourceState
+        where O : SearchableState
+        where G : SearchableState
+        where A : ParameterState
     {
 
         public delegate bool Precondition(I institutionState, W workflowState, O organisationState, G groupState, A actionParameters = null);
@@ -117,7 +117,7 @@
                 this.HasRuntimeParameters = hasRuntimeParameters;
             }
 
-            public bool CanAccess(Governor.GovernorState state, Workflow.WorkflowState workflowState, ResourceState actionParameters = null) {
+            public bool CanAccess(Governor.GovernorState state, Workflow.WorkflowState workflowState, ParameterState actionParameters = null) {
                 if (this.condition == null) {
                     return true;
                 }
@@ -158,7 +158,7 @@
                 this.HasRuntimeParameters = hasRuntimeParameters;
             }
 
-            internal bool Access(Governor.GovernorState agentState, ResourceState actionParameters, bool planningMode) {
+            internal bool Access(Governor.GovernorState agentState, ParameterState actionParameters, bool planningMode) {
 
                 if (this.condition != null) {
                     return this.ApplyConditions(agentState, condition, actionParameters, planningMode);
@@ -178,7 +178,7 @@
 
             // private methods
 
-            private bool ApplyConditions(Governor.GovernorState state, Precondition condition, ResourceState actionParameters, bool planningMode) {
+            private bool ApplyConditions(Governor.GovernorState state, Precondition condition, ParameterState actionParameters, bool planningMode) {
                 foreach (var group in state.Roles) {
                     if (group.Organisation is O && group.Role is G) {
                         // check first successful condition
@@ -264,7 +264,7 @@
 
         // postconditions
 
-        public override void ApplyPostconditions(Governor.GovernorState agentState, ResourceState actionParameters, bool planningMode) {
+        public override void ApplyPostconditions(Governor.GovernorState agentState, ParameterState actionParameters, bool planningMode) {
             if (this.postConditions != null) {
                 this.postConditions.ForEach(c => c.Access(agentState, actionParameters, planningMode));
             }
@@ -290,7 +290,7 @@
 
     }
 
-    public class AccessCondition<I, W> : AccessCondition<I, W, ResourceState, ResourceState, ResourceState>
+    public class AccessCondition<I, W> : AccessCondition<I, W, SearchableState, SearchableState, ParameterState>
         where I : Institution.InstitutionState
         where W : Workflow.WorkflowState
     {

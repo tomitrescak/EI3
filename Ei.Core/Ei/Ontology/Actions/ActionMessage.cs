@@ -9,10 +9,9 @@ namespace Ei.Ontology.Actions
     public class ActionMessage : ActionWithParameters
     {
 
-
         // constructor
 
-        public ActionMessage(string id, Institution ei, ResourceState createParameters = null, Group[] notifyGroups = null, List<string> notifyAgents = null)
+        public ActionMessage(string id, Institution ei, ParameterState createParameters = null, Group[] notifyGroups = null, List<string> notifyAgents = null)
             : base(ei, id, createParameters) {
 
             if (notifyGroups != null) {
@@ -28,7 +27,7 @@ namespace Ei.Ontology.Actions
 
         public ReadOnlyCollection<string> NotifyAgents { get; }
 
-        protected override IActionInfo PerformAction(Governor agent, Connection connection, ResourceState parameters) {
+        protected override IActionInfo PerformAction(Governor agent, Connection connection, ParameterState parameters) {
             var result = parameters.Validate();
             if (result != null) {
                 return new ActionInfo(InstitutionCodes.InvalidParameters, result);

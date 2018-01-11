@@ -31,17 +31,16 @@ namespace Ei.Runtime.Planning
             var strategy = desc.Length == 2 ? (StateGoalStrategy)Enum.Parse(typeof(StateGoalStrategy), desc[0]) : StateGoalStrategy.Equal;
 
             var strexpression = desc.Length == 2 ? desc[1] : desc[0];
-            var provider = agent.Resources.FindProvider(name);
-            var variableDefintion = provider.GetVariableDefiniton(name);
-            var value = variableDefintion.ParseValue(strexpression);
+            var provider = (SearchableState) agent.Resources.FindProvider(name);
+            // var value = provider.GetValue(name);
 
-            return new GoalState(str[0], value, strategy, variableDefintion);
+            return new GoalState(str[0], int.Parse(strexpression), strategy, provider);
 
         }
 
         // fields
 
-        private IVariableDefinition variableProvider;
+        private SearchableState variableProvider;
 
         public string Name;
         public object Value;
@@ -49,7 +48,7 @@ namespace Ei.Runtime.Planning
 
         // constructors
 
-        public GoalState(string name, object value, StateGoalStrategy strategy, IVariableDefinition variableProvider)
+        public GoalState(string name, object value, StateGoalStrategy strategy, SearchableState variableProvider)
         {
             this.Name = name;
             this.Value = value;
@@ -61,11 +60,12 @@ namespace Ei.Runtime.Planning
         // methods
 
         public object CurrentValue(Governor.GovernorState state) {
-            return this.variableProvider.Value(state.FindProvider(this.Name));
+            return this.variableProvider.GetValue(this.Name);
         }
 
         public float Difference(Governor.GovernorState state) {
-            return this.ParameterDifference(this.variableProvider.Value(state.FindProvider(this.Name)));
+            var provider = state.FindProvider(this.Name);
+            return this.ParameterDifference(provider.GetValue(this.Name));
         }
 
         private float ParameterDifference(object param)

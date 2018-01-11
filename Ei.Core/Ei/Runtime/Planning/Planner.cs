@@ -35,7 +35,7 @@ namespace Ei.Runtime.Planning
 
         private int checkedNodes;
         private Governor agent;
-        private int visited;
+        // private int visited;
         private AStarNode parent;
 
         //public IHeuristics Heuristics { get; set; }

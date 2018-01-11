@@ -10,10 +10,11 @@
     using ActionBase = Ei.Ontology.Actions.ActionBase;
     using Timer = System.Timers.Timer;
     using System;
+    using Ei.Runtime.Planning;
 
     public abstract class Institution : Entity, IStateProvider
     {
-        public class InstitutionState : Runtime.ResourceState
+        public class InstitutionState
         {
             private Institution ei;
             public InstitutionState(Institution ei) {

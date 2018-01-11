@@ -1,4 +1,6 @@
-﻿namespace Ei.Runtime
+﻿using System.Collections.Generic;
+
+namespace Ei.Runtime
 {
     public struct WorkflowInfo
     {
@@ -8,9 +10,9 @@
 
         public string Name { get; }
 
-        public VariableInstance[] Parameters { get; }
+        public List<VariableInstance> Parameters { get; }
 
-        public WorkflowInfo(string id, int instanceId, string name, VariableInstance[] parameters)
+        public WorkflowInfo(string id, int instanceId, string name, List<VariableInstance> parameters)
         {
             this.Id = id;
             this.InstanceId = instanceId;
