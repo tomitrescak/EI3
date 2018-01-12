@@ -8,10 +8,14 @@
 
   <ItemGroup>
     <None Remove="Files\AllComponents.json" />
+    <None Remove="Files\Fishing.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Files\AllComponents.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Files\Fishing.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -41,6 +45,10 @@
     <None Update="Features\OneLevelPlanning.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>OneLevelPlanning.feature.cs</LastGenOutput>
+    </None>
+    <None Update="Files\Fishing.yaml">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Fishing.feature.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

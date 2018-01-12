@@ -31,16 +31,12 @@ namespace Ei.Runtime.Planning
             var strategy = desc.Length == 2 ? (StateGoalStrategy)Enum.Parse(typeof(StateGoalStrategy), desc[0]) : StateGoalStrategy.Equal;
 
             var strexpression = desc.Length == 2 ? desc[1] : desc[0];
-            var provider = (SearchableState) agent.Resources.FindProvider(name);
-            // var value = provider.GetValue(name);
-
-            return new GoalState(str[0], int.Parse(strexpression), strategy, provider);
+           
+            return new GoalState(str[0], int.Parse(strexpression), strategy);
 
         }
 
         // fields
-
-        private SearchableState variableProvider;
 
         public string Name;
         public object Value;
@@ -48,19 +44,19 @@ namespace Ei.Runtime.Planning
 
         // constructors
 
-        public GoalState(string name, object value, StateGoalStrategy strategy, SearchableState variableProvider)
+        public GoalState(string name, object value, StateGoalStrategy strategy)
         {
             this.Name = name;
             this.Value = value;
             this.Strategy = strategy;
-            this.variableProvider = variableProvider;
         }
 
 
         // methods
 
         public object CurrentValue(Governor.GovernorState state) {
-            return this.variableProvider.GetValue(this.Name);
+            var provider = state.FindProvider(this.Name);
+            return provider.GetValue(this.Name);
         }
 
         public float Difference(Governor.GovernorState state) {

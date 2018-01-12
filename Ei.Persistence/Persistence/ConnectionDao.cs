@@ -8,14 +8,12 @@
         public string Id { get; set; }
         public string Import { get; set; }
 
-        public AccessConditionDao[] Allow { get; set; }
-        public AccessConditionDao[] Deny { get; set; }
-        public AccessConditionDao[] Postconditions { get; set; }
-        public AccessConditionDao[] Effects { get; set; }
+        public AccessConditionDao[] Access { get; set; }
+        public PostconditionDao[] Effects { get; set; }
 
         public BacktrackDao Backtrack { get; set; }
 
-        public AccessConditionDao[] GeneratedNestedEffects { get; set; }
+        public PostconditionDao[] GeneratedNestedEffects { get; set; }
 
         public string ActionId { get; set; }
 

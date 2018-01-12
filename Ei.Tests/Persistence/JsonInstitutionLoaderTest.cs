@@ -15,8 +15,14 @@ namespace Ei.Tests.Persistence
 
         [Fact]
         public void LoadFromFile() {
-            var institution = JsonInstitutionLoader.Instance.LoadFromFile("Files/AllComponents.json");
-            Assert.Equal("Institution", institution.Name);
+            var institution = JsonInstitutionLoader.Instance.LoadFromFile("Files/Fishing.json");
+
+            Assert.Equal(2, institution.Workflows.Count);
+
+            var w = institution.Workflows[1];
+            Assert.Equal(7, w.Connections.Length);
+
+            Assert.Equal("Fishing", institution.Name);
         }
     }
 }

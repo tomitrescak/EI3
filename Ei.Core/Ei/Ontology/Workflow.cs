@@ -76,7 +76,8 @@ namespace Ei.Ontology
             }
 
             private List<object> defaultValues;
-            protected override List<object> DefaultValues {
+
+            protected List<object> DefaultValues {
                 get {
                     if (defaultValues == null) {
                         defaultValues = new List<object> {

@@ -1,0 +1,17 @@
+﻿#region class {{ClassName}}
+class {{ClassName}}: {{ParentClassName}} {
+
+{{#if Parent}}{{> ParentResources}}{{/if}}
+{{^Parent}}{{> Resources}}{{/Parent}}
+
+    public {{ClassName}}() : base("{{Id}}") {
+        this.Name = "{{Name}}";
+    }
+
+    public {{ClassName}}(string id) : base(id) { }
+
+    protected override SearchableState CreateState() {
+        return new {{ClassName}}.Store();
+    }
+}
+#endregion

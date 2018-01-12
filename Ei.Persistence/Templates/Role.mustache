@@ -1,0 +1,14 @@
+﻿#region class {{ClassName}}
+class {{ClassName}}: Role {
+
+    {{> Resources}}
+
+    public {{ClassName}}() : base("{{Id}}") {
+        this.Name = "{{Name}}";
+    }
+
+    public override SearchableState CreateState() {
+        return new {{ClassName}}.Store();
+    }
+}
+#endregion

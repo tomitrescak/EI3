@@ -1,0 +1,96 @@
+﻿    #region class Store
+    public class Store : SearchableState
+    {
+        // Fields
+
+        private List<object> defaultValues = new List<object>() {
+            {{#each Properties}}
+            {{{DefaultValue}}},
+            {{/each}}
+        };
+
+        // Properties
+
+        {{#each Properties}}
+        {{Type}} {{Name}} { get; set; }
+        {{/each}}
+       
+        // Ctor
+        public Store() {
+            {{#each Properties}}
+            this.{{Name}} = {{{DefaultValue}}};
+            {{/each}}
+        } 
+
+        // Methods
+
+        public override SearchableState Clone(SearchableState cloneTo = null) {
+            var clone = cloneTo == null 
+                ? new {{ClassName}}.Store()
+                : ({{ClassName}}.Store) cloneTo;
+
+            {{#each Properties}}
+            clone.{{Name}} = this.{{Name}};
+            {{/each}}
+
+            return clone;
+        }
+
+        public override bool Contains(string name) {
+            {{#each Properties}}
+            if (name == "{{Name}}") return true;
+            {{/each}}
+    
+            return false; 
+        }
+
+        public override List<VariableInstance> FilterByAccess(Governor governor) {
+            return new List<VariableInstance> {
+                {{#each PublicProperties}}
+                new VariableInstance("{{Name}}", this.{{Name}}.ToString())
+                {{/each}}
+            };
+        }
+
+        public override object GetValue(string name) {
+            {{#each Properties}}
+            if (name == "{{Name}}") return this.{{Name}};
+            {{/each}}
+
+            throw new Exception("Key does not exists: " + name);
+        }
+
+        public override void SetValue(string name, object value) {
+            {{#each Properties}}
+            if (name == "{{Name}}") { this.{{Name}} = ({{Type}}) value; return; }
+            {{/each}}
+
+            throw new Exception("Key does not exists: " + name);
+        }
+
+        public override ResourceState Merge(BaseState state) {
+            return this;
+        }
+
+        public override ResourceState NewInstance() {
+            return new {{ClassName}}.Store();
+        }
+
+        public override void ResetDirty() {
+            {{#each Properties}}
+            this.defaultValues[{{@index}}] = this.{{Name}};
+            {{/each}}
+        }
+
+        public override GoalState[] ToGoalState() {
+            var list = new List<GoalState>();
+            {{#each Properties}}
+            if ({{#if IsNullable}}this.{{Name}} != null && {{/if}}!this.{{Name}}.Equals(this.defaultValues[{{@index}}])) {
+                list.Add(new GoalState("{{Name}}", this.{{Name}}, StateGoalStrategy.Equal));
+            }
+            {{/each}}
+            
+            return list.ToArray();
+        }
+    }
+    #endregion

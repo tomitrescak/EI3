@@ -135,8 +135,8 @@ namespace Ei.Persistence
             return workflowConnections;
         }
 
-        private List<AccessConditionDao> ExtractEffects(InstitutionDao dao, WorkflowConnection wc) {
-            var effects = new List<AccessConditionDao>();
+        private List<PostconditionDao> ExtractEffects(InstitutionDao dao, WorkflowConnection wc) {
+            var effects = new List<PostconditionDao>();
 
             if (wc.Workflow.Connections == null) return effects; // no connection in workflow
 
@@ -151,8 +151,12 @@ namespace Ei.Persistence
 
                 // add postconditions 
 
-                if (conn.Postconditions != null) {
-                    effects.AddRange(conn.Postconditions);
+                if (conn.Access != null) {
+                    foreach (var access in conn.Access) {
+                        if (access.Postconditions != null) {
+                            effects.AddRange(access.Postconditions);
+                        }
+                    }
                 }
 
                 // find all workflow connections

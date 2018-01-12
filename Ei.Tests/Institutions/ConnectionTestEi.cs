@@ -5,12 +5,18 @@ using Ei.Runtime;
 using Ei.Runtime.Planning;
 using System;
 using System.Collections.Generic;
+
 namespace Ei.Tests.Bdd.Institutions
 {
     #region class ConnectionTestEi
-    public class ConnectionTestEi : Institution<Institution.InstitutionState>
-    {
+    public class ConnectionTestEi : Institution<ConnectionTestEi.M> {
         private InstitutionState state;
+
+        public class M : Institution.InstitutionState
+        {
+            public M(Institution ei) : base(ei) {
+            }
+        }
 
         public ConnectionTestEi() : base("ConnectionTest") {
             // init basic properties
@@ -57,18 +63,15 @@ namespace Ei.Tests.Bdd.Institutions
     #endregion
 
     #region class DefaultOrganisation
-    public class DefaultOrganisation : Organisation
-    {
+    public class DefaultOrganisation : Organisation {
         public DefaultOrganisation() : base("default") {
             this.Name = "Default";
         }
 
-        public class DefaultResources : SearchableState
-        {
+        public class DefaultResources : SearchableState {
             private List<object> defaultValues = new List<object>();
-            protected override List<object> DefaultValues => defaultValues;
 
-            public override SearchableState Clone() {
+            public override SearchableState Clone(SearchableState cloneTo = null) {
                 var clone = new DefaultResources();
                 return clone;
             }
@@ -86,6 +89,10 @@ namespace Ei.Tests.Bdd.Institutions
                 throw new Exception("Key does not exists: " + name);
             }
 
+            public override void SetValue(string name, object value) {
+                throw new Exception("Key does not exists: " + name);
+            }
+
             public override ResourceState Merge(BaseState state) {
                 return this;
             }
@@ -97,7 +104,8 @@ namespace Ei.Tests.Bdd.Institutions
             public override void ResetDirty() {
             }
 
-            public override GoalState[] ToGoalState(bool onlyDirty = false) {
+            public override GoalState[] ToGoalState() {
+
                 return null;
             }
         }
@@ -109,8 +117,7 @@ namespace Ei.Tests.Bdd.Institutions
     #endregion
 
     #region class CitizenRole
-    public class CitizenRole : Role
-    {
+    public class CitizenRole : Role {
         public CitizenRole() : base("1") {
             this.Name = "Citizen";
             this.Description = null;
@@ -120,8 +127,7 @@ namespace Ei.Tests.Bdd.Institutions
             return new CitizenResources();
         }
 
-        public class CitizenResources : SearchableState
-        {
+        public class CitizenResources : SearchableState {
             public int ParentParameter { get; set; }
 
             // implementation
@@ -129,9 +135,8 @@ namespace Ei.Tests.Bdd.Institutions
             private List<object> defaultValues = new List<object> {
                 0
             };
-            protected override List<object> DefaultValues => defaultValues;
 
-            public override SearchableState Clone() {
+            public override SearchableState Clone(SearchableState cloneTo = null) {
                 var clone = new CitizenResources();
                 clone.ParentParameter = this.ParentParameter;
                 return clone;
@@ -158,10 +163,14 @@ namespace Ei.Tests.Bdd.Institutions
                 }
             }
 
+            public override void SetValue(string name, object value) {
+                throw new Exception("Key does not exists: " + name);
+            }
+
             public override ResourceState Merge(BaseState state) {
-                
-                var typedState = (CitizenResources) state;
-                if (!typedState.ParentParameter.Equals(typedState.DefaultValues[0])) {
+
+                var typedState = (CitizenResources)state;
+                if (!typedState.ParentParameter.Equals(typedState.defaultValues[0])) {
                     this.ParentParameter = typedState.ParentParameter;
                 }
                 return this;
@@ -172,11 +181,15 @@ namespace Ei.Tests.Bdd.Institutions
             }
 
             public override void ResetDirty() {
-                this.DefaultValues[0] = this.ParentParameter;
+                this.defaultValues[0] = this.ParentParameter;
             }
 
-            public override GoalState[] ToGoalState(bool onlyDirty = false) {
+            public override GoalState[] ToGoalState() {
                 var list = new List<GoalState>();
+                // we either return dirty ones or all of them
+                if (!this.ParentParameter.Equals(this.defaultValues[0])) {
+                    list.Add(new GoalState("ParentParameter", this.ParentParameter, StateGoalStrategy.Equal));
+                }
 
                 return list.ToArray();
             }
@@ -185,8 +198,7 @@ namespace Ei.Tests.Bdd.Institutions
     #endregion
 
     #region AccessFactory
-    static class AccessFactory
-    {
+    static class AccessFactory {
         public static AccessCondition<Institution.InstitutionState, MainWorkflow.WorkflowState, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState> MainDefaultCitizen {
             get { return new AccessCondition<Institution.InstitutionState, MainWorkflow.WorkflowState, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState>(); }
         }
@@ -197,12 +209,10 @@ namespace Ei.Tests.Bdd.Institutions
     #endregion
 
     #region class MainWorkflow
-    public class MainWorkflow : Workflow
-    {
+    public class MainWorkflow : Workflow {
         // action parameters
 
-        class SubWorkflowParameters : ParameterState
-        {
+        class SubWorkflowParameters : ParameterState {
 
             int Granite { get; set; }
 
@@ -328,13 +338,11 @@ namespace Ei.Tests.Bdd.Institutions
     #endregion
 
     #region class SubWorkflow
-    public class SubWorkflow : Workflow
-    {
+    public class SubWorkflow : Workflow {
         public const string ID = "subWorkflow";
 
         #region class Resources
-        public class Resources : WorkflowState
-        {
+        public class Resources : WorkflowState {
             public int Stones { get; set; }
 
             public override ResourceState NewInstance() {
@@ -344,8 +352,7 @@ namespace Ei.Tests.Bdd.Institutions
         private Resources resources = new Resources();
         #endregion
 
-        class SendActionParameters : ParameterState
-        {
+        class SendActionParameters : ParameterState {
             public int Stones { get; set; }
             public int Weight { get; set; }
 
@@ -438,3 +445,8 @@ namespace Ei.Tests.Bdd.Institutions
     }
     #endregion
 }
+
+namespace R
+{
+}
+

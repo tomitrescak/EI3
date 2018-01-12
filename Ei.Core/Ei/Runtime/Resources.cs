@@ -32,8 +32,6 @@ namespace Ei.Runtime
 
         public abstract ResourceState Merge(BaseState state);
 
-        protected abstract List<object> DefaultValues { get; }
-
         public abstract ResourceState NewInstance();
     }
 
@@ -41,12 +39,56 @@ namespace Ei.Runtime
     {
         public abstract object GetValue(string name);
 
+        public abstract void SetValue(string name, object value);
+
         public abstract bool Contains(string variable);
 
-        public abstract SearchableState Clone();
+        public abstract SearchableState Clone(SearchableState cloneto = null);
 
         public abstract void ResetDirty();
 
-        public abstract GoalState[] ToGoalState(bool onlyDirty = false);
+        public abstract GoalState[] ToGoalState();
+    }
+
+    public class EmptyResources : SearchableState
+    {
+        private List<object> defaultValues = new List<object>();
+
+        public override SearchableState Clone(SearchableState cloneTo = null) {
+            var clone = new EmptyResources();
+            return clone;
+        }
+
+        public override bool Contains(string variable) {
+            return false;
+        }
+
+        public override List<VariableInstance> FilterByAccess(Governor governor) {
+            var list = new List<VariableInstance>();
+            return list;
+        }
+
+        public override object GetValue(string name) {
+            throw new Exception("Key does not exists: " + name);
+        }
+
+        public override void SetValue(string name, object value) {
+            throw new Exception("Key does not exists: " + name);
+        }
+
+        public override ResourceState Merge(BaseState state) {
+            return this;
+        }
+
+        public override ResourceState NewInstance() {
+            return new EmptyResources();
+        }
+
+        public override void ResetDirty() {
+        }
+
+        public override GoalState[] ToGoalState() {
+            return null;
+        }
     }
 }

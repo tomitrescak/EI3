@@ -1,0 +1,424 @@
+﻿{
+	"Name": "Fishing",
+	"Description": "Fishing Example",
+	"Roles": [
+		{
+			"Id": "fisherman",
+			"Name": "Fisherman",
+			"Description": "We only need one role of fisherman as they both can do all actions, but who does what (rowing / spearing) is decided in the scene protocol\n",
+			"Properties": [
+				{
+					"Name": "FishCount",
+					"Type": "int",
+					"DefaultValue": 0
+				},
+				{
+					"Name": "ReedCount",
+					"Type": "int",
+					"DefaultValue": 0
+				},
+				{
+					"Name": "StoneCount",
+					"Type": "int",
+					"DefaultValue": 0
+				},
+				{
+					"Name": "WoodCount",
+					"Type": "int",
+					"DefaultValue": 0
+				},
+				{
+					"Name": "AxeCount",
+					"Type": "int",
+					"DefaultValue": 0
+				},
+				{
+					"Name": "HasSpear",
+					"Type": "bool",
+					"DefaultValue": false
+				},
+				{
+					"Name": "HasPaddle",
+					"Type": "bool",
+					"DefaultValue": false
+				}
+			]
+		}
+	],
+	"Organisations": [
+		{
+			"Id": "uruk",
+			"Name": "Uruk"
+		}
+	],
+	"Workflows": [
+		{
+			"Id": 1,
+			"Name": "Main",
+			"Stateless": true,
+			"Static": true,
+			"Start": {
+				"Id": "entry"
+			},
+			"End": [
+				{
+					"Id": "exit"
+				}
+			],
+			"Actions": [
+				{
+					"$type": "ActionMessageDao",
+					"Id": "findReed"
+				},
+				{
+					"$type": "ActionMessageDao",
+					"Id": "findStone"
+				},
+				{
+					"$type": "ActionMessageDao",
+					"Id": "findWood"
+				},
+				{
+					"$type": "ActionMessageDao",
+					"Id": "findAxe"
+				},
+				{
+					"$type": "ActionMessageDao",
+					"Id": "makeSpear"
+				},
+				{
+					"$type": "ActionMessageDao",
+					"Id": "makePaddle"
+				},
+        {
+          "$type": "ActionStartWorkflowDao",
+          "Id": "fishingWorkflow"
+        }
+			],
+			"States": null,
+			"Transitions": null,
+			"Connections": [
+				{
+					"Join": [
+						"entry",
+						"exit"
+					]
+				},
+				{
+					"Join": [
+						"open",
+						"open"
+					],
+					"ActionId": "findReed",
+					"Access": [
+						{
+							"Postconditions": [
+								{
+									"Condition": "r.ReedCount ++"
+								}
+							]
+						}
+					]
+				},
+				{
+					"Join": [
+						"open",
+						"open"
+					],
+					"ActionId": "findStone",
+					"Access": [
+						{
+							"Postconditions": [
+								{
+									"Condition": "r.StoneCount ++"
+								}
+							]
+						}
+					]
+				},
+				{
+					"Join": [
+						"open",
+						"open"
+					],
+					"ActionId": "findWood",
+					"Access": [
+						{
+							"Postconditions": [
+								{
+									"Condition": "r.WoodCount ++"
+								}
+							]
+						}
+					]
+				},
+				{
+					"Join": [
+						"open",
+						"open"
+					],
+					"ActionId": "findAxe",
+					"Access": [
+						{
+							"Postconditions": [
+								{
+									"Condition": "r.AxeCount ++"
+								}
+							]
+						}
+					]
+				},
+				{
+					"Join": [
+						"open",
+						"open"
+					],
+					"ActionId": "makeSpear",
+					"Access": [
+						{
+							"Precondition": "r.ReedCount > 0 && r.StoneCount > 0"
+						},
+						{
+							"Postconditions": [
+								{
+									"Condition": "r.ReedCount--; r.StoneCount--; r.HasSpear = true;\n"
+								}
+							]
+						}
+					]
+				},
+				{
+					"Join": [
+						"open",
+						"open"
+					],
+					"ActionId": "makePaddle",
+					"Access": [
+						{
+							"Precondition": "r.AxeCount > 0 && r.WoodCount > 0"
+						},
+						{
+							"Postconditions": [
+								{
+									"Condition": "r.WoodCount--; r.HasPaddle = true;\n"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Id": 2,
+			"Name": "Fishing",
+			"Stateless": false,
+			"Properties": [
+				{
+					"Name": "Rower",
+					"Type": "agent"
+				},
+				{
+					"Name": "Spearer",
+					"Type": "agent"
+				},
+				{
+					"Name": "FishCount",
+					"Type": "int"
+				}
+			],
+			"Start": {
+				"Id": "entry"
+			},
+			"End": [
+				{
+					"Id": "exit"
+				}
+			],
+			"Actions": [
+				{
+					"$type": "ActionMessageDao",
+					"Id": "enterBoat"
+				},
+				{
+					"$type": "ActionMessageDao",
+					"Id": "spearFish"
+				},
+				{
+					"$type": "ActionMessageDao",
+					"Id": "takeFish",
+					"Properties": [
+						{
+							"Name": "Count",
+							"Type": "int"
+						}
+					]
+				}
+			],
+			"States": [
+				{
+					"Id": "waitForRower",
+          "AllowEntry": [
+            {
+              "Role": "fisherman",
+              "Precondition": "r.HasPaddle == true;"
+            }
+          ]
+				},
+				{
+					"Id": "waitForSpearer",
+					"AllowEntry": [
+            {
+              "Role": "fisherman",
+              "Precondition": "r.HasSpear == true;"
+            }
+					]
+				},
+				{
+					"Id": "fishing"
+				}
+			],
+			"Transitions": null,
+			"Connections": [
+				{
+					"Join": [
+						"entry",
+						"waitForRower"
+					],
+					"ActionId": "enterBoat",
+					"Access": [
+						{
+							"Role": "fisherman",
+							"Precondition": "r.HasSpear",
+							"Postconditions": [
+								{
+									"Condition": "w.Spearer = r;"
+								}
+							]
+						}
+					]
+				},
+				{
+          "Join": [
+            "entry",
+            "waitForSpearer"
+          ],
+					"ActionId": "enterBoat",
+					"Access": [
+						{
+							"Role": "fisherman",
+							"Precondition": "r.HasPaddle",
+							"Postconditions": [
+								{
+									"Condition": "w.Rower = r;"
+								}
+							]
+						}
+					]
+				},
+				{
+					"Join": [
+						"waitForRower",
+						"fishing"
+					],
+					"ActionId": "enterBoat",
+					"Access": [
+						{
+							"Role": "fisherman",
+							"Precondition": "r.HasPaddle && a.Spearer != r",
+							"Postconditions": [
+								{
+									"Condition": "w.Rower = r;"
+								}
+							]
+						}
+					]
+				},
+				{
+					"Join": [
+						"waitForSpearer",
+						"fishing"
+					],
+					"ActionId": "enterBoat",
+					"Access": [
+						{
+							"Role": "fisherman",
+							"Precondition": "r.HasSpear && a.Rower != r",
+							"Postconditions": [
+								{
+									"Condition": "w.Spearer = r;"
+								}
+							]
+						}
+					]
+				},
+				{
+					"Join": [
+						"fish",
+						"fish"
+					],
+					"ActionId": "spearFish",
+					"Access": [
+						{
+							"Role": "fisherman",
+							"Precondition": "r.Spearer == r",
+							"Postconditions": [
+								{
+									"Condition": "w.FishCount ++;"
+								}
+							]
+						}
+					]
+				},
+				{
+					"Join": [
+						"fish",
+						"exit"
+					],
+					"ActionId": "takefish",
+					"Access": [
+						{
+							"Role": "fisherman",
+							"Precondition": "w.Spearer == r && a.Count <= w.FishCount",
+							"Postconditions": [
+								{
+									"Condition": "r.FishCount = a.Count; w.Rower.FishCount = w.FishCount - a.Count;\n"
+								}
+							]
+						}
+					]
+				},
+				{
+					"Join": [
+						"fish",
+						"exit"
+					],
+					"ActionId": "takefish",
+					"Access": [
+						{
+							"Role": "fisherman",
+							"Precondition": "w.Rower == r && a.Count <= w.FishCount",
+							"Postconditions": [
+								{
+									"Condition": "r.FishCount = a.Count; w.Spearer.FishCount = w.FishCount - a.Count;\n"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"InitialWorkflow": 1,
+	"Authorisation": [
+		{
+			"User": "user",
+			"Password": "pass",
+			"Groups": [
+				{
+					"OrganisationId": 1,
+					"RoleId": 1
+				}
+			]
+		}
+	]
+}

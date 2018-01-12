@@ -190,18 +190,25 @@
         // fields
 
         private Timer expressionTimer;
-
+        private List<Action<T>> expressions;
         // properties
 
-        public ReadOnlyCollection<Action<T>> Expressions { get; protected set; }
+        public ReadOnlyCollection<Action<T>> Expressions { get;  }
 
         // constructor
 
         protected Institution(string id) : base(id) {
+            this.expressions = new List<Action<T>>();
+            this.Expressions = new ReadOnlyCollection<Action<T>>(this.expressions);
+
             this.Start();
         }
 
         // methods 
+
+        public void AddExpressions(params Action<T>[] expressions) {
+            this.expressions.AddRange(expressions);
+        }
 
         public override void Start() {
             // init pauser that allows us to pause the institution

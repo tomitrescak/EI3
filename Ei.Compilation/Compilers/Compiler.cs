@@ -18,8 +18,11 @@ namespace Ei.Compilation
     {
         static Action<string> Write = Console.WriteLine;
 
-        public static string Compile(string codeToCompile)
-        {
+        public static string Compile(string codeToCompile) {
+            return Compile(codeToCompile, null, out object obj);
+        }
+
+        public static string Compile<T>(string codeToCompile, string activateObject, out T activatedObject) {
             Write("Let's compile!");
             Write("Parsing the code into the SyntaxTree");
 
@@ -28,6 +31,8 @@ namespace Ei.Compilation
         using Ei.Ontology.Actions;
         using Ei.Ontology.Transitions;
         using Ei.Runtime;
+        using Ei.Runtime.Planning;
+        using System;
         using System.Collections.Generic;
       " + codeToCompile;
 
@@ -38,6 +43,7 @@ namespace Ei.Compilation
             var neededAssemblies = new[]
             {
           "System.Runtime",
+          "System.Collections",
           "System.Private.CoreLib",
           "netstandard"
       };
@@ -61,35 +67,32 @@ namespace Ei.Compilation
                 references: references,
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-            using (var ms = new MemoryStream())
-            {
+            using (var ms = new MemoryStream()) {
+                activatedObject = default(T);
+
                 EmitResult result = compilation.Emit(ms);
 
-                if (!result.Success)
-                {
+                if (!result.Success) {
                     Write("Compilation failed!");
                     IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
                         diagnostic.IsWarningAsError ||
                         diagnostic.Severity == DiagnosticSeverity.Error);
 
                     var message = string.Join("\n", failures.Select(f => f.GetMessage()));
-                    foreach (Diagnostic diagnostic in failures)
-                    {
+                    foreach (Diagnostic diagnostic in failures) {
                         Console.Error.WriteLine("\t{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
                     }
                     return message;
                 }
-                else
-                {
-                    // Write("Compilation successful! Now instantiating and executing the code ...");
-                    // ms.Seek(0, SeekOrigin.Begin);
+                else if (activateObject != null) {
+                    Write("Compilation successful! Now instantiating and executing the code ...");
+                    ms.Seek(0, SeekOrigin.Begin);
 
-                    // Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
-                    // var type = assembly.GetType("RoslynCompileSample.Writer");
-                    // var instance = assembly.CreateInstance("RoslynCompileSample.Writer");
-                    // var meth = type.GetMember("Write").First() as MethodInfo;
-                    // meth.Invoke(instance, new[] { "joel" });
+                    Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
+                    var type = assembly.GetType(activateObject);
+                    activatedObject = (T)assembly.CreateInstance(activateObject);
                 }
+
             }
             return null;
         }

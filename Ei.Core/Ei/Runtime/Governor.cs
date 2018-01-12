@@ -85,11 +85,11 @@ namespace Ei.Runtime
                 return this.groups.Find(f => f.Role.Contains(name)).Role;
             }
 
-            public GoalState[] ToGoalState(bool onlyDirty = false) {
+            public GoalState[] ToGoalState() {
                 if (this.groups.Count == 1) {
-                    return this.groups[0].Role.ToGoalState(onlyDirty);
+                    return this.groups[0].Role.ToGoalState();
                 }
-                return this.groups.SelectMany(s => s.Role.ToGoalState(onlyDirty)).ToArray();
+                return this.groups.SelectMany(s => s.Role.ToGoalState()).ToArray();
             }
 
             public void ResetDirty() {

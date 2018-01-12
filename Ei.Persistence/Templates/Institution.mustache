@@ -1,0 +1,27 @@
+﻿#region class {{ClassName}}
+public class {{ClassName}} : Institution<{{ClassName}}.Store>
+    {
+
+    #region class Store
+    public class Store : Institution.InstitutionState
+    {
+    {{#each Properties}}
+    {{Type}} {{Name}} { get; set; }
+    {{/each}}
+
+    public Store(Institution ei) : base(ei) {}
+    }
+    #endregion
+
+    // constructor
+
+    public {{ClassName}}() : base("{{Id}}") {
+    }
+
+    // abstract implementation
+
+    public override Institution Instance => new {{ClassName}}();
+
+    public override Institution.InstitutionState Resources => new {{ClassName}}.Store(this);
+    }
+    #endregion

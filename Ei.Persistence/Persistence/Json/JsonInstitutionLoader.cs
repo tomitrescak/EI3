@@ -54,6 +54,7 @@ namespace Ei.Persistence.Json
         public override T Deserialise<T>(string source) {
             T newValue = JsonConvert.DeserializeObject<T>(source, new JsonSerializerSettings {
                 TypeNameHandling = TypeNameHandling.Objects,
+                MissingMemberHandling = MissingMemberHandling.Error,
                 SerializationBinder = knownTypesBinder
             });
             return newValue;

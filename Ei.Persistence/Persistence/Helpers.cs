@@ -15,5 +15,8 @@ namespace Ei.Persistence
             return str.Replace(" ", "");
         }
 
+        internal static string Pad(int pad, string text, params object[] values) {
+            return string.Format(text, values).Insert(0, "".PadLeft(pad));
+        }
     }
 }

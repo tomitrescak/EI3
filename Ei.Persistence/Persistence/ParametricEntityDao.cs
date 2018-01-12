@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Ei.Persistence
 {
@@ -6,10 +7,12 @@ namespace Ei.Persistence
     {
         public List<ParameterDao> Properties { get; set; }
 
-        protected ParametricEntityDao()
-        {
+        public string Parent { get; set; }
+
+        protected ParametricEntityDao() {
             this.Properties = new List<ParameterDao>();
         }
-        
+
+        public List<ParameterDao> PublicProperties => this.Properties.Where(p => p.AccessType == VariableAccess.Public).ToList();
     }
 }
