@@ -1,0 +1,18 @@
+﻿#region class {{ClassName}}
+public class {{ClassName}} {{#if Parent}}: {{ Parent }}{{/if}}
+{
+    // properties
+
+    {{#each Properties}}
+    {{Type}} {{Name}} { get; set; }
+    {{/each}}
+
+    // constructor
+
+    public {{ClassName}}() {
+        {{#each Properties}}
+        this.{{Name}} = {{DefaultValue}};
+        {{/each}}
+    }
+}
+#endregion
