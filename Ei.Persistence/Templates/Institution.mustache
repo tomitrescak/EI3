@@ -1,21 +1,53 @@
 ﻿#region class {{ClassName}}
 public class {{ClassName}} : Institution<{{ClassName}}.Store>
-    {
+{
 
     #region class Store
     public class Store : Institution.InstitutionState
     {
-    {{#each Properties}}
-    {{Type}} {{Name}} { get; set; }
-    {{/each}}
+        {{#each Properties}}
+        public {{Type}} {{Name}} { get; set; }
+        {{/each}}
 
-    public Store(Institution ei) : base(ei) {}
+        public Store(Institution ei) : base(ei) {}
     }
     #endregion
 
     // constructor
 
     public {{ClassName}}() : base("{{Id}}") {
+        this.Name = "{{Name}}";
+        this.Description = "{{Description}}";
+
+        // init organisations
+        {{#each Organisations}}
+        this.AddOrganisations(new {{ClassName}}());
+        {{/each}}
+
+        // init components
+        {{#each Roles}}
+        this.AddRoles(new {{ClassName}}());
+        {{/each}}
+
+        // init workflows
+        {{#each Workflows}}
+        this.AddWorkflows(new {{ClassName}}());
+        {{/each}}
+       
+        this.MainWorkflowId = this.Workflows[0].Id;
+
+        // init security
+        
+        {{#each Authorisation}}
+        this.AuthenticationPermissions.Add(new AuthorisationInfo("{{User}}", "{{Password}}", "{{Organisation}}"{{#each Groups}}, this.GroupByName("{{OrganisationId}}", "{{RoleId}}"){{/each}}));
+        {{/each}}
+
+        // init expressions
+
+        {{#each Expressions}}
+        this.AddExpressions(i => {{.}});
+        {{/each}}
+        
     }
 
     // abstract implementation
@@ -23,5 +55,5 @@ public class {{ClassName}} : Institution<{{ClassName}}.Store>
     public override Institution Instance => new {{ClassName}}();
 
     public override Institution.InstitutionState Resources => new {{ClassName}}.Store(this);
-    }
-    #endregion
+}
+#endregion

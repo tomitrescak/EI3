@@ -40,5 +40,6 @@ namespace Ei.Persistence.Templates
         public static Func<object, string> Organisation => LoadTemplate("Organisation");
         public static Func<object, string> Role => LoadTemplate("Role");
         public static Func<object, string> Institution => LoadTemplate("Institution");
+        public static Func<object, string> Class => LoadTemplate("Class");
     }
 }

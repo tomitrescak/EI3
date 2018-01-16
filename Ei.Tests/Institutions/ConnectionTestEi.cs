@@ -9,22 +9,14 @@ using System.Collections.Generic;
 namespace Ei.Tests.Bdd.Institutions
 {
     #region class ConnectionTestEi
-    public class ConnectionTestEi : Institution<ConnectionTestEi.M> {
-        private InstitutionState state;
+    public class ConnectionTestEi : Institution<Institution.InstitutionState> {
 
-        public class M : Institution.InstitutionState
-        {
-            public M(Institution ei) : base(ei) {
-            }
-        }
+
 
         public ConnectionTestEi() : base("ConnectionTest") {
             // init basic properties
             this.Name = "Connection Test";
             this.Description = "Connection Test Description";
-
-            // init state
-            this.state = new InstitutionState(this);
 
             // init organisations
             this.AddOrganisations(
@@ -44,10 +36,10 @@ namespace Ei.Tests.Bdd.Institutions
             this.MainWorkflowId = this.Workflows[0].Id;
 
             // init security
-            this.AuthenticationPermissions.Init(new List<AuthorisationInfo> {
-                new AuthorisationInfo(this, "user", null, null, new [] { this.GroupByName(new [] { "Citizen" } )}),
-                new AuthorisationInfo(this, null, "123", "Default", new [] { this.GroupByName(new [] { "Citizen" } )})
-            }, this);
+            this.AuthenticationPermissions.Add(
+                new AuthorisationInfo("user", null, null, this.GroupByName("Citizen")),
+                new AuthorisationInfo(null, "123", "Default", this.GroupByName("Citizen"))
+           );
         }
 
         // abstract implementation 
@@ -398,7 +390,7 @@ namespace Ei.Tests.Bdd.Institutions
 
             // define actions
 
-            var sendAction = new ActionMessage("send", ei, new SendActionParameters(), ei.RolesByName("Default", "Citizen"), null);
+            var sendAction = new ActionMessage("send", ei, new SendActionParameters(), ei.GroupsByName("Default", "Citizen"), null);
             var timeout = new ActionTimeout("timeout", ei);
 
             this.AddActions(

@@ -77,7 +77,7 @@ namespace Ei.Ontology
             if (roles != null)
             {
                 // build role list
-                roleList = this.Ei.RolesByName(roles);
+                roleList = this.Ei.GroupsByName(roles);
                 if (roleList == null)
                 {
                     return InstitutionCodes.IncorrectRoleOrOrganisation;

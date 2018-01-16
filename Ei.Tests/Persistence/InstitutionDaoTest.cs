@@ -22,6 +22,28 @@ namespace Ei.Tests.Persistence
                         Type = "int",
                         DefaultValue = "0"
                     }
+                },
+                Authorisation = new List<AuthorisationDao> {
+                    new AuthorisationDao {
+                        User = "User",
+                        Password = "Password",
+                        Organisation = "Organisation",
+                        Groups = new List<GroupDao> {
+                            new GroupDao {
+                                OrganisationId = "OId",
+                                RoleId = "RId"
+                            },
+                             new GroupDao {
+                                RoleId = "RId"
+                            },
+                              new GroupDao {
+                                OrganisationId = "OId"
+                            },
+                        }
+                    }
+                },
+                Expressions = new List<string> {
+                    "i.Count = (int) (i.TimeMs + i.TimeSeconds)"
                 }
             };
 

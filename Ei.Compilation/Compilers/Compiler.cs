@@ -27,14 +27,16 @@ namespace Ei.Compilation
             Write("Parsing the code into the SyntaxTree");
 
             codeToCompile = @"
-        using Ei.Ontology;
-        using Ei.Ontology.Actions;
-        using Ei.Ontology.Transitions;
-        using Ei.Runtime;
-        using Ei.Runtime.Planning;
-        using System;
-        using System.Collections.Generic;
-      " + codeToCompile;
+using Ei;
+using Ei.Ontology;
+using Ei.Ontology.Actions;
+using Ei.Ontology.Transitions;
+using Ei.Runtime;
+using Ei.Runtime.Planning;
+using System;
+using System.Collections.Generic;
+
+" + codeToCompile;
 
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(codeToCompile);
 

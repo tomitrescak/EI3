@@ -67,7 +67,7 @@
         protected Institution(string id) : base(id) {
             Log.Info("Institution instantiated ...");
 
-            this.AuthenticationPermissions = new Security();
+            this.AuthenticationPermissions = new Security(this);
 
             this.roles = new List<Role>();
             this.Roles = new ReadOnlyCollection<Role>(this.roles);
@@ -138,13 +138,15 @@
             }
 
             if (role.Length == 2) {
-                var org = this.Organisations.FirstOrDefault(w => w.Name == role[0].Trim());
+                var org = string.IsNullOrEmpty(role[0]) 
+                    ? this.Organisations[0]
+                    : this.Organisations.FirstOrDefault(w => w.Name == role[0].Trim());
                 if (org == null) {
                     throw new InstitutionException("Organisation does not exist: " + role[0]);
                 }
                 var rl = this.Roles.FirstOrDefault(w => w.Name == role[1].Trim());
                 if (rl == null) {
-                    throw new InstitutionException("Role does not exist: " + role[0]);
+                    throw new InstitutionException("Role does not exist: " + role[1]);
                 }
                 return (rl == null || org == null) ? null : new Group(org, rl);
             }
@@ -152,7 +154,7 @@
             return null;
         }
 
-        public Group[] RolesByName(params string[] roleNames) {
+        public Group[] GroupsByName(params string[] roleNames) {
             var roleList = new Group[roleNames.Length / 2];
             for (int i = 0; i < roleNames.Length / 2; i++) {
                 // in case there is only one organisation we allow users to specify only a role with no organisation
@@ -163,7 +165,7 @@
             return roleList;
         }
 
-        public Group[] RolesByName(string[][] roleNames) {
+        public Group[] GroupsByName(string[][] roleNames) {
             var roleList = new Group[roleNames.Length];
             for (int i = 0; i < roleNames.Length; i++) {
                 // in case there is only one organisation we allow users to specify only a role with no organisation
