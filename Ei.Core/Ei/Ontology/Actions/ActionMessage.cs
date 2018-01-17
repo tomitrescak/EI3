@@ -26,6 +26,7 @@ namespace Ei.Ontology.Actions
         public ReadOnlyCollection<Group> NotifyRoles { get; }
 
         public ReadOnlyCollection<string> NotifyAgents { get; }
+        #endregion
 
         protected override IActionInfo PerformAction(Governor agent, Connection connection, ParameterState parameters) {
             var result = parameters.Validate();
@@ -51,8 +52,5 @@ namespace Ei.Ontology.Actions
 
             return ActionInfo.Ok;
         }
-
-
-        #endregion
     }
 }

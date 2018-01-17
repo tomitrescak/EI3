@@ -231,16 +231,14 @@ namespace Ei.Runtime
                 this.Continue();
             }
 
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             if (result.IsOk) {
                 clone.Continue();
             }
         }
 
         public IActionInfo ExitWorkflow(string cloneName) {
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.ExitWorkflow() : result;
         }
 
@@ -268,14 +266,14 @@ namespace Ei.Runtime
                 this.Name,
                 oldWorkflow.Id,
                 oldWorkflow.Name,
-                newWorkflow != null ? newWorkflow.Id : null,
-                newWorkflow != null ? newWorkflow.Name : null);
+                newWorkflow?.Id,
+                newWorkflow?.Name);
 
             this.callbacks.ExitedWorkflow(
                 oldWorkflow.Id,
                 oldWorkflow.Name,
-                newWorkflow != null ? newWorkflow.Id : null,
-                newWorkflow != null ? newWorkflow.Name : null);
+                newWorkflow?.Id,
+                newWorkflow?.Name);
 
             // flow to output node of the context workflow node
             if (connection != null) {
@@ -292,8 +290,7 @@ namespace Ei.Runtime
         }
 
         public IActionInfo Move(string cloneName, string positionId) {
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.Move(positionId) : result;
         }
 
@@ -314,8 +311,7 @@ namespace Ei.Runtime
         }
 
         public IActionInfo PerformAction(string cloneName, string actionId, VariableInstance[] parameters) {
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.PerformAction(actionId, parameters) : result;
         }
 
@@ -353,7 +349,7 @@ namespace Ei.Runtime
                     this.Name,
                     this.Name,
                     activityId,
-                    parameters == null ? null : parameters.ToString());
+                    parameters?.ToString());
 
                 this.NotifyActivityFailed(this.Workflow, this.Name, activityId, parsedParameters);
             }
@@ -385,7 +381,7 @@ namespace Ei.Runtime
                     this.Name,
                     this.Name,
                     activityId,
-                    parameters == null ? null : parameters.ToString());
+                    parameters?.ToString());
 
                 this.NotifyActivityFailed(this.Workflow, this.Name, activityId, parameters);
             }
@@ -396,8 +392,7 @@ namespace Ei.Runtime
         }
 
         public WorkflowInfo[] GetWorkflowInfos(string cloneName, string activityId) {
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.GetWorkflowInfos(activityId) : new WorkflowInfo[0];
         }
 
@@ -420,8 +415,7 @@ namespace Ei.Runtime
         }
 
         public ActionBase[] FeasibleActions(string cloneName) {
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.FeasibleActions() : new ActionBase[0];
         }
 

@@ -154,6 +154,41 @@
             return null;
         }
 
+        public Group GroupById(params string[] role) {
+            if (role.Length == 1) {
+
+                if (this.Organisations.Count == 0) {
+                    throw new InstitutionException("You need to define at least one organisation");
+                }
+
+                var org = this.Organisations[0];
+                var rl = this.Roles.FirstOrDefault(w => w.Id == role[0].Trim());
+
+                if (rl == null) {
+                    throw new InstitutionException("Role does not exist: " + role[0]);
+                }
+
+                // role possibly does not exists
+                return rl == null ? null : new Group(org, rl);
+            }
+
+            if (role.Length == 2) {
+                var org = string.IsNullOrEmpty(role[0]) 
+                    ? this.Organisations[0]
+                    : this.Organisations.FirstOrDefault(w => w.Id == role[0].Trim());
+                if (org == null) {
+                    throw new InstitutionException("Organisation does not exist: " + role[0]);
+                }
+                var rl = this.Roles.FirstOrDefault(w => w.Id == role[1].Trim());
+                if (rl == null) {
+                    throw new InstitutionException("Role does not exist: " + role[1]);
+                }
+                return (rl == null || org == null) ? null : new Group(org, rl);
+            }
+
+            return null;
+        }
+
         public Group[] GroupsByName(params string[] roleNames) {
             var roleList = new Group[roleNames.Length / 2];
             for (int i = 0; i < roleNames.Length / 2; i++) {

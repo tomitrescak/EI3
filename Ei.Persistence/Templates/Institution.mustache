@@ -19,31 +19,41 @@ public class {{ClassName}} : Institution<{{ClassName}}.Store>
         this.Name = "{{Name}}";
         this.Description = "{{Description}}";
 
-        // init organisations
-        {{#each Organisations}}
-        this.AddOrganisations(new {{ClassName}}());
-        {{/each}}
+        // init organisations 
+        this.AddOrganisations(new Organisation[] {
+            {{#each Organisations}}
+            new {{ClassName}}(),
+            {{/each}}
+        });
+        
 
-        // init components
-        {{#each Roles}}
-        this.AddRoles(new {{ClassName}}());
-        {{/each}}
-
+        // init roles
+        this.AddRoles(new Role[] {
+            {{#each Roles}}
+            new {{ClassName}}(),
+            {{/each}}
+        });
+        
         // init workflows
-        {{#each Workflows}}
-        this.AddWorkflows(new {{ClassName}}());
-        {{/each}}
+        this.AddWorkflows(new Workflow[] {
+            {{#each Workflows}}
+            new {{ClassName}}(),
+            {{/each}}
+        });
+        
        
         this.MainWorkflowId = this.Workflows[0].Id;
 
         // init security
+
+        this.AuthenticationPermissions.Add(new AuthorisationInfo[] {
+            {{#each Authorisation}}
+            new AuthorisationInfo("{{User}}", "{{Password}}", "{{Organisation}}"{{#each Groups}}, this.GroupById("{{OrganisationId}}", "{{RoleId}}"){{/each}}),
+            {{/each}}
+        });
         
-        {{#each Authorisation}}
-        this.AuthenticationPermissions.Add(new AuthorisationInfo("{{User}}", "{{Password}}", "{{Organisation}}"{{#each Groups}}, this.GroupByName("{{OrganisationId}}", "{{RoleId}}"){{/each}}));
-        {{/each}}
 
         // init expressions
-
         {{#each Expressions}}
         this.AddExpressions(i => {{.}});
         {{/each}}

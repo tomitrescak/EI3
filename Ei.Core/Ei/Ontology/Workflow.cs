@@ -406,6 +406,7 @@ namespace Ei.Ontology
         private readonly List<State> states;
         private readonly List<ActionBase> actions;
         private Access joinPermissions;
+        private Access createPermissions;
         //private Access joinPermissionsOnWorkflowState;
         //private Access joinPermissionsOnAgentState;
 
@@ -430,6 +431,8 @@ namespace Ei.Ontology
         // abstract
 
         public Access JoinPermissions { get { return this.joinPermissions; } }
+
+         public Access CreatePermissions { get { return this.createPermissions; } }
 
         public virtual WorkflowState State { get; protected set; }
 
@@ -459,6 +462,14 @@ namespace Ei.Ontology
             }
             this.joinPermissions.Add(condition);
             return this.joinPermissions;
+        }
+
+        public Access AddCreatePermissions(AccessCondition condition) {
+            if (this.createPermissions == null) {
+                this.createPermissions = new Access();
+            }
+            this.createPermissions.Add(condition);
+            return this.createPermissions;
         }
 
         public void AddStates(params State[] states) {

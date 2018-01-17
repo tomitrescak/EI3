@@ -129,8 +129,9 @@ namespace Ei.Tests.Bdd.Institutions
             };
 
             public override SearchableState Clone(SearchableState cloneTo = null) {
-                var clone = new CitizenResources();
-                clone.ParentParameter = this.ParentParameter;
+                var clone = new CitizenResources {
+                    ParentParameter = this.ParentParameter
+                };
                 return clone;
             }
 
@@ -242,11 +243,12 @@ namespace Ei.Tests.Bdd.Institutions
 
             // add actions
             var joinSubworkflow = new ActionJoinWorkflow("joinSubWorkflow", ei, SubWorkflow.ID);
-            var startSubWorkflow = new ActionStartWorkflow("startSubWorkflow", ei, joinSubworkflow, new SubWorkflowParameters());
+            // var startSubWorkflow = new ActionStartWorkflow("startSubWorkflow", ei, joinSubworkflow, new SubWorkflowParameters());
 
-            this.AddActions(
+            this.AddActions(new ActionBase [] {
                 joinSubworkflow,
-                startSubWorkflow
+                // startSubWorkflow,
+                }
             );
 
             // add states
@@ -312,7 +314,7 @@ namespace Ei.Tests.Bdd.Institutions
                     })
                 );
 
-            this.Connect(startState, startState, startSubWorkflow);
+            // this.Connect(startState, startState, startSubWorkflow);
             this.Connect(startState, incState, joinSubworkflow);
 
             // check joins

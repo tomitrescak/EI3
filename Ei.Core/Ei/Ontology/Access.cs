@@ -37,11 +37,11 @@
 
         public bool HasPreconditions { get { return this.conditions.Any(c => c.HasPreconditions); } }
 
-        public bool CanAccess(Governor.GovernorState agentState, Workflow.WorkflowState workflow = null) {
+        public bool CanAccess(Governor.GovernorState agentState, Workflow.WorkflowState workflow = null, ParameterState parameters = null) {
             if (this.conditions.Count == 1) {
-                return this.conditions[0].CanAccess(agentState, workflow);
+                return this.conditions[0].CanAccess(agentState, workflow, parameters);
             }
-            return this.conditions.Any(c => c.CanAccess(agentState, workflow));
+            return this.conditions.Any(c => c.CanAccess(agentState, workflow, parameters));
         }
 
         public void ApplyPostconditions(Governor.GovernorState agent, ParameterState parameters, bool planningMode = false) {
@@ -84,7 +84,7 @@
         /// </summary>
         /// <param name="agentOrganisationalRoles">Roles to check</param>
         /// <param name="agentState"></param>
-        public abstract bool CanAccess(Governor.GovernorState agentState, Workflow.WorkflowState workflowState);
+        public abstract bool CanAccess(Governor.GovernorState agentState, Workflow.WorkflowState workflowState, ParameterState parameters);
 
         public abstract void ApplyPostconditions(Governor.GovernorState agent, ParameterState parameters, bool planningMode = false);
 
@@ -210,9 +210,7 @@
                 // check first successful condition
                 if (condition == null || condition((I)eiState, (W)workflowState, null, null, null)) {
                     // apply action
-                    if (this.action != null) {
-                        this.action((I)eiState, (W)workflowState, null, null, null);
-                    }
+                    this.action?.Invoke((I)eiState, (W)workflowState, null, null, null);
 
                     return true;
                 }
@@ -278,11 +276,11 @@
 
         // general access
 
-        public override bool CanAccess(Governor.GovernorState agentState, Workflow.WorkflowState workflowState) {
+        public override bool CanAccess(Governor.GovernorState agentState, Workflow.WorkflowState workflowState, ParameterState parameters) {
             if (this.preConditions == null) {
                 return true;
             }
-            return this.preConditions.Any(c => c.CanAccess(agentState, workflowState ?? agentState.Governor.Workflow.Resources));
+            return this.preConditions.Any(c => c.CanAccess(agentState, workflowState ?? agentState.Governor.Workflow.Resources, parameters));
         }
 
 

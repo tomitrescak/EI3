@@ -1,4 +1,5 @@
-﻿using HandlebarsDotNet;
+﻿using Ei.Persistence.Actions;
+using HandlebarsDotNet;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,6 +32,19 @@ namespace Ei.Persistence.Templates
         }
 
         static CodeGenerator() {
+            // load helpers
+            Handlebars.RegisterHelper("lowerCase", (writer, context, parameters) => {
+                writer.WriteSafeString(parameters[0].ToString().ToLower()); //.WriteSafeString("<a href='" + context.url + "'>" + context.text + "</a>");
+            });
+
+            Handlebars.RegisterHelper("generateConstructor", (writer, context, parameters) => {
+                writer.WriteSafeString(((ActionDao) parameters[0]).GenerateConstructor(parameters[1].ToString())); //.WriteSafeString("<a href='" + context.url + "'>" + context.text + "</a>");
+            });
+
+            Handlebars.RegisterHelper("generateParameters", (writer, context, parameters) => {
+                writer.WriteSafeString(((ActionDao) parameters[0]).GenerateParameters()); //.WriteSafeString("<a href='" + context.url + "'>" + context.text + "</a>");
+            });
+
             // preload partials
             LoadHelper("Resources");
             LoadHelper("ParentResources");
@@ -41,5 +55,7 @@ namespace Ei.Persistence.Templates
         public static Func<object, string> Role => LoadTemplate("Role");
         public static Func<object, string> Institution => LoadTemplate("Institution");
         public static Func<object, string> Class => LoadTemplate("Class");
+        public static Func<object, string> Workflow => LoadTemplate("Workflow");
+        public static Func<object, string> Parameters => LoadTemplate("Parameters");
     }
 }

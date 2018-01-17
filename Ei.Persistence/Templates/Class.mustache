@@ -4,7 +4,7 @@ public class {{ClassName}} {{#if Parent}}: {{ Parent }}{{/if}}
     // properties
 
     {{#each Properties}}
-    {{Type}} {{Name}} { get; set; }
+    public {{Type}} {{Name}} { get; set; }
     {{/each}}
 
     // constructor

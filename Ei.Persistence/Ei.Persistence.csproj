@@ -9,13 +9,18 @@
     <None Remove="Templates\Class.mustache" />
     <None Remove="Templates\Institution.mustache" />
     <None Remove="Templates\Organisation.mustache" />
+    <None Remove="Templates\Parameters.mustache" />
     <None Remove="Templates\ParentResources.mustache" />
     <None Remove="Templates\Resources.mustache" />
     <None Remove="Templates\Role.mustache" />
+    <None Remove="Templates\Workflow.mustache" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Templates\Authorisation.mustache">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\Parameters.mustache">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Templates\Class.mustache">
@@ -34,6 +39,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Templates\Role.mustache">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\Workflow.mustache">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

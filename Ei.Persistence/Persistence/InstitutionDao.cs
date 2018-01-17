@@ -47,14 +47,16 @@ namespace Ei.Persistence
         public string GenerateAll() {
             var sb = new StringBuilder();
 
-           
+            sb.AppendLine(CodeGenerator.Institution(this));
+
             this.Roles.ForEach(o => sb.AppendLine(o.GenerateCode()));
             this.Organisations.ForEach(o => sb.AppendLine(o.GenerateCode()));
+            this.Workflows.ForEach(o => sb.AppendLine(o.GenerateCode()));
 
             return sb.ToString();
         }
 
-        public string GenerateCode() {
+        public override string GenerateCode() {
             return CodeGenerator.Institution(this);
         }
     }

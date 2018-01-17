@@ -7,5 +7,8 @@ namespace Ei.Persistence.Actions
 {
     public class ActionTimeoutDao : ActionDao
     {
+        public override string GenerateConstructor(string holderClass) {
+            return $"new ActionTimeout(\"{Id}\", ei)";
+        }
     }
 }

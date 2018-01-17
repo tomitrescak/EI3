@@ -1,0 +1,32 @@
+﻿#region class MainWorkflow
+public class {{ClassName}} : Workflow {
+
+    // properties
+
+    public override bool Stateless => {{ lowerCase Stateless }};
+    public override bool Static => {{ lowerCase Static }};
+
+    // workflow actions
+
+    #region Action Parameters
+    {{#each Actions}}{{ generateParameters . }}{{/each}}   
+    #endregion
+
+    // constructor
+
+    public MainWorkflow(): this(null) { }
+
+    public MainWorkflow(Institution ei) : base(ei, "{{ Id }}") {
+        this.Name = "Main"; 
+
+        // actions
+        this.AddActions(new ActionBase [] {
+            {{#each Actions}}
+            {{ generateConstructor . ../ClassName }},
+            {{/each}}   
+        });
+
+        // states
+    }
+}
+#endregion

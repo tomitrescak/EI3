@@ -33,24 +33,44 @@ namespace Ei.Tests.Persistence
                                 OrganisationId = "OId",
                                 RoleId = "RId"
                             },
-                             new GroupDao {
+                            new GroupDao {
                                 RoleId = "RId"
-                            },
-                              new GroupDao {
-                                OrganisationId = "OId"
-                            },
+                            }
                         }
                     }
                 },
                 Expressions = new List<string> {
                     "i.Count = (int) (i.TimeMs + i.TimeSeconds)"
+                },
+                Workflows = new List<WorkflowDao> {
+                    new WorkflowDao {
+                        Id = "main",
+                        Name = "Main"
+                    }
+                },
+                Organisations = new List<OrganisationDao> {
+                    new OrganisationDao {
+                        Id = "OId",
+                        Name = "Default"
+                    }
+                },
+                Roles = new List<RoleDao> {
+                    new RoleDao {
+                        Id = "RId",
+                        Name = "Citizen"
+                    }
                 }
             };
 
-            var actual = dao.GenerateCode();
+            var actual = dao.GenerateAll();
 
             Console.WriteLine(actual);
-            Assert.Null(Compiler.Compile(actual));
+
+            var result = Compiler.Compile(actual, "DefaultInstitution", out Institution TestEi);
+            Assert.Null(result);
+
+            var auth = TestEi.AuthenticationPermissions.Authenticate("", "User", "Password");
+            Assert.False(auth.IsEmpty);
         }
     }
 }

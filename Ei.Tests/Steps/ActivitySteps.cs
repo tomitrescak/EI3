@@ -22,8 +22,7 @@ namespace Ei.Tests.Steps
         private readonly ScenarioContext scenarioContext;
 
         public ActivitySteps(ScenarioContext scenarioContext) {
-            if (scenarioContext == null) throw new ArgumentNullException("scenarioContext");
-            this.scenarioContext = scenarioContext;
+            this.scenarioContext = scenarioContext ?? throw new ArgumentNullException("scenarioContext");
         }
 
 
