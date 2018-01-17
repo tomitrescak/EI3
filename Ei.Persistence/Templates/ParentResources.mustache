@@ -76,14 +76,6 @@
             throw new Exception("Key does not exists: " + name);
         }
 
-        public override ResourceState Merge(BaseState state) {
-            return this;
-        }
-
-        public override ResourceState NewInstance() {
-            return new {{ClassName}}.Store();
-        }
-
         public override void ResetDirty() {
             base.ResetDirty();
 

@@ -17,23 +17,25 @@
             return null;
         }
 
-        public override ParameterState Parse(VariableInstance[] properties) {
-            var result = super.Parse(properties);
+        public override void Parse(VariableInstance[] properties) {
             foreach (var property in properties) {
                 switch (property.Name) {
                     {{#each Properties}}
                     case "{{Name}}":
-                        result.{{Name}} = {{Type}}.Parse(property.Value);
+                        this.{{Name}} = {{Type}}.Parse(property.Value);
                         break;
                     {{/each}}
                 }
             }
-            return result;
         }
 
         {{#if WorkflowId}}
-        public void override CopyTo(Workflow.WorkflowState store) {
-    
+        public override void CopyTo(Workflow.Store workflowStore) {
+            var store = ({{WorkflowClassName}}.Store) workflowStore;
+
+            {{#each Properties}}
+            store.{{Name}} = this.{{Name}};
+            {{/each}}
         }
         {{/if}}
     }

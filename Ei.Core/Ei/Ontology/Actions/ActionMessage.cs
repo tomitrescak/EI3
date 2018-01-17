@@ -6,13 +6,15 @@ using Ei.Runtime;
 
 namespace Ei.Ontology.Actions
 {
-    public class ActionMessage : ActionWithParameters
+    public class ActionMessage : ActionBase
     {
 
         // constructor
 
-        public ActionMessage(string id, Institution ei, ParameterState createParameters = null, Group[] notifyGroups = null, List<string> notifyAgents = null)
-            : base(ei, id, createParameters) {
+        public ActionMessage(string id, Institution ei, Func<ParameterState> createParameters, Group[] notifyGroups = null, List<string> notifyAgents = null)
+            : base(ei, id) {
+
+            this.CreateParameters = createParameters;
 
             if (notifyGroups != null) {
                 this.NotifyRoles = new ReadOnlyCollection<Group>(notifyGroups);

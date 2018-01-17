@@ -1,16 +1,28 @@
-﻿#region class MainWorkflow
+﻿#region class {{ClassName}}
 public class {{ClassName}} : Workflow {
 
-    // properties
-
-    public override bool Stateless => {{ lowerCase Stateless }};
-    public override bool Static => {{ lowerCase Static }};
+    // store
+    #region Store
+    public new class Store : Workflow.Store {
+        {{#each Properties}}
+        public {{Type}} {{Name}} { get; set; }
+        {{/each}} 
+    }
+    #endregion
 
     // workflow actions
 
     #region Action Parameters
-    {{#each Actions}}{{ generateParameters . }}{{/each}}   
+    {{#each Actions}}{{ generateParameters . ../ClassName }}{{/each}}   
     #endregion
+
+    // abstract implementation
+
+    public override bool Stateless => {{ lowerCase Stateless }};
+    public override bool Static => {{ lowerCase Static }};
+    public override Workflow.Store CreateStore() {
+        return new {{ClassName}}.Store();
+    }
 
     // constructor
 

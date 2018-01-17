@@ -25,17 +25,16 @@ namespace Ei.Ontology.Actions
                 this.InstanceId = -1;
             }
 
-            public override ParameterState Parse(VariableInstance[] properties) {
-                var parameters = new Parameters();
+            public override void Parse(VariableInstance[] properties) {
+                base.Parse(properties);
 
                 foreach (var property in properties) {
                     switch (property.Name) {
                         case "InstanceId":
-                            parameters.InstanceId = int.Parse(property.Value);
+                            this.InstanceId = int.Parse(property.Value);
                             break;
                     }
                 }
-                return parameters;
             }
         }
 
@@ -62,9 +61,10 @@ namespace Ei.Ontology.Actions
 
         // ctor
 
-        public ActionJoinWorkflow(string id, Institution institution, string workflowId)
+        public ActionJoinWorkflow(string id, Institution institution, string workflowId, Func<ParameterState> parameters)
             : base(institution, id) {
             this.ei = institution;
+            this.CreateParameters = parameters ?? (() => new Parameters()); 
 
             // get the workflow
 
@@ -79,7 +79,7 @@ namespace Ei.Ontology.Actions
 
             // initialise parameters
             if (parameters != null) {
-                newWorkflow.Resources.Merge(parameters);
+                parameters.CopyTo(newWorkflow.Resources);
             }
 
             // set owner to the agent that created this workflow
@@ -168,8 +168,5 @@ namespace Ei.Ontology.Actions
             return this.Workflows.Select(w => this.workflow.GetInstance(w).GetInfo(governor)).ToArray();
         }
 
-        public override ParameterState ParseParameters(VariableInstance[] properties) {
-            return Parameters.Instance.Parse(properties);
-        }
     }
 }

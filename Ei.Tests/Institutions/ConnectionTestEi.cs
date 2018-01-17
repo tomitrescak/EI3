@@ -85,14 +85,6 @@ namespace Ei.Tests.Bdd.Institutions
                 throw new Exception("Key does not exists: " + name);
             }
 
-            public override ResourceState Merge(BaseState state) {
-                return this;
-            }
-
-            public override ResourceState NewInstance() {
-                return new DefaultResources();
-            }
-
             public override void ResetDirty() {
             }
 
@@ -160,18 +152,6 @@ namespace Ei.Tests.Bdd.Institutions
                 throw new Exception("Key does not exists: " + name);
             }
 
-            public override ResourceState Merge(BaseState state) {
-
-                var typedState = (CitizenResources)state;
-                if (!typedState.ParentParameter.Equals(typedState.defaultValues[0])) {
-                    this.ParentParameter = typedState.ParentParameter;
-                }
-                return this;
-            }
-
-            public override ResourceState NewInstance() {
-                return new CitizenResources();
-            }
 
             public override void ResetDirty() {
                 this.defaultValues[0] = this.ParentParameter;
@@ -192,11 +172,11 @@ namespace Ei.Tests.Bdd.Institutions
 
     #region AccessFactory
     static class AccessFactory {
-        public static AccessCondition<Institution.InstitutionState, MainWorkflow.WorkflowState, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState> MainDefaultCitizen {
-            get { return new AccessCondition<Institution.InstitutionState, MainWorkflow.WorkflowState, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState>(); }
+        public static AccessCondition<Institution.InstitutionState, MainWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState> MainDefaultCitizen {
+            get { return new AccessCondition<Institution.InstitutionState, MainWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState>(); }
         }
-        public static AccessCondition<Institution.InstitutionState, SubWorkflow.Resources, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState> SubWorkflowDefaultCitizen {
-            get { return new AccessCondition<Institution.InstitutionState, SubWorkflow.Resources, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState>(); }
+        public static AccessCondition<Institution.InstitutionState, SubWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState> SubWorkflowDefaultCitizen {
+            get { return new AccessCondition<Institution.InstitutionState, SubWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState>(); }
         }
     }
     #endregion
@@ -205,7 +185,9 @@ namespace Ei.Tests.Bdd.Institutions
     public class MainWorkflow : Workflow {
         // action parameters
 
-        class SubWorkflowParameters : ParameterState {
+        #region class SubWorkflowParameters : ParameterState
+        class SubWorkflowParameters : ParameterState
+        {
 
             int Granite { get; set; }
 
@@ -216,7 +198,7 @@ namespace Ei.Tests.Bdd.Institutions
                 return null;
             }
 
-            public override ParameterState Parse(VariableInstance[] properties) {
+            public override void Parse(VariableInstance[] properties) {
                 foreach (var property in properties) {
                     switch (property.Name) {
                         case "Granite":
@@ -226,9 +208,9 @@ namespace Ei.Tests.Bdd.Institutions
                             throw new Exception("Key not found: " + property.Name);
                     }
                 }
-                return this;
             }
-        }
+        } 
+        #endregion
 
         // properties
 
@@ -236,13 +218,17 @@ namespace Ei.Tests.Bdd.Institutions
 
         public override bool Static { get { return true; } }
 
+        public override Store CreateStore() {
+            return new Workflow.Store();
+        }
+
         // constructor
 
         public MainWorkflow(Institution ei, string id = "main") : base(ei, id) {
             this.Name = "Main";
 
             // add actions
-            var joinSubworkflow = new ActionJoinWorkflow("joinSubWorkflow", ei, SubWorkflow.ID);
+            var joinSubworkflow = new ActionJoinWorkflow("joinSubWorkflow", ei, SubWorkflow.ID, null);
             // var startSubWorkflow = new ActionStartWorkflow("startSubWorkflow", ei, joinSubworkflow, new SubWorkflowParameters());
 
             this.AddActions(new ActionBase [] {
@@ -336,21 +322,18 @@ namespace Ei.Tests.Bdd.Institutions
         public const string ID = "subWorkflow";
 
         #region class Resources
-        public class Resources : WorkflowState {
+        public new class Store : Workflow.Store {
             public int Stones { get; set; }
-
-            public override ResourceState NewInstance() {
-                return new Resources();
-            }
         }
-        private Resources resources = new Resources();
         #endregion
 
-        class SendActionParameters : ParameterState {
+        #region class SendActionParameters
+        class SendActionParameters : ParameterState
+        {
             public int Stones { get; set; }
             public int Weight { get; set; }
 
-            public override ParameterState Parse(VariableInstance[] properties) {
+            public override void Parse(VariableInstance[] properties) {
                 foreach (var property in properties) {
                     switch (property.Name) {
                         case "Stones":
@@ -363,7 +346,6 @@ namespace Ei.Tests.Bdd.Institutions
                             throw new Exception("Key not found: " + property.Name);
                     }
                 }
-                return this;
             }
 
             public override string Validate() {
@@ -375,7 +357,8 @@ namespace Ei.Tests.Bdd.Institutions
                 }
                 return null;
             }
-        }
+        } 
+        #endregion
 
         // properties
 
@@ -383,7 +366,9 @@ namespace Ei.Tests.Bdd.Institutions
 
         public override bool Static { get { return false; } }
 
-        public override WorkflowState State { get { return this.resources; } }
+        public override Workflow.Store CreateStore() {
+            return new SubWorkflow.Store();
+        }
 
         // constructor
 
@@ -392,7 +377,7 @@ namespace Ei.Tests.Bdd.Institutions
 
             // define actions
 
-            var sendAction = new ActionMessage("send", ei, new SendActionParameters(), ei.GroupsByName("Default", "Citizen"), null);
+            var sendAction = new ActionMessage("send", ei, () => new SendActionParameters(), ei.GroupsByName("Default", "Citizen"), null);
             var timeout = new ActionTimeout("timeout", ei);
 
             this.AddActions(
@@ -415,7 +400,7 @@ namespace Ei.Tests.Bdd.Institutions
             // define connections
 
             this.Connect(startState, midState, sendAction)
-                .Condition(new AccessCondition<Institution.InstitutionState, SubWorkflow.Resources, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, SendActionParameters>()
+                .Condition(new AccessCondition<Institution.InstitutionState, SubWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, SendActionParameters>()
                     .Action((i, w, o, r, a) => {
                         w.Stones = a.Stones;
                     }));

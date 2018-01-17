@@ -61,11 +61,9 @@ namespace Ei.Tests.Persistence
             Assert.Single(store.FilterByAccess(null));
             Assert.Equal("PublicParameter", store.FilterByAccess(null)[0].Name);
             Assert.NotEqual(store, store.Clone());
-            Assert.NotNull(store.NewInstance());
 
             var type = store.GetType();
-            Assert.Equal(store.NewInstance().GetType(), type);
-
+           
             var goalState = store.ToGoalState();
             Assert.Empty(goalState);
 
@@ -153,11 +151,6 @@ namespace Ei.Tests.Persistence
             Assert.NotEqual(store, clone);
             Assert.Equal(2, clone.GetValue("ParentParameter"));
             Assert.Equal(5, clone.GetValue("ChildParameter"));
-
-            Assert.NotNull(store.NewInstance());
-
-            var type = store.GetType();
-            Assert.Equal(store.NewInstance().GetType(), type);
 
             // check goal state
 

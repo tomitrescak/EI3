@@ -9,10 +9,12 @@ namespace Ei.Persistence.Actions
         public override string ParameterParentName => "ActionJoinWorkflow.Parameters";
 
         public override string GenerateConstructor(string holderClass) {
-            return $"new ActionJoinWorkflow(\"{Id}\", ei, \"{WorkflowId}\")";
+            return $"new ActionJoinWorkflow(\"{Id}\", ei, \"{WorkflowId}\", () => new {holderClass}.{ParameterClassName}())";
         }
 
-        public override string GenerateParameters() {
+        public override string GenerateParameters(string workflowClassName) {
+            this.WorkflowClassName = workflowClassName;
+
             return CodeGenerator.Parameters(this);
         }
     }

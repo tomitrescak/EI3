@@ -42,7 +42,7 @@ namespace Ei.Persistence.Templates
             });
 
             Handlebars.RegisterHelper("generateParameters", (writer, context, parameters) => {
-                writer.WriteSafeString(((ActionDao) parameters[0]).GenerateParameters()); //.WriteSafeString("<a href='" + context.url + "'>" + context.text + "</a>");
+                writer.WriteSafeString(((ActionDao) parameters[0]).GenerateParameters(parameters[1].ToString())); //.WriteSafeString("<a href='" + context.url + "'>" + context.text + "</a>");
             });
 
             // preload partials

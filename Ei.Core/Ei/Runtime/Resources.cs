@@ -19,20 +19,18 @@ namespace Ei.Runtime
 
     public abstract class ParameterState: BaseState
     {
-        public abstract ParameterState Parse(VariableInstance[] properties);
+        public virtual void Parse(VariableInstance[] properties) { }
 
         public virtual string Validate() {
             return null;
         }
+
+        public virtual void CopyTo(Workflow.Store workflowStore) { }
     }
 
     public abstract class ResourceState: BaseState
     {
         public abstract List<VariableInstance> FilterByAccess(Governor governor);
-
-        public abstract ResourceState Merge(BaseState state);
-
-        public abstract ResourceState NewInstance();
     }
 
     public abstract class SearchableState : ResourceState
@@ -74,14 +72,6 @@ namespace Ei.Runtime
 
         public override void SetValue(string name, object value) {
             throw new Exception("Key does not exists: " + name);
-        }
-
-        public override ResourceState Merge(BaseState state) {
-            return this;
-        }
-
-        public override ResourceState NewInstance() {
-            return new EmptyResources();
         }
 
         public override void ResetDirty() {

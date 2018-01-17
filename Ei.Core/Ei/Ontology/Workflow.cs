@@ -13,11 +13,9 @@ namespace Ei.Ontology
     using ActionBase = Ei.Ontology.Actions.ActionBase;
     using Ei.Runtime.Planning;
 
-    public abstract class Workflow : Entity
-    {
+    public abstract class Workflow : Entity {
         #region class WorkflowState
-        public class WorkflowState : Runtime.ResourceState
-        {
+        public class Store : Runtime.ResourceState {
             // fields
 
             private int agentCount;
@@ -67,77 +65,6 @@ namespace Ei.Ontology
                 };
             }
 
-            public override ResourceState NewInstance() {
-                return new WorkflowState();
-            }
-
-            public override ResourceState Merge(BaseState state) {
-                return this;
-            }
-
-            private List<object> defaultValues;
-
-            protected List<object> DefaultValues {
-                get {
-                    if (defaultValues == null) {
-                        defaultValues = new List<object> {
-                            0,    // Agent Count
-                            null, // Last
-                            null  // Owner
-                        };
-                    }
-                    return defaultValues;
-                }
-            }
-
-            //public override ResourceState Clone() {
-            //    return new WorkflowState {
-            //        AgentCount = this.AgentCount,
-            //        Last = this.Last,
-            //        Owner = this.Owner
-            //    };
-            //}
-
-
-
-            //public override object GetValue(string name) {
-            //    switch (name) {
-            //        case "AgentCount":
-            //            return this.AgentCount;
-            //        case "Owner":
-            //            return this.Owner;
-            //        case "Last":
-            //            return this.Last;
-            //        default:
-            //            throw new Exception("Key not found: " + name);
-            //    }
-            //}
-
-
-
-            //public override ResourceState Parse(VariableInstance[] properties) {
-            //    foreach (var property in properties) {
-            //        switch (property.Name) {
-            //            case "AgentCount":
-            //                this.AgentCount = int.Parse(property.Value);
-            //                break;
-            //            default:
-            //                throw new Exception("Key not found: " + property.Name);
-            //        }
-            //    }
-            //    return this;
-            //}
-
-            //public override void ResetDirty() {
-            //    this.DefaultValues[0] = this.AgentCount;
-            //    this.DefaultValues[1] = this.Owner;
-            //    this.DefaultValues[2] = this.Last;
-            //}
-
-            //public override GoalState[] ToGoalState(bool onlyDirty = false) {
-            //    return null;
-            //}
-
             // methods
 
             protected void NotifyParameterChanged(string name, object value) {
@@ -147,12 +74,11 @@ namespace Ei.Ontology
         #endregion
 
         #region class Instance
-        public class Instance : IStateProvider
-        {
+        public class Instance : IStateProvider {
             private WorkflowPosition state;
             private readonly List<Governor> agents;
             private Workflow workflow;
-            private WorkflowState resources;
+            private Store resources;
 
             // helper properties
 
@@ -172,7 +98,7 @@ namespace Ei.Ontology
 
             // properties
 
-            public WorkflowState Resources { get { return this.resources; } }
+            public Store Resources { get { return this.resources; } }
 
             public ReadOnlyCollection<Governor> Agents { get; }
 
@@ -219,7 +145,7 @@ namespace Ei.Ontology
                 this.state = this.workflow.Start;
 
                 // init state
-                this.resources = (WorkflowState)this.workflow.State.NewInstance();
+                this.resources = this.workflow.CreateStore();
                 this.Resources.AgentCount = 0;
                 this.Resources.Last = null;
                 this.Resources.Owner = null;
@@ -432,13 +358,13 @@ namespace Ei.Ontology
 
         public Access JoinPermissions { get { return this.joinPermissions; } }
 
-         public Access CreatePermissions { get { return this.createPermissions; } }
-
-        public virtual WorkflowState State { get; protected set; }
+        public Access CreatePermissions { get { return this.createPermissions; } }
 
         public abstract bool Stateless { get; }
 
         public abstract bool Static { get; }
+
+        public abstract Workflow.Store CreateStore();
 
         // constructor
 
@@ -453,7 +379,7 @@ namespace Ei.Ontology
             this.States = new ReadOnlyCollection<State>(this.states);
             this.actions = new List<ActionBase>();
             this.Actions = new ReadOnlyCollection<ActionBase>(actions);
-            this.State = new WorkflowState();
+ 
         }
 
         public Access AddJoinPermissions(AccessCondition condition) {

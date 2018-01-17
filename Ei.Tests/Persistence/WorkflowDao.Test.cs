@@ -17,6 +17,12 @@ namespace Ei.Tests.Persistence
                 Name = "Main",
                 Stateless = true,
                 Static = true,
+                Properties = new List<ParameterDao> {
+                    new ParameterDao {
+                        Name = "WParam",
+                        Type = "int"
+                    }
+                },
                 Actions = new ActionDao[] {
                     new ActionJoinWorkflowDao {
                         Id = "join",
