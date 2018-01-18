@@ -17,7 +17,7 @@ namespace Ei.Runtime.Planning.Strategies
         {
             this.Groups = agentGroups;
 
-            this.InitialNode = new AStarNode(new Connection(null, agentPosition));
+            this.InitialNode = new AStarNode(new Connection(null, null, agentPosition));
             this.InitialNode.Parent = null;
             this.InitialNode.Resources = agentState;
         }
@@ -48,18 +48,19 @@ namespace Ei.Runtime.Planning.Strategies
             var result = new List<Connection>();
             foreach (var conn in connections)
             {
-                if (conn.Action == null)
-                {
-                    result.Add(conn);
-                    continue;
-                }
+                //if (conn.Action == null)
+                //{
+                //    result.Add(conn);
+                //    continue;
+                //}
 
 
                 var used = 0;
                 var parent = node;
                 while (parent != null)
                 {
-                    if (parent.Arc != null && parent.Arc.Action != null && parent.Arc.Action.Id == conn.Action.Id)
+                    if (parent.Arc != null && parent.Arc.Id == conn.Id)
+                    // if (parent.Arc != null && parent.Arc.Action != null && parent.Arc.Action.Id == conn.Action.Id)
                     {
                         used ++;
                     }
@@ -68,6 +69,8 @@ namespace Ei.Runtime.Planning.Strategies
                 if (used <= conn.AllowLoops)
                 {
                     result.Add(conn);
+                } else {
+                    Console.WriteLine("Max Loops Reached: " + conn.Id);
                 }
             }
             return result.ToArray();
@@ -92,13 +95,11 @@ namespace Ei.Runtime.Planning.Strategies
             var nestedInitialState = currentNode.Resources.Clone();
 
             // apply backward preconditions
-            currentNode.Arc.ApplyBacktrackPostconditions(this.Groups, nestedInitialState);
+            // currentNode.Arc.ApplyBacktrackPostconditions(this.Groups, nestedInitialState);
 
             // we need to find a way of how to get from "Start" node to the goal state
             return new ForwardSearch(workflow.Start, nestedInitialState, this.Groups);
         }
-
-
 
         public bool ExpandEffects { get { return true; } }
         public IHeuristics CreateHeuristicsForNestedSearch(AStarNode currentNode)

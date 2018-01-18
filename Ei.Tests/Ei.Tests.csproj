@@ -1,16 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Files\AllComponents.json" />
     <None Remove="Files\Fishing.json" />
+    <None Remove="Files\AllComponents.json" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="Files\AllComponents.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -19,7 +16,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="Moq" Version="4.8.1" />
@@ -27,29 +23,8 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Ei.Compilation\Ei.Compilation.csproj" />
     <ProjectReference Include="..\Ei.Persistence\Ei.Persistence.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Features\Actions.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>Actions.feature.cs</LastGenOutput>
-    </None>
-    <None Update="Features\InstitutionConnection.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>InstitutionConnection.feature.cs</LastGenOutput>
-    </None>
-    <None Update="Features\OneLevelPlanning.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>OneLevelPlanning.feature.cs</LastGenOutput>
-    </None>
-    <None Update="Files\Fishing.yaml">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>Fishing.feature.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-
 </Project>

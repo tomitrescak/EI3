@@ -10,14 +10,14 @@ namespace Ei.Ontology.Transitions
     {
         // properties
 
-        public ReadOnlyCollection<AccessCondition> Decision { get; set; }
+        public Access Decision { get; set; }
 
         // constructor
 
-        public TransitionBinaryDecision(string id, string name, string description, AccessCondition[] decisions, Workflow workflow)
+        public TransitionBinaryDecision(string id, string name, string description, Access decisions, Workflow workflow)
             : base(id, name, description, workflow)
         {
-            this.Decision = new ReadOnlyCollection<AccessCondition>(decisions);
+            this.Decision = decisions;
         }
 
         // methods

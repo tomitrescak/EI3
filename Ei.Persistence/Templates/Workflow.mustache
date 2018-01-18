@@ -26,10 +26,11 @@ public class {{ClassName}} : Workflow {
 
     // constructor
 
-    public MainWorkflow(): this(null) { }
+    public {{ClassName}}(): this(null) { }
 
-    public MainWorkflow(Institution ei) : base(ei, "{{ Id }}") {
-        this.Name = "Main"; 
+    public {{ClassName}}(Institution ei) : base(ei, "{{ Id }}") {
+        this.Name = "{{Name}}";
+        this.Description = "{{Description}}";
 
         // actions
         this.AddActions(new ActionBase [] {
@@ -39,6 +40,43 @@ public class {{ClassName}} : Workflow {
         });
 
         // states
+
+        this.AddStates(new State[] {
+            {{#each States}}
+            {{ generate . .. }},
+            {{/each}}
+        });
+
+        // transitions
+
+        this.AddTransitions(new Transition[] {
+            {{#each Transitions}}
+            {{ generate . .. }},
+            {{/each}}
+        });
+
+        // connections
+        {{#each Connections }}
+        this.Connect("{{Id}}", this.GetPosition("{{Join.0}}"), this.GetPosition("{{Join.1}}"), this.GetAction("{{ AssignedActionId }}"), {{ AllowLoops }}){{#each Access}}
+              .Condition({{> Access .}}){{/each}}{{#if Effects }}
+              .AddEffects(new AccessCondition[] { {{#each Effects}}
+                  {{>Access}}, {{/each}} }){{/if}};
+            
+        {{/each}}
+
+        // create permissions
+        {{#each AllowCreate}}
+        this.AddCreatePermissions({{> Access}});
+        {{/each}}
+
+        // entry permissions
+        {{#each AllowJoin}}
+        this.AddJoinPermissions({{> Access}});
+        {{/each}}
+
+        // IMPORTANT: this needs to be called to initialise connections
+
+        this.Init();
     }
 }
 #endregion

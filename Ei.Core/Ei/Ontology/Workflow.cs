@@ -14,6 +14,7 @@ namespace Ei.Ontology
     using Ei.Runtime.Planning;
 
     public abstract class Workflow : Entity {
+
         #region class WorkflowState
         public class Store : Runtime.ResourceState {
             // fields
@@ -330,6 +331,7 @@ namespace Ei.Ontology
         private readonly Dictionary<int, Instance> instances;
         private readonly List<Connection> connections;
         private readonly List<State> states;
+        private readonly List<Transition> transitions;
         private readonly List<ActionBase> actions;
         private Access joinPermissions;
         private Access createPermissions;
@@ -350,7 +352,7 @@ namespace Ei.Ontology
 
         public ReadOnlyCollection<State> States { get; private set; }
 
-        public ReadOnlyCollection<State> Transitions { get; private set; }
+        public ReadOnlyCollection<Transition> Transitions { get; private set; }
 
         public ReadOnlyCollection<ActionBase> Actions { get; private set; }
 
@@ -377,6 +379,8 @@ namespace Ei.Ontology
             this.Connections = new ReadOnlyCollection<Connection>(this.connections);
             this.states = new List<State>();
             this.States = new ReadOnlyCollection<State>(this.states);
+            this.transitions = new List<Transition>();
+            this.Transitions = new ReadOnlyCollection<Transition>(this.transitions);
             this.actions = new List<ActionBase>();
             this.Actions = new ReadOnlyCollection<ActionBase>(actions);
  
@@ -402,12 +406,43 @@ namespace Ei.Ontology
             this.states.AddRange(states);
         }
 
+        public void AddTransitions(params Transition[] transitions) {
+            this.transitions.AddRange(transitions);
+        }
+
         public void AddActions(params ActionBase[] actions) {
             this.actions.AddRange(actions);
         }
 
-        public Connection Connect(WorkflowPosition from, WorkflowPosition to, ActionBase action = null) {
-            var conn = new Connection(this.Institution, from, to, action);
+        public WorkflowPosition GetPosition(string id) {
+            if (string.IsNullOrEmpty(id)) {
+                return null;
+            }
+            WorkflowPosition position = this.States.FirstOrDefault(s => s.Id == id);
+            if (position == null) {
+                position = this.Transitions.FirstOrDefault(t => t.Id == id);
+                if (position == null) {
+                    throw new Exception($"Position '{id}' does not exist");
+                }
+                return position;
+            }
+            return position;
+        }
+
+        public ActionBase GetAction(string id) {
+            if (string.IsNullOrEmpty(id)) {
+                return null;
+            }
+            ActionBase action = this.Actions.FirstOrDefault(s => s.Id == id);
+            if (action == null) {
+               throw new Exception($"Action '{id}' does not exist");
+            }
+            return action;
+        }
+
+        public Connection Connect(string id, WorkflowPosition from, WorkflowPosition to, ActionBase action = null, int allowLoops = 0) {
+            var conn = new Connection(this.Institution, id, from, to, action);
+            conn.AllowLoops = allowLoops;
             this.connections.Add(conn);
             return conn;
         }

@@ -81,23 +81,23 @@ namespace Ei.Persistence
 
             // for each join workflow action extract the list of postconditions
 
-            if (!string.IsNullOrEmpty(dao.InitialWorkflow)) {
-                foreach (var wconn in ExtractWorkflowConnections(dao, dao.Workflows.First(w => w.Id == dao.InitialWorkflow))) {
-                    ExtractEffects(dao, wconn);
-                }
-            }
+            //if (!string.IsNullOrEmpty(dao.InitialWorkflow)) {
+            //    foreach (var wconn in ExtractWorkflowConnections(dao, dao.Workflows.First(w => w.Id == dao.InitialWorkflow))) {
+            //        ExtractEffects(dao, wconn);
+            //    }
+            //}
 
             // move all functions into global list
 
-            foreach (var workflow in dao.Workflows) {
-                if (workflow.Functions != null) {
-                    // init properties if necessary
-                    if (dao.Globals == null) dao.Globals = new GlobalsDao();
-                    if (dao.Globals.Functions == null) dao.Globals.Functions = new List<FunctionDao>();
+            //foreach (var workflow in dao.Workflows) {
+            //    if (workflow.Functions != null) {
+            //        // init properties if necessary
+            //        if (dao.Globals == null) dao.Globals = new GlobalsDao();
+            //        if (dao.Globals.Functions == null) dao.Globals.Functions = new List<FunctionDao>();
 
-                    dao.Globals.Functions.AddRange(workflow.Functions);
-                }
-            }
+            //        dao.Globals.Functions.AddRange(workflow.Functions);
+            //    }
+            //}
 
             return dao;
         }
@@ -135,43 +135,43 @@ namespace Ei.Persistence
             return workflowConnections;
         }
 
-        private List<PostconditionDao> ExtractEffects(InstitutionDao dao, WorkflowConnection wc) {
-            var effects = new List<PostconditionDao>();
+        //private List<AccessConditionDao> ExtractEffects(InstitutionDao dao, WorkflowConnection wc) {
+        //    var effects = new List<AccessConditionDao>();
 
-            if (wc.Workflow.Connections == null) return effects; // no connection in workflow
+        //    if (wc.Workflow.Connections == null) return effects; // no connection in workflow
 
-            foreach (var connection in wc.Workflow.Connections) {
-                var conn = connection;
+        //    foreach (var connection in wc.Workflow.Connections) {
+        //        var conn = connection;
 
-                // possibly import the connection
+        //        // possibly import the connection
 
-                if (!string.IsNullOrEmpty(connection.Import)) {
-                    conn = dao.Globals.Connections.First(w => w.Id == connection.Import);
-                }
+        //        if (!string.IsNullOrEmpty(connection.Import)) {
+        //            conn = dao.Globals.Connections.First(w => w.Id == connection.Import);
+        //        }
 
-                // add postconditions 
+        //        // add postconditions 
 
-                if (conn.Access != null) {
-                    foreach (var access in conn.Access) {
-                        if (access.Postconditions != null) {
-                            effects.AddRange(access.Postconditions);
-                        }
-                    }
-                }
+        //        if (conn.Access != null) {
+        //            foreach (var access in conn.Access) {
+        //                if (access.Postconditions != null) {
+        //                    effects.Add(access);
+        //                }
+        //            }
+        //        }
 
-                // find all workflow connections
+        //        // find all workflow connections
 
-                foreach (var wconn in ExtractWorkflowConnections(dao, wc.Workflow)) {
-                    effects.AddRange(ExtractEffects(dao, wconn));
-                }
-            }
+        //        foreach (var wconn in ExtractWorkflowConnections(dao, wc.Workflow)) {
+        //            effects.AddRange(ExtractEffects(dao, wconn));
+        //        }
+        //    }
 
-            // assign these effects to the current connection
+        //    // assign these effects to the current connection
 
-            wc.Connection.GeneratedNestedEffects = effects.ToArray();
+        //    wc.Connection.GeneratedNestedEffects = effects.ToArray();
 
-            return effects;
-        }
+        //    return effects;
+        //}
 
         private void CheckAndCombine(ParametricEntityDao fromItem, ParametricEntityDao toItem) {
             if (toItem != null && toItem.Name != fromItem.Name) {

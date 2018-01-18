@@ -3,6 +3,7 @@ using Ei.Ontology;
 using Ei.Persistence;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Xunit;
 
@@ -45,7 +46,14 @@ namespace Ei.Tests.Persistence
                 Workflows = new List<WorkflowDao> {
                     new WorkflowDao {
                         Id = "main",
-                        Name = "Main"
+                        Name = "Main",
+                        States = new StateDao[] {
+                            new StateDao {
+                                Id = "start",
+                                IsStart = true,
+                                IsEnd = true
+                            }
+                        }
                     }
                 },
                 Organisations = new List<OrganisationDao> {
@@ -60,14 +68,17 @@ namespace Ei.Tests.Persistence
                         Name = "Citizen"
                     }
                 }
+
             };
 
             var actual = dao.GenerateAll();
 
+            // Debug.WriteLine(actual);
             Console.WriteLine(actual);
 
             var result = Compiler.Compile(actual, "DefaultInstitution", out Institution TestEi);
             Assert.Null(result);
+            
 
             var auth = TestEi.AuthenticationPermissions.Authenticate("", "User", "Password");
             Assert.False(auth.IsEmpty);

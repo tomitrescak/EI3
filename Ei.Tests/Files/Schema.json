@@ -1,0 +1,352 @@
+﻿{
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "definitions": {
+    "Validations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Properties": {
+      "$id": "/propertiesSchema",
+      "type": "array",
+      "items": {
+        "$id": "/properties/Roles/items/properties/Properties/items",
+        "type": "object",
+        "properties": {
+          "Name": {
+            "$id": "/properties/Roles/items/properties/Properties/items/properties/Name",
+            "type": "string"
+          },
+          "Type": {
+            "$id": "/properties/Roles/items/properties/Properties/items/properties/Type",
+            "enum": ["int", "string", "double"]
+          },
+          "DefaultValue": {
+            "$id": "/properties/Roles/items/properties/Properties/items/properties/DefaultValue",
+            "type": "string"
+          },
+          "AccessType": {
+            "enum": [ "Public", "Private" ]
+          }
+        }
+      }
+    },
+    "Access": {
+      "type": "array",
+      "default": null,
+      "items": {
+        "type": "object",
+        "properties": {
+          "Role": {
+            "type": "string"
+          },
+          "Organisation": {
+            "type": "string"
+          },
+          "Precondition": {
+            "type": "string"
+          },
+          "Postconditions": {
+            "type": "array",
+            "default": null,
+            "items": {
+              "type": "object",
+              "properties": {
+                "Condition": {
+                  "type": "string"
+                },
+                "Action": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Groups": {
+      "$id": "/properties/Authorisation/items/properties/Groups",
+      "type": "array",
+      "items": {
+        "$id": "/properties/Authorisation/items/properties/Groups/items",
+        "type": "object",
+        "properties": {
+          "OrganisationId": {
+            "$id": "/properties/Authorisation/items/properties/Groups/items/properties/OrganisationId",
+            "type": "string"
+          },
+          "RoleId": {
+            "$id": "/properties/Authorisation/items/properties/Groups/items/properties/RoleId",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "properties": {
+    "Name": {
+      "$id": "/properties/Name",
+      "type": "string",
+      "examples": [
+        "Fishing"
+      ]
+    },
+    "Description": {
+      "$id": "/properties/Description",
+      "type": "string",
+      "examples": [
+        "Fishing Example"
+      ]
+    },
+    "Roles": {
+      "$id": "/properties/Roles",
+      "type": "array",
+      "items": {
+        "$id": "/properties/Roles/items",
+        "type": "object",
+        "properties": {
+          "Id": {
+            "$id": "/properties/Roles/items/properties/Id",
+            "type": "string",
+            "examples": [
+              "fisherman"
+            ]
+          },
+          "Name": {
+            "$id": "/properties/Roles/items/properties/Name",
+            "type": "string",
+            "examples": [
+              "Fisherman"
+            ]
+          },
+          "Description": {
+            "$id": "/properties/Roles/items/properties/Description",
+            "type": "string",
+            "examples": [
+              "We only need one role of fisherman as they both can do all actions, but who does what (rowing / spearing) is decided in the scene protocol\n"
+            ]
+          },
+          "Properties": {
+            "$ref": "#/definitions/Properties"
+          },
+          "Validations": {
+            "$ref": "#/definitions/Validations"
+          }
+        }
+      }
+    },
+    "Organisations": {
+      "$id": "/properties/Organisations",
+      "type": "array",
+      "items": {
+        "$id": "/properties/Organisations/items",
+        "type": "object",
+        "properties": {
+          "Id": {
+            "$id": "/properties/Organisations/items/properties/Id",
+            "type": "string",
+            "examples": [
+              "uruk"
+            ]
+          },
+          "Name": {
+            "$id": "/properties/Organisations/items/properties/Name",
+            "type": "string",
+            "examples": [
+              "Uruk"
+            ]
+          },
+          "Properties": {
+            "$ref": "#/definitions/Properties"
+          },
+          "Validations": {
+            "$ref": "#/definitions/Validations"
+          }
+        }
+      }
+    },
+    "Workflows": {
+      "$id": "/properties/Workflows",
+      "type": "array",
+      "items": {
+        "$id": "/properties/Workflows/items",
+        "type": "object",
+        "properties": {
+          "Id": {
+            "$id": "/properties/Workflows/items/properties/Id",
+            "type": "string"
+          },
+          "Name": {
+            "$id": "/properties/Workflows/items/properties/Name",
+            "type": "string"
+          },
+          "Stateless": {
+            "$id": "/properties/Workflows/items/properties/Stateless",
+            "type": "boolean",
+            "default": false
+          },
+          "Static": {
+            "$id": "/properties/Workflows/items/properties/Static",
+            "type": "boolean",
+            "default": false
+          },
+          "Actions": {
+            "$id": "/properties/Workflows/items/properties/Actions",
+            "type": "array",
+            "items": {
+              "$id": "/properties/Workflows/items/properties/Actions/items",
+              "type": "object",
+              "properties": {
+                "$type": {
+                  "$id": "/properties/Workflows/items/properties/Actions/items/properties/$type",
+                  "type": "string"
+                },
+                "Id": {
+                  "type": "string"
+                },
+                "Properties": {
+                  "$ref": "#/definitions/Properties"
+                },
+                "Validations": {
+                  "$ref": "#/definitions/Validations"
+                },
+                "NotifyGroups": {
+                  "$ref": "#/definitions/Groups"
+                },
+                "WorkflowId": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "States": {
+            "$id": "/properties/Workflows/items/properties/States",
+            "type": "array",
+            "items": {
+              "$id": "/properties/Workflows/items/properties/States/items",
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "string"
+                },
+                "Name": {
+                  "type": "string"
+                },
+                "Description": {
+                  "type": "string"
+                },
+                "IsStart": {
+                  "type": "boolean"
+                },
+                "IsEnd": {
+                  "type": "boolean"
+                },
+                "IsOpen": {
+                  "type": "boolean"
+                },
+                "Timeout": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "Transitions": {
+            "$id": "/properties/Workflows/items/properties/Transitions",
+            "type": "array",
+            "default": null,
+            "items": {
+              "$id": "/properties/Workflows/items/properties/Transitions/items",
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "$id": "/properties/Workflows/items/properties/States/items/properties/Id",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "Connections": {
+            "$id": "/properties/Workflows/items/properties/Connections",
+            "type": "array",
+            "items": {
+              "$id": "/properties/Workflows/items/properties/Connections/items",
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "string"
+                },
+                "ActionId": {
+                  "type": "string"
+                },
+                "AllowLoops": {
+                  "type": "integer"
+                },
+                "Join": {
+                  "type": "array",
+                  "items": {
+                    "$id": "/properties/Workflows/items/properties/Connections/items/properties/Join/items",
+                    "type": "string"
+                  }
+                },
+                "Access": {
+                  "$ref": "#/definitions/Access"
+                },
+                "Effects": {
+                  "$ref": "#/definitions/Access"
+                }
+              }
+            }
+          },
+          "Properties": {
+            "$ref": "#/definitions/Properties"
+          },
+          "Validations": {
+            "$ref": "#/definitions/Validations"
+          },
+          "AllowJoin": {
+            "$ref": "#/definitions/Access"
+          },
+          "AllowCreate": {
+            "$ref": "#/definitions/Access"
+          }
+        }
+      }
+    },
+    "InitialWorkflow": {
+      "$id": "/properties/InitialWorkflow",
+      "type": "integer",
+      "default": 0,
+      "examples": [
+        1
+      ]
+    },
+    "Authorisation": {
+      "$id": "/properties/Authorisation",
+      "type": "array",
+      "items": {
+        "$id": "/properties/Authorisation/items",
+        "type": "object",
+        "properties": {
+          "User": {
+            "$id": "/properties/Authorisation/items/properties/User",
+            "type": "string"
+          },
+          "Password": {
+            "$id": "/properties/Authorisation/items/properties/Password",
+            "type": "string"
+          },
+          "Organisation": {
+            "type": "string",
+            "default": ""
+          },
+          "Groups": {
+            "$ref": "#/definitions/Groups"
+          }
+        }
+      }
+    }
+  }
+}

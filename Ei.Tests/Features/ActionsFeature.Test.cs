@@ -15,7 +15,7 @@ namespace Ei.Tests.Features
             var a = new ActivitySteps(scenarioContext);
 
             // Given That institution 'InstitutionStart' is launched
-            c.GivenThatInstitutionIsRunning("InstitutionStart");
+            c.GivenThatInstitutionIsRunning("ConnectionTest.json"); // InstitutionStart
             // When Agent 'user1' connects with '123' to organisation 'Default'
             c.WhenAgentConnectsWithPasswordInOrganisation("user1", "123", "Default");
             // When Agent 'user2' connects with '123' to organisation 'Default'
@@ -53,10 +53,10 @@ namespace Ei.Tests.Features
             a.ThenAgentCannotPerformWith("user2", "send", "InvalidParameters");
 
             // Then Agent 'user2' fails 'send' with 'Stones=0' and message 'Stones: Value Required'
-            a.ThenAgentFailsActivityWithMessage("user2", "send", "Stones=0", "Stones: Value Required");
+            a.ThenAgentFailsActivityWithMessage("user2", "send", "Stones=0", "Failed: Stones != 0");
 
             // Then Agent 'user2' fails 'send' with 'Stones=2;Weight=100' and message 'Weight needs to be max 10'
-            a.ThenAgentFailsActivityWithMessage("user2", "send", "Stones=2;Weight=100", "Weight needs to be max 10");
+            a.ThenAgentFailsActivityWithMessage("user2", "send", "Stones=2;Weight=100", "Failed: Weight < 10");
 
             // When Agent 'user2' performs action 'send' with 'Stones=3;Weight=3'
             a.ThenAgentPerformsActivityWith("user2", "send", "Stones=3;Weight=3");

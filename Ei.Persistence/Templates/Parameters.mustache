@@ -11,6 +11,11 @@
         // Abstract implementation
 
         public override string Validate() {
+            var result = base.Validate();
+            if (result != null) {
+                return result;
+            }
+    
             {{#each Validations }}
             if (!({{{.}}})) return "Failed: {{{.}}}";
             {{/each}}
@@ -18,6 +23,7 @@
         }
 
         public override void Parse(VariableInstance[] properties) {
+            base.Parse(properties);
             foreach (var property in properties) {
                 switch (property.Name) {
                     {{#each Properties}}
@@ -31,7 +37,7 @@
 
         {{#if WorkflowId}}
         public override void CopyTo(Workflow.Store workflowStore) {
-            var store = ({{WorkflowClassName}}.Store) workflowStore;
+            var store = ({{ targetWorkflowClassName WorkflowId }}.Store) workflowStore;
 
             {{#each Properties}}
             store.{{Name}} = this.{{Name}};

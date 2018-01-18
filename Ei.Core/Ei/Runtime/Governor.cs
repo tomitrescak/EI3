@@ -672,10 +672,10 @@ namespace Ei.Runtime
                 }
 
                 // connection can contain EFFECTS (which are all postconditions from the contained workflow)
-                if (conn.GeneratedNestedEffects != null) {
+                if (conn.ExpectedEffects != null) { // TODO: Check why this used to be generated nested effects
                     // test each effect separately
 
-                    foreach (var effect in conn.GeneratedNestedEffects) {
+                    foreach (var effect in conn.ExpectedEffects) {
                         state = agentState.Clone();
                         effect.ApplyPostconditions(state, null, true);
 

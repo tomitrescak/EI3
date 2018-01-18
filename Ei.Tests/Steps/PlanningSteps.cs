@@ -88,12 +88,12 @@ namespace Ei.Tests.Steps
         }
 
         // [Then(@"Agent '(.*)' has '(.*)' possibilitites to satisfy '(.*)'")]
-        public void ThenAgentHasPossibilititesToSatisfy(string agentName, int possibilities, string stateDescription) {
-            var agent = Governors[agentName].Object;
-            var goalState = GoalState.ParseStringGoals(agent, stateDescription);
+        //public void ThenAgentHasPossibilititesToSatisfy(string agentName, int possibilities, string stateDescription) {
+        //    var agent = Governors[agentName].Object;
+        //    var goalState = GoalState.ParseStringGoals(agent, stateDescription);
 
-            var goals = Governor.FindGoals(agent.Workflow, agent.Resources, agent.Groups, goalState);
-            Assert.Equal(possibilities, goals.Count);
-        }
+        //    var goals = Governor.FindGoals(agent.Workflow, agent.Resources, agent.Groups, goalState);
+        //    Assert.Equal(possibilities, goals.Count);
+        //}
     }
 }
