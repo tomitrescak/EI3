@@ -308,7 +308,7 @@
       "Connections": [
         {
           "Id": "1",
-          "Join": ["start", "mid", "send"],
+          "Join": ["start", "mid"],
           "ActionId": "send",
           "Access": [{
             "Postconditions": [{
@@ -322,7 +322,8 @@
         },
         {
           "Id": "3",
-          "Join": ["wait", "yield", "timeout"]
+          "Join": ["wait", "yield"],
+          "ActionId": "timeout"
         },
         {
           "Id": "4",

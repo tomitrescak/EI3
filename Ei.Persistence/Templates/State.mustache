@@ -1,0 +1,3 @@
+﻿new State("{{Id}}", "{{Name}}", "{{Description}}", this, {{lowerCase IsOpen}}, {{ Timeout }}, {{ lowerCase IsStart}}, {{ lowerCase IsEnd }}){{#if HasEntryRules}}{{#each EntryRules}}
+              .AllowEntry({{> Access .}}){{/each}}{{/if}}{{#if HasExitRules}}{{#each ExitRules}}
+              .AllowExit({{> Access .}}){{/each}}{{/if}}

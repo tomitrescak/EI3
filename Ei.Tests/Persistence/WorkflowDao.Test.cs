@@ -38,16 +38,6 @@ namespace Ei.Tests.Persistence
                 }
             };
 
-            var ei = new InstitutionDao {
-                Name = "Ei",
-                Organisations = new List<OrganisationDao> {
-                    organisation
-                },
-                Roles = new List<RoleDao> {
-                    role
-                }
-            };
-
             var postconditionOnly = new AccessConditionDao {
                 Organisation = "o",
                 Role = "r",
@@ -70,6 +60,7 @@ namespace Ei.Tests.Persistence
                 }
             };
 
+
             var workflow = new WorkflowDao {
                 Id = "main",
                 Name = "Main",
@@ -84,7 +75,7 @@ namespace Ei.Tests.Persistence
                 Actions = new ActionDao[] {
                     new ActionJoinWorkflowDao {
                         Id = "join",
-                        WorkflowId = "wid",
+                        WorkflowId = "main",
                         Properties = new List<ParameterDao> {
                             new ParameterDao {
                                 Name = "WParam",
@@ -196,9 +187,22 @@ namespace Ei.Tests.Persistence
                     withPreconditon
                 }
             };
+            
+            var ei = new InstitutionDao {
+                Name = "Ei",
+                Organisations = new List<OrganisationDao> {
+                    organisation
+                },
+                Roles = new List<RoleDao> {
+                    role
+                },
+                Workflows = new List<WorkflowDao> {
+                    workflow
+                }
+            };
 
             var actual = workflow.GenerateCode();
-            var full = actual + "\n" + role.GenerateCode() + "\n" + organisation.GenerateCode() + "\n" + ei.GenerateCode();
+            var full = ei.GenerateAll();
             Console.WriteLine(actual);
 
             var result = Compiler.Compile(full, "MainWorkflow", out dynamic Activated);
