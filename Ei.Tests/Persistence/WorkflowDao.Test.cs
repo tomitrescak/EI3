@@ -6,11 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Ei.Tests.Persistence
 {
     public class WorkflowDaoTest
     {
+        private readonly ITestOutputHelper output;
+
+        public WorkflowDaoTest(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+        
         [Fact]
         public void GenerateWorkflow() {
 
@@ -203,10 +211,10 @@ namespace Ei.Tests.Persistence
 
             var actual = workflow.GenerateCode();
             var full = ei.GenerateAll();
-            Console.WriteLine(actual);
+            this.output.WriteLine(actual);
 
             var result = Compiler.Compile(full, "MainWorkflow", out dynamic Activated);
-            Assert.Null(result);
+            Assert.NotNull(result);
         }
     }
 }

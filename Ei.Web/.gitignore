@@ -1,0 +1,17 @@
+.project
+.settings
+node_modules/
+.vscode/
+.alm/
+build/
+dist/
+.DS_Store
+.tmp/
+.idea/
+.fusebox
+public/*.html
+public/*.js
+public/*.map
+public/upload
+public/styles
+.db/
