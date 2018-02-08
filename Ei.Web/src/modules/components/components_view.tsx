@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react';
 import { style } from 'typestyle';
 import { Link } from '../../config/router';
 import { AccordionHandler } from '../../config/store';
+import { SocketClient } from '../ws/socket_client';
 import { HierarchicEntityView } from './hierarchic_entity_view';
 import { WorkflowList } from './workflow_list_view';
 
@@ -17,13 +18,14 @@ const componentsType = style({
 
 interface Props {
   context?: App.Context;
+  client?: SocketClient;
 }
 
 interface State {
   activeIndices: number[];
 }
 
-@inject('context')
+@inject('context', 'client')
 @observer
 export class Components extends React.Component<Props, State> {
   static displayName = 'ComponentView';
@@ -53,6 +55,10 @@ export class Components extends React.Component<Props, State> {
   };
   showType = (id: string, name: string) => this.props.context.store.viewStore.showType(id, name);
 
+  compile = () => {
+    this.props.context.store.ei.compile(this.props.client);
+  }
+
   render() {
     const ei = this.props.context.store.ei;
     const store = this.props.context.store;
@@ -66,6 +72,7 @@ export class Components extends React.Component<Props, State> {
             </Link>
           </Menu.Item>
           <Menu.Menu position="right">
+            <Menu.Item icon="cogs" onClick={this.compile} title="Compile Solution" />
             <Menu.Item icon="save" onClick={ei.save} />
           </Menu.Menu>
         </Menu>

@@ -3,6 +3,7 @@ import * as SplitPane from 'react-split-pane';
 
 import { style } from 'typestyle';
 import { Components } from '../components/components_view';
+import { MiddleView } from '../errors/middle_view';
 import { ChildProps } from '../ws/interface';
 
 const layoutStyle = style({
@@ -81,11 +82,35 @@ const pane = style({
   }
 });
 
+const barePane = style({
+  height: '100%',
+  $nest: {
+    '.storm-diagrams-canvas': {
+      position: 'absolute',
+      background: 'rgba(0, 0, 0, 0.8)',
+      backgroundImage:
+        'linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent)',
+      backgroundSize: '50px 50px',
+      left: '0px',
+      right: '0px',
+      top: '0px',
+      bottom: '0px'
+    }
+  }
+});
+
 const propertyPane = style({
   background: '#efefef',
   height: '100%',
   overflow: 'auto',
   padding: '6px'
+});
+
+const errorPane = style({
+  maxHeight: '90%',
+  height: '100%',
+  width: '100%',
+  padding: '0px'
 });
 
 const componentsType = style({
@@ -102,6 +127,13 @@ interface Query {
   LoadInstitution: string;
 }
 
+const MiddleLayout = ({ views }: any) => (
+  <SplitPane split="horizontal" defaultSize={100} primary="second">
+    <div className={barePane}>{views.graph}</div>
+    <div className={errorPane}><MiddleView /></div>
+  </SplitPane>
+);
+
 export const EiLayout = ({ views }: ChildProps<Props, Query>) => {
   return (
     <SplitPane split="vertical" minSize={100} defaultSize={250} className={layoutStyle}>
@@ -110,11 +142,11 @@ export const EiLayout = ({ views }: ChildProps<Props, Query>) => {
       </div>
       {views.editor ? (
         <SplitPane split="vertical" defaultSize={400} primary="second">
-          <div className={pane}>{views.graph}</div>
+          <MiddleLayout views={views} />
           <div className={propertyPane}>{views.editor}</div>
         </SplitPane>
       ) : (
-        <div className={pane}>{views.graph}</div>
+        <MiddleLayout views={views} />
       )}
     </SplitPane>
   );

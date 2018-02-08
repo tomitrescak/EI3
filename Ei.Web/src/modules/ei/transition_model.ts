@@ -24,10 +24,9 @@ export class Transition extends PositionModel {
     this.Horizontal = transition.Horizontal;
   }
 
-  get json(): TransitionDao {
+  get json() {
     return {
       ...super.json,
-      $type: '',
       Horizontal: this.Horizontal
     }
   }
@@ -74,8 +73,8 @@ export class TransitionSplit extends Transition {
 
   get json() {
     return {
-      ...super.json,
       $type: 'TransitionSplitDao',
+      ...super.json,
       Names: this.Names.map(n => [ n.stateId, n.name ]),
       Shallow: this.Shallow
     }
@@ -96,8 +95,8 @@ export class TransitionJoin extends Transition {
 
   get json() {
     return {
-      ...super.json,
       $type: 'TransitionJoinDao',
+      ...super.json,
     }
   }
 }

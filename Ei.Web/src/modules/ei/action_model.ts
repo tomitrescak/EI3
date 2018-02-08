@@ -13,13 +13,6 @@ export class Action extends ParametricEntity {
   Icon = '';
   $type = '';
 
-  get json() {
-    return {
-      ...super.json,
-      $type: ''
-    }
-  }
-
   constructor(action: Partial<ActionDao>) {
     super(action);
     this.$type = action.$type;
@@ -44,8 +37,8 @@ export class ActionJoinWorkflow extends Action {
 
   get json() {
     return {
-      ...super.json,
       $type: 'ActionJoinWorkflowDao',
+      ...super.json,
       WorkflowId: this.WorkflowId
     }
   }
@@ -72,8 +65,8 @@ export class ActionMessage extends Action {
 
   get json() {
     return {
-      ...super.json,
       $type: 'ActionMessageDao',
+      ...super.json,
       NotifyAgents: this.NotifyAgents.array.map(a => a),
       NotifyGroups: this.NotifyGroups.map(g => g.json)
     }
@@ -87,8 +80,8 @@ export class ActionTimeout extends Action {
 
   get json() {
     return {
+      $type: 'ActionTimeoutDao',
       ...super.json,
-      $type: 'ActionTimeoutDao'
     }
   }
 }

@@ -1,10 +1,12 @@
-import { computed, IObservableArray, observable } from 'mobx';
+import { autorun, computed, IObservableArray, observable } from 'mobx';
 import { DropdownItemProps } from 'semantic-ui-react';
 import { DefaultNodeFactory, DiagramEngine } from 'storm-react-diagrams';
+
 
 import { Ui } from '../../helpers/client_helpers';
 import { EntityLinkFactory } from '../diagrams/model/entity/entity_link_factory';
 import { EntityNodeFactory } from '../diagrams/model/entity/entity_node_factory';
+import { SocketClient } from '../ws/socket_client';
 import { Authorisation, AuthorisationDao } from './authorisation_model';
 import { Entity } from './entity_model';
 import { HierarchicEntity, HierarchicEntityDao } from './hierarchic_entity_model';
@@ -125,6 +127,20 @@ export class Ei extends ParametricEntity {
   @computed
   get roleOptions(): DropdownItemProps[] {
     return this.Roles.map(w => ({ text: w.Name, value: w.Id }));
+  }
+
+  compile(client: SocketClient) {
+    const observer = client.send('CompileInstitution', [ JSON.stringify(this.json) ]);
+    autorun(() => {
+      if (observer.loading) {
+        // console.log('Compiling ...');
+      } else {
+        const result = observer.data.CompileInstitution;
+        this.store.compiledCode = result.Code;
+        this.store.errors.replace(result.Errors);
+        // console.log(JSON.stringify(observer.data));
+      }
+    })
   }
 
   checkExists(array: Entity[], name: string, entity: Entity) {

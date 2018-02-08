@@ -5,7 +5,7 @@ import { shallowCompare } from './utils';
 
 export class Observer {
   id: number;
-  data = {};
+  data: any = {};
   @observable loading = true;
   @observable version = 0;
 

@@ -11,9 +11,19 @@ export interface AccordionHandler {
   isActive(index: any): boolean;
 }
 
+export interface CompilationError {
+  Message: string;
+  Line: number;
+  Code: string[];
+}
+
 export class StoreModel {
   @observable previewImage = '';
   @observable saving = false;
+  @observable compiledCode = '';
+  messages = observable([] as string[]);
+  errors = observable([] as CompilationError[]);
+  
 
   context: App.Context;
   ei: Ei;

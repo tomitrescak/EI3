@@ -1,20 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Files\AllComponents.json" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="Files\AllComponents.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.2" />
@@ -30,10 +26,12 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
-
   <ItemGroup>
+    <ProjectReference Include="..\Ei.Compilation\Ei.Compilation.csproj">
+      <Project>{70A326AE-3EDB-44B1-88D6-24879ABE8A4C}</Project>
+      <Name>Ei.Compilation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\websocket-manager\src\WebSocketManager\WebSocketManager.csproj" />
     <ProjectReference Include="..\websocket-manager\src\WebSocketManager.Common\WebSocketManager.Common.csproj" />
   </ItemGroup>
-
 </Project>
