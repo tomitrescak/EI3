@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import { inject } from 'mobx-react';
 
 import { compose } from '../ws/utils';
@@ -25,6 +27,7 @@ export const EiContainer = compose<Props>(
         if (!ownProps.context.store.ei) { // do not update if refreshed
           let ei = new Ei(LoadInstitution as any, ownProps.context.store);
           ownProps.context.store.ei = ei;
+          ownProps.context.Ui.history.startHistory(ei);
         }
       }
       return {

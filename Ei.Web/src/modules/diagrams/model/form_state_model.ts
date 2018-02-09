@@ -1,10 +1,14 @@
 import * as SRD from 'storm-react-diagrams';
 
-import { FieldCollection, FieldDefinition, FieldMap, FieldModel, FormStateListener } from 'semantic-ui-mobx';
-
+import {
+  FieldCollection,
+  FieldDefinition,
+  FieldMap,
+  FieldModel,
+  FormStateListener
+} from 'semantic-ui-mobx';
 
 export class FormNodeStore extends SRD.NodeModel {
-
   fields: FieldMap;
   fieldDefinitions: FieldDefinition[];
   formListeners: FormStateListener[] = [];
@@ -45,7 +49,7 @@ export class FormNodeStore extends SRD.NodeModel {
     for (let fieldName of Object.getOwnPropertyNames(this)) {
       let field = this.fields[fieldName] ? this.fields[fieldName] : this[fieldName];
 
-      if (typeof field !== 'string' && (Array.isArray(field) || field.length)) {
+      if (Array.isArray(field)) {
         for (let f of field) {
           this.checkField(listener, f);
         }

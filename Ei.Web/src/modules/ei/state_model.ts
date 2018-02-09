@@ -55,8 +55,9 @@ export class State extends PositionModel {
     this.addPort(new WorkflowPortModel(workflow, 'northeast'));
     this.addPort(new WorkflowPortModel(workflow, 'southwest'));
     this.addPort(new WorkflowPortModel(workflow, 'northwest'));
-		this.addPort(new WorkflowPortModel(workflow, 'southeast'));
-
+    this.addPort(new WorkflowPortModel(workflow, 'southeast'));
+    
+    // this.addFormListener(() => Ui.history.step());
   }
 
   @action removeItem() {

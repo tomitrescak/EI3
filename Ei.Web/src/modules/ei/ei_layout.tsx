@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as SplitPane from 'react-split-pane';
 
+import { observer } from 'mobx-react';
 import { style } from 'typestyle';
 import { Components } from '../components/components_view';
 import { MiddleView } from '../errors/middle_view';
@@ -134,7 +135,7 @@ const MiddleLayout = ({ views }: any) => (
   </SplitPane>
 );
 
-export const EiLayout = ({ views }: ChildProps<Props, Query>) => {
+export const EiLayout = observer(({ views }: ChildProps<Props, Query>) => {
   return (
     <SplitPane split="vertical" minSize={100} defaultSize={250} className={layoutStyle}>
       <div className={componentsType}>
@@ -150,6 +151,6 @@ export const EiLayout = ({ views }: ChildProps<Props, Query>) => {
       )}
     </SplitPane>
   );
-};
+});
 
 EiLayout.displayName = 'EiLayout';

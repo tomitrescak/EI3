@@ -11,7 +11,7 @@ import { SocketClient } from '../ws/socket_client';
 import { Authorisation, AuthorisationDao } from './authorisation_model';
 import { Entity } from './entity_model';
 import { HierarchicEntity, HierarchicEntityDao } from './hierarchic_entity_model';
-import { ParametricEntity } from './parametric_entity_model';
+import { ParametricEntity, ParametricEntityDao } from './parametric_entity_model';
 import { Workflow, WorkflowDao } from './workflow_model';
 
 
@@ -58,13 +58,10 @@ export class Type extends HierarchicEntity {
   }
 }
 
-interface EiDao extends ParametricEntity {
+export interface EiDao extends ParametricEntityDao {
   Organisations: HierarchicEntityDao[];
-  Organisation: string;
   Roles: HierarchicEntityDao[];
-  RoleDiagram: string;
   Types: HierarchicEntityDao[];
-  TypeDiagram: string;
   Workflows: WorkflowDao[];
   Authorisation: AuthorisationDao[];
   MainWorkflow: string;
@@ -106,6 +103,8 @@ export class Ei extends ParametricEntity {
     this.Authorisation = observable(
       (model.Authorisation || emptyAuthorisation).map(r => new Authorisation(r))
     );
+
+    this.addFormListener(() => Ui.history.step());
   }
 
   @computed
@@ -224,7 +223,7 @@ export class Ei extends ParametricEntity {
     }
   };
 
-  get json() {
+  get json(): EiDao {
     return {
       ...super.json,
       MainWorkflow: this.MainWorkflow,

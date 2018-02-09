@@ -1,6 +1,9 @@
+import { WorkHistory } from '../modules/history/history';
+
 let a: any;
 
 export const Ui = {
+  history: new WorkHistory(),
   alerter(v?: any) { 
     if (v) {
       a = v;

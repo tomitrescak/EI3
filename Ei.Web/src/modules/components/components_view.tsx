@@ -60,6 +60,7 @@ export class Components extends React.Component<Props, State> {
   }
 
   render() {
+    const context = this.props.context;
     const ei = this.props.context.store.ei;
     const store = this.props.context.store;
 
@@ -68,10 +69,12 @@ export class Components extends React.Component<Props, State> {
         <Menu inverted attached="top" color="blue" style={{ borderRadius: '0px' }}>
           <Menu.Item>
             <Link to="/" action={() => store.viewStore.showView('home')}>
-              Institution
+              Ei
             </Link>
           </Menu.Item>
           <Menu.Menu position="right">
+            <Menu.Item icon="reply" onClick={context.Ui.history.undo} title="Undo" />
+            <Menu.Item icon="mail forward" onClick={context.Ui.history.redo} title="Redo" />
             <Menu.Item icon="cogs" onClick={this.compile} title="Compile Solution" />
             <Menu.Item icon="save" onClick={ei.save} />
           </Menu.Menu>
