@@ -64,7 +64,7 @@ export class FormNodeStore extends SRD.NodeModel {
         field.___isChecked = true;
 
         // add listener
-        field.observe(Ui.collectionObserver);
+        // field.observe(Ui.collectionObserver);
 
         for (let f of field) {
           this.checkField(listener, f);

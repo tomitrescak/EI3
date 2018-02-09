@@ -5,6 +5,7 @@ import { Checkbox, Form, Input, Label, Radio, Select } from 'semantic-ui-mobx';
 import { DropdownItemProps, Header } from 'semantic-ui-react';
 
 import { action } from 'mobx';
+import { Ui } from '../../helpers/client_helpers';
 import { AccessEditor } from '../access/access_editor';
 import { EntityEditor } from '../core/entity_view';
 import { ActionDisplayType, Connection } from '../ei/connection_model';
@@ -64,6 +65,8 @@ export class ConnectionEditor extends React.Component<Props> {
 
     this.connection.workflow.Connections.remove(this.connection);
     this.connection.workflow.Connections.push(this.connection);
+
+    Ui.history.step();
   });
 
   changeSourcePosition = action((_e: any, { value }: any) => {
@@ -86,6 +89,8 @@ export class ConnectionEditor extends React.Component<Props> {
     this.connection.update();
     this.connection.workflow.Connections.remove(this.connection);
     this.connection.workflow.Connections.push(this.connection);
+
+    Ui.history.step();
   });
 
   changeTargetPort = action((_e: any, { value }: any) => {
@@ -100,6 +105,8 @@ export class ConnectionEditor extends React.Component<Props> {
 
     this.connection.workflow.Connections.remove(this.connection);
     this.connection.workflow.Connections.push(this.connection);
+
+    Ui.history.step();
   });
 
   changeTargetPosition = action((_e: any, { value }: any) => {
@@ -122,6 +129,8 @@ export class ConnectionEditor extends React.Component<Props> {
     this.connection.update();
     this.connection.workflow.Connections.remove(this.connection);
     this.connection.workflow.Connections.push(this.connection);
+
+    Ui.history.step();
   });
 
   render() {

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as SplitPane from 'react-split-pane';
 
-import { observer } from 'mobx-react';
 import { style } from 'typestyle';
 import { Components } from '../components/components_view';
 import { MiddleView } from '../errors/middle_view';
@@ -66,22 +65,22 @@ const layoutStyle = style({
   }
 });
 
-// const pane = style({
-//   padding: '12px',
-//   overflow: 'auto',
-//   height: '100%',
-//   $nest: {
-//     '.storm-diagrams-canvas': {
-//       background: 'rgba(0, 0, 0, 0.8)',
-//       backgroundImage:
-//         'linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent)',
-//       backgroundSize: '50px 50px',
-//       height: '100%',
-//       minHeight: '400px',
-//       margin: '-12px'
-//     }
-//   }
-// });
+const pane = style({
+  padding: '12px',
+  overflow: 'auto',
+  height: '100%',
+  $nest: {
+    '.storm-diagrams-canvas': {
+      background: 'rgba(0, 0, 0, 0.8)',
+      backgroundImage:
+        'linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent)',
+      backgroundSize: '50px 50px',
+      height: '100%',
+      minHeight: '400px',
+      margin: '-12px'
+    }
+  }
+});
 
 const barePane = style({
   height: '100%',
@@ -135,7 +134,7 @@ const MiddleLayout = ({ views }: any) => (
   </SplitPane>
 );
 
-export const EiLayout = observer(({ views }: ChildProps<Props, Query>) => {
+export const EiLayout = ({ views }: ChildProps<Props, Query>) => {
   return (
     <SplitPane split="vertical" minSize={100} defaultSize={250} className={layoutStyle}>
       <div className={componentsType}>
@@ -151,6 +150,6 @@ export const EiLayout = observer(({ views }: ChildProps<Props, Query>) => {
       )}
     </SplitPane>
   );
-});
+};
 
 EiLayout.displayName = 'EiLayout';

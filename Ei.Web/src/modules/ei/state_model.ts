@@ -70,6 +70,8 @@ export class State extends PositionModel {
 
     // remove from collection
     this.workflow.States.remove(this);
+
+    Ui.history.step();
   }
 
   async remove(): Promise<void> {

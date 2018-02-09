@@ -1,38 +1,35 @@
-import { action, IObservableArray } from 'mobx';
+import { DiffPatcher } from 'jsondiffpatch';
+import { observable } from 'mobx';
+
+import { store } from '../../config/store';
 import { Ei, EiDao } from '../ei/ei_model';
 
-interface HistoryStep {
-  undo: Function;
-  redo: Function;
-}
+const patcher = new DiffPatcher();
 
 class Step {
+  delta: any;
   previous: Step;
   next: Step;
 
-  constructor(private steps: HistoryStep[]) { }
-
-  @action
-  undo() {
-    this.steps.forEach(s => s.undo());
+  constructor(delta: any) {
+    this.delta = delta;
   }
 
-  @action
-  redo() {
-    this.steps.forEach(s => s.redo());
-    // this.steps.reverse();
+  undo(ei: EiDao) {
+    return patcher.unpatch(ei, this.delta);
+  }
+
+  redo(ei: EiDao) {
+    return patcher.patch(ei, this.delta);
   }
 }
 
 export class WorkHistory {
+  @observable version = 0;
   ei: Ei;
-
+  
   currentEi: EiDao;
   currentStep: Step;
-  inProcess: boolean;
-
-  currentSteps: HistoryStep[] = [];
-  timeout: any;
 
   startHistory(ei: Ei) {
     this.ei = ei;
@@ -41,59 +38,41 @@ export class WorkHistory {
     this.currentStep = new Step(null);
   }
 
-  addToCollection(collection: IObservableArray<any>, element: any) {
-    // collection.push(element);
+  step = () => {
+    const current = this.ei.json;
+    const delta = patcher.diff(this.currentEi, current);
+    
+    this.currentEi = current;
 
-    this.step(() => collection.remove(element), () => collection.push(element));
+    const step = new Step(delta);
+    step.previous = this.currentStep;
+    this.currentStep.next = step;
+    this.currentStep = step;
   }
-
-  removeFromCollection(collection: IObservableArray<any>, element: any) {
-    // collection.remove(element);
-
-    this.step(() => collection.push(element), () => collection.remove(element));
-  }
-
-  assignValue<T, K extends keyof T>(owner: T, property: K, newValue: any, oldValue?: any) {
-    oldValue = oldValue || owner[property];
-    this.step(() => (owner[property] = oldValue), () => (owner[property] = newValue));
-  }
-
-  step = (undo: Function, redo: Function) => {
-    if (this.inProcess) {
-      return;
-    }
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-
-    this.currentSteps.push({ undo, redo });
-
-    this.timeout = setTimeout(() => {
-      const step = new Step(this.currentSteps);
-      step.previous = this.currentStep;
-      this.currentStep.next = step;
-      this.currentStep = step;
-      this.currentSteps = [];
-    }, 30);
-  };
 
   undo = () => {
     if (!this.currentStep.previous) {
       return;
     }
-    this.inProcess = true;
-    this.currentStep.undo();
+    this.currentEi = this.currentStep.undo(this.currentEi);
     this.currentStep = this.currentStep.previous;
-    this.inProcess = false;
-  };
+    
+    let s = store();
+    this.ei = new Ei(this.currentEi, s);
+    s.ei = this.ei;
+    this.version++;
+  }
 
   redo = () => {
     if (!this.currentStep.next) {
       return;
     }
-    this.inProcess = true;
     this.currentStep = this.currentStep.next;
-    this.currentStep.redo();
-    this.inProcess = false;
-  };
+    this.currentEi = this.currentStep.redo(this.currentEi);
+    
+    let s = store();
+    this.ei = new Ei(this.currentEi, s);
+    s.ei = this.ei;
+    this.version++;
+  }
 }

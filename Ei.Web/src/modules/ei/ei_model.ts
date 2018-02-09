@@ -82,8 +82,6 @@ export class Ei extends ParametricEntity {
   constructor(model: EiDao, store: App.Store) {
     super(model);
 
-    Ui.history.inProcess = true;
-
     this.store = store;
     this.engine = new DiagramEngine();
     this.engine.registerNodeFactory(new DefaultNodeFactory());
@@ -106,12 +104,7 @@ export class Ei extends ParametricEntity {
       (model.Authorisation || emptyAuthorisation).map(r => new Authorisation(r))
     );
 
-    this.addFormListener((o, p, n) => Ui.history.step(
-      () => o.value = p, 
-      () => o.value = n)
-    );
-
-    Ui.history.inProcess = false;
+    this.addFormListener(() => Ui.history.step());
   }
 
   @computed
@@ -179,6 +172,8 @@ export class Ei extends ParametricEntity {
         if (!this.checkExists(this.Organisations, 'Organisation', org)) {
           this.Organisations.push(org);
           this.store.viewStore.showOrganisation(org.Id, org.Name);
+
+          Ui.history.step();
         }
       }
     });
@@ -195,8 +190,10 @@ export class Ei extends ParametricEntity {
         this
       );
       if (!this.checkExists(this.Roles, 'Role', role)) {
-        this.Roles.push();
+        this.Roles.push(role);
         this.store.viewStore.showRole(role.Id, role.Name);
+
+        Ui.history.step();
       }
     }
   };
@@ -212,6 +209,8 @@ export class Ei extends ParametricEntity {
       if (!this.checkExists(this.Types, 'Type', type)) {
         this.Types.push(type);
         this.store.viewStore.showType(type.Id, type.Name);
+
+        Ui.history.step();
       }
     }
   };
@@ -226,6 +225,8 @@ export class Ei extends ParametricEntity {
       if (!this.checkExists(this.Workflows, 'Workflow', workflow)) {
         this.Workflows.push(workflow);
         this.store.viewStore.showWorkflow(workflow.Id, workflow.Name);
+
+        Ui.history.step();
       }
     }
   };

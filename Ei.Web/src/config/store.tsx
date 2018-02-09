@@ -26,7 +26,7 @@ export class StoreModel {
   
 
   context: App.Context;
-  @observable ei: Ei;
+  @observable.shallow ei: Ei;
   viewStore: App.ViewStore;
   storedHandlers: Object;
 

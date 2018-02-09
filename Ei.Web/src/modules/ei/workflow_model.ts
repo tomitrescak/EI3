@@ -123,6 +123,8 @@ export class Workflow extends ParametricEntity {
         this.ei.store.viewStore.showView('home');
       })();
     }
+
+    Ui.history.step();
   };
 
   @computed
@@ -208,6 +210,8 @@ export class Workflow extends ParametricEntity {
     }
 
     this.ei.store.viewStore.showAction(this.Id, this.Name, Id);
+
+    Ui.history.step();
   };
 
   createState = async () => {
@@ -217,6 +221,8 @@ export class Workflow extends ParametricEntity {
         new State({ Name: name.value, Id: name.value.toUrlName() } as any, this, this.ei)
       );
     }
+
+    Ui.history.step();
   };
 
   createTransition = async (e: any) => {
@@ -271,6 +277,8 @@ export class Workflow extends ParametricEntity {
     }
 
     this.ei.store.viewStore.showTransition(this.Id, this.Name, Id);
+
+    Ui.history.step();
   };
 
   createConnection = () => {

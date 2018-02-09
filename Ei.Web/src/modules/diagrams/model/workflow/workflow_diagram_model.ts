@@ -1,6 +1,7 @@
 import { DiagramModel } from 'storm-react-diagrams';
 
 import { observable } from 'mobx';
+import { Ui } from '../../../../helpers/client_helpers';
 import { WorkflowLinkModel } from './workflow_link_model';
 import { WorkflowPortModel } from './workflow_port_model';
 
@@ -54,7 +55,7 @@ export class WorkflowDiagramModel extends DiagramModel {
                 link.connection.Id
               );
 
-              
+              Ui.history.step();
             }, 50);
             document.removeEventListener('mouseup', checkConnection);
           };

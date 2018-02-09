@@ -93,7 +93,6 @@ export abstract class HierarchicEntity extends ParametricEntity {
   }
 
   set Parent(parent: string) {
-    Ui.history.assignValue(this, 'Parent', parent);
     this._parent = parent;
     this.update();
   }
@@ -111,6 +110,8 @@ export abstract class HierarchicEntity extends ParametricEntity {
         entity.parentLink = null;
       }
     }
+
+    Ui.history.step();
   }
 
   async remove(): Promise<void> {
