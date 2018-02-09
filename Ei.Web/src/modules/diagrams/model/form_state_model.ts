@@ -50,11 +50,11 @@ export class FormNodeStore extends SRD.NodeModel {
     for (let fieldName of Object.getOwnPropertyNames(this)) {
       let field = this.fields[fieldName] ? this.fields[fieldName] : this[fieldName];
 
-      if (!field || typeof field === 'string' || typeof field === 'number' || typeof field === 'boolean' || field.___isChecked) {
-        continue;
-      }
-      field.___isChecked = true;
-      if (Array.isArray(field) || (field != null && field.length && field.remove)) {
+      if (Array.isArray(field) || (field != null && field.constructor.name === 'ObservableArray')) {
+        if (field.___isChecked) {
+          continue;
+        }
+        field.___isChecked = true;
         for (let f of field) {
           this.checkField(listener, f);
         }
