@@ -1,5 +1,6 @@
 import * as SRD from 'storm-react-diagrams';
 
+import { ObservableArray } from 'mobx/lib/types/observablearray';
 import {
   FieldCollection,
   FieldDefinition,
@@ -49,7 +50,11 @@ export class FormNodeStore extends SRD.NodeModel {
     for (let fieldName of Object.getOwnPropertyNames(this)) {
       let field = this.fields[fieldName] ? this.fields[fieldName] : this[fieldName];
 
-      if (Array.isArray(field)) {
+      if (!field || typeof field === 'string' || typeof field === 'number' || typeof field === 'boolean' || field.___isChecked) {
+        continue;
+      }
+      field.___isChecked = true;
+      if (Array.isArray(field) || (field != null && field.length && field.remove)) {
         for (let f of field) {
           this.checkField(listener, f);
         }
