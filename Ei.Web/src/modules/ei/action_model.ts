@@ -6,7 +6,7 @@ import { ParametricEntity, ParametricEntityDao } from './parametric_entity_model
 
 // #region ############### Action ####################
 export interface ActionDao extends ParametricEntityDao {
-  $type: string;
+  $type?: string;
 }
 
 export class Action extends ParametricEntity { 
@@ -16,6 +16,12 @@ export class Action extends ParametricEntity {
   constructor(action: Partial<ActionDao>) {
     super(action);
     this.$type = action.$type;
+  }
+
+  get json(): ActionDao {
+    return {
+      ...super.json
+    };
   }
 }
 // #endregion

@@ -1,11 +1,9 @@
 import { action, IObservableArray, observable } from 'mobx';
 import { field, intPositiveValidator } from 'semantic-ui-mobx';
-import { PointModel } from 'storm-react-diagrams';
 
 import { Ui } from '../../helpers/client_helpers';
 import { WorkflowPortModel } from '../diagrams/model/workflow/workflow_port_model';
 import { AccessCondition, AccessConditionDao } from './access_model';
-import { FreeJoint } from './connection_model';
 import { Ei } from './ei_model';
 import { EntityDao } from './entity_model';
 import { PositionModel } from './position_model';

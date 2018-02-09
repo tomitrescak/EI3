@@ -9,7 +9,7 @@ import { PositionModel } from './position_model';
 import { Workflow } from './workflow_model';
 
 export interface TransitionDao extends EntityDao {
-  $type: string;
+  $type?: string;
   Horizontal: boolean;
 }
 
