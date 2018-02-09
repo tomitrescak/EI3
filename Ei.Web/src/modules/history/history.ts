@@ -1,35 +1,46 @@
 import { DiffPatcher } from 'jsondiffpatch';
-import { observable } from 'mobx';
+import { action, observable } from 'mobx';
 
 import { store } from '../../config/store';
 import { Ei, EiDao } from '../ei/ei_model';
 
-const patcher = new DiffPatcher();
+const patcher = new DiffPatcher(); // { textDiff: 10000 }
 
 class Step {
-  delta: any;
+  deltas: any[];
   previous: Step;
   next: Step;
 
-  constructor(delta: any) {
-    this.delta = delta;
+  constructor(deltas: any[]) {
+    this.deltas = deltas;
   }
 
+  @action
   undo(ei: EiDao) {
-    return patcher.unpatch(ei, this.delta);
+    let result = ei;
+    for (let delta of this.deltas.reverse()) {
+      result = patcher.unpatch(result, delta);
+    }
+    this.deltas.reverse();
+    return result;
   }
 
+  @action 
   redo(ei: EiDao) {
-    return patcher.patch(ei, this.delta);
+    let result = ei;
+    this.deltas.forEach(delta => result = patcher.patch(result, delta));
+    return result;
   }
 }
 
 export class WorkHistory {
   @observable version = 0;
   ei: Ei;
-  
+
   currentEi: EiDao;
   currentStep: Step;
+  deltas: any[] = [];
+  timeout: any;
 
   startHistory(ei: Ei) {
     this.ei = ei;
@@ -41,14 +52,23 @@ export class WorkHistory {
   step = () => {
     const current = this.ei.json;
     const delta = patcher.diff(this.currentEi, current);
-    
+
     this.currentEi = current;
 
-    const step = new Step(delta);
-    step.previous = this.currentStep;
-    this.currentStep.next = step;
-    this.currentStep = step;
-  }
+    this.deltas.push(delta);
+
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+
+    this.timeout = setTimeout(() => {
+      const step = new Step(this.deltas);
+      step.previous = this.currentStep;
+      this.currentStep.next = step;
+      this.currentStep = step;
+      this.deltas = [];
+    }, 200);
+  };
 
   undo = () => {
     if (!this.currentStep.previous) {
@@ -56,12 +76,12 @@ export class WorkHistory {
     }
     this.currentEi = this.currentStep.undo(this.currentEi);
     this.currentStep = this.currentStep.previous;
-    
+
     let s = store();
     this.ei = new Ei(this.currentEi, s);
     s.ei = this.ei;
     this.version++;
-  }
+  };
 
   redo = () => {
     if (!this.currentStep.next) {
@@ -69,10 +89,10 @@ export class WorkHistory {
     }
     this.currentStep = this.currentStep.next;
     this.currentEi = this.currentStep.redo(this.currentEi);
-    
+
     let s = store();
     this.ei = new Ei(this.currentEi, s);
     s.ei = this.ei;
     this.version++;
-  }
+  };
 }
