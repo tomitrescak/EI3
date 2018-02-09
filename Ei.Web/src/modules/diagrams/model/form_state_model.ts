@@ -44,13 +44,18 @@ export class FormNodeStore extends SRD.NodeModel {
   }
 
   addFormListener(listener: FormStateListener) {
+    if (this.___isChecked) {
+      return;
+    }
+    this.___isChecked = true;
+
     this.formListeners.push(listener);
 
     // notify all fields
     for (let fieldName of Object.getOwnPropertyNames(this)) {
       let field = this.fields[fieldName] ? this.fields[fieldName] : this[fieldName];
 
-      if (Array.isArray(field) || (field != null && field.constructor.name === 'ObservableArray')) {
+      if ((field != null && field.constructor.name === 'ObservableArray')) {
         if (field.___isChecked) {
           continue;
         }
