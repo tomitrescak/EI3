@@ -8,6 +8,7 @@ import {
   FieldModel,
   FormStateListener
 } from 'semantic-ui-mobx';
+import { Ui } from '../../../helpers/client_helpers';
 
 export class FormNodeStore extends SRD.NodeModel {
   fields: FieldMap;
@@ -61,6 +62,10 @@ export class FormNodeStore extends SRD.NodeModel {
           continue;
         }
         field.___isChecked = true;
+
+        // add listener
+        field.observe(Ui.collectionObserver);
+
         for (let f of field) {
           this.checkField(listener, f);
         }

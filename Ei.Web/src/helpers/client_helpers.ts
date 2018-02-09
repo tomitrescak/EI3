@@ -1,9 +1,22 @@
+import { IArrayChange, IArraySplice } from 'mobx';
+
 import { WorkHistory } from '../modules/history/history';
 
 let a: any;
 
 export const Ui = {
   history: new WorkHistory(),
+  collectionObserver: (e: IArrayChange<any> | IArraySplice<any>) => {
+    if (e.type === 'splice') {
+      if (e.addedCount > 0) {
+        Ui.history.addToCollection(e.object, e.added);
+      } else if (e.removedCount > 0) {
+        Ui.history.removeFromCollection(e.object, e.removed[0]);
+      }
+    } else if (e.type === 'update') {
+      // Ui.history.addToCollection(this.parents, e.newValue);
+    }
+  },
   alerter(v?: any) { 
     if (v) {
       a = v;

@@ -82,6 +82,8 @@ export class Ei extends ParametricEntity {
   constructor(model: EiDao, store: App.Store) {
     super(model);
 
+    Ui.history.inProcess = true;
+
     this.store = store;
     this.engine = new DiagramEngine();
     this.engine.registerNodeFactory(new DefaultNodeFactory());
@@ -108,6 +110,8 @@ export class Ei extends ParametricEntity {
       () => o.value = p, 
       () => o.value = n)
     );
+
+    Ui.history.inProcess = false;
   }
 
   @computed
