@@ -14,6 +14,7 @@ export class FormNodeStore extends SRD.NodeModel {
   fieldDefinitions: FieldDefinition[];
   formListeners: FormStateListener[] = [];
   validationMessage: string;
+  __isChecked: boolean;
 
   constructor(id: string) {
     super('entity', id);
@@ -44,10 +45,10 @@ export class FormNodeStore extends SRD.NodeModel {
   }
 
   addFormListener(listener: FormStateListener) {
-    if (this.___isChecked) {
+    if (this.__isChecked) {
       return;
     }
-    this.___isChecked = true;
+    this.__isChecked = true;
 
     this.formListeners.push(listener);
 

@@ -104,7 +104,10 @@ export class Ei extends ParametricEntity {
       (model.Authorisation || emptyAuthorisation).map(r => new Authorisation(r))
     );
 
-    this.addFormListener(() => Ui.history.step());
+    this.addFormListener((o, p, n) => Ui.history.step(
+      () => o.value = p, 
+      () => o.value = n)
+    );
   }
 
   @computed

@@ -1,49 +1,31 @@
-import { DiffPatcher } from 'jsondiffpatch';
-import { observable } from 'mobx';
-
-import { store } from '../../config/store';
 import { Ei, EiDao } from '../ei/ei_model';
 
-const patcher = new DiffPatcher();
-
 class Step {
-  delta: any;
   previous: Step;
   next: Step;
-
-  constructor(delta: any) {
-    this.delta = delta;
-  }
-
-  undo(ei: EiDao) {
-    return patcher.unpatch(ei, this.delta);
-  }
-
-  redo(ei: EiDao) {
-    return patcher.patch(ei, this.delta);
-  }
+  constructor(public undo: Function, public redo: Function) {}
 }
+
 
 export class WorkHistory {
   ei: Ei;
   
   currentEi: EiDao;
   currentStep: Step;
+  inProcess: boolean;
 
   startHistory(ei: Ei) {
     this.ei = ei;
     // this.first = ei.json;
     this.currentEi = ei.json;
-    this.currentStep = new Step(null);
+    this.currentStep = new Step(null, null);
   }
 
-  step = () => {
-    const current = this.ei.json;
-    const delta = patcher.diff(this.currentEi, current);
-    
-    this.currentEi = current;
-
-    const step = new Step(delta);
+  step = (undo: Function, redo: Function) => {
+    if (this.inProcess) {
+      return;
+    }
+    const step = new Step(undo, redo);
     step.previous = this.currentStep;
     this.currentStep.next = step;
     this.currentStep = step;
@@ -53,21 +35,20 @@ export class WorkHistory {
     if (!this.currentStep.previous) {
       return;
     }
-    this.currentEi = this.currentStep.undo(this.currentEi);
+    this.inProcess = true;
+    this.currentStep.undo();
     this.currentStep = this.currentStep.previous;
-    
-    let s = store();
-    s.ei = new Ei(this.currentEi, s);
+    this.inProcess = false;
   }
 
   redo = () => {
     if (!this.currentStep.next) {
       return;
     }
+    this.inProcess = true;
     this.currentStep = this.currentStep.next;
-    this.currentEi = this.currentStep.redo(this.currentEi);
-    
-    let s = store();
-    s.ei = new Ei(this.currentEi, s);
+    this.currentEi = this.currentStep.redo();
+    this.inProcess = false;
+  
   }
 }
