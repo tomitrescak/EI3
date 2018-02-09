@@ -2,6 +2,8 @@ import { action, IObservableArray, observable } from 'mobx';
 import { field } from 'semantic-ui-mobx';
 import { PointModel } from 'storm-react-diagrams';
 
+import { Ui } from '../../helpers/client_helpers';
+import { EntityDiagramModel } from '../diagrams/model/entity/entity_diagram_model';
 import { EntityLinkModel } from '../diagrams/model/entity/entity_link_model';
 import { EntityPortModel } from '../diagrams/model/entity/entity_port_model';
 import { Ei } from './ei_model';
@@ -23,6 +25,7 @@ export abstract class HierarchicEntity extends ParametricEntity {
   parentLink: EntityLinkModel;
   parents: IObservableArray<HierarchicEntity>;
   ei: Ei;
+  model: EntityDiagramModel;
 
   constructor(model: HierarchicEntityDao, parents: IObservableArray<HierarchicEntity>, ei: Ei, allowEditIcon = false) {
     super(model, allowEditIcon);
@@ -62,7 +65,7 @@ export abstract class HierarchicEntity extends ParametricEntity {
     }
   }
 
-  @action remove() {
+  @action removeItem() {
     // remove from collection
     this.parents.remove(this);
 
@@ -72,6 +75,21 @@ export abstract class HierarchicEntity extends ParametricEntity {
         entity.Parent = null
         entity.parentLink = null;
       }
+    }
+  }
+
+  async remove(): Promise<void> {
+    if (this.parents.length === 1 && (this.constructor.name === 'Role' || this.constructor.name === 'Organisation')) {
+      Ui.alertDialog('You cannot remove the last item. Institution needs to contain at least one.');
+      return;
+    }
+    if (
+      await Ui.confirmDialogAsync(
+        'Do you want to delete this record? This can break your existing references!',
+        'Deleting record'
+      )
+    ) {
+      this.removeItem();
     }
   }
 

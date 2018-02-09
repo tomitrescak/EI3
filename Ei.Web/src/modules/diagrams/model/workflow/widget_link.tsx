@@ -187,6 +187,10 @@ export class WorkflowLink extends DefaultLinkWidget {
     let pLast = link.getLastPoint();
     let pPrevious = link.points[link.points.length - 2];
 
+    if (pPrevious == null) {
+      return false;
+    }
+
     let flip = pPrevious.x > pLast.x;
     let path = flip
       ? `M ${pLast.x - 5} ${pLast.y} L ${pLast.x + 10} ${pLast.y + 5} L ${pLast.x + 10} ${pLast.y -

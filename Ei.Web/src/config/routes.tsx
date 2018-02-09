@@ -4,9 +4,9 @@ import { Route } from './mobx_router';
 import { ActionView } from '../modules/actions/action_view';
 import { ConnectionEditor } from '../modules/connections/connection_editor';
 import { EntitiesView } from '../modules/diagrams/entities_view';
-import { EntityView } from '../modules/diagrams/entity_view';
+import { HierarchicEntityEditor } from '../modules/diagrams/hierarchic_entity_editor';
+import { EiEditor } from '../modules/ei/ei_editor';
 import { Ei } from '../modules/ei/ei_model';
-import { EiProperties } from '../modules/ei/ei_properties';
 import { StateEditor } from '../modules/states/state_editor';
 import { TransitionEditor } from '../modules/transitions/transitions_editor';
 import { WorkflowEditor } from '../modules/workflow/workflow_editor';
@@ -24,7 +24,7 @@ export function initRoutes(store: App.Store): Route[] {
       route: '/',
       action: () => view.showView('home'),
       components: () => ({
-        graph: <EiProperties />
+        graph: <EiEditor />
       })
     },
     {
@@ -55,7 +55,7 @@ export function initRoutes(store: App.Store): Route[] {
             type="organisations"
           />
         ),
-        editor: <EntityView id={id} name={name} collection={organisationSelector} />
+        editor: <HierarchicEntityEditor id={id} name={name} collection={organisationSelector} minCount={1} parentView="organisations" />
       })
     },
     {
@@ -79,7 +79,7 @@ export function initRoutes(store: App.Store): Route[] {
             type="roles"
           />
         ),
-        editor: <EntityView id={id} name={name} collection={roleSelector} />
+        editor: <HierarchicEntityEditor id={id} name={name} collection={roleSelector} minCount={1} parentView="roles" />
       })
     },
     {
@@ -103,7 +103,7 @@ export function initRoutes(store: App.Store): Route[] {
             type="types"
           />
         ),
-        editor: <EntityView id={id} name={name} collection={typeSelector} />
+        editor: <HierarchicEntityEditor id={id} name={name} collection={typeSelector} minCount={1} parentView="types" />
       })
     },
     {

@@ -47,11 +47,11 @@ export const Ui = {
     const swal = require('sweetalert2');
     try {
       await swal({
-        name: name,
+        title: name,
         text: text,
         type: type,
         showCancelButton: true,
-        cancelButtonColor: '#d33',
+        cancelButtonColor: 'grey',
         confirmButtonText: confirmButtonText
       });
       return true;

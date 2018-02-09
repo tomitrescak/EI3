@@ -32,7 +32,7 @@ const activePane = style(pane, { display: 'block' });
 const hiddenPane = style(pane);
 
 interface Props {
-  context: App.Context;
+  context?: App.Context;
 }
 
 export const Messages = observer(({ context }: Props) => (

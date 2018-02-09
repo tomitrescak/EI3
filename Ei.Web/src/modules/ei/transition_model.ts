@@ -1,6 +1,7 @@
-import { IObservableArray, observable } from 'mobx';
+import { action, IObservableArray, observable } from 'mobx';
 import { field, FormState } from 'semantic-ui-mobx';
 
+import { Ui } from '../../helpers/client_helpers';
 import { WorkflowPortModel } from '../diagrams/model/workflow/workflow_port_model';
 import { Ei } from './ei_model';
 import { EntityDao } from './entity_model';
@@ -28,6 +29,28 @@ export class Transition extends PositionModel {
     return {
       ...super.json,
       Horizontal: this.Horizontal
+    }
+  }
+
+  @action removeItem() {
+    // adjust all children
+    for (let connection of this.workflow.Connections) {
+      if (connection.From === this.Id || connection.To === this.Id) {
+        this.workflow.Connections.remove(connection)
+      }
+    }
+    // remove from collection
+    this.workflow.Transitions.remove(this);
+  }
+
+  async remove(): Promise<void> {
+    if (
+      await Ui.confirmDialogAsync(
+        'Do you want to delete this transition? This will delete all its connections!',
+        'Deleting transition'
+      )
+    ) {
+      this.removeItem();
     }
   }
 

@@ -1,4 +1,4 @@
-import { computed, IObservableArray, observable } from 'mobx';
+import { action, computed, IObservableArray, observable } from 'mobx';
 import { field } from 'semantic-ui-mobx';
 import { DiagramModel } from 'storm-react-diagrams';
 
@@ -26,7 +26,6 @@ import {
   TransitionSplit,
   TransitionSplitDao
 } from './transition_model';
-
 
 // tslint:disable-next-line:no-empty-interface
 export interface WorkflowDao extends ParametricEntityDao {
@@ -112,19 +111,35 @@ export class Workflow extends ParametricEntity {
     return p;
   }
 
+  delete = async () => {
+    if (
+      await Ui.confirmDialogAsync(
+        'Do you want to delete this workflow? This can break some references!',
+        'Deleting workflow'
+      )
+    ) {
+      action(() => {
+        this.ei.Workflows.remove(this);
+        this.ei.store.viewStore.showView('home');
+      })();
+    }
+  };
+
   @computed
   get connectionOptions() {
-    return [{ value: '', text: 'None' }].concat(
-      this.States.map(c => ({
-        value: c.Id.toString(),
-        text: c.Name || c.Id
-      })).concat(
-        this.Transitions.map(c => ({
+    return [{ value: '', text: 'None' }]
+      .concat(
+        this.States.map(c => ({
           value: c.Id.toString(),
           text: c.Name || c.Id
-        }))
+        })).concat(
+          this.Transitions.map(c => ({
+            value: c.Id.toString(),
+            text: c.Name || c.Id
+          }))
+        )
       )
-    ).sort(optionSort);
+      .sort(optionSort);
   }
 
   @computed
@@ -198,7 +213,9 @@ export class Workflow extends ParametricEntity {
   createState = async () => {
     let name = await Ui.promptText('Name of the new state?');
     if (name.value) {
-      this.States.push(new State({ Name: name.value, Id: name.value.toUrlName() } as any, this, this.ei));
+      this.States.push(
+        new State({ Name: name.value, Id: name.value.toUrlName() } as any, this, this.ei)
+      );
     }
   };
 

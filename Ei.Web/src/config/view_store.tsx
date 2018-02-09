@@ -23,6 +23,7 @@ export class ViewStoreModel {
     this.router.startRouter(routes);
   }
 
+
   @action
   showView(name: string, params?: any) {
     this.view = name;

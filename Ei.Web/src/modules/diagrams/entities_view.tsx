@@ -51,6 +51,7 @@ export class EntitiesView extends React.Component<Props> {
 
     for (let node of this.entities()) {
       model.addNode(node);
+      node.model = model;
       if (node.parentLink) {
         node.Parent; // subscribe
         model.addLink(node.parentLink);

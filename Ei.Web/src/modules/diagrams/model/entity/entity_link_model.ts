@@ -6,7 +6,6 @@ import { HierarchicEntity } from '../../../ei/hierarchic_entity_model';
 import { EntityDiagramModel } from './entity_diagram_model';
 
 export class EntityLinkModel extends LinkModel {
-  model: EntityDiagramModel;
 
   @action safeRemove(model: EntityDiagramModel) {
     this.safeRemoveParent();

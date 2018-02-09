@@ -1,4 +1,5 @@
 import { autorun, computed, IObservableArray, observable } from 'mobx';
+import { field } from 'semantic-ui-mobx';
 import { DropdownItemProps } from 'semantic-ui-react';
 import { DefaultNodeFactory, DiagramEngine } from 'storm-react-diagrams';
 
@@ -12,6 +13,7 @@ import { Entity } from './entity_model';
 import { HierarchicEntity, HierarchicEntityDao } from './hierarchic_entity_model';
 import { ParametricEntity } from './parametric_entity_model';
 import { Workflow, WorkflowDao } from './workflow_model';
+
 
 const emptyWorkflows: WorkflowDao[] = [];
 const emptyAuthorisation: AuthorisationDao[] = [];
@@ -33,11 +35,6 @@ export class Organisation extends HierarchicEntity {
     this.ei.store.viewStore.showOrganisation(this.Id, this.Name);
   }
 
-  remove() {
-    super.remove();
-
-    this.ei.store.viewStore.showView('organisations');
-  }
 }
 
 export class Role extends HierarchicEntity {
@@ -70,11 +67,14 @@ interface EiDao extends ParametricEntity {
   TypeDiagram: string;
   Workflows: WorkflowDao[];
   Authorisation: AuthorisationDao[];
+  MainWorkflow: string;
 }
 
 export class Ei extends ParametricEntity {
   engine: DiagramEngine;
   store: App.Store;
+
+  @field MainWorkflow: string;
 
   Organisations: IObservableArray<Organisation>;
   Roles: IObservableArray<Role>;
@@ -96,6 +96,7 @@ export class Ei extends ParametricEntity {
 
     this.engine.maxNumberPointsPerLink = 1;
 
+    this.MainWorkflow = model.MainWorkflow;
     this.Organisations = this.initHierarchy(model.Organisations, observable([]), Organisation);
     this.Roles = this.initHierarchy(model.Roles, observable([]), Role);
     this.Types = this.initHierarchy(model.Types, observable([]), Type);
@@ -226,6 +227,7 @@ export class Ei extends ParametricEntity {
   get json() {
     return {
       ...super.json,
+      MainWorkflow: this.MainWorkflow,
       Organisations: this.Organisations.map(o => o.json),
       Roles: this.Roles.map(o => o.json),
       Types: this.Types.map(o => o.json),
