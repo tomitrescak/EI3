@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react';
 import { style } from 'typestyle';
 import { Link } from '../../config/router';
 import { AccordionHandler } from '../../config/store';
+import { Ei } from '../ei/ei_model';
 import { SocketClient } from '../ws/socket_client';
 import { HierarchicEntityView } from './hierarchic_entity_view';
 import { WorkflowList } from './workflow_list_view';
@@ -91,6 +92,7 @@ export class Components extends React.Component<Props, State> {
               showSingle={this.showRole}
               url="roles"
               title="Roles"
+              ei={ei}
             />
 
             <HierarchicEntityView
@@ -103,6 +105,7 @@ export class Components extends React.Component<Props, State> {
               showSingle={this.showOrganisation}
               url="organisations"
               title="Organisations"
+              ei={ei}
             />
 
             <HierarchicEntityView
@@ -115,6 +118,7 @@ export class Components extends React.Component<Props, State> {
               showSingle={this.showType}
               url="types"
               title="Types"
+              ei={ei}
             />
 
             <WorkflowList

@@ -23,17 +23,12 @@ export function initRoutes(store: App.Store): Route[] {
   let view = store.viewStore;
   return [
     {
-      name: 'home',
-      route: '/',
-      action: () => view.showView('home'),
-      component: EiList
-    },
-    {
       component: EiContainer,
+      route: '/:eiName/:eiId',
       children: [
         {
           name: 'ei',
-          route: '/:eiName/:eiId',
+          route: '',
           action: (name, id) => view.showEi(id, name),
           components: () => ({
             graph: (
@@ -44,7 +39,7 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'organisations',
           route: '/organisations',
-          action: () => view.showView('organisations'),
+          action: (eiName, eiId) => view.showView('organisations', { eiName, eiId }),
           components: () => ({
             graph: (
               <EntitiesView
@@ -59,7 +54,7 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'organisation',
           route: '/organisation/:name/:id',
-          action: (name, id) => view.showOrganisation(id, name),
+          action: (eiName, eiId, name, id) => view.showOrganisation(id, name, eiId, eiName),
           components: ({ id, name }) => ({
             graph: (
               <EntitiesView
@@ -75,7 +70,7 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'roles',
           route: '/roles',
-          action: () => view.showView('roles'),
+          action: (eiName, eiId) => view.showView('roles', { eiName, eiId }),
           components: () => ({
             graph: <EntitiesView store={store} id={null} entities={roleSelector} type="roles" />
           })
@@ -83,7 +78,7 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'role',
           route: '/role/:name/:id',
-          action: (name, id) => view.showRole(id, name),
+          action: (eiName, eiId, name, id) => view.showRole(id, name, eiId, eiName),
           components: ({ id, name }) => ({
             graph: (
               <EntitiesView
@@ -99,7 +94,7 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'types',
           route: '/types',
-          action: () => view.showView('types'),
+          action: (eiName, eiId) => view.showView('types', { eiName, eiId }),
           components: () => ({
             graph: <EntitiesView store={store} id={null} entities={typeSelector} type="types" />
           })
@@ -107,7 +102,7 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'type',
           route: '/type/:name/:id',
-          action: (name, id) => view.showType(id, name),
+          action: (eiName, eiId, name, id) => view.showType(id, name, eiId, eiName),
           components: ({ id, name }) => ({
             graph: (
               <EntitiesView
@@ -123,7 +118,7 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'action',
           route: '/workflows/:name/:id/action/:actionId',
-          action: (name, id, actionId) => view.showAction(id, name, actionId),
+          action: (eiName, eiId, name, id, actionId) => view.showAction(id, name, actionId, eiId, eiName),
           components: ({ id, actionId }) => ({
             graph: <WorkflowView id={id} />,
             editor: <ActionView id={actionId} workflowId={id} />
@@ -132,7 +127,7 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'state',
           route: '/workflows/:name/:id/state/:stateId',
-          action: (name, id, stateId) => view.showState(id, name, stateId),
+          action: (eiName, eiId, name, id, stateId) => view.showState(id, name, stateId, eiId, eiName),
           components: ({ id, stateId }) => ({
             graph: <WorkflowView id={id} />,
             editor: <StateEditor id={stateId} workflowId={id} />
@@ -141,7 +136,7 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'transition',
           route: '/workflows/:name/:id/transition/:transitionId',
-          action: (name, id, transitionId) => view.showTransition(id, name, transitionId),
+          action: (eiName, eiId, name, id, transitionId) => view.showTransition(id, name, transitionId, eiId, eiName),
           components: ({ id, transitionId }) => ({
             graph: <WorkflowView id={id} />,
             editor: <TransitionEditor id={transitionId} workflowId={id} />
@@ -150,7 +145,7 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'connection',
           route: '/workflows/:name/:id/connection/:connectionId',
-          action: (name, id, connectionId) => view.showConnection(id, name, connectionId),
+          action: (eiName, eiId, name, id, connectionId) => view.showConnection(id, name, connectionId, eiId, eiName),
           components: ({ id, connectionId }) => ({
             graph: <WorkflowView id={id} />,
             editor: <ConnectionEditor id={connectionId} workflowId={id} />
@@ -159,13 +154,19 @@ export function initRoutes(store: App.Store): Route[] {
         {
           name: 'workflow',
           route: '/workflows/:name/:id',
-          action: (name, id) => view.showWorkflow(id, name),
+          action: (eiName, eiId, name, id) => view.showWorkflow(id, name, eiId, eiName),
           components: ({ id }) => ({
             graph: <WorkflowView id={id} />,
             editor: <WorkflowEditor id={id} />
           })
         }
       ]
+    },
+    {
+      name: 'home',
+      route: '/',
+      action: () => view.showView('home'),
+      component: EiList
     },
     {
       name: 'notFound',

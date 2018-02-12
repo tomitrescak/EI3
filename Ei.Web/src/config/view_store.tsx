@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { action, observable } from 'mobx';
+import { Ei, EiDao } from '../modules/ei/ei_model';
 import { MobxRouter, Route } from './mobx_router';
 
 declare global {
@@ -14,6 +15,8 @@ export class ViewStoreModel {
   router: MobxRouter;
   store: App.Store;
   context: App.Context;
+
+  ei: EiDao;
 
   constructor(context: App.Context) {
     this.context = context;
@@ -29,22 +32,25 @@ export class ViewStoreModel {
   @action
   showView(name: string, params?: any) {
     this.view = name;
+
+    params = this.ei ? { ...params, eiId: this.ei.Id, eiName: this.ei.Name.toUrlName() } : params;
+
     this.viewParameters = params || {};
   }
 
   @action
-  showOrganisation(id: string, name: string) {
-    this.showView('organisation', { id: id.toUrlName(), name: name.toUrlName() });
+  showOrganisation(id: string, name: string, eiId?: string, eiName?: string) {
+    this.showView('organisation', { eiName, eiId, id: id.toUrlName(), name: name.toUrlName() });
   }
 
   @action
-  showRole(id: string, name: string) {
-    this.showView('role', { id: id.toUrlName(), name: name.toUrlName() });
+  showRole(id: string, name: string, eiId?: string, eiName?: string) {
+    this.showView('role', { eiName, eiId, id: id.toUrlName(), name: name.toUrlName() });
   }
 
   @action
-  showType(id: string, name: string) {
-    this.showView('type', { id: id.toUrlName(), name: name.toUrlName() });
+  showType(id: string, name: string, eiId?: string, eiName?: string) {
+    this.showView('type', { eiName, eiId, id: id.toUrlName(), name: name.toUrlName() });
   }
 
   parseEvent(e: React.MouseEvent<HTMLAnchorElement>) {
@@ -65,12 +71,12 @@ export class ViewStoreModel {
     this.showView('ei', { eiId, eiName });
   }
 
-  showAction = (workflowId: string, workflowName: string, actionId: string) => {
-    this.showView('action', { id: workflowId, name: workflowName.toUrlName(), actionId });
+  showAction = (workflowId: string, workflowName: string, actionId: string, eiId?: string, eiName?: string) => {
+    this.showView('action', { eiName, eiId, id: workflowId, name: workflowName.toUrlName(), actionId });
   };
 
-  showWorkflow(workflowId: string, workflowName: string) {
-    this.showView('workflow', { id: workflowId, name: workflowName.toUrlName() });
+  showWorkflow(workflowId: string, workflowName: string, eiId?: string, eiName?: string) {
+    this.showView('workflow', { eiName, eiId, id: workflowId, name: workflowName.toUrlName() });
   }
 
   showStateClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -78,8 +84,8 @@ export class ViewStoreModel {
     this.showState(p.workflowId, p.workflowName, p.id);
   };
 
-  showState = (workflowId: string, workflowName: string, stateId: string) => {
-    this.showView('state', { id: workflowId, name: workflowName.toUrlName(), stateId });
+  showState = (workflowId: string, workflowName: string, stateId: string, eiId?: string, eiName?: string) => {
+    this.showView('state', { eiName, eiId, id: workflowId, name: workflowName.toUrlName(), stateId });
   };
 
   showTransitionClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -87,8 +93,8 @@ export class ViewStoreModel {
     this.showTransition(p.workflowId, p.workflowName, p.id);
   };
 
-  showTransition(workflowId: string, workflowName: string, transitionId: string) {
-    this.showView('transition', { id: workflowId, name: workflowName.toUrlName(), transitionId });
+  showTransition(workflowId: string, workflowName: string, transitionId: string, eiId?: string, eiName?: string) {
+    this.showView('transition', { eiName, eiId, id: workflowId, name: workflowName.toUrlName(), transitionId });
   }
 
   showConnectionClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -96,7 +102,7 @@ export class ViewStoreModel {
     this.showConnection(p.workflowId, p.workflowName, p.id);
   };
 
-  showConnection(workflowId: string, workflowName: string, connectionId: string) {
-    this.showView('connection', { id: workflowId, name: workflowName.toUrlName(), connectionId });
+  showConnection(workflowId: string, workflowName: string, connectionId: string, eiId?: string, eiName?: string) {
+    this.showView('connection', { eiName, eiId, id: workflowId, name: workflowName.toUrlName(), connectionId });
   }
 }

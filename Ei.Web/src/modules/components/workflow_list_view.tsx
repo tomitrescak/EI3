@@ -103,6 +103,7 @@ export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: Det
             route="action"
             viewAction={ei.store.viewStore.showActionClick}
             createAction={workflow.createAction}
+            ei={ei}
           />
 
           <WorkflowComponentList
@@ -114,6 +115,7 @@ export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: Det
             route="state"
             viewAction={ei.store.viewStore.showStateClick}
             createAction={workflow.createState}
+            ei={ei}
           />
 
           <WorkflowComponentList
@@ -125,6 +127,7 @@ export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: Det
             route="transition"
             viewAction={ei.store.viewStore.showTransitionClick}
             createAction={workflow.createTransition}
+            ei={ei}
           />
 
           <WorkflowComponentList
@@ -135,6 +138,7 @@ export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: Det
             collection={workflow.Connections}
             route="connection"
             viewAction={ei.store.viewStore.showConnectionClick}
+            ei={ei}
           />
 
         </Accordion>

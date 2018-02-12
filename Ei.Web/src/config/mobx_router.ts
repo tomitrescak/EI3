@@ -57,18 +57,23 @@ export class MobxRouter {
     });
   }
 
-  addRoutes(r: Route[], layout: any, routes: any) {
+  addRoutes(r: Route[], parentRoute: Route, routes: any) {
     // initialise routes from route definition
     for (let route of r) {
       this.routes[route.name] = route;
 
-      if (layout) {
-        route.layout = layout;
+      if (parentRoute) {
+        if (parentRoute.component) {
+          route.layout = parentRoute.component;
+        }
+        if (parentRoute.route) {
+          route.route = parentRoute.route + route.route;
+        }
       }
 
       // add children
       if (route.children) {
-        this.addRoutes(route.children, route.component, routes);
+        this.addRoutes(route.children, route, routes);
       }
     }
 

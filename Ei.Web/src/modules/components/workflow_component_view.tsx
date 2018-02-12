@@ -7,6 +7,7 @@ import { Accordion, Button, Icon, Label, List } from 'semantic-ui-react';
 import { Link } from '../../config/router';
 import { AccordionHandler } from '../../config/store';
 import { IconView } from '../core/entity_icon_view';
+import { Ei } from '../ei/ei_model';
 import { Entity, entitySort } from '../ei/entity_model';
 import { Workflow } from '../ei/workflow_model';
 import { accordionButton } from './hierarchic_entity_view';
@@ -21,6 +22,7 @@ interface WorkflowElementProps {
   route: string;
   viewAction: any;
   createAction?: any;
+  ei: Ei;
 }
 let entity: Entity;
 
@@ -28,12 +30,13 @@ export const WorkflowComponentList = observer(
   ({
     collection,
     createAction,
+    ei,
     handler,
     index,
     route,
     title,
     viewAction,
-    workflow
+    workflow,
   }: WorkflowElementProps) => (
     <>
       <Accordion.Title active={handler.isActive(index)} index={index} onClick={handler.handleClick}>
@@ -58,7 +61,7 @@ export const WorkflowComponentList = observer(
           <For each="entity" of={collection.sort(entitySort)}>
             <List.Item
               as={Link}
-              to={`/workflows/${workflow.Name.toUrlName()}/${
+              to={`/${ei.Name.toUrlName()}/${ei.id}/workflows/${workflow.Name.toUrlName()}/${
                 workflow.Id
               }/${route}/${entity.Id.toUrlName()}`}
               action={viewAction}

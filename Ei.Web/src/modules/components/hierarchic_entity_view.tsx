@@ -7,6 +7,7 @@ import { style } from 'typestyle';
 import { IObservableArray } from 'mobx';
 import { Link } from '../../config/router';
 import { IconView } from '../core/entity_icon_view';
+import { Ei } from '../ei/ei_model';
 import { entitySort } from '../ei/entity_model';
 import { HierarchicEntity } from '../ei/hierarchic_entity_model';
 
@@ -31,6 +32,7 @@ interface Props {
   index: number;
   title: string;
   url: string;
+  ei: Ei;
 
   createEntity: (e: any) => void;
   showAll: (e: any) => void;
@@ -47,7 +49,8 @@ export const HierarchicEntityView = observer(
     showAll,
     showSingle,
     title,
-    url
+    url,
+    ei
   }: Props) => (
     <>
       <Accordion.Title active={active} index={index} onClick={handleClick}>
@@ -76,7 +79,7 @@ export const HierarchicEntityView = observer(
           <For each="entity" of={collection.sort(entitySort)}>
             <List.Item
               as={Link}
-              to={`/${url}/${entity.Name.toUrlName()}/${entity.Id}`}
+              to={`/${ei.Name.toUrlName()}/${ei.id}/${url}/${entity.Name.toUrlName()}/${entity.Id}`}
               action={() => showSingle(entity.Id, entity.Name)}
               key={entity.Id}
             >

@@ -6,7 +6,6 @@ import { inject, observer } from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
 
 import { Layout } from '../modules/core/layout';
-import { EiContainer } from '../modules/ei/ei_container';
 
 type Props = {
   context?: App.Context;
