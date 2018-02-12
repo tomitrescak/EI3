@@ -13,13 +13,15 @@ export class ViewStoreModel {
 
   router: MobxRouter;
   store: App.Store;
+  context: App.Context;
 
-  constructor(store: App.Store) {
-    this.store = store;
+  constructor(context: App.Context) {
+    this.context = context;
+    this.store = context.store;
   }
 
   startRouter(routes: Route[]) {
-    this.router = new MobxRouter(this);
+    this.router = new MobxRouter(this.context);
     this.router.startRouter(routes);
   }
 
@@ -58,6 +60,10 @@ export class ViewStoreModel {
     let p = this.parseEvent(e);
     this.showAction(p.workflowId, p.workflowName, p.id);
   };
+
+  showEi(eiId: string, eiName: string) {
+    this.showView('ei', { eiId, eiName });
+  }
 
   showAction = (workflowId: string, workflowName: string, actionId: string) => {
     this.showView('action', { id: workflowId, name: workflowName.toUrlName(), actionId });

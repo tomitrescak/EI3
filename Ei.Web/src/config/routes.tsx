@@ -5,7 +5,10 @@ import { ActionView } from '../modules/actions/action_view';
 import { ConnectionEditor } from '../modules/connections/connection_editor';
 import { EntitiesView } from '../modules/diagrams/entities_view';
 import { HierarchicEntityEditor } from '../modules/diagrams/hierarchic_entity_editor';
+import { EiContainer } from '../modules/ei/ei_container';
 import { EiEditor } from '../modules/ei/ei_editor';
+import { EiLayout } from '../modules/ei/ei_layout';
+import { EiList } from '../modules/ei/ei_list';
 import { Ei } from '../modules/ei/ei_model';
 import { StateEditor } from '../modules/states/state_editor';
 import { TransitionEditor } from '../modules/transitions/transitions_editor';
@@ -23,133 +26,146 @@ export function initRoutes(store: App.Store): Route[] {
       name: 'home',
       route: '/',
       action: () => view.showView('home'),
-      components: () => ({
-        graph: <EiEditor />
-      })
+      component: EiList
     },
     {
-      name: 'organisations',
-      route: '/organisations',
-      action: () => view.showView('organisations'),
-      components: () => ({
-        graph: (
-          <EntitiesView
-            store={store}
-            id={null}
-            entities={organisationSelector}
-            type="organisations"
-          />
-        )
-      })
-    },
-    {
-      name: 'organisation',
-      route: '/organisation/:name/:id',
-      action: (name, id) => view.showOrganisation(id, name),
-      components: ({ id, name }) => ({
-        graph: (
-          <EntitiesView
-            store={store}
-            id={view.viewParameters.id}
-            entities={organisationSelector}
-            type="organisations"
-          />
-        ),
-        editor: <HierarchicEntityEditor id={id} name={name} collection={organisationSelector} minCount={1} parentView="organisations" />
-      })
-    },
-    {
-      name: 'roles',
-      route: '/roles',
-      action: () => view.showView('roles'),
-      components: () => ({
-        graph: <EntitiesView store={store} id={null} entities={roleSelector} type="roles" />
-      })
-    },
-    {
-      name: 'role',
-      route: '/role/:name/:id',
-      action: (name, id) => view.showRole(id, name),
-      components: ({ id, name }) => ({
-        graph: (
-          <EntitiesView
-            store={store}
-            id={view.viewParameters.id}
-            entities={roleSelector}
-            type="roles"
-          />
-        ),
-        editor: <HierarchicEntityEditor id={id} name={name} collection={roleSelector} minCount={1} parentView="roles" />
-      })
-    },
-    {
-      name: 'types',
-      route: '/types',
-      action: () => view.showView('types'),
-      components: () => ({
-        graph: <EntitiesView store={store} id={null} entities={typeSelector} type="types" />
-      })
-    },
-    {
-      name: 'type',
-      route: '/type/:name/:id',
-      action: (name, id) => view.showType(id, name),
-      components: ({ id, name }) => ({
-        graph: (
-          <EntitiesView
-            store={store}
-            id={view.viewParameters.id}
-            entities={typeSelector}
-            type="types"
-          />
-        ),
-        editor: <HierarchicEntityEditor id={id} name={name} collection={typeSelector} minCount={1} parentView="types" />
-      })
-    },
-    {
-      name: 'action',
-      route: '/workflows/:name/:id/action/:actionId',
-      action: (name, id, actionId) => view.showAction(id, name, actionId),
-      components: ({ id, actionId }) => ({
-        graph: <WorkflowView id={id} />,
-        editor: <ActionView id={actionId} workflowId={id} />
-      })
-    },
-    {
-      name: 'state',
-      route: '/workflows/:name/:id/state/:stateId',
-      action: (name, id, stateId) => view.showState(id, name, stateId),
-      components: ({ id, stateId }) => ({
-        graph: <WorkflowView id={id} />,
-        editor: <StateEditor id={stateId} workflowId={id} />
-      })
-    },
-    {
-      name: 'transition',
-      route: '/workflows/:name/:id/transition/:transitionId',
-      action: (name, id, transitionId) => view.showTransition(id, name, transitionId),
-      components: ({ id, transitionId }) => ({
-        graph: <WorkflowView id={id} />,
-        editor: <TransitionEditor id={transitionId} workflowId={id} />
-      })
-    },
-    {
-      name: 'connection',
-      route: '/workflows/:name/:id/connection/:connectionId',
-      action: (name, id, connectionId) => view.showConnection(id, name, connectionId),
-      components: ({ id, connectionId }) => ({
-        graph: <WorkflowView id={id} />,
-        editor: <ConnectionEditor id={connectionId} workflowId={id} />
-      })
-    },
-    {
-      name: 'workflow',
-      route: '/workflows/:name/:id',
-      action: (name, id) => view.showWorkflow(id, name),
-      components: ({ id }) => ({
-        graph: <WorkflowView id={id} />,
-        editor: <WorkflowEditor id={id} />
-      })
+      component: EiContainer,
+      children: [
+        {
+          name: 'ei',
+          route: '/:eiName/:eiId',
+          action: (name, id) => view.showEi(id, name),
+          components: () => ({
+            graph: (
+              <EiEditor />
+            )
+          })
+        },
+        {
+          name: 'organisations',
+          route: '/organisations',
+          action: () => view.showView('organisations'),
+          components: () => ({
+            graph: (
+              <EntitiesView
+                store={store}
+                id={null}
+                entities={organisationSelector}
+                type="organisations"
+              />
+            )
+          })
+        },
+        {
+          name: 'organisation',
+          route: '/organisation/:name/:id',
+          action: (name, id) => view.showOrganisation(id, name),
+          components: ({ id, name }) => ({
+            graph: (
+              <EntitiesView
+                store={store}
+                id={view.viewParameters.id}
+                entities={organisationSelector}
+                type="organisations"
+              />
+            ),
+            editor: <HierarchicEntityEditor id={id} name={name} collection={organisationSelector} minCount={1} parentView="organisations" />
+          })
+        },
+        {
+          name: 'roles',
+          route: '/roles',
+          action: () => view.showView('roles'),
+          components: () => ({
+            graph: <EntitiesView store={store} id={null} entities={roleSelector} type="roles" />
+          })
+        },
+        {
+          name: 'role',
+          route: '/role/:name/:id',
+          action: (name, id) => view.showRole(id, name),
+          components: ({ id, name }) => ({
+            graph: (
+              <EntitiesView
+                store={store}
+                id={view.viewParameters.id}
+                entities={roleSelector}
+                type="roles"
+              />
+            ),
+            editor: <HierarchicEntityEditor id={id} name={name} collection={roleSelector} minCount={1} parentView="roles" />
+          })
+        },
+        {
+          name: 'types',
+          route: '/types',
+          action: () => view.showView('types'),
+          components: () => ({
+            graph: <EntitiesView store={store} id={null} entities={typeSelector} type="types" />
+          })
+        },
+        {
+          name: 'type',
+          route: '/type/:name/:id',
+          action: (name, id) => view.showType(id, name),
+          components: ({ id, name }) => ({
+            graph: (
+              <EntitiesView
+                store={store}
+                id={view.viewParameters.id}
+                entities={typeSelector}
+                type="types"
+              />
+            ),
+            editor: <HierarchicEntityEditor id={id} name={name} collection={typeSelector} minCount={1} parentView="types" />
+          })
+        },
+        {
+          name: 'action',
+          route: '/workflows/:name/:id/action/:actionId',
+          action: (name, id, actionId) => view.showAction(id, name, actionId),
+          components: ({ id, actionId }) => ({
+            graph: <WorkflowView id={id} />,
+            editor: <ActionView id={actionId} workflowId={id} />
+          })
+        },
+        {
+          name: 'state',
+          route: '/workflows/:name/:id/state/:stateId',
+          action: (name, id, stateId) => view.showState(id, name, stateId),
+          components: ({ id, stateId }) => ({
+            graph: <WorkflowView id={id} />,
+            editor: <StateEditor id={stateId} workflowId={id} />
+          })
+        },
+        {
+          name: 'transition',
+          route: '/workflows/:name/:id/transition/:transitionId',
+          action: (name, id, transitionId) => view.showTransition(id, name, transitionId),
+          components: ({ id, transitionId }) => ({
+            graph: <WorkflowView id={id} />,
+            editor: <TransitionEditor id={transitionId} workflowId={id} />
+          })
+        },
+        {
+          name: 'connection',
+          route: '/workflows/:name/:id/connection/:connectionId',
+          action: (name, id, connectionId) => view.showConnection(id, name, connectionId),
+          components: ({ id, connectionId }) => ({
+            graph: <WorkflowView id={id} />,
+            editor: <ConnectionEditor id={connectionId} workflowId={id} />
+          })
+        },
+        {
+          name: 'workflow',
+          route: '/workflows/:name/:id',
+          action: (name, id) => view.showWorkflow(id, name),
+          components: ({ id }) => ({
+            graph: <WorkflowView id={id} />,
+            editor: <WorkflowEditor id={id} />
+          })
+        }
+      ]
     },
     {
       name: 'notFound',

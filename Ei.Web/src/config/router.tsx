@@ -16,7 +16,7 @@ export const App = inject('context')(
   observer(({ context }: Props) => {
     return (
       <Layout>
-        <EiContainer views={context.store.viewStore.router.view} />
+        { context.store.viewStore.router.view }
         <DevTools />
       </Layout>
     );

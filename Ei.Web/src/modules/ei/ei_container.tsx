@@ -2,8 +2,8 @@ import * as React from 'react';
 
 import { inject } from 'mobx-react';
 
+import { ls } from '../ws/ls_container';
 import { compose } from '../ws/utils';
-import { ws } from '../ws/ws_container';
 import { EiLayout } from './ei_layout';
 import { Ei } from './ei_model';
 
@@ -14,13 +14,17 @@ type Data = {
 
 type Props = {
   context?: App.Context;
+  params: {
+    eiId: string,
+    eiName: string;
+  },
   views: { [index: string]: JSX.Element };
 }
 
 export const EiContainer = compose<Props>(
   inject('context'),
-  ws<Data, Props>('LoadInstitution', {
-    variables: ['Connection Test 1'],
+  ls<Data, Props>('LoadInstitution', {
+    variables: ({ params }) => [params.eiId],
     cache: true,
     props: ({ ownProps, data: { loading, LoadInstitution } }) => {      
       if (!loading) {

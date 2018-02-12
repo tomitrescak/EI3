@@ -22,7 +22,7 @@ export type ComponentDecorator<TOwnProps, TMergedProps> = (
 ) => React.ComponentClass<TOwnProps>;
 
 export interface Options<TData, TProps> {
-  variables?: any[];
+  variables?: (props: TProps) => string[];
   props?: (props: OptionProps<TProps, TData>) => any;
   name?: string;
   waitForData?: boolean;

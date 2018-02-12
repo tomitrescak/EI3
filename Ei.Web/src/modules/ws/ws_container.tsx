@@ -6,37 +6,22 @@ import { ChildProps, ComponentDecorator, Options } from './interface';
 import { Observer } from './observer';
 import { SocketClient } from './socket_client';
 
-let data = require('./ConnectionTest.json');
-if (localStorage.getItem('ws.Connection Test 1') == null) {
-  localStorage.setItem('ws.Connection Test 1', JSON.stringify(data));
-}
-
-
 interface WProps {
   client: SocketClient;
 }
 
 export function ws<DataResult = {}, QueryProps = {}, TChildProps = ChildProps<QueryProps, DataResult>>(
   query: any,
-  { props = null, name = 'data', variables, waitForData, cache, loadingComponent }: Options<DataResult, QueryProps> = {}
+  { props = null, name = 'data', variables, waitForData, loadingComponent }: Options<DataResult, QueryProps> = {}
 ): ComponentDecorator<QueryProps, TChildProps> {
   return function(Wrapper) {
     @inject('client')
     @observer
-    class WebSocketContainer extends React.Component<WProps, {}> {
+    class ApolloWrappedContainer extends React.Component<WProps, {}> {
       observe: Observer;
-      cachedData: any;
 
       render() {
-        
-        // TEMPORARY Disable
-        const receivedData = cache && localStorage.getItem('ws.' + variables[0])
-        ? {
-          [query]: JSON.parse(localStorage.getItem('ws.' + variables[0])),
-          loading: false,
-          version: 1
-        }
-        : {
+        const receivedData = {
           ...this.observe.data,
           loading: this.observe.loading,
           version: this.observe.version
@@ -60,17 +45,17 @@ export function ws<DataResult = {}, QueryProps = {}, TChildProps = ChildProps<Qu
         return <Wrapper {...newProps} />;
       }
 
-      // componentWillUpdate(nextProps: WProps) {
-      //   const client = nextProps.client;
-      //   this.observe.check(variables);
-      // }
+      componentWillUpdate(nextProps: WProps) {
+        const client = nextProps.client;
+        this.observe.check(variables);
+      }
 
-      // componentWillMount() {
-      //   const client = this.props.client;
-      //   this.observe = client.send(query, variables);
-      // }
+      componentWillMount() {
+        const client = this.props.client;
+        this.observe = client.send(query, variables(this.props as any));
+      }
     }
 
-    return WebSocketContainer as any;
+    return ApolloWrappedContainer as any;
   };
 }

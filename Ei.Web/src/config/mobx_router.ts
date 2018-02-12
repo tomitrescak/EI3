@@ -1,26 +1,35 @@
+import * as React from 'react';
+
 // @ts-ignore
 import { Router } from 'director/build/director';
 
 import { autorun, computed } from 'mobx';
 
 export interface Route {
-  name: string;
-  route: string;
-  component?: () => JSX.Element;
+  name?: string;
+  route?: string;
+  component?: (params?: any) => JSX.Element;
   components?: (params: { [index: string]: string }) => { [index: string]: JSX.Element };
-  action: (...params: string[]) => void;
+  action?: (...params: string[]) => void;
+  children?: Route[];
+  layout?: (params?: any) => JSX.Element;
 }
 
 export class MobxRouter {
   routes: { [name: string]: Route };
   store: App.ViewStore;
+  context: App.Context;
 
-  constructor(store: App.ViewStore) {
-    this.store = store;
+  constructor(context: App.Context) {
+    this.context = context;
+    this.store = context.store.viewStore;
   }
 
   @computed
   get currentPath() {
+    if (!this.routes[this.store.view]) {
+      throw new Error('Route does not exists for view: ' + this.store.view);
+    }
     let route = this.routes[this.store.view].route;
 
     // replace all parameters with :name
@@ -32,23 +41,49 @@ export class MobxRouter {
 
   @computed
   get view() {
-    return this.routes[this.store.view].components(this.store.viewParameters);
+    let route = this.routes[this.store.view];
+
+    // if there is no layout just return component
+    if (!route.layout) {
+      return React.createElement(route.component, {
+        params: this.store.viewParameters,
+        context: this.context
+      });
+    }
+    return React.createElement(route.layout, {
+      views: route.components(this.store.viewParameters),
+      params: this.store.viewParameters,
+      context: this.context
+    });
   }
 
-  startRouter(r: Route[]) {
+  addRoutes(r: Route[], layout: any, routes: any) {
     // initialise routes from route definition
-    this.routes = {};
     for (let route of r) {
       this.routes[route.name] = route;
+
+      if (layout) {
+        route.layout = layout;
+      }
+
+      // add children
+      if (route.children) {
+        this.addRoutes(route.children, route.component, routes);
+      }
     }
 
     // initialise external router to parse the initial routes
     let keys = Object.getOwnPropertyNames(this.routes);
-    let routes: any = {};
 
     for (let key of keys) {
       routes[this.routes[key].route] = this.routes[key].action;
     }
+  }
+
+  startRouter(r: Route[]) {
+    this.routes = {};
+    const routes = {};
+    this.addRoutes(r, null, routes);
 
     const router = new Router(routes);
     router.configure({

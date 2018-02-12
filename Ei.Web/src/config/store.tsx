@@ -34,7 +34,7 @@ export class StoreModel {
 
   constructor(context: App.Context) {
     this.context = context;
-    this.viewStore = new ViewStoreModel(this);
+    this.viewStore = new ViewStoreModel(context);
 
     // autorun(() => {
     //   debugger;
