@@ -1,4 +1,4 @@
-import { IObservableArray, observable } from 'mobx';
+import { action, IObservableArray, observable } from 'mobx';
 import { field } from 'semantic-ui-mobx';
 import { NodeModel, PointModel } from 'storm-react-diagrams';
 
@@ -8,6 +8,7 @@ import { AccessCondition, AccessConditionDao } from './access_model';
 import { Ei } from './ei_model';
 import { Entity, EntityDao } from './entity_model';
 import { PointDao } from './hierarchic_entity_model';
+import { SplitInfo, TransitionSplit } from './transition_model';
 import { Workflow } from './workflow_model';
 
 export interface ConnectionDao extends EntityDao {
@@ -85,7 +86,7 @@ export class Connection extends Entity {
     if (!createLink) {
       return;
     }
-    
+
     this.link = new WorkflowLinkModel(this, workflow);
     if (connection.LinkPoints && connection.LinkPoints.length) {
       this.link.setPoints(connection.LinkPoints.map(p => new PointModel(this.link, p)));
@@ -157,7 +158,9 @@ export class Connection extends Entity {
       this.toJoint = new FreeJoint(workflow);
       const from = fromPosition ? { x: fromPosition.x, y: fromPosition.y } : random;
       const point = this.link.points[1];
-      const { x, y } = connection.FreeTo ? connection.FreeTo : ( point ? point : { x: from.x + 80, y: from.y });
+      const { x, y } = connection.FreeTo
+        ? connection.FreeTo
+        : point ? point : { x: from.x + 80, y: from.y };
       this.toJoint.setPosition(x, y);
       this.link.setTargetPort(this.toJoint.getPort('left'));
     }
@@ -173,6 +176,37 @@ export class Connection extends Entity {
         new PointModel(this.link, { x: p0.x - 60, y: p0.y - 50 }),
         p1
       ]);
+    }
+
+    // check split
+    this.checkSplit();
+  }
+
+  @action
+  checkSplit(removed = false) {
+    const fromPosition = this.workflow.findPosition(this.From);
+    if (this.workflow.Connections && fromPosition && fromPosition.constructor.name === 'TransitionSplit') {
+      const connections = this.workflow.Connections.concat(!removed ? [this] : []);
+      const transitionSplit = fromPosition as TransitionSplit;
+      // find all connections from split
+      const splitConnections = connections.filter(c => c.From === fromPosition.Id);
+      const names = transitionSplit.Names;
+
+      // check added connections
+      for (let con of splitConnections.filter(c => c.From === fromPosition.Id)) {
+        if (!names.find(c => c.stateId === con.To)) {
+          names.push(new SplitInfo(con.To, ''));
+        }
+      }
+
+      // check missing connections
+      for (let i = transitionSplit.Names.length - 1; i >= 0; i--) {
+        if (!splitConnections.find(c => c.To === names[i].stateId)) {
+          names.splice(i, 1);
+        }
+      }
+
+      
     }
   }
 

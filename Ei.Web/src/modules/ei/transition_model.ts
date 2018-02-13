@@ -76,11 +76,14 @@ export class SplitInfo extends FormState {
   }
 }
 
+let id = 0;
+
 export class TransitionSplit extends Transition {
   Icon = '⑃';
 
   @field Shallow: boolean;
   Names: IObservableArray<SplitInfo>;
+  uid = id++;
 
   constructor(transition: Partial<TransitionSplitDao>, workflow: Workflow, ei: Ei) {
     super(transition, workflow, ei);
@@ -92,6 +95,8 @@ export class TransitionSplit extends Transition {
     this.addPort(new WorkflowPortModel(workflow, 'split1'));
     this.addPort(new WorkflowPortModel(workflow, 'split2'));
     this.addPort(new WorkflowPortModel(workflow, 'split3'));
+
+    this.$type = 'TransitionSplitDao';
   }
 
   get json() {
@@ -114,6 +119,8 @@ export class TransitionJoin extends Transition {
     this.addPort(new WorkflowPortModel(workflow, 'join1'));
     this.addPort(new WorkflowPortModel(workflow, 'join2'));
     this.addPort(new WorkflowPortModel(workflow, 'join3'));
+
+    this.$type = 'TransitionJoinDao';
   }
 
   get json() {

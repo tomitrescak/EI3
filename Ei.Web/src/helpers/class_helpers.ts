@@ -10,6 +10,21 @@ String.prototype.toUrlName = function(this: string) {
   return (result + extension).toLowerCase();
 };
 
+String.prototype.toId = function(this: string) {
+  
+  let result = this.replace(/\:/g, '');
+  result = result.replace(/ - /g, '');
+  result = result.replace(/\W/g, ' ');
+  do {
+    result = result.replace(/  /g, ' ');
+  } while (result.indexOf('  ') >= 0);
+
+  let parts = result.split(' ');
+  result = parts.map(w => w[0].toUpperCase() + w.substring(1)).join('');
+
+  return result;
+};
+
 String.prototype.hashCode = function() {
   let hash = 0;
 

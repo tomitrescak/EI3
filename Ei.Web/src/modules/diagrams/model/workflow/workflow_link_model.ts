@@ -50,6 +50,8 @@ export class WorkflowLinkModel extends LinkModel {
     this.workflow.Connections.remove(this.connection);
     this.workflow.ei.store.viewStore.showWorkflow(this.workflow.Id, this.workflow.Name);
     
+    // remove split info
+    this.connection.checkSplit(true);
     // if (this.targetPort) {
     //   let port = this.targetPort.name === 'top' ? this.targetPort : this.sourcePort;
     //   let node = port.parentNode as HierarchicEntity;

@@ -61,7 +61,7 @@ export const Ui = {
     type = 'warning'
   ) {
     const swal = require('sweetalert2');
-    return swal({
+    const result = await swal({
       title: name,
       text: text,
       type: type,
@@ -69,6 +69,7 @@ export const Ui = {
       cancelButtonColor: 'grey',
       confirmButtonText: confirmButtonText
     });
+    return result.value;
   },
   inputValidator: (validate: (val: string) => any) => {
     return function(value: string) {

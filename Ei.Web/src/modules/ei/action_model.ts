@@ -39,6 +39,8 @@ export class ActionJoinWorkflow extends Action {
   constructor(action: Partial<ActionJoinWorkflowDao>) {
     super(action);
     this.WorkflowId = action.WorkflowId;
+
+    this.$type = 'ActionJoinWorkflowDao';
   }
 
   get json() {
@@ -67,6 +69,8 @@ export class ActionMessage extends Action {
     super(action);
     this.NotifyAgents = new FieldCollection((action.NotifyAgents || []));
     this.NotifyGroups = observable((action.NotifyGroups || []).map(g => new Group(g)));
+
+    this.$type = 'ActionMessageDao';
   }
 
   get json() {
@@ -83,6 +87,12 @@ export class ActionMessage extends Action {
 // #region ############### ActionTimeout ####################
 export class ActionTimeout extends Action { 
   Icon = '🕐';
+
+  constructor(action: Partial<ActionDao>) {
+    super(action);
+
+    this.$type = 'ActionTimeoutDao';
+  }
 
   get json() {
     return {

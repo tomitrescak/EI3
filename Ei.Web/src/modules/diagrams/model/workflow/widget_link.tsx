@@ -5,6 +5,8 @@ import { DefaultLinkWidget } from 'storm-react-diagrams';
 import { ActionDisplayType } from '../../../ei/connection_model';
 import { WorkflowLinkModel } from './workflow_link_model';
 
+const maxLength = 200;
+
 class Point {
   x: number;
   y: number;
@@ -243,7 +245,7 @@ export class WorkflowLink extends DefaultLinkWidget {
         if (access.Precondition) {
           let role = connection.workflow.ei.Roles.find(r => r.Id === access.Role);
           if (role) {
-            texts.push(`❓ ${role.Icon} ${access.Precondition.substring(0, 30)}`);
+            texts.push(`❓ ${role.Icon} ${access.Precondition.substring(0, maxLength)}`);
           } else {
             connection.workflow.ei.store.warn(`Role in precondition does not exist: ` + role);
           }
@@ -257,9 +259,9 @@ export class WorkflowLink extends DefaultLinkWidget {
           if (role) {
             for (let pc of access.Postconditions) {
               texts.push(
-                `⚡️ ${role.Icon} ${
-                  pc.Condition ? pc.Condition.substring(0, 15) + ' ?: ' : ''
-                } ${pc.Action.substring(0, 20)}`
+                `⚡️ ${role.Icon}\u00A0\u00A0 ${
+                  pc.Condition ? pc.Condition.substring(0, maxLength / 2) + ' ?: ' : ''
+                } ${pc.Action.substring(0, maxLength / 2)}`
               );
             }
           } else {
@@ -270,6 +272,8 @@ export class WorkflowLink extends DefaultLinkWidget {
 
       let longest = texts.reduce((prev, next) => (prev = prev < next.length ? next.length : prev), 0) * 6;
       let height = texts.length * 19 + 4;
+
+      longest = longest < labelSize ? labelSize : longest;
 
       return (
         <>

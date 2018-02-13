@@ -223,7 +223,7 @@ export class Ei extends ParametricEntity {
     Ui.promptText('Name of the new organisation?').then(name => {
       if (name.value) {
         let org = new Organisation(
-          { Name: name.value, Id: name.value.toUrlName() } as any,
+          { Name: name.value, Id: name.value.toId() } as any,
           this.Organisations,
           this
         );
@@ -246,7 +246,7 @@ export class Ei extends ParametricEntity {
     let name = await Ui.promptText('Name of the new role?');
     if (name.value) {
       let role = new Role(
-        { Name: name.value, Id: name.value.toUrlName() } as any,
+        { Name: name.value, Id: name.value.toId() } as any,
         this.Roles,
         this
       );
@@ -265,7 +265,7 @@ export class Ei extends ParametricEntity {
     let name = await Ui.promptText('Name of the new type?');
     if (name.value) {
       const type = new Type(
-        { Name: name.value, Id: name.value.toUrlName() } as any,
+        { Name: name.value, Id: name.value.toId() } as any,
         this.Types,
         this
       );
@@ -282,7 +282,7 @@ export class Ei extends ParametricEntity {
     let name = await Ui.promptText('Name of the new workflow?');
     if (name.value) {
       let workflow = new Workflow(
-        { Name: name.value, Id: name.value.toUrlName(), Static: false, Stateless: false } as any,
+        { Name: name.value, Id: name.value.toId(), Static: false, Stateless: false } as any,
         this
       );
       if (!this.checkExists(this.Workflows, 'Workflow', workflow)) {

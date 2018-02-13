@@ -42,10 +42,9 @@ export const EiList = observer(({ context, eis }: Props) => {
                 icon="trash"
                 color="red"
                 onClick={async () => {
-                  const result = await context.Ui.confirmDialogAsync(
+                  if (await context.Ui.confirmDialogAsync(
                     'Do you want to delete this institution? Action cannot be undone!'
-                  );
-                  if (result.value) {
+                  )) {
                     localStorage.removeItem('ws.' + e.id);
                     eis.remove(eis.find(ei => ei.id === ei.id));
                     localStorage.setItem('eis', JSON.stringify(eis.map(ei => ({ id: ei.id, name: ei.name }))));
@@ -93,7 +92,7 @@ export const EiList = observer(({ context, eis }: Props) => {
 
           if (promptValue) {
             const name = promptValue.value;
-            const id = name.toUrlName();
+            const id = name.toId();
 
             if (eis.some(e => e.id === id)) {
               context.Ui.alertError('Institution with this id exists: ' + id);

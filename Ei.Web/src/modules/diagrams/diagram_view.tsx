@@ -1,7 +1,8 @@
 import * as React from 'react';
 
-import { DiagramEngine, DiagramWidget } from 'storm-react-diagrams';
+import { DiagramEngine, DiagramWidget, LinkModel } from 'storm-react-diagrams';
 
+import { Entity } from '../ei/entity_model';
 import { EntityDiagramModel } from './model/entity/entity_diagram_model';
 
 interface Props {
@@ -18,7 +19,9 @@ export class DiagramView extends React.Component<Props> {
       for (let element of this.props.diagram.getSelectedItems()) {
         // only delete items which are not locked
         if (!this.props.engine.isModelLocked(element)) {
-          element.remove();
+          if (element instanceof Entity || element instanceof LinkModel) {
+            element.remove();
+          }
         }
       }
     }

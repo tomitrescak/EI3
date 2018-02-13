@@ -114,6 +114,9 @@ using System.Collections.Generic;
                         var code = new string[10];
                         var m = 0;
                         for (var i = line - 5; i < line + 5; i++) {
+                            if (i == source.Length) {
+                                break;
+                            }
                             code[m++] = source[i] + ((i == line) ? "  // <- ERROR" : "");
                         }
                         

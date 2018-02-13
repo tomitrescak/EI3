@@ -1,10 +1,11 @@
 import * as React from 'react';
 
 import { inject, observer } from 'mobx-react';
-import { Form } from 'semantic-ui-mobx';
+import { Checkbox, Form } from 'semantic-ui-mobx';
 import { Button, Header, Message } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
+import { AccessEditor } from '../access/access_editor';
 import { EntityEditor } from '../core/entity_view';
 import { PropertyView } from '../properties/property_view';
 
@@ -36,7 +37,18 @@ export class WorkflowEditor extends React.Component<Props> {
       <Form>
         <EntityEditor entity={workflow} />
 
+        <Checkbox owner={workflow.fields.Static} label="Static" />
+        <Checkbox owner={workflow.fields.Stateless} label="Stateless" />
+
         <PropertyView owner={workflow} types={ei.types} /> 
+
+        <Header as="h4" icon="legal" content="Allow Create" dividing />
+        <AccessEditor ei={ei} access={workflow.AllowCreate} name={'allow_create_' + workflow.Id} />
+
+        <Header as="h4" icon="legal" content="Allow Join" />
+        <AccessEditor ei={ei} access={workflow.AllowJoin} name={'allow_join_' + workflow.Id} />
+
+        
 
         { ei.MainWorkflow !== workflow.Id && (
           <div className={deleteButton}>

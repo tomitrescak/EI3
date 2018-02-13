@@ -27,6 +27,7 @@ export class TransitionEditor extends React.Component<Props> {
       const tr = transition as TransitionSplit;
       return ( 
         <>
+          <Header content="Splits" icon="fork" as="h4" dividing />
           {
             tr.Names.map((n, i) => (
               <Form.Group key={i}>

@@ -154,7 +154,7 @@ export class Workflow extends ParametricEntity {
     );
   }
 
-  createAction = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  createAction = async (e: any) => {
     e.stopPropagation();
 
     const swal = require('sweetalert2');
@@ -185,7 +185,7 @@ export class Workflow extends ParametricEntity {
 
     const actionType: string = formValues[0];
     const actionName: string = formValues[1];
-    const Id = actionName.toUrlName();
+    const Id = actionName.toId();
 
     // check if action exists
     let m = this.Actions.find(a => a.Id === Id);
@@ -214,11 +214,13 @@ export class Workflow extends ParametricEntity {
     Ui.history.step();
   };
 
-  createState = async () => {
+  createState = async (e: any) => {
+    e.stopPropagation();
+
     let name = await Ui.promptText('Name of the new state?');
     if (name.value) {
       this.States.push(
-        new State({ Name: name.value, Id: name.value.toUrlName() } as any, this, this.ei)
+        new State({ Name: name.value, Id: name.value.toId() } as any, this, this.ei)
       );
     }
 
@@ -255,7 +257,7 @@ export class Workflow extends ParametricEntity {
 
     const transitionType: string = formValues[0];
     const transitionName: string = formValues[1];
-    const Id = transitionName.toUrlName();
+    const Id = transitionName.toId();
 
     // check if action exists
     let m = this.Transitions.find(a => a.Id === Id);
@@ -282,6 +284,7 @@ export class Workflow extends ParametricEntity {
   };
 
   createConnection = () => {
+
     let idx = 0;
     let id = 'c' + idx;
     while (this.Connections.some(c => c.Id === id)) {
