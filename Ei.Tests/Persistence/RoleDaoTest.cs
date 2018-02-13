@@ -20,7 +20,7 @@ namespace Ei.Tests.Persistence
 
             var actual = dao.GenerateCode();
 
-            Assert.Null(Compiler.Compile(actual));
+            Assert.True(Compiler.Compile(actual).Success);
         }
 
 
@@ -49,7 +49,7 @@ namespace Ei.Tests.Persistence
             var actual = dao.GenerateCode();
             Console.WriteLine(actual);
             var result = Compiler.Compile(actual, "DefaultRole", out Role role);
-            Assert.Null(result);
+            Assert.True(result.Success);
 
             Assert.Equal("Default", role.Name);
             Assert.Equal("default", role.Id);

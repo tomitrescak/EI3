@@ -47,7 +47,7 @@
             var list = base.FilterByAccess(governor);
             list.AddRange(new List<VariableInstance> {
                 {{#each PublicProperties}}
-                new VariableInstance("{{Name}}", this.{{Name}}.ToString())
+                new VariableInstance("{{Name}}", this.{{Name}}.ToString()),
                 {{/each}}
             });
             return list;

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Route } from './mobx_router';
 
 import { ActionView } from '../modules/actions/action_view';
+import { AuthorisationEditor } from '../modules/authorisations/authorisation_editor';
 import { ConnectionEditor } from '../modules/connections/connection_editor';
 import { EntitiesView } from '../modules/diagrams/entities_view';
 import { HierarchicEntityEditor } from '../modules/diagrams/hierarchic_entity_editor';
@@ -34,6 +35,18 @@ export function initRoutes(store: App.Store): Route[] {
             graph: (
               <EiEditor />
             )
+          })
+        },
+        {
+          name: 'authorisation',
+          route: '/authorisation/:index',
+          action: (eiName, eiId, index) => view.showAuthorisation(index, eiId, eiName),
+          components: ({ index }) => ({
+            graph: (
+              <AuthorisationEditor
+                index={index}
+              />
+            ),
           })
         },
         {

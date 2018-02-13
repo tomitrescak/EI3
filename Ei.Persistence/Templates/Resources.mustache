@@ -47,7 +47,7 @@
         public override List<VariableInstance> FilterByAccess(Governor governor) {
             return new List<VariableInstance> {
                 {{#each PublicProperties}}
-                new VariableInstance("{{Name}}", this.{{Name}}.ToString())
+                new VariableInstance("{{Name}}", this.{{Name}}.ToString()),
                 {{/each}}
             };
         }

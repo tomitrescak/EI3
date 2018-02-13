@@ -1,5 +1,5 @@
 import { IObservableArray, observable } from 'mobx';
-import { field } from 'semantic-ui-mobx';
+import { field, FormState } from 'semantic-ui-mobx';
 import { Group, GroupDao } from './group_model';
 
 // tslint:disable-next-line:no-empty-interface
@@ -9,13 +9,15 @@ export interface AuthorisationDao {
   Password: string;
   Groups: GroupDao[];
 }
-export class Authorisation {
+export class Authorisation extends FormState {
   @field Organisation: string;
   @field User: string;
   @field Password: string;
   Groups: IObservableArray<Group>;
 
-  constructor(authorisation: AuthorisationDao) {
+  constructor(authorisation: Partial<AuthorisationDao> = {}) {
+    super();
+    
     this.Organisation = authorisation.Organisation;
     this.User = authorisation.User;
     this.Password = authorisation.Password;

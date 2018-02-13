@@ -31,7 +31,7 @@ namespace Ei.Persistence
         
         public List<OrganisationDao> Organisations { get; set; }
 
-        public List<string> Expressions { get; set; } 
+        public string Expressions { get; set; } 
 
         public List<WorkflowDao> Workflows { get; set; }
 

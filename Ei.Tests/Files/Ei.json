@@ -176,7 +176,7 @@
       ],
       "Actions": [
         {
-          "$type": "",
+          "$type": "ActionJoinWorkflowDao",
           "Id": "joinSubWorkflow",
           "Name": "Sub Workflow",
           "x": 129,
@@ -185,7 +185,7 @@
           "WorkflowId": "main"
         },
         {
-          "$type": "",
+          "$type": "ActionMessageDao",
           "Id": "mesaz",
           "Name": "Mesaz To Me",
           "x": 159,
@@ -197,11 +197,11 @@
             { "OrganisationId": "child", "RoleId": "citizen" }
           ]
         },
-        { "$type": "", "Id": "timtim", "Name": "Timeout", "x": 98, "y": 113, "Properties": [] }
+        { "$type": "ActionTimeoutDao", "Id": "timtim", "Name": "Timeout", "x": 98, "y": 113, "Properties": [] }
       ],
       "Transitions": [
         {
-          "$type": "",
+          "$type": "TransitionSplitDao",
           "Id": "split",
           "x": 53.411168113272666,
           "y": 64.73466156263507,
@@ -336,7 +336,7 @@
       ],
       "Actions": [
         {
-          "$type": "",
+          "$type": "ActionMessageDao",
           "Id": "send",
           "x": 58,
           "y": 68,
@@ -347,7 +347,7 @@
           "NotifyAgents": [],
           "NotifyGroups": [{ "OrganisationId": "default", "RoleId": "citizen" }]
         },
-        { "$type": "", "Id": "timeout", "x": 107, "y": 196, "Properties": [] }
+        { "$type": "ActionTimeoutDao", "Id": "timeout", "x": 107, "y": 196, "Properties": [] }
       ],
       "Transitions": [],
       "Connections": [

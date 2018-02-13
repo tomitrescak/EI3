@@ -32,9 +32,9 @@ namespace Ei.Tests.Persistence
             Assert.Equal(2, institution.Workflows.Count);
 
             var w = institution.Workflows[1];
-            Assert.Equal(7, w.Connections.Length);
+            Assert.Equal(4, w.Connections.Length);
 
-            Assert.Equal("Fishing", institution.Name);
+            Assert.Equal("Connection Test 1", institution.Name);
         }
     }
 }

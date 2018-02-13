@@ -57,9 +57,9 @@ public class {{ClassName}} : Institution<{{ClassName}}.Store>
         
 
         // init expressions
-        {{#each Expressions}}
-        this.AddExpressions(i => {{.}});
-        {{/each}}
+        {{#if Expressions}}
+        this.AddExpressions(i => { {{{ Expressions }}}; });
+        {{/if}}
         
     }
 

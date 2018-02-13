@@ -6,11 +6,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Ei.Tests.Persistence
 {
     public class InstitutionDaoTest
     {
+        private readonly ITestOutputHelper output;
+
+        public InstitutionDaoTest(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
+        
         [Fact]
         public void GenerateWithNoProperties() {
             var dao = new InstitutionDao {
@@ -40,9 +49,7 @@ namespace Ei.Tests.Persistence
                         }
                     }
                 },
-                Expressions = new List<string> {
-                    "i.Count = (int) (i.TimeMs + i.TimeSeconds)"
-                },
+                Expressions = "i.Count = (int) (i.TimeMs + i.TimeSeconds)",
                 Workflows = new List<WorkflowDao> {
                     new WorkflowDao {
                         Id = "main",
@@ -74,10 +81,11 @@ namespace Ei.Tests.Persistence
             var actual = dao.GenerateAll();
 
             // Debug.WriteLine(actual);
-            Console.WriteLine(actual);
+            this.output.WriteLine(actual);
 
             var result = Compiler.Compile(actual, "DefaultInstitution", out Institution TestEi);
-            Assert.Null(result);
+            Assert.Null(result.Errors);
+            Assert.True(result.Success);
             
 
             var auth = TestEi.AuthenticationPermissions.Authenticate("", "User", "Password");

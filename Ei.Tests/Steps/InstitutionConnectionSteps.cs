@@ -53,7 +53,7 @@ namespace Ei.Tests.Steps
                     var dao = JsonInstitutionLoader.Instance.LoadFromFile("Files/" + path);
                     var code = dao.GenerateAll();
                     var result = Compiler.Compile(code, "DefaultInstitution", out ei);
-                    Assert.Null(result);
+                    Assert.True(result.Success);
                     break;
                 default:
                     throw new NotImplementedException($"Institution '{path}' is not implemented");

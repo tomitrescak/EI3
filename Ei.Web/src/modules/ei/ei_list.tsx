@@ -42,13 +42,13 @@ export const EiList = observer(({ context, eis }: Props) => {
                 icon="trash"
                 color="red"
                 onClick={async () => {
-                  if (
-                    await context.Ui.confirmDialogAsync(
-                      'Do you want to delete this institution? Action cannot be undone!'
-                    )
-                  ) {
+                  const result = await context.Ui.confirmDialogAsync(
+                    'Do you want to delete this institution? Action cannot be undone!'
+                  );
+                  if (result.value) {
                     localStorage.removeItem('ws.' + e.id);
                     eis.remove(eis.find(ei => ei.id === ei.id));
+                    localStorage.setItem('eis', JSON.stringify(eis.map(ei => ({ id: ei.id, name: ei.name }))));
                   }
                 }}
               />
@@ -89,7 +89,7 @@ export const EiList = observer(({ context, eis }: Props) => {
         content="Create Institution"
         icon="plus"
         onClick={async () => {
-          let promptValue = await context.Ui.promptText('Name of the new state?');
+          let promptValue = await context.Ui.promptText('Name of the new institution?');
 
           if (promptValue) {
             const name = promptValue.value;
@@ -101,9 +101,8 @@ export const EiList = observer(({ context, eis }: Props) => {
 
             const ei = Ei.create(id, name, context.store);
             localStorage.setItem('ws.' + id, JSON.stringify(ei.json));
-            localStorage.setItem('eis', JSON.stringify(eis.map(e => ({ id: e.id, name: e.name }))));
-
             eis.push({ id, name });
+            localStorage.setItem('eis', JSON.stringify(eis.map(e => ({ id: e.id, name: e.name }))));
           }
         }}
       />

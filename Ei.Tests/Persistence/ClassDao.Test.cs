@@ -42,7 +42,7 @@ namespace Ei.Tests.Persistence
             // Console.WriteLine(actual);
 
             var result = Compiler.Compile(actual, "MyClass", out dynamic Activated);
-            Assert.Null(result);
+            Assert.True(result.Success);
             Assert.Equal(Activated.ChildParam, 3);
             Assert.Equal(Activated.ParentParam, 2);
 

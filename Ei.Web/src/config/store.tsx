@@ -21,6 +21,7 @@ export class StoreModel {
   @observable previewImage = '';
   @observable saving = false;
   @observable compiledCode = '';
+  @observable compiling = false;
   messages = observable([] as string[]);
   errors = observable([] as CompilationError[]);
   

@@ -19,7 +19,7 @@ namespace Ei.Tests.Persistence
 
             var actual = dao.GenerateCode();
 
-            Assert.Null(Compiler.Compile(actual));
+            Assert.True(Compiler.Compile(actual).Success);
         }
 
 
@@ -79,7 +79,7 @@ namespace Ei.Tests.Persistence
             Assert.Empty(goalState);
 
 
-            Assert.Null(result);
+            Assert.True(result.Success);
         }
 
         [Fact]
@@ -130,7 +130,7 @@ namespace Ei.Tests.Persistence
             Console.WriteLine(actual);
             var result = Compiler.Compile(actual, "ChildOrganisation", out Organisation organisation);
 
-            Assert.Null(result);
+            Assert.True(result.Success);
 
             Assert.Equal("Child", organisation.Name);
             Assert.Equal("child", organisation.Id);

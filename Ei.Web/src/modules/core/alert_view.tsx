@@ -4,7 +4,7 @@ import * as AlertTemplate from 'react-alert-template-basic';
 import { Provider, withAlert } from 'react-alert';
 
 const View = withAlert(({ alert, context }: any) => {
-  context.Ui.alerter = () => alert;
+  context.Ui.alerter(alert);
   return false;
 });
 

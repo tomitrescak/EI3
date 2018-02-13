@@ -129,6 +129,7 @@ using System.Collections.Generic;
                         
                     });
 
+
                     compilationResult.Errors = list.ToArray();
                     return compilationResult;
                 }
@@ -140,9 +141,12 @@ using System.Collections.Generic;
                     var type = assembly.GetType(activateObject);
                     activatedObject = (T)assembly.CreateInstance(activateObject);
                 }
-
+                
+                return new CompilationResult {
+                    Success = true,
+                    Code = codeToCompile,
+                };
             }
-            return null;
         }
     }
 }

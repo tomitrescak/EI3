@@ -67,6 +67,10 @@ export class ViewStoreModel {
     this.showAction(p.workflowId, p.workflowName, p.id);
   };
 
+  showAuthorisation = (index: string, eiId?: string, eiName?: string) => {
+    this.showView('authorisation', { eiName, eiId, index });
+  }
+
   showEi(eiId: string, eiName: string) {
     this.showView('ei', { eiId, eiName });
   }

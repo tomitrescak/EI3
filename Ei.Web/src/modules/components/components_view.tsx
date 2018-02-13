@@ -1,11 +1,12 @@
 import * as React from 'react';
 
-import { Accordion, Menu } from 'semantic-ui-react';
+import { Accordion, Loader, Menu } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 import { style } from 'typestyle';
 import { Link } from '../../config/router';
 import { AccordionHandler } from '../../config/store';
+import { AuthorisationList } from '../authorisations/authorisation_list';
 import { Ei } from '../ei/ei_model';
 import { SocketClient } from '../ws/socket_client';
 import { HierarchicEntityView } from './hierarchic_entity_view';
@@ -58,7 +59,7 @@ export class Components extends React.Component<Props, State> {
 
   compile = () => {
     this.props.context.store.ei.compile(this.props.client);
-  }
+  };
 
   render() {
     const context = this.props.context;
@@ -69,14 +70,20 @@ export class Components extends React.Component<Props, State> {
       <>
         <Menu inverted attached="top" color="blue" style={{ borderRadius: '0px' }}>
           <Menu.Item>
-            <Link to="/" action={() => store.viewStore.showView('home')}>
+            <Link to="/" action={() => store.viewStore.showView('ei')}>
               Ei
             </Link>
           </Menu.Item>
           <Menu.Menu position="right">
             <Menu.Item icon="reply" onClick={context.Ui.history.undo} title="Undo" />
             <Menu.Item icon="mail forward" onClick={context.Ui.history.redo} title="Redo" />
-            <Menu.Item icon="cogs" onClick={this.compile} title="Compile Solution" />
+            {store.compiling ? (
+              <Menu.Item title="Compiling">
+                <Loader active inline size="tiny" />
+              </Menu.Item>
+            ) : (
+              <Menu.Item icon="cogs" onClick={this.compile} title="Compile Solution" />
+            )}
             <Menu.Item icon="save" onClick={ei.save} />
           </Menu.Menu>
         </Menu>
@@ -124,6 +131,13 @@ export class Components extends React.Component<Props, State> {
             <WorkflowList
               active={this.handler.isActive(3)}
               index={3}
+              handleClick={this.handler.handleClick}
+              ei={ei}
+            />
+
+            <AuthorisationList
+              active={this.handler.isActive(4)}
+              index={4}
               handleClick={this.handler.handleClick}
               ei={ei}
             />

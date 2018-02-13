@@ -103,6 +103,7 @@ export class SocketClient {
       // we may be already connected
       if (this.state === SocketState.Open) {
         resolve();
+        return;
       }
 
       this.socket = new WebSocket(this.url);

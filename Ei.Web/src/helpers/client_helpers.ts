@@ -17,7 +17,7 @@ export const Ui = {
   //     // Ui.history.addToCollection(this.parents, e.newValue);
   //   }
   // },
-  alerter(v?: any) { 
+  alerter(v?: any) {
     if (v) {
       a = v;
     }
@@ -40,9 +40,9 @@ export const Ui = {
     swal(name, text, type);
   },
   groupByArray<T>(xs: T[], key: string | Function): Array<Group<T>> {
-    return xs.reduce(function (previous, current: Indexable<any>) {
+    return xs.reduce(function(previous, current: Indexable<any>) {
       let v = key instanceof Function ? key(current) : current[key];
-      let el = previous.find((r) => r && r.key === v);
+      let el = previous.find(r => r && r.key === v);
       if (el) {
         el.values.push(current);
       } else {
@@ -61,20 +61,14 @@ export const Ui = {
     type = 'warning'
   ) {
     const swal = require('sweetalert2');
-    try {
-      await swal({
-        title: name,
-        text: text,
-        type: type,
-        showCancelButton: true,
-        cancelButtonColor: 'grey',
-        confirmButtonText: confirmButtonText
-      });
-      return true;
-    } catch (ex) {
-      /**/
-    }
-    return false;
+    return swal({
+      title: name,
+      text: text,
+      type: type,
+      showCancelButton: true,
+      cancelButtonColor: 'grey',
+      confirmButtonText: confirmButtonText
+    });
   },
   inputValidator: (validate: (val: string) => any) => {
     return function(value: string) {
@@ -129,8 +123,8 @@ export const Ui = {
       showCancelButton: true,
       inputValidator: this.inputValidator(validate as any)
     });
-  },
-}
+  }
+};
 
 export const Router = {
   router: '',

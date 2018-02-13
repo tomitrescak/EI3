@@ -56,6 +56,7 @@ export class Type extends HierarchicEntity {
 }
 
 export interface EiDao extends ParametricEntityDao {
+  Expressions: string;
   Organisations: HierarchicEntityDao[];
   Roles: HierarchicEntityDao[];
   Types: HierarchicEntityDao[];
@@ -64,6 +65,8 @@ export interface EiDao extends ParametricEntityDao {
   MainWorkflow: string;
 }
 
+const empty: string[] = [];
+
 export class Ei extends ParametricEntity {
   static create(id: string, name: string, store: App.Store) {
     return new Ei(
@@ -71,6 +74,7 @@ export class Ei extends ParametricEntity {
         Id: id,
         Name: name,
         Description: '',
+        Expressions: null,
         Organisations: [{ Id: 'default', Name: 'Default' }],
         Roles: [{ Id: 'default', Name: 'Citizen' }],
         Types: [],
@@ -95,6 +99,7 @@ export class Ei extends ParametricEntity {
   store: App.Store;
 
   @field MainWorkflow: string;
+  Expressions: string;
 
   Organisations: IObservableArray<Organisation>;
   Roles: IObservableArray<Role>;
@@ -116,6 +121,7 @@ export class Ei extends ParametricEntity {
 
     this.engine.maxNumberPointsPerLink = 1;
 
+    this.Expressions = model.Expressions;
     this.MainWorkflow = model.MainWorkflow;
     this.Organisations = this.initHierarchy(model.Organisations, observable([]), Organisation);
     this.Roles = this.initHierarchy(model.Roles, observable([]), Role);
@@ -147,20 +153,42 @@ export class Ei extends ParametricEntity {
     return this.Organisations.map(w => ({ text: w.Name, value: w.Id }));
   }
 
+  get removableOrganisationsOptions(): DropdownItemProps[] {
+    return [{ text: 'None', value: '' }].concat(this.organisationsOptions as any);
+  }
+
   @computed
   get roleOptions(): DropdownItemProps[] {
     return this.Roles.map(w => ({ text: w.Name, value: w.Id }));
   }
 
+  roleName(id: string) {
+    let entity = this.Roles.find(r => r.Id === id);
+    return entity ? entity.Name : '<Role Deleted>';
+  }
+
+  organisationName(id: string) {
+    let entity = this.Organisations.find(r => r.Id === id);
+    return entity ? entity.Name : '<Organisation Deleted>';
+  }
+
   compile(client: SocketClient) {
     const observer = client.send('CompileInstitution', [JSON.stringify(this.json)]);
+    this.store.compiling = true;
     autorun(() => {
       if (observer.loading) {
         // console.log('Compiling ...');
       } else {
         const result = observer.data.CompileInstitution;
         this.store.compiledCode = result.Code;
-        this.store.errors.replace(result.Errors);
+        this.store.errors.replace(result.Errors ? result.Errors : empty);
+        this.store.compiling = false;
+
+        if (result.Errors) {
+          Ui.alertError('Compilation Failed')
+        } else {
+          Ui.alert('Compilation Successful');
+        }
         // console.log(JSON.stringify(observer.data));
       }
     });
@@ -176,10 +204,17 @@ export class Ei extends ParametricEntity {
   }
 
   save = () => {
-    const key = 'ws.' + this.Name;
+    const key = 'ws.' + this.Id;
     const json = this.json;
     localStorage.setItem(key, JSON.stringify(json, null));
   };
+
+  createAuthorisation = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+  
+    this.Authorisation.push(new Authorisation())
+  }
 
   createOrganisation = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -203,8 +238,11 @@ export class Ei extends ParametricEntity {
 
     return false;
   };
+  
 
-  createRole = async () => {
+  createRole = async (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+
     let name = await Ui.promptText('Name of the new role?');
     if (name.value) {
       let role = new Role(
@@ -221,7 +259,9 @@ export class Ei extends ParametricEntity {
     }
   };
 
-  createType = async () => {
+  createType = async (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+
     let name = await Ui.promptText('Name of the new type?');
     if (name.value) {
       const type = new Type(
@@ -258,6 +298,7 @@ export class Ei extends ParametricEntity {
     return {
       ...super.json,
       MainWorkflow: this.MainWorkflow,
+      Expressions: this.Expressions,
       Organisations: this.Organisations.map(o => o.json),
       Roles: this.Roles.map(o => o.json),
       Types: this.Types.map(o => o.json),
