@@ -133,8 +133,8 @@ export class Connection extends Entity {
     const toPosition = workflow.findPosition(this.To);
     let random = { x: this.randomPosition(), y: this.randomPosition() };
 
-    if (!connection.Name) {
-      connection.Name = `${this.From} → ${this.To}`;
+    if (!this.Name) {
+      this.Name = `${fromPosition ? fromPosition.Name : '[Open]'} → ${toPosition ? toPosition.Name : '[Open]'}`;
     }
 
     // free joints are displayed as separate nodes
