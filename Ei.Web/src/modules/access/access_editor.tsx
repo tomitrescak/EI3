@@ -2,34 +2,34 @@ import * as React from 'react';
 
 import { observer } from 'mobx-react';
 
-import {
-  Checkbox,
-  field,
-  Form,
-  FormState,
-  Select,
-  TextArea
-} from 'semantic-ui-mobx';
+import { Checkbox, field, Form, FormState, Label, Select, TextArea } from 'semantic-ui-mobx';
 import { Accordion, Button, Icon, Segment } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { AccordionHandler } from '../../config/store';
+import { CodeEditor } from '../core/monaco_editor';
 import { AccessCondition, Postcondition } from '../ei/access_model';
-import { Ei } from '../ei/ei_model';
+import { Action } from '../ei/action_model';
+import { Ei, Organisation, Role } from '../ei/ei_model';
+import { Workflow } from '../ei/workflow_model';
 
 interface AccessProps {
   access: AccessCondition[];
   ei: Ei;
   name: string;
+  action: Action;
+  workflow: Workflow;
 }
 
 const addButton = style({ marginTop: '12px!important' });
 const fieldRow = style({ margin: '0px!important' });
+const editorHolder = style({ padding: '0px!important' });
+const headerHolder = style({ padding: '3px 12px!important' });
 
 @observer
 export class AccessEditor extends React.Component<AccessProps> {
   render() {
-    const { access, name, ei } = this.props;
+    const { access, name, ei, action, workflow } = this.props;
     const handler = ei.store.createAccordionHandler(name);
     return (
       <>
@@ -42,6 +42,8 @@ export class AccessEditor extends React.Component<AccessProps> {
               remove={() => access.splice(i, 1)}
               handler={handler}
               index={i}
+              action={action}
+              workflow={workflow}
             />
           ))}
         </Accordion>
@@ -67,6 +69,8 @@ export class AccessEditor extends React.Component<AccessProps> {
 interface AccessConditionProps {
   condition: AccessCondition;
   ei: Ei;
+  workflow: Workflow;
+  action: Action;
   remove: any;
   handler: AccordionHandler;
   index: number;
@@ -86,19 +90,28 @@ class AccessConditionState extends FormState {
 export class AccessConditionEditor extends React.Component<AccessConditionProps> {
   accessState: AccessConditionState;
 
-  remove() { /**/ }
+  remove() {
+    /**/
+  }
 
   componentWillMount() {
     this.accessState = new AccessConditionState(!!this.props.condition.Precondition);
   }
+
+  actionUpdate = (value: any) => {
+    this.props.condition.Precondition = value;
+  };
+
+  actionValue = () => this.props.condition.Precondition;
 
   // componentWillUpdate(nextProps: AccessConditionProps) {
   //   this.accessState.showPrecondition = !!nextProps.condition.Precondition;
   // }
 
   render() {
-    const { condition, ei, remove, handler, index } = this.props;
-    const organisation = ei.Organisations.find(o => o.Id === condition.Organisation) || ei.Organisations[0];
+    const { condition, ei, remove, handler, index, workflow, action } = this.props;
+    const organisation =
+      ei.Organisations.find(o => o.Id === condition.Organisation) || ei.Organisations[0];
     const role = ei.Roles.find(o => o.Id === condition.Role) || ei.Roles[0];
     return (
       <>
@@ -109,7 +122,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
         >
           <Icon name="dropdown" />
           <span>
-            {organisation.Name} &gt; 
+            {organisation.Name} &gt;
             {role.Name}
           </span>
         </Accordion.Title>
@@ -143,8 +156,17 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
               </div>
             </Segment>
             {this.accessState.showPrecondition && (
-              <Segment attached>
-                <TextArea owner={condition.fields.Precondition} />
+              <Segment secondary attached className={editorHolder}>
+                <CodeEditor
+                  update={this.actionUpdate}
+                  value={this.actionValue}
+                  height={100}
+                  i={ei.Properties}
+                  w={workflow && workflow.Properties}
+                  o={organisation.Properties}
+                  r={role.Properties}
+                  a={action && action.Properties}
+                />
               </Segment>
             )}
             <Segment tertiary attached as="h5" icon="legal">
@@ -160,6 +182,11 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                 key={i}
                 p={p}
                 i={i}
+                ei={ei}
+                workflow={this.props.workflow}
+                organisation={organisation}
+                role={role}
+                action={this.props.action}
                 remove={() => condition.Postconditions.splice(i, 1)}
                 showAll={this.accessState.showPostcondition}
               />
@@ -183,35 +210,85 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
 }
 
 interface PostconditionProps {
+  ei: Ei;
+  workflow: Workflow;
+  organisation: Organisation;
+  role: Role;
+  action: Action;
   p: Postcondition;
   i: number;
   remove: any;
   showAll: boolean;
 }
 
-export const PostconditionView = observer(({ p, i, remove, showAll }: PostconditionProps) => (
-  <Segment secondary attached key={i}>
-    {(showAll || p.Condition || (!p.Condition && !p.Action)) && (
-      <TextArea
-        owner={p.fields.Condition}
-        label="Condition"
-        rows={p.Condition ? p.Condition.split('\n').length : 1}
-      />
-    )}
-    {(showAll || p.Action || (!p.Condition && !p.Action)) && (
-      <TextArea
-        owner={p.fields.Action}
-        label="Action"
-        rows={p.Action ? p.Action.split('\n').length : 1}
-      />
-    )}
-    <Button
-      type="button"
-      content="Remove Postcondition"
-      name="addInput"
-      color="red"
-      onClick={remove}
-      icon="trash"
-    />
-  </Segment>
-));
+@observer
+export class PostconditionView extends React.Component<PostconditionProps> {
+  actionUpdate = (value: any) => {
+    this.props.p.Action = value;
+  };
+
+  actionValue = () => this.props.p.Action;
+
+  conditionUpdate = (value: any) => {
+    this.props.p.Condition = value;
+  };
+
+  conditionValue = () => this.props.p.Condition;
+
+  render() {
+    const { p, i, remove, showAll, ei, workflow, role, organisation, action } = this.props;
+
+    return (
+      <>
+        {(showAll || p.Condition || (!p.Condition && !p.Action)) && (
+          <>
+            <Segment secondary attached className={headerHolder}>
+              Condition
+            </Segment>
+            <Segment secondary attached className={editorHolder}>
+              <CodeEditor
+                update={this.conditionUpdate}
+                value={this.conditionValue}
+                height={100}
+                i={ei.Properties}
+                w={workflow && workflow.Properties}
+                o={organisation.Properties}
+                r={role.Properties}
+                a={action && action.Properties}
+              />
+            </Segment>
+          </>
+        )}
+        {(showAll || p.Action || (!p.Condition && !p.Action)) && (
+          <>
+            <Segment secondary attached className={headerHolder}>
+              Action
+            </Segment>
+            <Segment secondary attached className={editorHolder}>
+              <CodeEditor
+                update={this.actionUpdate}
+                value={this.actionValue}
+                height={100}
+                i={ei.Properties}
+                w={workflow && workflow.Properties}
+                o={organisation.Properties}
+                r={role.Properties}
+                a={action && action.Properties}
+              />
+            </Segment>
+          </>
+        )}
+        <Segment secondary attached className={headerHolder}>
+          <Button
+            type="button"
+            content="Remove Postcondition"
+            name="addInput"
+            color="red"
+            onClick={remove}
+            icon="trash"
+          />
+        </Segment>
+      </>
+    );
+  }
+}

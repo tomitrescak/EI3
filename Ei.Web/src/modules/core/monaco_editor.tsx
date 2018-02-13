@@ -16,6 +16,7 @@ const requireConfig = {
 interface Props {
   update: (value: string) => void;
   value: () => string;
+  height?: number;
   i?: IObservableArray<Property>;
   w?: IObservableArray<Property>;
   o?: IObservableArray<Property>;
@@ -35,6 +36,10 @@ const editor = style({
 export class CodeEditor<T, K extends keyof T> extends React.Component<Props> {
   monaco: any;
   previous: any;
+  editor: any;
+  holder: any;
+
+  bindEditor = (monacoEditor: any) => this.editor = monacoEditor;
 
   createDefinitions(properties: IObservableArray<Property>) {
     if (!properties) {
@@ -94,16 +99,33 @@ export class CodeEditor<T, K extends keyof T> extends React.Component<Props> {
     });
   }
 
+  updateDimensions() {
+    this.editor.layout();
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions.bind(this));
+
+    this.holder.addEventListener('onresize', function(){
+      console.log('resized');
+    })
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions.bind(this));
+  }
+
   render() {
     this.updateDefinitions(this.props);
 
     const { update, value } = this.props;
     return (
-      <div className={editor}>
+      <div className={editor} ref={node => this.holder = node}>
         <MonacoEditor
-          height="200"
+          height={this.props.height || 200}
           language="csharp"
           options={{
+            automaticLayout: true,
             minimap: { enabled: false },
             quickSuggestions: { other: true, comments: true, strings: true },
             quickSuggestionsDelay: 10
@@ -112,6 +134,7 @@ export class CodeEditor<T, K extends keyof T> extends React.Component<Props> {
           requireConfig={requireConfig}
           onChange={update}
           editorWillMount={() => this.updateDefinitions(this.props, monaco)}
+          editorDidMount={this.bindEditor}
         />
       </div>
     );

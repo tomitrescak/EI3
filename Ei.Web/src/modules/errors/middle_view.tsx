@@ -92,6 +92,7 @@ export const Errors = observer(({ context }: Props) => (
 Errors.displayName = 'ErrorsView';
 
 @inject('context')
+@observer
 export class MiddleView extends React.Component<Props> {
   state = { activeItem: 'messages' };
 
@@ -116,7 +117,7 @@ export class MiddleView extends React.Component<Props> {
           />
           <Menu.Item
             name="errors"
-            content="Errors"
+            content={`${context.store.errors.length} Error${context.store.errors.length === 1 ? '' : 's'}`}
             icon="bug"
             active={activeItem === 'errors'}
             onClick={this.handleItemClick}
