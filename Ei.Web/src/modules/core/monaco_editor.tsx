@@ -125,6 +125,7 @@ export class CodeEditor<T, K extends keyof T> extends React.Component<Props> {
           height={this.props.height || 200}
           language="csharp"
           options={{
+            lineNumbers: 'off',
             automaticLayout: true,
             minimap: { enabled: false },
             quickSuggestions: { other: true, comments: true, strings: true },

@@ -243,12 +243,21 @@ export class WorkflowLink extends DefaultLinkWidget {
       // add preconditions
       for (let access of connection.Access) {
         if (access.Precondition) {
+          let preconditionTexts: string[] = [];
           let role = connection.workflow.ei.Roles.find(r => r.Id === access.Role);
           if (role) {
-            texts.push(`❓ ${role.Icon} ${access.Precondition.substring(0, maxLength)}`);
+            let parts = access.Precondition.split('\n');
+            for (let i = 0; i < parts.length; i++) {
+              preconditionTexts.push(
+                (i === 0 ? `❓ ${role.Icon} ` : '\u00A0\u00A0\u00A0\u00A0') +
+                  parts[i].substring(0, maxLength)
+              );
+            }
+            // texts.push(`❓ ${role.Icon} ${access.Precondition.substring(0, maxLength)}`);
           } else {
             connection.workflow.ei.store.warn(`Role in precondition does not exist: ` + role);
           }
+          texts.push(...preconditionTexts);
         }
       }
 
@@ -258,11 +267,32 @@ export class WorkflowLink extends DefaultLinkWidget {
           let role = connection.workflow.ei.Roles.find(r => r.Id === access.Role);
           if (role) {
             for (let pc of access.Postconditions) {
-              texts.push(
-                `⚡️ ${role.Icon}\u00A0\u00A0 ${
-                  pc.Condition ? pc.Condition.substring(0, maxLength / 2) + ' ?: ' : ''
-                } ${pc.Action.substring(0, maxLength / 2)}`
-              );
+              let pcText = [];
+              if (pc.Condition) {
+                let parts = pc.Condition.split('\n');
+                for (let i = 0; i < parts.length; i++) {
+                  pcText.push(
+                    (i === 0 ? `⚡️${role.Icon} ❓\u00A0` : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0') +
+                      parts[i].substring(0, maxLength)
+                  );
+                }
+              }
+              if (pc.Action) {
+                let parts = pc.Action.split('\n');
+                for (let i = 0; i < parts.length; i++) {
+                  pcText.push(
+                    (i === 0 ? (pcText.length === 0 ? `⚡️${role.Icon}❗️\u00A0` : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0❗️\u00A0' ) : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0') +
+                      parts[i].substring(0, maxLength)
+                  );
+                }
+                texts.push(...pcText);
+              }
+              
+              // texts.push(
+              //   `⚡️ ${role.Icon}\u00A0\u00A0 ${
+              //     pc.Condition ? pc.Condition.substring(0, maxLength / 2) + ' ?: ' : ''
+              //   } ${pc.Action.substring(0, maxLength / 2)}`
+              // );
             }
           } else {
             connection.workflow.ei.store.warn(`Role in precondition does not exist: ` + role);
@@ -270,7 +300,8 @@ export class WorkflowLink extends DefaultLinkWidget {
         }
       }
 
-      let longest = texts.reduce((prev, next) => (prev = prev < next.length ? next.length : prev), 0) * 6;
+      let longest =
+        texts.reduce((prev, next) => (prev = prev < next.length ? next.length : prev), 0) * 6+ 10;
       let height = texts.length * 19 + 4;
 
       longest = longest < labelSize ? labelSize : longest;
@@ -291,7 +322,6 @@ export class WorkflowLink extends DefaultLinkWidget {
                 this.setState({ selected: true });
               }}
             />
-           
 
             <text
               x={0}
@@ -308,7 +338,12 @@ export class WorkflowLink extends DefaultLinkWidget {
               }}
             >
               {texts.map((r, i) => (
-                <tspan style={{ fontWeight: i === 0 ? 'bold' : 'normal'}} key={i} x={position.x - longest / 2 + 5} dy="18px">
+                <tspan
+                  style={{ fontWeight: i === 0 ? 'bold' : 'normal' }}
+                  key={i}
+                  x={position.x - longest / 2 + 5}
+                  dy="18px"
+                >
                   {r}
                 </tspan>
               ))}
@@ -359,7 +394,7 @@ export class WorkflowLink extends DefaultLinkWidget {
     const link = this.props.link as WorkflowLinkModel;
 
     link.getLastPoint().id = 'last';
-    
+
     // subscribe
     link.selected;
 
@@ -367,8 +402,10 @@ export class WorkflowLink extends DefaultLinkWidget {
       <>
         {super.render()}
         {this.renderAction(link)}
-        { link.connection.ActionDisplay !== ActionDisplayType.Full && this.renderPreconditionRoleLabels(link)}
-        { link.connection.ActionDisplay !== ActionDisplayType.Full && this.renderPostconditionRoleLabels(link)}
+        {link.connection.ActionDisplay !== ActionDisplayType.Full &&
+          this.renderPreconditionRoleLabels(link)}
+        {link.connection.ActionDisplay !== ActionDisplayType.Full &&
+          this.renderPostconditionRoleLabels(link)}
         {this.renderArrow(link)}
       </>
     );
