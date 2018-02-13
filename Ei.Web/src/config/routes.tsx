@@ -8,7 +8,7 @@ import { HierarchicEntityEditor } from '../modules/diagrams/hierarchic_entity_ed
 import { EiContainer } from '../modules/ei/ei_container';
 import { EiEditor } from '../modules/ei/ei_editor';
 import { EiLayout } from '../modules/ei/ei_layout';
-import { EiList } from '../modules/ei/ei_list';
+import { EiList, EiListContainer } from '../modules/ei/ei_list';
 import { Ei } from '../modules/ei/ei_model';
 import { StateEditor } from '../modules/states/state_editor';
 import { TransitionEditor } from '../modules/transitions/transitions_editor';
@@ -166,7 +166,7 @@ export function initRoutes(store: App.Store): Route[] {
       name: 'home',
       route: '/',
       action: () => view.showView('home'),
-      component: EiList
+      component: EiListContainer
     },
     {
       name: 'notFound',

@@ -3,7 +3,6 @@ import { field } from 'semantic-ui-mobx';
 import { DropdownItemProps } from 'semantic-ui-react';
 import { DefaultNodeFactory, DiagramEngine } from 'storm-react-diagrams';
 
-
 import { Ui } from '../../helpers/client_helpers';
 import { EntityLinkFactory } from '../diagrams/model/entity/entity_link_factory';
 import { EntityNodeFactory } from '../diagrams/model/entity/entity_node_factory';
@@ -13,7 +12,6 @@ import { Entity } from './entity_model';
 import { HierarchicEntity, HierarchicEntityDao } from './hierarchic_entity_model';
 import { ParametricEntity, ParametricEntityDao } from './parametric_entity_model';
 import { Workflow, WorkflowDao } from './workflow_model';
-
 
 const emptyWorkflows: WorkflowDao[] = [];
 const emptyAuthorisation: AuthorisationDao[] = [];
@@ -34,7 +32,6 @@ export class Organisation extends HierarchicEntity {
   select() {
     this.ei.store.viewStore.showOrganisation(this.Id, this.Name);
   }
-
 }
 
 export class Role extends HierarchicEntity {
@@ -68,6 +65,32 @@ export interface EiDao extends ParametricEntityDao {
 }
 
 export class Ei extends ParametricEntity {
+  static create(id: string, name: string, store: App.Store) {
+    return new Ei(
+      {
+        Id: id,
+        Name: name,
+        Description: '',
+        Organisations: [{ Id: 'default', Name: 'Default' }],
+        Roles: [{ Id: 'default', Name: 'Citizen' }],
+        Types: [],
+        Workflows: [
+          {
+            Id: 'main',
+            Name: 'Main',
+            Static: true,
+            Stateless: true,
+            States: [{ Id: 'start', Name: 'Start', IsStart: true, IsEnd: true, Open: false }]
+          }
+        ],
+        Authorisation: [],
+        MainWorkflow: 'main',
+        Properties: []
+      },
+      store
+    );
+  }
+
   engine: DiagramEngine;
   store: App.Store;
 
@@ -130,7 +153,7 @@ export class Ei extends ParametricEntity {
   }
 
   compile(client: SocketClient) {
-    const observer = client.send('CompileInstitution', [ JSON.stringify(this.json) ]);
+    const observer = client.send('CompileInstitution', [JSON.stringify(this.json)]);
     autorun(() => {
       if (observer.loading) {
         // console.log('Compiling ...');
@@ -140,7 +163,7 @@ export class Ei extends ParametricEntity {
         this.store.errors.replace(result.Errors);
         // console.log(JSON.stringify(observer.data));
       }
-    })
+    });
   }
 
   checkExists(array: Entity[], name: string, entity: Entity) {

@@ -3,7 +3,7 @@ import { Entity, EntityDao } from './entity_model';
 import { Property, PropertyDao } from './property_model';
 
 export interface ParametricEntityDao extends EntityDao {
-  Properties: PropertyDao[];
+  Properties?: PropertyDao[];
 }
 
 const emptyProperties: Property[] = [];

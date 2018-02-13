@@ -11,12 +11,12 @@ import { Workflow } from './workflow_model';
 
 export interface StateDao extends EntityDao {
   Open: boolean;
-  Timeout: number;
+  Timeout?: number;
   IsStart: boolean;
   IsEnd: boolean;
-  ShowRules: boolean;
-  EntryRules: AccessConditionDao[];
-  ExitRules: AccessConditionDao[];
+  ShowRules?: boolean;
+  EntryRules?: AccessConditionDao[];
+  ExitRules?: AccessConditionDao[];
 }
 
 export class State extends PositionModel {

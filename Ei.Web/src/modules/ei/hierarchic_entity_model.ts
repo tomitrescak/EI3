@@ -15,8 +15,8 @@ export interface PointDao {
 }
 
 export interface HierarchicEntityDao extends ParametricEntityDao {
-  Parent: string;
-  LinkPoints: PointDao[];
+  Parent?: string;
+  LinkPoints?: PointDao[];
 }
 
 export abstract class HierarchicEntity extends ParametricEntity {

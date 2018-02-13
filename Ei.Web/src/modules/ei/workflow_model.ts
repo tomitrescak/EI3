@@ -32,11 +32,11 @@ export interface WorkflowDao extends ParametricEntityDao {
   Stateless: boolean;
   Static: boolean;
   States: StateDao[];
-  Actions: ActionDao[];
-  Transitions: TransitionDao[];
-  Connections: ConnectionDao[];
-  AllowCreate: AccessConditionDao[];
-  AllowJoin: AccessConditionDao[];
+  Actions?: ActionDao[];
+  Transitions?: TransitionDao[];
+  Connections?: ConnectionDao[];
+  AllowCreate?: AccessConditionDao[];
+  AllowJoin?: AccessConditionDao[];
 }
 
 export function optionSort(a: any, b: any): number {

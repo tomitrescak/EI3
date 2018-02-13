@@ -4,10 +4,10 @@ import { FormNodeStore } from '../diagrams/model/form_state_model';
 export interface EntityDao {
   Id: string;
   Name: string;
-  Description: string;
-  Icon: string;
-  x: number;
-  y: number;
+  Description?: string;
+  Icon?: string;
+  x?: number;
+  y?: number;
 }
 
 export function entitySort(a: Entity, b: Entity): number {
