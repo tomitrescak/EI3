@@ -22,6 +22,14 @@ interface Props {
 @inject('context')
 @observer
 export class TransitionEditor extends React.Component<Props> {
+  componentWillMount() {
+    this.props.context.store.selectWorkflowElement(this.props.workflowId, 'Transitions', this.props.id);
+  }
+
+  componentWillUpdate(props: Props) {
+    props.context.store.selectWorkflowElement(props.workflowId, 'Transitions', props.id);
+  }
+
   renderTransition(transition: Transition) {
     if (transition.$type === 'TransitionSplitDao') {
       const tr = transition as TransitionSplit;

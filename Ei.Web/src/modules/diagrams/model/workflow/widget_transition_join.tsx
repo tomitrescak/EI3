@@ -45,7 +45,7 @@ export class TransitionJoinWidget extends React.Component<StateJoinNodeWidgetPro
           <g id="Layer_1" />
           <g id="Layer_2">
 						<rect
-              fill="black"
+              fill={node.selected ? 'salmon' : 'black'}
 							width={labelSize}
 							height={height}
 							y={0}

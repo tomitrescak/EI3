@@ -1,12 +1,13 @@
 import { LinkModel } from 'storm-react-diagrams';
 
-import { action, computed } from 'mobx';
+import { action, computed, observable } from 'mobx';
 
 import { Connection } from '../../../ei/connection_model';
 import { Workflow } from '../../../ei/workflow_model';
 import { WorkflowDiagramModel } from './workflow_diagram_model';
 
 export class WorkflowLinkModel extends LinkModel {
+  @observable selected = false;
   connection: Connection;
   workflow: Workflow;
   model: WorkflowDiagramModel;

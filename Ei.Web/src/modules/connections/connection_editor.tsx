@@ -133,6 +133,14 @@ export class ConnectionEditor extends React.Component<Props> {
     Ui.history.step();
   });
 
+  componentWillMount() {
+    this.props.context.store.selectWorkflowElement(this.props.workflowId, 'Connections', this.props.id, 'link');
+  }
+
+  componentWillUpdate(props: Props) {
+    props.context.store.selectWorkflowElement(props.workflowId, 'Connections', props.id, 'link');
+  }
+
   render() {
     const { id, context } = this.props;
     let ei = context.store.ei;

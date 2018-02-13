@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { DiagramEngine, DiagramWidget, LinkModel } from 'storm-react-diagrams';
+import { DiagramEngine, DiagramWidget, LinkModel, PointModel } from 'storm-react-diagrams';
 
 import { Entity } from '../ei/entity_model';
 import { EntityDiagramModel } from './model/entity/entity_diagram_model';
@@ -16,10 +16,11 @@ export class DiagramView extends React.Component<Props> {
   onKeyUp = (event: any) => {
     // delete elements but only if we are not deleting stuff in inputs or textboxes 
     if (event.target.nodeName.toLowerCase() === 'body' && event.keyCode === 8 || event.keyCode === 46) {
-      for (let element of this.props.diagram.getSelectedItems()) {
+      let selected = this.props.diagram.getSelectedItems();
+      for (let element of selected) {
         // only delete items which are not locked
         if (!this.props.engine.isModelLocked(element)) {
-          if (element instanceof Entity || element instanceof LinkModel) {
+          if (element instanceof Entity || element instanceof LinkModel || selected.every(e => e instanceof PointModel)) {
             element.remove();
           }
         }

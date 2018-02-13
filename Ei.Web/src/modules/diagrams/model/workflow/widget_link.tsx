@@ -359,6 +359,9 @@ export class WorkflowLink extends DefaultLinkWidget {
     const link = this.props.link as WorkflowLinkModel;
 
     link.getLastPoint().id = 'last';
+    
+    // subscribe
+    link.selected;
 
     return (
       <>

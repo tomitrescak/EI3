@@ -1,5 +1,6 @@
 import { observable } from 'mobx';
 import { Ei } from '../modules/ei/ei_model';
+import { Entity } from '../modules/ei/entity_model';
 import { ViewStoreModel } from './view_store';
 
 declare global {
@@ -24,7 +25,6 @@ export class StoreModel {
   @observable compiling = false;
   messages = observable([] as string[]);
   errors = observable([] as CompilationError[]);
-  
 
   context: App.Context;
   @observable.shallow ei: Ei;
@@ -32,6 +32,7 @@ export class StoreModel {
   storedHandlers: Object;
 
   handlers: { [index: string]: AccordionHandler } = {};
+  selectedEntity: Entity;
 
   constructor(context: App.Context) {
     this.context = context;
@@ -48,6 +49,27 @@ export class StoreModel {
     /** */
     // tslint:disable-next-line:no-console
     console.warn(message);
+  }
+
+  selectWorkflowElement(wid: string, collection: string, id: string, subSelection: string = null) {
+    let workflow = this.ei.Workflows.find(w => w.Id === wid);
+    if (!workflow) {
+      return;
+    }
+    let entity: Entity = workflow[collection].find((a: Entity) => a.Id === id);
+    if (!entity) {
+      return;
+    }
+    if (subSelection) {
+      entity = entity[subSelection];
+    }
+    if (this.selectedEntity) {
+      this.selectedEntity.setSelected(false);
+    }
+    if (!entity.selected) {
+      entity.setSelected(true);
+      this.selectedEntity = entity;
+    }
   }
 
   createAccordionHandler(id: string) {

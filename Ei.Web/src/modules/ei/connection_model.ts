@@ -44,6 +44,7 @@ export enum ActionDisplayType {
 export class Connection extends Entity {
   Icon = '➡';
 
+  @observable selected: boolean = false;
   @field From: string;
   @field To: string;
   Access: IObservableArray<AccessCondition>;
@@ -131,6 +132,10 @@ export class Connection extends Entity {
     const fromPosition = workflow.findPosition(this.From);
     const toPosition = workflow.findPosition(this.To);
     let random = { x: this.randomPosition(), y: this.randomPosition() };
+
+    if (!connection.Name) {
+      connection.Name = `${this.From} → ${this.To}`;
+    }
 
     // free joints are displayed as separate nodes
     if (fromPosition) {

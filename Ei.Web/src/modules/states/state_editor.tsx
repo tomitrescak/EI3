@@ -18,6 +18,14 @@ interface Props {
 @inject('context')
 @observer
 export class StateEditor extends React.Component<Props> {
+  componentWillMount() {
+    this.props.context.store.selectWorkflowElement(this.props.workflowId, 'States', this.props.id);
+  }
+
+  componentWillUpdate(props: Props) {
+    props.context.store.selectWorkflowElement(props.workflowId, 'States', props.id);
+  }
+
   render() {
     const { id, context } = this.props;
     let ei = context.store.ei;
