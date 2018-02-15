@@ -1,6 +1,6 @@
-import { LinkModel } from 'storm-react-diagrams';
+import { LinkModel, PointModel } from 'storm-react-diagrams';
 
-import { action, computed, observable } from 'mobx';
+import { action, computed, IObservableArray, observable } from 'mobx';
 
 import { Connection } from '../../../ei/connection_model';
 import { Workflow } from '../../../ei/workflow_model';
@@ -12,6 +12,16 @@ export class WorkflowLinkModel extends LinkModel {
   workflow: Workflow;
   model: WorkflowDiagramModel;
 
+  _points: any;
+
+  get points(): IObservableArray<PointModel> {
+    return this._points;
+  }
+
+  set points(value) {
+    this._points = value;
+  }
+
   constructor(connection: Connection, workflow: Workflow) {
     super('default', connection.Id);
     this.connection = connection;
@@ -22,6 +32,15 @@ export class WorkflowLinkModel extends LinkModel {
 				isSelected ? this.select() : false;
 			}
     })
+
+    this.points = observable(this.points);
+  }
+
+  setPoints(points: PointModel[]) {
+    if (!this.points) {
+      this.points = observable([]);
+    }
+    this.points.replace(points);
   }
 
   select() {

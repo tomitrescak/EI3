@@ -39,7 +39,9 @@ export class CodeEditor<T, K extends keyof T> extends React.Component<Props> {
   editor: any;
   holder: any;
 
-  bindEditor = (monacoEditor: any) => this.editor = monacoEditor;
+  bindEditor = (monacoEditor: any) => {
+    this.editor = monacoEditor;
+  };
 
   createDefinitions(properties: IObservableArray<Property>) {
     if (!properties) {
@@ -105,14 +107,15 @@ export class CodeEditor<T, K extends keyof T> extends React.Component<Props> {
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions.bind(this));
-
-    this.holder.addEventListener('onresize', function(){
-      console.log('resized');
-    })
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions.bind(this));
+  }
+
+  update = (value: string) => {
+    global._monaco_updated = Date.now();
+    this.props.update(value);
   }
 
   render() {
@@ -120,7 +123,7 @@ export class CodeEditor<T, K extends keyof T> extends React.Component<Props> {
 
     const { update, value } = this.props;
     return (
-      <div className={editor} ref={node => this.holder = node}>
+      <div className={editor} ref={node => (this.holder = node)}>
         <MonacoEditor
           height={this.props.height || 200}
           language="csharp"
@@ -133,7 +136,7 @@ export class CodeEditor<T, K extends keyof T> extends React.Component<Props> {
           }}
           value={value()}
           requireConfig={requireConfig}
-          onChange={update}
+          onChange={this.update}
           editorWillMount={() => this.updateDefinitions(this.props, monaco)}
           editorDidMount={this.bindEditor}
         />

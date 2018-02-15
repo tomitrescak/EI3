@@ -16,7 +16,7 @@ export const App = inject('context')(
     return (
       <Layout>
         { context.store.viewStore.router.view }
-        <DevTools position={{right: '350px'}} />
+        <DevTools position={{right: '550px'}} />
       </Layout>
     );
   })

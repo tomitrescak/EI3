@@ -159,7 +159,7 @@ export class StateWidget extends React.Component<StateNodeWidgetProps> {
             top: 3 * height / 4
           }}
         >
-          <PortWidget name="southwest" node={this.props.node} />
+          <PortWidget name="southeast" node={this.props.node} />
         </div>
 
         <div
@@ -170,7 +170,7 @@ export class StateWidget extends React.Component<StateNodeWidgetProps> {
             top: height / 4 - 13
           }}
         >
-          <PortWidget name="northwest" node={this.props.node} />
+          <PortWidget name="northeast" node={this.props.node} />
         </div>
 
         <div

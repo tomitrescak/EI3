@@ -1,7 +1,8 @@
 import * as React from 'react';
 
 import { observer } from 'mobx-react';
-import { DefaultLinkWidget } from 'storm-react-diagrams';
+import { DefaultLinkWidget, PointModel } from 'storm-react-diagrams';
+import { Ui } from '../../../../helpers/client_helpers';
 import { ActionDisplayType } from '../../../ei/connection_model';
 import { WorkflowLinkModel } from './workflow_link_model';
 
@@ -124,6 +125,26 @@ export class WorkflowLink extends DefaultLinkWidget {
     );
   }
 
+  // override to add points with alt
+  addPointToLink = (event: MouseEvent, index: number): void => {
+    if (
+      event.altKey &&
+      !this.props.diagramEngine.isModelLocked(this.props.link) &&
+      this.props.link.points.length - 1 <= this.props.diagramEngine.getMaxNumberPointsPerLink()
+    ) {
+      const point = new PointModel(
+        this.props.link,
+        this.props.diagramEngine.getRelativeMousePoint(event)
+      );
+      point.setSelected(true);
+      this.forceUpdate();
+      this.props.link.addPoint(point, index);
+      this.props.pointAdded(point, event);
+    }
+
+    Ui.history.step();
+  };
+
   lastAngle(points: Point[]) {
     let vector = points[points.length - 1].vector(points[points.length - 2]);
     return Math.atan(vector.y / vector.x) * (180 / Math.PI);
@@ -183,6 +204,8 @@ export class WorkflowLink extends DefaultLinkWidget {
       </g>
     );
   }
+
+  select = () => (this.props.link as WorkflowLinkModel).select();
 
   renderArrow(link: WorkflowLinkModel) {
     let points = link.points.map(p => new Point(p.x, p.y));
@@ -272,7 +295,9 @@ export class WorkflowLink extends DefaultLinkWidget {
                 let parts = pc.Condition.split('\n');
                 for (let i = 0; i < parts.length; i++) {
                   pcText.push(
-                    (i === 0 ? `⚡️${role.Icon} ❓\u00A0` : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0') +
+                    (i === 0
+                      ? `⚡️${role.Icon} ❓\u00A0`
+                      : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0') +
                       parts[i].substring(0, maxLength)
                   );
                 }
@@ -281,13 +306,17 @@ export class WorkflowLink extends DefaultLinkWidget {
                 let parts = pc.Action.split('\n');
                 for (let i = 0; i < parts.length; i++) {
                   pcText.push(
-                    (i === 0 ? (pcText.length === 0 ? `⚡️${role.Icon}❗️\u00A0` : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0❗️\u00A0' ) : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0') +
+                    (i === 0
+                      ? pcText.length === 0
+                        ? `⚡️${role.Icon}❗️\u00A0`
+                        : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0❗️\u00A0'
+                      : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0') +
                       parts[i].substring(0, maxLength)
                   );
                 }
                 texts.push(...pcText);
               }
-              
+
               // texts.push(
               //   `⚡️ ${role.Icon}\u00A0\u00A0 ${
               //     pc.Condition ? pc.Condition.substring(0, maxLength / 2) + ' ?: ' : ''
@@ -301,7 +330,7 @@ export class WorkflowLink extends DefaultLinkWidget {
       }
 
       let longest =
-        texts.reduce((prev, next) => (prev = prev < next.length ? next.length : prev), 0) * 6+ 10;
+        texts.reduce((prev, next) => (prev = prev < next.length ? next.length : prev), 0) * 6 + 10;
       let height = texts.length * 19 + 4;
 
       longest = longest < labelSize ? labelSize : longest;
@@ -348,6 +377,14 @@ export class WorkflowLink extends DefaultLinkWidget {
                 </tspan>
               ))}
             </text>
+            {link.connection.AllowLoops && (
+              <>
+                <circle cx={position.x - longest / 2} cy={position.y - 22} r="10" fill="silver" />
+                <text x={position.x - longest / 2 - 4} y={position.y - 18}>
+                  {link.connection.AllowLoops}
+                </text>
+              </>
+            )}
           </g>
         </>
       );
@@ -367,9 +404,7 @@ export class WorkflowLink extends DefaultLinkWidget {
               transform={`rotate(${angle} ${position.x} ${position.y})`}
               x={position.x - labelSize / 2}
               y={position.y - 15}
-              onClick={() => {
-                this.setState({ selected: true });
-              }}
+              onClick={this.select}
             />
           )}
           <text
@@ -379,12 +414,18 @@ export class WorkflowLink extends DefaultLinkWidget {
             textAnchor="middle"
             alignmentBaseline="central"
             transform={`rotate(${angle} ${position.x} ${position.y})`}
-            onClick={() => {
-              this.setState({ selected: true });
-            }}
+            onClick={this.select}
           >
             {name}
           </text>
+          {link.connection.AllowLoops && (
+            <>
+              <circle cx={position.x - labelSize / 2} cy={position.y - 16} r="10" fill="silver" />
+              <text x={position.x - labelSize / 2 - 4} y={position.y - 12}>
+                {link.connection.AllowLoops}
+              </text>
+            </>
+          )}
         </g>
       </>
     );

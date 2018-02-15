@@ -24,7 +24,7 @@ const layoutStyle = style({
       background: '#c0ff00!important'
     },
     '& .point.selected': {
-      fill: 'rgba(0, 0, 0, 0.5)!important'
+      fill: 'salmon!important'
     },
     '& .Resizer': {
       background: '#000',

@@ -17,8 +17,10 @@ interface AccessProps {
   access: AccessCondition[];
   ei: Ei;
   name: string;
-  action: Action;
+  action?: Action;
   workflow: Workflow;
+  hidePreconditions?: boolean;
+  hideActionCondition?: boolean;
 }
 
 const addButton = style({ marginTop: '12px!important' });
@@ -29,7 +31,15 @@ const headerHolder = style({ padding: '3px 12px!important' });
 @observer
 export class AccessEditor extends React.Component<AccessProps> {
   render() {
-    const { access, name, ei, action, workflow } = this.props;
+    const {
+      access,
+      name,
+      ei,
+      action,
+      workflow,
+      hideActionCondition,
+      hidePreconditions
+    } = this.props;
     const handler = ei.store.createAccordionHandler(name);
     return (
       <>
@@ -44,6 +54,8 @@ export class AccessEditor extends React.Component<AccessProps> {
               index={i}
               action={action}
               workflow={workflow}
+              hideActionCondition={hideActionCondition}
+              hidePreconditions={hidePreconditions}
             />
           ))}
         </Accordion>
@@ -74,6 +86,8 @@ interface AccessConditionProps {
   remove: any;
   handler: AccordionHandler;
   index: number;
+  hidePreconditions: boolean;
+  hideActionCondition: boolean;
 }
 
 class AccessConditionState extends FormState {
@@ -109,7 +123,17 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
   // }
 
   render() {
-    const { condition, ei, remove, handler, index, workflow, action } = this.props;
+    const {
+      condition,
+      ei,
+      remove,
+      handler,
+      index,
+      workflow,
+      action,
+      hideActionCondition,
+      hidePreconditions
+    } = this.props;
     const organisation =
       ei.Organisations.find(o => o.Id === condition.Organisation) || ei.Organisations[0];
     const role = ei.Roles.find(o => o.Id === condition.Role) || ei.Roles[0];
@@ -148,34 +172,39 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                 />
               </Form.Group>
             </Segment>
-            <Segment tertiary={true} attached as="h5" icon="legal">
-              <Icon name="legal" />
-              Precondition
-              <div style={{ float: 'right' }}>
-                <Checkbox owner={this.accessState.fields.showPrecondition} label="Show" />
-              </div>
-            </Segment>
-            {this.accessState.showPrecondition && (
-              <Segment secondary attached className={editorHolder}>
-                <CodeEditor
-                  update={this.actionUpdate}
-                  value={this.actionValue}
-                  height={100}
-                  i={ei.Properties}
-                  w={workflow && workflow.Properties}
-                  o={organisation.Properties}
-                  r={role.Properties}
-                  a={action && action.Properties}
-                />
+            {!hidePreconditions && (
+              <Segment tertiary={true} attached as="h5" icon="legal">
+                <Icon name="legal" />
+                Precondition
+                <div style={{ float: 'right' }}>
+                  <Checkbox owner={this.accessState.fields.showPrecondition} label="Show" />
+                </div>
               </Segment>
             )}
-            <Segment tertiary attached as="h5" icon="legal">
-              <Icon name="legal" />
-              Postconditions
-              <div style={{ float: 'right' }}>
-                <Checkbox owner={this.accessState.fields.showPostcondition} label="Show All" />
-              </div>
-            </Segment>
+            {!hidePreconditions &&
+              this.accessState.showPrecondition && (
+                <Segment secondary attached className={editorHolder}>
+                  <CodeEditor
+                    update={this.actionUpdate}
+                    value={this.actionValue}
+                    height={100}
+                    i={ei.Properties}
+                    w={workflow && workflow.Properties}
+                    o={organisation.Properties}
+                    r={role.Properties}
+                    a={action && action.Properties}
+                  />
+                </Segment>
+              )}
+            {!hideActionCondition && (
+              <Segment tertiary attached as="h5" icon="legal">
+                <Icon name="legal" />
+                Postconditions
+                <div style={{ float: 'right' }}>
+                  <Checkbox owner={this.accessState.fields.showPostcondition} label="Show All" />
+                </div>
+              </Segment>
+            )}
 
             {condition.Postconditions.map((p, i) => (
               <PostconditionView
@@ -189,6 +218,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                 action={this.props.action}
                 remove={() => condition.Postconditions.splice(i, 1)}
                 showAll={this.accessState.showPostcondition}
+                hideActionCondition={hideActionCondition}
               />
             ))}
             <Segment attached="bottom" tertiary>
@@ -219,6 +249,7 @@ interface PostconditionProps {
   i: number;
   remove: any;
   showAll: boolean;
+  hideActionCondition: boolean;
 }
 
 @observer
@@ -236,30 +267,42 @@ export class PostconditionView extends React.Component<PostconditionProps> {
   conditionValue = () => this.props.p.Condition;
 
   render() {
-    const { p, i, remove, showAll, ei, workflow, role, organisation, action } = this.props;
+    const {
+      p,
+      i,
+      remove,
+      showAll,
+      ei,
+      workflow,
+      role,
+      organisation,
+      action,
+      hideActionCondition
+    } = this.props;
 
     return (
       <>
-        {(showAll || p.Condition || (!p.Condition && !p.Action)) && (
-          <>
-            <Segment secondary attached className={headerHolder}>
-              Condition
-            </Segment>
-            <Segment secondary attached className={editorHolder}>
-              <CodeEditor
-                update={this.conditionUpdate}
-                value={this.conditionValue}
-                height={100}
-                i={ei.Properties}
-                w={workflow && workflow.Properties}
-                o={organisation.Properties}
-                r={role.Properties}
-                a={action && action.Properties}
-              />
-            </Segment>
-          </>
-        )}
-        {(showAll || p.Action || (!p.Condition && !p.Action)) && (
+        {!hideActionCondition &&
+          (showAll || p.Condition || (!p.Condition && !p.Action)) && (
+            <>
+              <Segment secondary attached className={headerHolder}>
+                Condition
+              </Segment>
+              <Segment secondary attached className={editorHolder}>
+                <CodeEditor
+                  update={this.conditionUpdate}
+                  value={this.conditionValue}
+                  height={100}
+                  i={ei.Properties}
+                  w={workflow && workflow.Properties}
+                  o={organisation.Properties}
+                  r={role.Properties}
+                  a={action && action.Properties}
+                />
+              </Segment>
+            </>
+          )}
+        {(!hideActionCondition || (showAll || p.Action || (!p.Condition && !p.Action))) && (
           <>
             <Segment secondary attached className={headerHolder}>
               Action

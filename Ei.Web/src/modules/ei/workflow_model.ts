@@ -60,6 +60,7 @@ export class Workflow extends ParametricEntity {
     super(workflow);
 
     this.ei = ei;
+    
 
     this.Stateless = workflow.Stateless;
     this.Static = workflow.Static;

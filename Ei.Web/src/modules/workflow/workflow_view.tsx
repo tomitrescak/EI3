@@ -55,6 +55,7 @@ export class WorkflowView extends React.Component<Props> {
 
   render() {
     let model = new WorkflowDiagramModel();
+    model.setGridSize(10);
     model.version;
 
     // add states

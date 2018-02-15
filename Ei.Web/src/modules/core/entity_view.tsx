@@ -13,19 +13,22 @@ const floatRight = style({
 
 interface Props {
   entity: Entity;
+  hideHeader?: boolean;
 }
 
-export const EntityEditor = observer(({ entity }: Props) => (
+export const EntityEditor = observer(({ entity, hideHeader }: Props) => (
   <>
-    <Header dividing>
-      <Header.Content>
-        <IconView entity={entity} />
-        {entity.Name || entity.Id || '<Empty>'}
-      </Header.Content>
-      <Label color="green" size="tiny" className={floatRight}>
-        Id: {entity.Id}
-      </Label>
-    </Header>
+    {!hideHeader && (
+      <Header dividing>
+        <Header.Content>
+          <IconView entity={entity} />
+          {entity.Name || entity.Id || '<Empty>'}
+        </Header.Content>
+        <Label color="green" size="tiny" className={floatRight}>
+          Id: {entity.Id}
+        </Label>
+      </Header>
+    )}
     <Input owner={entity.fields.Name} label="Name" />
     <TextArea owner={entity.fields.Description} label="Description" />
     {entity.allowEditIcon && <Input owner={entity.fields.Icon} label="Icon" />}
