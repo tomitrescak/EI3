@@ -1,6 +1,6 @@
 ﻿namespace Ei.Persistence.Transitions
 {
-    public class TransitionDao : EntityDao
+    public abstract class TransitionDao : EntityDao
     {
     }
 }

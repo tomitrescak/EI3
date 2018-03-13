@@ -15,7 +15,7 @@ namespace Ei.Tests.Features
             var a = new ActivitySteps(scenarioContext);
 
             // Given That institution 'InstitutionStart' is launched
-            c.GivenThatInstitutionIsRunning("InstitutionStart");
+            c.GivenThatInstitutionIsRunning("ConnectionTest.json"); // InstitutionStart
             // When Agent 'user1' connects with '123' to organisation 'Default'
             c.WhenAgentConnectsWithPasswordInOrganisation("user1", "123", "Default");
             // When Agent 'user2' connects with '123' to organisation 'Default'
@@ -28,19 +28,19 @@ namespace Ei.Tests.Features
 
 
             // Then Agent 'user1' cannot perform 'joinSubWorkflow' with 'WorkflowInstanceNotRunning'
-            a.ThenAgentCannotPerformWith("user1", "joinSubWorkflow", "WorkflowInstanceNotRunning");
+            // a.ThenAgentCannotPerformWith("user1", "joinSubWorkflow", "WorkflowInstanceNotRunning");
 
             // When Agent 'user1' performs 'startSubWorkflow'
-            a.ThenAgentPerformsActivity("user1", "startSubWorkflow");
+            a.ThenAgentPerformsActivity("user1", "joinSubWorkflow");
 
             // When Agent 'user1' joins workflow 'joinSubWorkflow' with 'InstanceId=0'
-            a.ThenAgentPerformsActivityWith("user1", "joinSubWorkflow", "InstanceId=0");
+            // a.ThenAgentPerformsActivityWith("user1", "joinSubWorkflow", "InstanceId=0");
 
             // Then Agent 'user1' is in workflow 'subWorkflow' position 'start'
             a.ThenAgentIsInWorkflowPosition("user1", "subWorkflow", "start");
 
             // When Agent 'user2' performs 'joinSubWorkflow'
-            a.ThenAgentPerformsActivity("user2", "joinSubWorkflow");
+            a.ThenAgentPerformsActivityWith("user2", "joinSubWorkflow", "InstanceId=0");
 
             // Then Agent 'user2' is in workflow 'subWorkflow' position 'start'
             a.ThenAgentIsInWorkflowPosition("user2", "subWorkflow", "start");
@@ -53,10 +53,10 @@ namespace Ei.Tests.Features
             a.ThenAgentCannotPerformWith("user2", "send", "InvalidParameters");
 
             // Then Agent 'user2' fails 'send' with 'Stones=0' and message 'Stones: Value Required'
-            a.ThenAgentFailsActivityWithMessage("user2", "send", "Stones=0", "Stones: Value Required");
+            a.ThenAgentFailsActivityWithMessage("user2", "send", "Stones=0", "Failed: Stones != 0");
 
             // Then Agent 'user2' fails 'send' with 'Stones=2;Weight=100' and message 'Weight needs to be max 10'
-            a.ThenAgentFailsActivityWithMessage("user2", "send", "Stones=2;Weight=100", "Weight needs to be max 10");
+            a.ThenAgentFailsActivityWithMessage("user2", "send", "Stones=2;Weight=100", "Failed: Weight < 10");
 
             // When Agent 'user2' performs action 'send' with 'Stones=3;Weight=3'
             a.ThenAgentPerformsActivityWith("user2", "send", "Stones=3;Weight=3");
@@ -85,7 +85,7 @@ namespace Ei.Tests.Features
             a.ThenAgentCanJoinWorkflowsIn("user3", 1, "joinSubWorkflow");
 
             // When Agent 'user3' performs 'joinSubWorkflow'
-            a.ThenAgentPerformsActivity("user3", "joinSubWorkflow");
+            a.ThenAgentPerformsActivityWith("user3", "joinSubWorkflow", "InstanceId=0");
 
             // Then Agent 'user3' is in workflow 'subWorkflow' position 'yield'
             a.ThenAgentIsInWorkflowPosition("user3", "subWorkflow", "yield");
@@ -117,7 +117,8 @@ namespace Ei.Tests.Features
             a.ThenAgentMovesTo("user3", "start");
 
             // Then Agent 'user3' cannot perform 'joinSubWorkflow' with 'WorkflowInstanceNotRunning
-            a.ThenAgentCannotPerformWith("user3", "joinSubWorkflow", "WorkflowInstanceNotRunning");
+            // TODO: Check number of running instances as well
+            // a.ThenAgentCannotPerformWith("user3", "joinSubWorkflow", "Failed");
         }
 
         [Fact]

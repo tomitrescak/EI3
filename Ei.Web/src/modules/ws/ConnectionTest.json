@@ -1,0 +1,357 @@
+﻿{
+  "Name": "Connection Test 1",
+  "Description": "Connection Test Description",
+  "Organisations": [
+    {
+      "Id": "default",
+      "Name": "Default"
+    }
+  ],
+  "Roles": [
+    {
+      "Id": "citizen",
+      "Name": "Citizen",
+      "Properties": [
+        {
+          "Name": "ParentParameter",
+          "DefaultValue": "0",
+          "Type": "int"
+        }
+      ]
+    }
+  ],
+  "Workflows": [
+    {
+      "Id": "main",
+      "Name": "Main",
+      "Stateless": true,
+      "Static": true,
+      "States": [
+        {
+          "Id": "start",
+          "IsStart": true
+        },
+        {
+          "Id": "end",
+          "IsEnd": true
+        },
+        {
+          "Id": "inc"
+        },
+        {
+          "Id": "s1"
+        },
+        {
+          "Id": "s2"
+        },
+        {
+          "Id": "joined"
+        },
+        {
+          "Id": "actions"
+        },
+        {
+          "Id": "open",
+          "IsOpen": true
+        }
+      ],
+      "Transitions": [
+        {
+          "$type": "TransitionSplitDao",
+          "Id": "split",
+          "Shallow": true,
+          "Names": [
+            [
+              "s1",
+              "Left"
+            ],
+            [
+              "s2",
+              "Right"
+            ]
+          ]
+        },
+        {
+          "$type": "TransitionJoinDao",
+          "Id": "join"
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionJoinWorkflowDao",
+          "Id": "joinSubWorkflow",
+          "WorkflowId": "subWorkflow",
+          "Properties": [
+            {
+              "Name": "Granite",
+              "Type": "int",
+              "DefaultValue": "0"
+            }
+          ],
+          "Validations": [
+            "Granite >= 0"
+          ]
+        }
+      ],
+      "Connections": [
+        {
+          "Id": "1",
+          "Join": [
+            "start",
+            "end"
+          ],
+          "Access": [
+            {
+              "Precondition": "r.ParentParameter > 0"
+            }
+          ]
+        },
+        {
+          "Id": "2",
+          "Join": [
+            "start",
+            "inc"
+          ],
+          "AllowLoops": 4,
+          "Access": [
+            {
+              "Postconditions": [
+                {
+                  "Action": "r.ParentParameter++"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Id": "3",
+          "Join": [
+            "inc",
+            "inc"
+          ],
+          "Access": [
+            {
+              "Postconditions": [
+                {
+                  "Condition": "r.ParentParameter == 0",
+                  "Action": "r.ParentParameter += 10"
+                },
+                {
+                  "Condition": "r.ParentParameter > 0",
+                  "Action": "r.ParentParameter = 0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Id": "4",
+          "Join": [
+            "inc",
+            "start"
+          ]
+        },
+        {
+          "Id": "5",
+          "Join": [
+            "inc",
+            ""
+          ]
+        },
+        {
+          "Id": "6",
+          "Join": [
+            "",
+            "inc"
+          ]
+        },
+        {
+          "Id": "7",
+          "Join": [
+            "",
+            "inc"
+          ],
+          "Access": [
+            {
+              "Postconditions": [
+                {
+                  "Action": "r.ParentParameter = 3"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Id": "8",
+          "Join": [
+            "start",
+            "inc"
+          ],
+          "ActionId": "joinSubWorkflow"
+        },
+        {
+          "Id": "9",
+          "Join": [
+            "inc",
+            "split"
+          ]
+        },
+        {
+          "Id": "10",
+          "Join": [
+            "split",
+            "s1"
+          ]
+        },
+        {
+          "Id": "11",
+          "Join": [
+            "split",
+            "s2"
+          ]
+        },
+        {
+          "Id": "12",
+          "Join": [
+            "s1",
+            "join"
+          ]
+        },
+        {
+          "Id": "13",
+          "Join": [
+            "s2",
+            "join"
+          ]
+        },
+        {
+          "Id": "14",
+          "Join": [
+            "join",
+            "joined"
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "subWorkflow",
+      "Name": "SubWorkflow",
+      "Stateless": false,
+      "Static": false,
+      "Properties": [
+        {
+          "Name": "Stones",
+          "Type": "int",
+          "DefaultValue": "0"
+        },
+        {
+          "Name": "Granite",
+          "Type": "int",
+          "DefaultValue": "0"
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionMessageDao",
+          "Id": "send",
+          "Properties": [
+            {
+              "Name": "Stones",
+              "Type": "int",
+              "DefaultValue": "0"
+            },
+            {
+              "Name": "Weight",
+              "Type": "int",
+              "DefaultValue": "0"
+            }
+          ],
+          "Validations": [
+            "Stones != 0",
+            "Weight < 10"
+          ],
+          "NotifyGroups": [{
+            "RoleId": "citizen",
+            "OrganisationId": "default"
+          }]
+        },
+        {
+          "$type": "ActionTimeoutDao",
+          "Id": "timeout"
+        }
+      ],
+      "States": [
+        {
+          "Id": "start",
+          "Name": "Start",
+          "IsStart": true
+        },
+        {
+          "Id": "end",
+          "Name": "End",
+          "IsEnd": true
+        },
+        {
+          "Id": "wait",
+          "Name": "Wait",
+          "Timeout": 1
+        },
+        {
+          "Id": "mid",
+          "Name": "Mid"
+        },
+        {
+          "Id": "yield",
+          "Name": "Yield"
+        }
+      ],
+      "Connections": [
+        {
+          "Id": "1",
+          "Join": ["start", "mid"],
+          "ActionId": "send",
+          "Access": [{
+            "Postconditions": [{
+              "Action": "w.Stones = a.Stones"
+            }]
+          }]
+        },
+        {
+          "Id": "2",
+          "Join": ["mid", "wait"]
+        },
+        {
+          "Id": "3",
+          "Join": ["wait", "yield"],
+          "ActionId": "timeout"
+        },
+        {
+          "Id": "4",
+          "Join": ["yield", "end"]
+        }
+      ],
+      "AllowJoin": [{
+        "Precondition": "w.AgentCount < 2 || w.Stones > 2"
+      }]
+    }
+  ],
+  "Authorisation": [
+    {
+      "User": "user",
+      "Groups": [
+        {
+          "RoleId": "citizen"
+        }
+      ]
+    },
+    {
+      "Password": "123",
+      "Organisation": "Default",
+      "Groups": [
+        {
+          "RoleId": "citizen"
+        }
+      ]
+    }
+  ]
+}

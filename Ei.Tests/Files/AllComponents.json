@@ -1,9 +1,9 @@
 ﻿{
   "Name": "Institution",
-  "Description": "Desc",
+  "Description1": "Desc",
   "Roles": [
     {
-      "Id": 1,
+      "Id": "1",
       "Name": "Citizen",
       "Description": "Citizen Role",
       "Properties": [
@@ -36,14 +36,14 @@
       ]
     },
     {
-      "Id": 2,
+      "Id": "2",
       "Name": "Fisherman",
       "Description": "Fisherman"
     }
   ],
   "Organisations": [
     {
-      "Id": 1,
+      "Id": "1",
       "Name": "Darug",
       "Properties": [
         {

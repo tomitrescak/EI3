@@ -9,15 +9,19 @@ namespace Ei.Ontology
 {
     public class Connection
     {
+        static int openId = 0;
+        static string OpenId => "open" + openId++;
+   
         #region Properties
 
         public string Id { get; private set; }
         public Access Access { get; private set; }
 
-        public AccessCondition[] GeneratedNestedEffects { get; set; }
+        // public AccessCondition[] GeneratedNestedEffects { get; set; }
         public AccessCondition[] ExpectedEffects { get; set; }
-        public AccessCondition[] BacktrackPreconditions { get; set; }
-        public AccessCondition[] BacktrackPostconditions { get; set; }
+
+        //public AccessCondition[] BacktrackPreconditions { get; set; }
+        //public AccessCondition[] BacktrackPostconditions { get; set; }
 
         public WorkflowPosition From { get; private set; }
         public WorkflowPosition To { get; private set; }
@@ -26,7 +30,7 @@ namespace Ei.Ontology
         public bool OpenIn { get; private set; }
         public bool OpenOut { get; private set; }
 
-        public int AllowLoops { get; private set; }
+        public int AllowLoops { get; set; }
 
         /// <summary>
         /// Combination of 
@@ -48,7 +52,8 @@ namespace Ei.Ontology
         #endregion
 
 
-        public Connection(WorkflowPosition from, WorkflowPosition to) {
+        public Connection(string id, WorkflowPosition from, WorkflowPosition to) {
+            this.Id = id;
             this.From = from;
             this.To = to;
 
@@ -67,14 +72,14 @@ namespace Ei.Ontology
             }
         }
 
-        public Connection(WorkflowPosition from, WorkflowPosition to, Connection conn) : this(from, to) {
-            this.Id = conn.Id;
+        public Connection(WorkflowPosition from, WorkflowPosition to, Connection conn) : this(conn.Id, from, to) {
+
             this.Action = conn.Action;
             this.Access = conn.Access;
             this.AllowLoops = conn.AllowLoops;
         }
 
-        public Connection(Institution ei, WorkflowPosition from, WorkflowPosition to, ActionBase action) : this(from, to) {
+        public Connection(Institution ei, string id, WorkflowPosition from, WorkflowPosition to, ActionBase action) : this(id, from, to) {
             this.Action = action;
         }
 
@@ -85,6 +90,11 @@ namespace Ei.Ontology
                 this.Access = new Access();
             }
             this.Access.Add(condition);
+            return this;
+        }
+
+        public Connection AddEffects(AccessCondition[] effects) {
+            this.ExpectedEffects = effects != null && effects.Length > 0 ? effects : null;
             return this;
         }
 
@@ -171,14 +181,14 @@ namespace Ei.Ontology
         }
 
 
-        public void ApplyBacktrackPostconditions(Group[] groups, Governor.GovernorState state) {
-            if (this.BacktrackPostconditions != null) {
-                foreach (var postcondition in this.BacktrackPostconditions) {
-                    // check if arc is constrained to the agent role
-                    postcondition.ApplyPostconditions(state, null, true);
-                }
-            }
-        }
+        //public void ApplyBacktrackPostconditions(Group[] groups, Governor.GovernorState state) {
+        //    if (this.BacktrackPostconditions != null) {
+        //        foreach (var postcondition in this.BacktrackPostconditions) {
+        //            // check if arc is constrained to the agent role
+        //            postcondition.ApplyPostconditions(state, null, true);
+        //        }
+        //    }
+        //}
 
         public void ApplyExpectedEffects(Governor.GovernorState state, AccessCondition effect) {
             // we can either apply a single effect
@@ -200,14 +210,14 @@ namespace Ei.Ontology
             }
         }
 
-        public void ApplyGeneratedBacktrackEffects(Governor.GovernorState state) {
-            if (this.GeneratedNestedEffects != null) {
-                foreach (var postcondition in this.GeneratedNestedEffects) {
-                    // check if arc is constrained to the agent role
-                    postcondition.ApplyPostconditions(state, null, true);
-                }
-            }
-        }
+        //public void ApplyGeneratedBacktrackEffects(Governor.GovernorState state) {
+        //    if (this.GeneratedNestedEffects != null) {
+        //        foreach (var postcondition in this.GeneratedNestedEffects) {
+        //            // check if arc is constrained to the agent role
+        //            postcondition.ApplyPostconditions(state, null, true);
+        //        }
+        //    }
+        //}
 
 
     }

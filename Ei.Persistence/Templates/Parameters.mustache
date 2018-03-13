@@ -1,0 +1,48 @@
+﻿
+    #region {{ParameterClassName}}
+    public class {{ParameterClassName}}: {{ ParameterParentName }} {
+        
+        // Properties
+
+        {{#each Properties}}
+        public {{Type}} {{Name}} { get; set; }
+        {{/each}}
+
+        // Abstract implementation
+
+        public override string Validate() {
+            var result = base.Validate();
+            if (result != null) {
+                return result;
+            }
+    
+            {{#each Validations }}
+            if (!({{{.}}})) return "Failed: {{{.}}}";
+            {{/each}}
+            return null;
+        }
+
+        public override void Parse(VariableInstance[] properties) {
+            base.Parse(properties);
+            foreach (var property in properties) {
+                switch (property.Name) {
+                    {{#each Properties}}
+                    case "{{Name}}":
+                        this.{{Name}} = {{Type}}.Parse(property.Value);
+                        break;
+                    {{/each}}
+                }
+            }
+        }
+
+        {{#if WorkflowId}}
+        public override void CopyTo(Workflow.Store workflowStore) {
+            var store = ({{ targetWorkflowClassName WorkflowId }}.Store) workflowStore;
+
+            {{#each Properties}}
+            store.{{Name}} = this.{{Name}};
+            {{/each}}
+        }
+        {{/if}}
+    }
+    #endregion

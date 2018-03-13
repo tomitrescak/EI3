@@ -11,6 +11,8 @@ using Ei.Ontology;
 using Ei.Logs;
 using System.Collections;
 using System.Diagnostics;
+using System.Security.Permissions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Ei.Compilation
 {
@@ -18,11 +20,26 @@ namespace Ei.Compilation
     {
         static Action<string> Write = Console.WriteLine;
 
-        public static string Compile(string codeToCompile) {
+        public static CompilationResult Compile(string codeToCompile) {
             return Compile(codeToCompile, null, out object obj);
         }
 
-        public static string Compile<T>(string codeToCompile, string activateObject, out T activatedObject) {
+        public class CompilationResult
+        {
+            public string Code;
+            public bool Success;
+            public CompilationError[] Errors;
+        } 
+        
+        public class CompilationError
+        {
+            public string Message;
+            public int Line;
+            public string[] Code;
+            public string Severity;
+        }
+
+        public static CompilationResult Compile<T>(string codeToCompile, string activateObject, out T activatedObject) {
             Write("Let's compile!");
             Write("Parsing the code into the SyntaxTree");
 
@@ -76,15 +93,48 @@ using System.Collections.Generic;
 
                 if (!result.Success) {
                     Write("Compilation failed!");
+                    var source = codeToCompile.Split('\n');
+                    var compilationResult = new CompilationResult {
+                        Code = codeToCompile,
+                        Success = false
+                    };
+                    for (int i = 0; i < source.Length; i++) {
+                        Console.WriteLine(i.ToString().PadLeft(5) + ": " + source[i]);
+                    }
+                    
+                    Console.WriteLine("======================================");
+                    
                     IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
                         diagnostic.IsWarningAsError ||
                         diagnostic.Severity == DiagnosticSeverity.Error);
 
-                    var message = string.Join("\n", failures.Select(f => f.GetMessage()));
-                    foreach (Diagnostic diagnostic in failures) {
-                        Console.Error.WriteLine("\t{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
-                    }
-                    return message;
+                    var list = failures.Select(f => {
+                        var span = f.Location.GetMappedLineSpan();
+                        var line = span.StartLinePosition.Line;
+                        var code = new string[10];
+                        var m = 0;
+                        for (var i = line - 5; i < line + 5; i++) {
+                            if (i == source.Length) {
+                                break;
+                            }
+                            code[m++] = source[i] + ((i == line) ? "  // <- ERROR" : "");
+                        }
+                        
+                        Console.Error.WriteLine(f.ToString());
+                        
+                        return new CompilationError {
+                            Severity = f.Severity.ToString(),
+                            Code = code,
+                            Line = line,
+                            Message = f.GetMessage()
+                        };
+                        
+                        
+                    });
+
+
+                    compilationResult.Errors = list.ToArray();
+                    return compilationResult;
                 }
                 else if (activateObject != null) {
                     Write("Compilation successful! Now instantiating and executing the code ...");
@@ -94,9 +144,12 @@ using System.Collections.Generic;
                     var type = assembly.GetType(activateObject);
                     activatedObject = (T)assembly.CreateInstance(activateObject);
                 }
-
+                
+                return new CompilationResult {
+                    Success = true,
+                    Code = codeToCompile,
+                };
             }
-            return null;
         }
     }
 }

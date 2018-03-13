@@ -3,6 +3,10 @@ using System.IO;
 using System.Net.WebSockets;
 using System.Reflection;
 using System.Threading.Tasks;
+using Ei.Compilation;
+using Ei.Ontology;
+using Ei.Persistence.Json;
+using Newtonsoft.Json;
 using WebSocketManager;
 using WebSocketManager.Common;
 
@@ -59,6 +63,38 @@ namespace Ei.Server
                 Console.Write(ex.Message);
             }
         }
+        
+        public async Task CompileInstitution(long queryId, string source)
+        {
+            Console.Write("Compiling Institution");
+            try {
+                var institution = JsonInstitutionLoader.Instance.Load(source, null);
+                var code = institution.GenerateAll();
+                var result = Compiler.Compile(code, "DefaultInstitution", out Institution TestEi);
+                var json = JsonConvert.SerializeObject(result);
+                await InvokeClientMethodToAllAsync("queryResult", queryId, json);
+            }
+            catch (Exception ex) {
+                if (ex.InnerException != null) {
+                    ex = ex.InnerException;
+                }
+                var result = new Compiler.CompilationResult {
+                    Success = false,
+                    Code = "Parsing Error",
+                    Errors = new [] {
+                        new Compiler.CompilationError {
+                            Code = new string[0],
+                            Line = 0,
+                            Message = ex.Message,
+                            Severity = "error"
+                        }
+                    }
+                };
+                var json = JsonConvert.SerializeObject(result);
+                await InvokeClientMethodToAllAsync("queryResult", queryId, json);
+            }
+        }
+        
 
         public async Task LoadInstitution1(string name)
         {

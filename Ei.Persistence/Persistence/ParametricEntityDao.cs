@@ -7,6 +7,8 @@ namespace Ei.Persistence
     {
         public List<ParameterDao> Properties { get; set; }
 
+        public string[] Validations { get; set; }
+
         public string Parent { get; set; }
 
         protected ParametricEntityDao() {

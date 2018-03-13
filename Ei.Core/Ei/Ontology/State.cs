@@ -12,6 +12,7 @@ namespace Ei.Ontology
     public class State : WorkflowPosition
     {
 
+        #region class Instance
         public class Instance : WorkflowPosition.PositionInstance
         {
             // fields
@@ -40,7 +41,7 @@ namespace Ei.Ontology
                     currentWorkflow.Close();
                     return ActionInfo.Ok;
                 }
-                
+
 
                 // handle timeout
 
@@ -84,8 +85,8 @@ namespace Ei.Ontology
 
                 workflow.State = connection.To;
             }
-        }
-
+        } 
+        #endregion
 
         // properties
 
@@ -94,8 +95,8 @@ namespace Ei.Ontology
 
         public bool Open { get; }
 
-        public Access EntryRules { get; }
-        public Access ExitRules { get; }
+        public Access EntryRules { get; private set; }
+        public Access ExitRules { get; private set; }
 
         public int Timeout { get; }
 
@@ -110,18 +111,30 @@ namespace Ei.Ontology
             Workflow workflow,
             bool open = false,
             int timeout = 0,
-            Access entryRules = null,
-            Access exitRules = null,
             bool isStart = false, 
             bool isEnd = false) : base(id, name, description, workflow) {
             this.Open = open;
-            this.EntryRules = entryRules;
-            this.ExitRules = exitRules;
-
             this.IsStart = isStart;
             this.IsEnd = isEnd;
-
             this.Timeout = timeout;
+        }
+
+        // ctor helpers
+
+        public State AllowEntry(AccessCondition condition) {
+            if (this.EntryRules == null) {
+                this.EntryRules = new Access();
+            }
+            this.EntryRules.Add(condition);
+            return this;
+        }
+
+        public State AllowExit(AccessCondition condition) {
+            if (this.ExitRules == null) {
+                this.ExitRules = new Access();
+            }
+            this.ExitRules.Add(condition);
+            return this;
         }
 
         // public methods

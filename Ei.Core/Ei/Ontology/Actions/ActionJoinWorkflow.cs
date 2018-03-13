@@ -7,7 +7,7 @@ using Ei.Runtime;
 
 namespace Ei.Ontology.Actions
 {
-    
+
 
     public class ActionJoinWorkflow : ActionBase
     {
@@ -19,20 +19,22 @@ namespace Ei.Ontology.Actions
             public static Parameters Instance = new Parameters();
 
             public int InstanceId { get; set; }
+            public int RunningInstances { get; set; }
 
-            public override ParameterState Parse(VariableInstance[] properties) {
-                var parameters = new Parameters();
+            public Parameters() {
+                this.InstanceId = -1;
+            }
+
+            public override void Parse(VariableInstance[] properties) {
+                base.Parse(properties);
 
                 foreach (var property in properties) {
                     switch (property.Name) {
                         case "InstanceId":
-                            parameters.InstanceId = int.Parse(property.Value);
+                            this.InstanceId = int.Parse(property.Value);
                             break;
-                        default:
-                            throw new Exception("Invalid Parameter" + property.Name);
                     }
                 }
-                return parameters;
             }
         }
 
@@ -48,12 +50,9 @@ namespace Ei.Ontology.Actions
         public List<int> Workflows { get; }
 
 
-        public Workflow.Instance TestWorkflow
-        {
-            get
-            {
-                if (this.testWorkflow == null)
-                {
+        public Workflow.Instance TestWorkflow {
+            get {
+                if (this.testWorkflow == null) {
                     this.testWorkflow = this.ei.CreateWorkflow(this.WorkflowId, null);
                 }
                 return this.testWorkflow;
@@ -62,27 +61,25 @@ namespace Ei.Ontology.Actions
 
         // ctor
 
-        public ActionJoinWorkflow(string id, Institution institution, string workflowId)
-            : base(institution, id)
-        {
+        public ActionJoinWorkflow(string id, Institution institution, string workflowId, Func<ParameterState> parameters)
+            : base(institution, id) {
             this.ei = institution;
+            this.CreateParameters = parameters ?? (() => new Parameters()); 
 
             // get the workflow
-            
+
             this.WorkflowId = workflowId;
             this.Workflows = new List<int>();
         }
 
-        public Workflow.Instance Create(Governor performer, ParameterState parameters = null)
-        {
+        public Workflow.Instance Create(Governor performer, ParameterState parameters = null) {
             //           Console.WriteLine("[THREAD] Creating workflow ...: " + Thread.CurrentThread.ManagedThreadId);
             this.workflow = this.ei.GetWorkflow(this.WorkflowId);
             var newWorkflow = this.ei.CreateWorkflow(this.WorkflowId, performer.Workflow);
 
             // initialise parameters
-            if (parameters != null)
-            {
-                newWorkflow.Resources.Merge(parameters);
+            if (parameters != null) {
+                parameters.CopyTo(newWorkflow.Resources);
             }
 
             // set owner to the agent that created this workflow
@@ -90,43 +87,39 @@ namespace Ei.Ontology.Actions
 
             this.Workflows.Add(newWorkflow.InstanceId);
 
-            if (Log.IsInfo) Log.Info(newWorkflow.Name, InstitutionCodes.WorkflowStarted, 
-                newWorkflow.Name, 
-                newWorkflow.Id, 
+            if (Log.IsInfo) Log.Info(newWorkflow.Name, InstitutionCodes.WorkflowStarted,
+                newWorkflow.Name,
+                newWorkflow.Id,
                 newWorkflow.ToString());
+
+            performer.Resources.CreatedInstanceId = newWorkflow.InstanceId;
 
             return newWorkflow;
         }
 
-        protected override IActionInfo PerformAction(Governor agent, Connection connection, ParameterState parameters)
-        {
+        protected override IActionInfo PerformAction(Governor agent, Connection connection, ParameterState parameters) {
             this.workflow = ei.GetWorkflow(this.WorkflowId);
             var joinParameters = parameters as ActionJoinWorkflow.Parameters;
-
-            // lazily load
-
-            if (this.Workflows.Count == 0)
-            {              
-                if (workflow.Static)
-                {
-                    this.Create(agent);
-                }
-            }
-
-            // handle static workflow
+            joinParameters.RunningInstances = this.Workflows.Count;
 
             Workflow.Instance workflowInstance = null;
 
-            if (this.Workflows.Count == 1 && this.workflow.Static)
-            {
-                workflowInstance = this.workflow.GetInstance(this.Workflows[0]); 
+            // 1. create a new workflow or join static workflow
+            if (joinParameters.InstanceId == -1) {
+                if (workflow.Static && this.Workflows.Count > 0) {
+                    workflowInstance = this.workflow.GetInstance(this.Workflows[0]);
+                }
+                else if (this.workflow.CreatePermissions == null 
+                    || this.workflow.CreatePermissions.CanAccess(agent.Resources, null, joinParameters)) { 
+                    workflowInstance = this.Create(agent, parameters);
+                } else {
+                    return ActionInfo.AccessDenied;
+                }
             }
 
-            // handle statefull workflow
+            // 2. join existing workflow
 
-            // 1. join existing workflow
-
-            else if (joinParameters.InstanceId >= 0) {
+            else {
                 var workflowInstanceId = joinParameters.InstanceId;
                 workflowInstance = this.workflow.GetInstance(workflowInstanceId);
 
@@ -139,7 +132,7 @@ namespace Ei.Ontology.Actions
 
                 // check access conditions
 
-                if (workflowInstance.Workflow.JoinPermissions != null && 
+                if (workflowInstance.Workflow.JoinPermissions != null &&
                     !workflowInstance.Workflow.JoinPermissions.CanAccess(agent.Resources, workflowInstance.Resources)) {
                     return ActionInfo.AccessDenied;
                 }
@@ -171,13 +164,9 @@ namespace Ei.Ontology.Actions
             return ActionInfo.Failed;
         }
 
-        public WorkflowInfo[] GetWorkflows(Governor governor)
-        {
+        public WorkflowInfo[] GetWorkflows(Governor governor) {
             return this.Workflows.Select(w => this.workflow.GetInstance(w).GetInfo(governor)).ToArray();
         }
 
-        public override ParameterState ParseParameters(VariableInstance[] properties) {
-            return Parameters.Instance.Parse(properties);
-        }
     }
 }

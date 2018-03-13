@@ -47,7 +47,7 @@
             var list = base.FilterByAccess(governor);
             list.AddRange(new List<VariableInstance> {
                 {{#each PublicProperties}}
-                new VariableInstance("{{Name}}", this.{{Name}}.ToString())
+                new VariableInstance("{{Name}}", this.{{Name}}.ToString()),
                 {{/each}}
             });
             return list;
@@ -74,14 +74,6 @@
             {{/each}}
 
             throw new Exception("Key does not exists: " + name);
-        }
-
-        public override ResourceState Merge(BaseState state) {
-            return this;
-        }
-
-        public override ResourceState NewInstance() {
-            return new {{ClassName}}.Store();
         }
 
         public override void ResetDirty() {

@@ -13,40 +13,53 @@ public class {{ClassName}} : Institution<{{ClassName}}.Store>
     }
     #endregion
 
-    // constructor
+    // constructor 
 
     public {{ClassName}}() : base("{{Id}}") {
         this.Name = "{{Name}}";
         this.Description = "{{Description}}";
 
-        // init organisations
-        {{#each Organisations}}
-        this.AddOrganisations(new {{ClassName}}());
-        {{/each}}
+        // init organisations 
+        this.AddOrganisations(new Organisation[] {
+            {{#each Organisations}}
+            new {{ClassName}}(),
+            {{/each}}
+        });
+        
 
-        // init components
-        {{#each Roles}}
-        this.AddRoles(new {{ClassName}}());
-        {{/each}}
+        // init roles
+        this.AddRoles(new Role[] {
+            {{#each Roles}}
+            new {{ClassName}}(),
+            {{/each}}
+        });
 
         // init workflows
-        {{#each Workflows}}
-        this.AddWorkflows(new {{ClassName}}());
-        {{/each}}
-       
+        this.AddWorkflows(new Workflow[] {
+            {{#each Workflows}}
+            new {{ClassName}}(this),
+            {{/each}}
+        });
+        
+        // set main workfloe
+        if (this.Workflows == null || this.Workflows.Count == 0) {
+            throw new Exception("You need to define at least one workflow!");
+        }
         this.MainWorkflowId = this.Workflows[0].Id;
 
         // init security
+
+        this.AuthenticationPermissions.Add(new AuthorisationInfo[] {
+            {{#each Authorisation}}
+            new AuthorisationInfo({{nullString User}}, {{nullString Password}}, {{nullString Organisation}}{{#each Groups}}, this.GroupById({{nullString OrganisationId}}, {{nullString RoleId}}){{/each}}),
+            {{/each}}
+        });
         
-        {{#each Authorisation}}
-        this.AuthenticationPermissions.Add(new AuthorisationInfo("{{User}}", "{{Password}}", "{{Organisation}}"{{#each Groups}}, this.GroupByName("{{OrganisationId}}", "{{RoleId}}"){{/each}}));
-        {{/each}}
 
         // init expressions
-
-        {{#each Expressions}}
-        this.AddExpressions(i => {{.}});
-        {{/each}}
+        {{#if Expressions}}
+        this.AddExpressions(i => { {{{ Expressions }}}; });
+        {{/if}}
         
     }
 

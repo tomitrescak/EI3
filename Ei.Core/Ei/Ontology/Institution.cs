@@ -16,7 +16,7 @@
     {
         public class InstitutionState
         {
-            private Institution ei;
+            private readonly Institution ei;
             public InstitutionState(Institution ei) {
                 this.ei = ei;
 
@@ -27,9 +27,9 @@
 
         #region Fields
         private int idProvider;
-        private List<Role> roles;
-        private List<Organisation> organisations;
-        private List<Workflow> workflows;
+        private readonly List<Role> roles;
+        private readonly List<Organisation> organisations;
+        private readonly List<Workflow> workflows;
         #endregion
 
         #region Properties
@@ -81,15 +81,15 @@
 
         // constructor helpers
 
-        public void AddRoles(params Role[] role) {
+        protected void AddRoles(params Role[] role) {
             this.roles.AddRange(role);
         }
 
-        public void AddOrganisations(params Organisation[] organisation) {
+        protected void AddOrganisations(params Organisation[] organisation) {
             this.organisations.AddRange(organisation);
         }
 
-        public void AddWorkflows(params Workflow[] workflows) {
+        protected void AddWorkflows(params Workflow[] workflows) {
             this.workflows.AddRange(workflows);
         }
 
@@ -154,6 +154,41 @@
             return null;
         }
 
+        public Group GroupById(params string[] role) {
+            if (role.Length == 1) {
+
+                if (this.Organisations.Count == 0) {
+                    throw new InstitutionException("You need to define at least one organisation");
+                }
+
+                var org = this.Organisations[0];
+                var rl = this.Roles.FirstOrDefault(w => w.Id == role[0].Trim());
+
+                if (rl == null) {
+                    throw new InstitutionException("Role does not exist: " + role[0]);
+                }
+
+                // role possibly does not exists
+                return rl == null ? null : new Group(org, rl);
+            }
+
+            if (role.Length == 2) {
+                var org = string.IsNullOrEmpty(role[0]) 
+                    ? this.Organisations[0]
+                    : this.Organisations.FirstOrDefault(w => w.Id == role[0].Trim());
+                if (org == null) {
+                    throw new InstitutionException("Organisation does not exist: " + role[0]);
+                }
+                var rl = this.Roles.FirstOrDefault(w => w.Id == role[1].Trim());
+                if (rl == null) {
+                    throw new InstitutionException("Role does not exist: " + role[1]);
+                }
+                return (rl == null || org == null) ? null : new Group(org, rl);
+            }
+
+            return null;
+        }
+
         public Group[] GroupsByName(params string[] roleNames) {
             var roleList = new Group[roleNames.Length / 2];
             for (int i = 0; i < roleNames.Length / 2; i++) {
@@ -192,16 +227,15 @@
         // fields
 
         private Timer expressionTimer;
-        private List<Action<T>> expressions;
+        private readonly List<Action<T>> expressions;
         // properties
 
-        public ReadOnlyCollection<Action<T>> Expressions { get;  }
+        public Action<T> Expression { get;  }
 
         // constructor
 
         protected Institution(string id) : base(id) {
             this.expressions = new List<Action<T>>();
-            this.Expressions = new ReadOnlyCollection<Action<T>>(this.expressions);
 
             this.Start();
         }
@@ -222,20 +256,18 @@
             this.Time.Start();
 
             // init expression evaluation
-            if (this.Expressions != null && this.Expressions.Count > 0) {
-                this.expressionTimer = new Timer {
-                    Interval = 100,
-                    AutoReset = true
-                };
+            if (this.Expression == null) return;
+            
+            this.expressionTimer = new Timer {
+                Interval = 100,
+                AutoReset = true
+            };
 
-                this.expressionTimer.Elapsed += (sender, args) => {
-                    foreach (var expression in this.Expressions) {
-                        expression((T)this.Resources);
-                    }
-                };
+            this.expressionTimer.Elapsed += (sender, args) => {
+                this.Expression((T)this.Resources);
+            };
 
-                this.expressionTimer.Start();
-            }
+            this.expressionTimer.Start();
         }
     }
 }

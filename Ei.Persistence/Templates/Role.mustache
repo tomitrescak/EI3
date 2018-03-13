@@ -1,11 +1,14 @@
 ﻿#region class {{ClassName}}
-class {{ClassName}}: Role {
+class {{ClassName}}: {{ParentClassName}} {
 
-    {{> Resources}}
+    {{#if Parent}}{{> ParentResources}}{{/if}}
+    {{^Parent}}{{> Resources}}{{/Parent}}
 
     public {{ClassName}}() : base("{{Id}}") {
         this.Name = "{{Name}}";
     }
+
+    public {{ClassName}}(string id) : base(id) { }
 
     public override SearchableState CreateState() {
         return new {{ClassName}}.Store();

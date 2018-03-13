@@ -1,23 +1,40 @@
-﻿namespace Ei.Persistence
+﻿using Newtonsoft.Json;
+using System.Linq;
+
+namespace Ei.Persistence
 {
     public class ConnectionDao
     {
+        public string Id { get; set; }
+
         public string[] Join { get; set; }
 
-        //public bool Stop { get; set; }
-        public string Id { get; set; }
-        public string Import { get; set; }
-
         public AccessConditionDao[] Access { get; set; }
-        public PostconditionDao[] Effects { get; set; }
 
-        public BacktrackDao Backtrack { get; set; }
-
-        public PostconditionDao[] GeneratedNestedEffects { get; set; }
+        public AccessConditionDao[] Effects { get; set; } 
 
         public string ActionId { get; set; }
 
         public int AllowLoops { get; set; }
+
+
+        // helpers
+
+        [JsonIgnore] 
+        public string AssignedActionId {
+            get {
+                InstitutionDao.Instance.CurrentAction =
+                    this.ActionId == null
+                        ? "ParameterState"
+                        : InstitutionDao.Instance.CurrentWorkflow.Actions.First(a => a.Id == this.ActionId).ParameterClassName;
+                return this.ActionId;
+            }
+        }
+
+        // public BacktrackDao Backtrack { get; set; }
+
+        // [JsonIgnore]
+        // public AccessConditionDao[] GeneratedNestedEffects { get; set; }
 
         public override string ToString()
         {

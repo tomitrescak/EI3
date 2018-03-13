@@ -37,6 +37,7 @@ namespace Ei.Runtime
             {
                 public SearchableState Organisation;
                 public SearchableState Role;
+                public GovernorState Agent;
             }
             private List<Group> groups;
             public int CreatedInstanceId;
@@ -57,7 +58,8 @@ namespace Ei.Runtime
 
                     this.groups.Add(new Group {
                         Organisation = organisation == -1 ? group.Organisation.Clone() : this.groups[organisation].Organisation,
-                        Role = role == -1 ? group.Role.Clone() : this.groups[role].Role
+                        Role = role == -1 ? group.Role.Clone() : this.groups[role].Role,
+                        Agent = this
                     });
                 }
             }
@@ -74,7 +76,10 @@ namespace Ei.Runtime
                     if (!addedRoles.ContainsKey(group.Role)) {
                         addedRoles.Add(group.Role, group.Role.CreateState());
                     }
-                    this.groups.Add(new Group { Organisation = group.Organisation.Resources, Role = addedRoles[group.Role] });
+                    this.groups.Add(new Group {
+                        Organisation = group.Organisation.Resources, 
+                        Role = addedRoles[group.Role]
+                    });
                 }
             }
 
@@ -231,16 +236,14 @@ namespace Ei.Runtime
                 this.Continue();
             }
 
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             if (result.IsOk) {
                 clone.Continue();
             }
         }
 
         public IActionInfo ExitWorkflow(string cloneName) {
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.ExitWorkflow() : result;
         }
 
@@ -268,14 +271,14 @@ namespace Ei.Runtime
                 this.Name,
                 oldWorkflow.Id,
                 oldWorkflow.Name,
-                newWorkflow != null ? newWorkflow.Id : null,
-                newWorkflow != null ? newWorkflow.Name : null);
+                newWorkflow?.Id,
+                newWorkflow?.Name);
 
             this.callbacks.ExitedWorkflow(
                 oldWorkflow.Id,
                 oldWorkflow.Name,
-                newWorkflow != null ? newWorkflow.Id : null,
-                newWorkflow != null ? newWorkflow.Name : null);
+                newWorkflow?.Id,
+                newWorkflow?.Name);
 
             // flow to output node of the context workflow node
             if (connection != null) {
@@ -292,8 +295,7 @@ namespace Ei.Runtime
         }
 
         public IActionInfo Move(string cloneName, string positionId) {
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.Move(positionId) : result;
         }
 
@@ -314,8 +316,7 @@ namespace Ei.Runtime
         }
 
         public IActionInfo PerformAction(string cloneName, string actionId, VariableInstance[] parameters) {
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.PerformAction(actionId, parameters) : result;
         }
 
@@ -353,7 +354,7 @@ namespace Ei.Runtime
                     this.Name,
                     this.Name,
                     activityId,
-                    parameters == null ? null : parameters.ToString());
+                    parameters?.ToString());
 
                 this.NotifyActivityFailed(this.Workflow, this.Name, activityId, parsedParameters);
             }
@@ -385,7 +386,7 @@ namespace Ei.Runtime
                     this.Name,
                     this.Name,
                     activityId,
-                    parameters == null ? null : parameters.ToString());
+                    parameters?.ToString());
 
                 this.NotifyActivityFailed(this.Workflow, this.Name, activityId, parameters);
             }
@@ -396,8 +397,7 @@ namespace Ei.Runtime
         }
 
         public WorkflowInfo[] GetWorkflowInfos(string cloneName, string activityId) {
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.GetWorkflowInfos(activityId) : new WorkflowInfo[0];
         }
 
@@ -420,8 +420,7 @@ namespace Ei.Runtime
         }
 
         public ActionBase[] FeasibleActions(string cloneName) {
-            Governor clone;
-            var result = this.FindClone(cloneName, out clone);
+            var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.FeasibleActions() : new ActionBase[0];
         }
 
@@ -678,10 +677,10 @@ namespace Ei.Runtime
                 }
 
                 // connection can contain EFFECTS (which are all postconditions from the contained workflow)
-                if (conn.GeneratedNestedEffects != null) {
+                if (conn.ExpectedEffects != null) { // TODO: Check why this used to be generated nested effects
                     // test each effect separately
 
-                    foreach (var effect in conn.GeneratedNestedEffects) {
+                    foreach (var effect in conn.ExpectedEffects) {
                         state = agentState.Clone();
                         effect.ApplyPostconditions(state, null, true);
 

@@ -1,4 +1,8 @@
-﻿namespace Ei.Tests.Steps
+﻿using Ei.Compilation;
+using Ei.Persistence.Json;
+using Microsoft.VisualStudio.TestPlatform.Common.DataCollection;
+
+namespace Ei.Tests.Steps
 {
     using System;
     using System.Collections.Generic;
@@ -44,6 +48,12 @@
             switch (path) {
                 case "InstitutionStart":
                     ei = new ConnectionTestEi();
+                    break;
+                case "ConnectionTest.json":
+                    var dao = JsonInstitutionLoader.Instance.LoadFromFile("Files/" + path);
+                    var code = dao.GenerateAll();
+                    var result = Compiler.Compile(code, "DefaultInstitution", out ei);
+                    Assert.True(result.Success);
                     break;
                 default:
                     throw new NotImplementedException($"Institution '{path}' is not implemented");

@@ -14,6 +14,13 @@ namespace Ei.Tests.Persistence
             var parent = new ClassDao {
                 Id = "1",
                 Name = "My Parent Class",
+                Properties = new List<ParameterDao> {
+                    new ParameterDao {
+                        Name = "ParentParam",
+                        Type = "int",
+                        DefaultValue = "2"
+                    }
+                }
             };
 
             var child = new ClassDao {
@@ -23,17 +30,23 @@ namespace Ei.Tests.Persistence
                 Parent = "MyParentClass",
                 Properties = new List<ParameterDao> {
                     new ParameterDao {
-                        Name = "ChildParame",
+                        Name = "ChildParam",
                         Type = "int",
-                        DefaultValue = "0"
+                        DefaultValue = "3"
                     }
                 }
             };
 
             var actual = parent.GenerateCode() + "\n" + child.GenerateCode();
 
-            Console.WriteLine(actual);
-            Assert.Null(Compiler.Compile(actual));
+            // Console.WriteLine(actual);
+
+            var result = Compiler.Compile(actual, "MyClass", out dynamic Activated);
+            Assert.True(result.Success);
+            Assert.Equal(Activated.ChildParam, 3);
+            Assert.Equal(Activated.ParentParam, 2);
+
+            
         }
     }
 }

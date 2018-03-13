@@ -1,6 +1,7 @@
 ﻿namespace Ei.Ontology.Actions
 {
     using Ei.Runtime;
+    using System;
 
     public abstract class ActionBase : Entity
     {
@@ -13,9 +14,16 @@
 
         // abstract methods
 
-        public virtual ParameterState ParseParameters(VariableInstance[] properties) {
+        public ParameterState ParseParameters(VariableInstance[] properties) {
+            if (this.CreateParameters != null) {
+                var parameters = this.CreateParameters();
+                parameters.Parse(properties);
+                return parameters;
+            }
             return null;
         }
+
+        public virtual Func<ParameterState> CreateParameters { get; set; }
 
         protected abstract IActionInfo PerformAction(Governor performer, Connection connection, ParameterState parameters);
 

@@ -85,14 +85,6 @@ namespace Ei.Tests.Bdd.Institutions
                 throw new Exception("Key does not exists: " + name);
             }
 
-            public override ResourceState Merge(BaseState state) {
-                return this;
-            }
-
-            public override ResourceState NewInstance() {
-                return new DefaultResources();
-            }
-
             public override void ResetDirty() {
             }
 
@@ -129,8 +121,9 @@ namespace Ei.Tests.Bdd.Institutions
             };
 
             public override SearchableState Clone(SearchableState cloneTo = null) {
-                var clone = new CitizenResources();
-                clone.ParentParameter = this.ParentParameter;
+                var clone = new CitizenResources {
+                    ParentParameter = this.ParentParameter
+                };
                 return clone;
             }
 
@@ -159,18 +152,6 @@ namespace Ei.Tests.Bdd.Institutions
                 throw new Exception("Key does not exists: " + name);
             }
 
-            public override ResourceState Merge(BaseState state) {
-
-                var typedState = (CitizenResources)state;
-                if (!typedState.ParentParameter.Equals(typedState.defaultValues[0])) {
-                    this.ParentParameter = typedState.ParentParameter;
-                }
-                return this;
-            }
-
-            public override ResourceState NewInstance() {
-                return new CitizenResources();
-            }
 
             public override void ResetDirty() {
                 this.defaultValues[0] = this.ParentParameter;
@@ -191,11 +172,11 @@ namespace Ei.Tests.Bdd.Institutions
 
     #region AccessFactory
     static class AccessFactory {
-        public static AccessCondition<Institution.InstitutionState, MainWorkflow.WorkflowState, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState> MainDefaultCitizen {
-            get { return new AccessCondition<Institution.InstitutionState, MainWorkflow.WorkflowState, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState>(); }
+        public static AccessCondition<Institution.InstitutionState, MainWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState> MainDefaultCitizen {
+            get { return new AccessCondition<Institution.InstitutionState, MainWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState>(); }
         }
-        public static AccessCondition<Institution.InstitutionState, SubWorkflow.Resources, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState> SubWorkflowDefaultCitizen {
-            get { return new AccessCondition<Institution.InstitutionState, SubWorkflow.Resources, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState>(); }
+        public static AccessCondition<Institution.InstitutionState, SubWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState> SubWorkflowDefaultCitizen {
+            get { return new AccessCondition<Institution.InstitutionState, SubWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, ParameterState>(); }
         }
     }
     #endregion
@@ -204,7 +185,9 @@ namespace Ei.Tests.Bdd.Institutions
     public class MainWorkflow : Workflow {
         // action parameters
 
-        class SubWorkflowParameters : ParameterState {
+        #region class SubWorkflowParameters : ParameterState
+        class SubWorkflowParameters : ParameterState
+        {
 
             int Granite { get; set; }
 
@@ -215,7 +198,7 @@ namespace Ei.Tests.Bdd.Institutions
                 return null;
             }
 
-            public override ParameterState Parse(VariableInstance[] properties) {
+            public override void Parse(VariableInstance[] properties) {
                 foreach (var property in properties) {
                     switch (property.Name) {
                         case "Granite":
@@ -225,9 +208,9 @@ namespace Ei.Tests.Bdd.Institutions
                             throw new Exception("Key not found: " + property.Name);
                     }
                 }
-                return this;
             }
-        }
+        } 
+        #endregion
 
         // properties
 
@@ -235,23 +218,31 @@ namespace Ei.Tests.Bdd.Institutions
 
         public override bool Static { get { return true; } }
 
+        public override Store CreateStore() {
+            return new Workflow.Store();
+        }
+
+        private int connId = 0;
+        private string ConnId => "Conn_" + connId++;
+
         // constructor
 
         public MainWorkflow(Institution ei, string id = "main") : base(ei, id) {
             this.Name = "Main";
 
             // add actions
-            var joinSubworkflow = new ActionJoinWorkflow("joinSubWorkflow", ei, SubWorkflow.ID);
-            var startSubWorkflow = new ActionStartWorkflow("startSubWorkflow", ei, joinSubworkflow, new SubWorkflowParameters());
+            var joinSubworkflow = new ActionJoinWorkflow("joinSubWorkflow", ei, SubWorkflow.ID, null);
+            // var startSubWorkflow = new ActionStartWorkflow("startSubWorkflow", ei, joinSubworkflow, new SubWorkflowParameters());
 
-            this.AddActions(
+            this.AddActions(new ActionBase [] {
                 joinSubworkflow,
-                startSubWorkflow
+                // startSubWorkflow,
+                }
             );
 
             // add states
-            var startState = new State("start", "Start", "", this, false, 0, null, null, true, false);
-            var endState = new State("end", "End", "", this, false, 0, null, null, false, true);
+            var startState = new State("start", "Start", "", this, false, 0, true, false);
+            var endState = new State("end", "End", "", this, false, 0, false, true);
             var incState = new State("inc", "Inc", "", this);
 
             var s1State = new State("s1", "Left", "", this);
@@ -261,6 +252,7 @@ namespace Ei.Tests.Bdd.Institutions
             var multiState = new State("actions", "Actions", "", this);
             var openState = new State("open", "Open", "", this, true);
             var workflowState = new State("workflow", "Workflow", "", this);
+            
             var split = new TransitionSplit("split", "Split", "", true, new[] { new[] { "s1", "Left" }, new[] { "s2", "Right" } }, this);
             var join = new TransitionJoin("join", "Join", "", this);
 
@@ -274,54 +266,54 @@ namespace Ei.Tests.Bdd.Institutions
 
             // add connections
 
-            this.Connect(startState, endState)
+            this.Connect(ConnId, startState, endState)
                 .Condition(AccessFactory.MainDefaultCitizen
                     .Allow(
-                        (i, w, o, r, a) => {
+                        (i, w, g, o, r, a) => {
                             return r.ParentParameter > 0;
                         }
                      ));
 
-            this.Connect(startState, incState)
+            this.Connect(ConnId, startState, incState, null, 4)
                 .Condition(AccessFactory.MainDefaultCitizen
-                    .Action((i, w, o, r, a) => {
+                    .Action((i, w, g, o, r, a) => {
                         r.ParentParameter++;
                     }));
 
-            this.Connect(incState, incState)
+            this.Connect(ConnId, incState, incState)
                 .Condition(AccessFactory.MainDefaultCitizen
                     .Action(
-                        (i, w, o, r, a) => {
+                        (i, w, g, o, r, a) => {
                             return r.ParentParameter == 0;
                         },
-                        (i, w, o, r, a) => {
+                        (i, w, g, o, r, a) => {
                             r.ParentParameter += 10;
                         })
-                    .Action((i, w, o, r, a) => {
+                    .Action((i, w, g, o, r, a) => {
                         return r.ParentParameter > 0;
-                    }, (i, w, o, r, a) => {
+                    }, (i, w, g, o, r, a) => {
                         r.ParentParameter = 0;
                     }));
 
-            this.Connect(incState, startState);
-            this.Connect(incState, null);
-            this.Connect(null, incState)
+            this.Connect(ConnId, incState, startState);
+            this.Connect(ConnId, incState, null);
+            this.Connect(ConnId, null, incState)
                 .Condition(AccessFactory.MainDefaultCitizen
-                    .Action((i, w, o, r, a) => {
+                    .Action((i, w, g, o, r, a) => {
                         r.ParentParameter = 3;
                     })
                 );
 
-            this.Connect(startState, startState, startSubWorkflow);
-            this.Connect(startState, incState, joinSubworkflow);
+            // this.Connect(startState, startState, startSubWorkflow);
+            this.Connect(ConnId, startState, incState, joinSubworkflow);
 
             // check joins
-            this.Connect(incState, split);
-            this.Connect(split, s1State);
-            this.Connect(split, s2State);
-            this.Connect(s1State, join);
-            this.Connect(s2State, join);
-            this.Connect(join, joinedState);
+            this.Connect(ConnId, incState, split);
+            this.Connect(ConnId, split, s1State);
+            this.Connect(ConnId, split, s2State);
+            this.Connect(ConnId, s1State, join);
+            this.Connect(ConnId, s2State, join);
+            this.Connect(ConnId, join, joinedState);
 
             // IMPORTANT: this needs to be called to initialise connections
             this.Init();
@@ -334,21 +326,18 @@ namespace Ei.Tests.Bdd.Institutions
         public const string ID = "subWorkflow";
 
         #region class Resources
-        public class Resources : WorkflowState {
+        public new class Store : Workflow.Store {
             public int Stones { get; set; }
-
-            public override ResourceState NewInstance() {
-                return new Resources();
-            }
         }
-        private Resources resources = new Resources();
         #endregion
 
-        class SendActionParameters : ParameterState {
+        #region class SendActionParameters
+        class SendActionParameters : ParameterState
+        {
             public int Stones { get; set; }
             public int Weight { get; set; }
 
-            public override ParameterState Parse(VariableInstance[] properties) {
+            public override void Parse(VariableInstance[] properties) {
                 foreach (var property in properties) {
                     switch (property.Name) {
                         case "Stones":
@@ -361,7 +350,6 @@ namespace Ei.Tests.Bdd.Institutions
                             throw new Exception("Key not found: " + property.Name);
                     }
                 }
-                return this;
             }
 
             public override string Validate() {
@@ -373,7 +361,8 @@ namespace Ei.Tests.Bdd.Institutions
                 }
                 return null;
             }
-        }
+        } 
+        #endregion
 
         // properties
 
@@ -381,7 +370,9 @@ namespace Ei.Tests.Bdd.Institutions
 
         public override bool Static { get { return false; } }
 
-        public override WorkflowState State { get { return this.resources; } }
+        public override Workflow.Store CreateStore() {
+            return new SubWorkflow.Store();
+        }
 
         // constructor
 
@@ -390,7 +381,7 @@ namespace Ei.Tests.Bdd.Institutions
 
             // define actions
 
-            var sendAction = new ActionMessage("send", ei, new SendActionParameters(), ei.GroupsByName("Default", "Citizen"), null);
+            var sendAction = new ActionMessage("send", ei, () => new SendActionParameters(), ei.GroupsByName("Default", "Citizen"), null);
             var timeout = new ActionTimeout("timeout", ei);
 
             this.AddActions(
@@ -399,11 +390,11 @@ namespace Ei.Tests.Bdd.Institutions
 
             // add states
 
-            var startState = new State("start", "Start", "", this, false, 0, null, null, true, false);
+            var startState = new State("start", "Start", "", this, false, 0, true, false);
             var waitState = new State("wait", "Wait", "", this, false, 1);
             var midState = new State("mid", "Mid", "", this);
             var yieldState = new State("yield", "Yield", "", this);
-            var endState = new State("end", "End", "", this, false, 0, null, null, false, true);
+            var endState = new State("end", "End", "", this, false, 0, false, true);
 
             this.AddStates(
                 startState,
@@ -412,20 +403,20 @@ namespace Ei.Tests.Bdd.Institutions
 
             // define connections
 
-            this.Connect(startState, midState, sendAction)
-                .Condition(new AccessCondition<Institution.InstitutionState, SubWorkflow.Resources, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, SendActionParameters>()
-                    .Action((i, w, o, r, a) => {
+            this.Connect("1", startState, midState, sendAction)
+                .Condition(new AccessCondition<Institution.InstitutionState, SubWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, SendActionParameters>()
+                    .Action((i, w, g, o, r, a) => {
                         w.Stones = a.Stones;
                     }));
 
-            this.Connect(midState, waitState);
-            this.Connect(waitState, yieldState, timeout);
-            this.Connect(yieldState, endState);
+            this.Connect("2", midState, waitState);
+            this.Connect("3", waitState, yieldState, timeout);
+            this.Connect("4", yieldState, endState);
 
             // define constraints
 
             this.AddJoinPermissions(AccessFactory.SubWorkflowDefaultCitizen
-                .Allow((i, w, o, r, a) => {
+                .Allow((i, w, g, o, r, a) => {
                     return w.AgentCount < 2 || w.Stones > 2;
                 })
             );

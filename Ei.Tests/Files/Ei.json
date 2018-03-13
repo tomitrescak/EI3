@@ -1,0 +1,439 @@
+﻿{
+  "Name": "Connection Test 1",
+  "Description": "Connection Test Description",
+  "x": 156,
+  "y": 110,
+  "Properties": [],
+  "Organisations": [
+    {
+      "Id": "default",
+      "Name": "Default",
+      "Icon": "🏠",
+      "x": 348,
+      "y": 124,
+      "Properties": [{ "Name": "1", "DefaultValue": "\"\"\"", "Type": "string" }],
+      "LinkPoints": []
+    },
+    {
+      "Id": "child",
+      "Name": "Child",
+      "Icon": "🧒",
+      "x": 356,
+      "y": 285,
+      "Properties": [],
+      "Parent": "default",
+      "LinkPoints": [
+        { "x": 390.4971466064453, "y": 183.4801025390625 },
+        { "x": 390.48292541503906, "y": 284.5028381347656 }
+      ]
+    },
+    {
+      "Id": "child-2",
+      "Name": "Grandchild",
+      "Icon": "👶🏿",
+      "x": 353,
+      "y": 421,
+      "Properties": [{ "Name": "mine", "DefaultValue": "\"1234\"", "Type": "string" }],
+      "Parent": "child",
+      "LinkPoints": [
+        { "x": 390.48292541503906, "y": 344.4886169433594 },
+        { "x": 407.4857940673828, "y": 420.49713134765625 }
+      ]
+    }
+  ],
+  "Roles": [
+    {
+      "Id": "citizen",
+      "Name": "Citizen",
+      "Icon": "👮🏼‍",
+      "x": 164,
+      "y": 113,
+      "Properties": [{ "Name": "ParentParameter", "DefaultValue": "0", "Type": "int" }],
+      "LinkPoints": []
+    },
+    {
+      "Id": "other-role",
+      "Name": "Other Role",
+      "Icon": "👨‍🌾",
+      "x": 87,
+      "y": 170,
+      "Properties": [],
+      "LinkPoints": []
+    }
+  ],
+  "Types": [
+    {
+      "Id": "parenttype",
+      "Name": "ParentType",
+      "x": 181,
+      "y": 138,
+      "Properties": [],
+      "LinkPoints": []
+    },
+    {
+      "Id": "childtype",
+      "Name": "Child Type",
+      "x": 203,
+      "y": 286,
+      "Properties": [{ "Name": "Child Property", "DefaultValue": "0", "Type": "int" }],
+      "Parent": "parenttype",
+      "LinkPoints": [
+        { "x": 235.4829559326172, "y": 197.4857940673828 },
+        { "x": 257.4857940673828, "y": 285.4971618652344 }
+      ]
+    }
+  ],
+  "Workflows": [
+    {
+      "Id": "main",
+      "Name": "Main",
+      "x": 58,
+      "y": 4,
+      "Properties": [],
+      "Stateless": true,
+      "Static": true,
+      "States": [
+        {
+          "Id": "start",
+          "x": 73.7172641103195,
+          "y": -161.15766353215733,
+          "IsStart": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "end",
+          "Name": "End",
+          "x": 72.82136916303108,
+          "y": 321.65538846361983,
+          "IsEnd": true,
+          "ShowRules": true,
+          "EntryRules": [
+            {
+              "Role": "citizen",
+              "Organisation": "default",
+              "Precondition": "p.wqweqe",
+              "Postconditions": [
+                { "Condition": "o.reerwer", "Action": "o.fwerwre\nqweqeqeqw\nqweqwe" },
+                { "Condition": "wewrewrwrwer", "Action": "" }
+              ]
+            }
+          ],
+          "ExitRules": []
+        },
+        {
+          "Id": "inc",
+          "x": -15.912789001408182,
+          "y": -92.60748583526862,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "s1",
+          "x": -63.92443029255785,
+          "y": 136.89275269657435,
+          "Timeout": "20",
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "s2",
+          "x": 129.01222802670503,
+          "y": 94.44957210382523,
+          "Open": false,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "joined",
+          "x": 243.50741507765423,
+          "y": 93.3245399657005,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "actions",
+          "x": 233.64622204562698,
+          "y": -28.74261086213179,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "open",
+          "x": 242.064016319104,
+          "y": -164.8811892377543,
+          "Open": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionJoinWorkflowDao",
+          "Id": "joinSubWorkflow",
+          "Name": "Sub Workflow",
+          "x": 129,
+          "y": 178,
+          "Properties": [{ "Name": "Granite", "DefaultValue": "0", "Type": "int" }],
+          "WorkflowId": "main"
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "mesaz",
+          "Name": "Mesaz To Me",
+          "x": 159,
+          "y": 128,
+          "Properties": [],
+          "NotifyAgents": ["eweertyu", "ertyu"],
+          "NotifyGroups": [
+            { "OrganisationId": "default", "RoleId": "citizen" },
+            { "OrganisationId": "child", "RoleId": "citizen" }
+          ]
+        },
+        { "$type": "ActionTimeoutDao", "Id": "timtim", "Name": "Timeout", "x": 98, "y": 113, "Properties": [] }
+      ],
+      "Transitions": [
+        {
+          "$type": "TransitionSplitDao",
+          "Id": "split",
+          "x": 53.411168113272666,
+          "y": 64.73466156263507,
+          "Horizontal": true,
+          "Names": [["s1", "east"], ["s2", "west"]],
+          "Shallow": true
+        },
+        {
+          "$type": "TransitionJoinDao",
+          "Id": "join",
+          "x": 50.983050847457605,
+          "y": 214.2542372881356,
+          "Horizontal": true
+        }
+      ],
+      "Connections": [
+        {
+          "Id": "c1",
+          "x": 30,
+          "y": 161,
+          "Join": ["join", "end"],
+          "Access": [],
+          "Effects": [],
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            { "x": 91.47725926767481, "y": 238.7357987507735 },
+            { "x": 90.31251510771195, "y": 316.15055499690595 }
+          ],
+          "SourcePort": "yield",
+          "TargetPort": "north",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c0",
+          "x": 27,
+          "y": 199,
+          "Join": ["", ""],
+          "Access": [
+            {
+              "Role": "citizen",
+              "Organisation": "default",
+              "Precondition": "a.bobo > 0",
+              "Postconditions": [
+                { "Condition": "condition", "Action": "ewrwrewr w e rwerwe rewrw erwrwer" }
+              ]
+            },
+            {
+              "Role": "other-role",
+              "Organisation": "default",
+              "Precondition": "booob < 3",
+              "Postconditions": []
+            }
+          ],
+          "Effects": [],
+          "ActionId": "mesaz",
+          "FreeFrom": { "x": -88.37623762376234, "y": -248.18811881188117 },
+          "FreeTo": { "x": 230.9135663627398, "y": -246.75153977800124 },
+          "LinkPoints": [
+            { "x": -72.86929593227877, "y": -232.68464041228341 },
+            { "x": 246.40624093537284, "y": -231.24998187074567 }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "RotateLabel": false,
+          "ActionDisplay": "full"
+        }
+      ],
+      "AllowCreate": [],
+      "AllowJoin": []
+    },
+    {
+      "Id": "subWorkflow",
+      "Name": "SubWorkflow",
+      "x": 16,
+      "y": 175,
+      "Properties": [
+        { "Name": "Stones", "DefaultValue": "0", "Type": "int" },
+        { "Name": "Granite", "DefaultValue": "0", "Type": "int" }
+      ],
+      "Stateless": false,
+      "Static": false,
+      "States": [
+        {
+          "Id": "start",
+          "Name": "Start",
+          "x": -30.530625279427838,
+          "y": 184.66321773008895,
+          "IsStart": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "end",
+          "Name": "End",
+          "x": -24.468672159417576,
+          "y": 543.4548764131064,
+          "IsEnd": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "wait",
+          "Name": "Wait",
+          "x": -33.954652870920526,
+          "y": 377.9572076387561,
+          "Timeout": 1,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "mid",
+          "Name": "Mid",
+          "x": -23.270358306188957,
+          "y": 308.7357092674205,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "yield",
+          "Name": "Yield",
+          "x": -29.479082838347164,
+          "y": 472.2821102382326,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionMessageDao",
+          "Id": "send",
+          "x": 58,
+          "y": 68,
+          "Properties": [
+            { "Name": "Stones", "DefaultValue": "0", "Type": "int" },
+            { "Name": "Weight", "DefaultValue": "0", "Type": "int" }
+          ],
+          "NotifyAgents": [],
+          "NotifyGroups": [{ "OrganisationId": "default", "RoleId": "citizen" }]
+        },
+        { "$type": "ActionTimeoutDao", "Id": "timeout", "x": 107, "y": 196, "Properties": [] }
+      ],
+      "Transitions": [],
+      "Connections": [
+        {
+          "Id": "1",
+          "x": 56,
+          "y": 162,
+          "Join": ["start", "mid"],
+          "Access": [
+            {
+              "Role": "citizen",
+              "Organisation": "default",
+              "Postconditions": [{ "Action": "w.Stones = a.Stones" }]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "send",
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            { "x": -6.036924474379596, "y": 218.15338733149508 },
+            { "x": -6.775569541781556, "y": 303.224427466299 }
+          ],
+          "SourcePort": "south",
+          "TargetPort": "north",
+          "ActionDisplay": "full"
+        },
+        {
+          "Id": "2",
+          "x": 152,
+          "y": 68,
+          "Join": ["mid", "wait"],
+          "Access": [],
+          "Effects": [],
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            { "x": -6.775569541781556, "y": 342.2158992991728 },
+            { "x": -5.454547358494178, "y": 372.45738309972427 }
+          ],
+          "SourcePort": "south",
+          "TargetPort": "north",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "3",
+          "x": 101,
+          "y": 171,
+          "Join": ["wait", "yield"],
+          "Access": [],
+          "Effects": [],
+          "ActionId": "timeout",
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            { "x": -5.454547358494178, "y": 411.448854932598 },
+            { "x": -4.985803342333027, "y": 466.7754887599571 }
+          ],
+          "SourcePort": "south",
+          "TargetPort": "north",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "4",
+          "x": 54,
+          "y": 188,
+          "Join": ["yield", "end"],
+          "Access": [],
+          "Effects": [],
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            { "x": -4.985803342333027, "y": 505.76702043121935 },
+            { "x": -6.960230808632046, "y": 537.9545084635416 }
+          ],
+          "SourcePort": "south",
+          "TargetPort": "north",
+          "ActionDisplay": "iconAndText"
+        }
+      ],
+      "AllowCreate": [],
+      "AllowJoin": [{ "Precondition": "w.AgentCount < 2 || w.Stones > 2", "Postconditions": [] }]
+    }
+  ],
+  "Authorisation": [
+    { "User": "user", "Groups": [{ "RoleId": "citizen" }] },
+    { "Organisation": "Default", "Password": "123", "Groups": [{ "RoleId": "citizen" }] }
+  ]
+}

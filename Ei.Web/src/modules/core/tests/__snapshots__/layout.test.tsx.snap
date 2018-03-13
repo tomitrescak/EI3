@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Layout @view renders child component 1`] = `"<div><div>Rendered</div><div>ee</div></div>"`;

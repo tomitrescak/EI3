@@ -10,5 +10,9 @@
     public class ActionStartWorkflowDao : ActionDao
     {
         public string Path { get; set; }
+
+        public override string GenerateConstructor(string holderClass) {
+            return $"new ActionStartWorkflow(\"{Id}\", ei)";
+        }
     }
 }

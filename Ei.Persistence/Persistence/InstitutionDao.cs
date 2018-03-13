@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Text;
 using Ei.Persistence.Actions;
 using Ei.Persistence.Templates;
@@ -11,7 +13,17 @@ namespace Ei.Persistence
     {
         public static InstitutionDao Instance;
 
-        public override string ClassName => base.ClassName + "Institution";
+        [JsonIgnore]
+        public override string ClassName => "DefaultInstitution";
+        
+        [JsonIgnore]
+        public OrganisationDao DefaultOrganisation { get; private set; }
+
+        [JsonIgnore]
+        public WorkflowDao CurrentWorkflow { get; set; }
+
+        [JsonIgnore]
+        public string CurrentWorkflowClass => this.CurrentWorkflow.ClassName;
 
         public List<ClassDao> Types { get; set; }
          
@@ -19,7 +31,7 @@ namespace Ei.Persistence
         
         public List<OrganisationDao> Organisations { get; set; }
 
-        public List<string> Expressions { get; set; } 
+        public string Expressions { get; set; } 
 
         public List<WorkflowDao> Workflows { get; set; }
 
@@ -29,10 +41,17 @@ namespace Ei.Persistence
 
         public string InitialWorkflow { get; set; }
 
+        public string CurrentAction { get; internal set; }
+
         // HELPERS
 
-        [JsonIgnore]
-        public OrganisationDao DefaultOrganisation { get; private set; }
+        public OrganisationDao OrganisationById(string id) {
+            return this.Organisations.Find(o => o.Id == id);
+        }
+
+        public RoleDao RoleById(string id) {
+            return this.Roles.Find(o => o.Id == id);
+        }
 
         public InstitutionDao()
         {
@@ -47,14 +66,30 @@ namespace Ei.Persistence
         public string GenerateAll() {
             var sb = new StringBuilder();
 
-           
+            sb.AppendLine(CodeGenerator.Institution(this));
+
             this.Roles.ForEach(o => sb.AppendLine(o.GenerateCode()));
             this.Organisations.ForEach(o => sb.AppendLine(o.GenerateCode()));
+            this.Workflows.ForEach(o => sb.AppendLine(o.GenerateCode()));
 
+            // temporary solution
+
+            File.WriteAllText("/Users/tomi/Github/apps/Ei/Generated.cs", @"
+using Ei;
+using Ei.Ontology;
+using Ei.Ontology.Actions;
+using Ei.Ontology.Transitions;
+using Ei.Runtime;
+using Ei.Runtime.Planning;
+using System;
+using System.Collections.Generic;
+
+" + sb.ToString());
+            
             return sb.ToString();
         }
 
-        public string GenerateCode() {
+        public override string GenerateCode() {
             return CodeGenerator.Institution(this);
         }
     }

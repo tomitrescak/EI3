@@ -383,7 +383,7 @@ namespace Ei.Runtime.Planning
                     }
 
                     // first add the exit workflow action
-                    plan.Add(new AStarNode(new Connection( null, null, null, new ActionExitWorkflow())));
+                    plan.Add(new AStarNode(new Connection(null, null, null, null, new ActionExitWorkflow())));
 
                     // reverse this plan
                     nestedPlan.Reverse();

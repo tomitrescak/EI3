@@ -1,0 +1,82 @@
+﻿#region class {{ClassName}}
+public class {{ClassName}} : Workflow {
+
+    // store
+    #region Store
+    public new class Store : Workflow.Store {
+        {{#each Properties}}
+        public {{Type}} {{Name}} { get; set; }
+        {{/each}} 
+    }
+    #endregion
+
+    // workflow actions
+
+    #region Action Parameters
+    {{#each Actions}}{{ generateParameters . ../ClassName }}{{/each}}   
+    #endregion
+
+    // abstract implementation
+
+    public override bool Stateless => {{ lowerCase Stateless }};
+    public override bool Static => {{ lowerCase Static }};
+    public override Workflow.Store CreateStore() {
+        return new {{ClassName}}.Store();
+    }
+
+    // constructor
+
+    public {{ClassName}}(): this(null) { }
+
+    public {{ClassName}}(Institution ei) : base(ei, "{{ Id }}") {
+        this.Name = "{{Name}}";
+        this.Description = "{{Description}}";
+
+        // actions
+        this.AddActions(new ActionBase [] {
+            {{#each Actions}}
+            {{ generateConstructor . ../ClassName }},
+            {{/each}}   
+        });
+
+        // states
+
+        this.AddStates(new State[] {
+            {{#each States}}
+            {{ generate . .. }},
+            {{/each}}
+        });
+
+        // transitions
+
+        this.AddTransitions(new Transition[] {
+            {{#each Transitions}}
+            {{ generate . .. }},
+            {{/each}}
+        });
+
+        // connections
+        {{#each Connections }}
+        this.Connect("{{Id}}", this.GetPosition("{{Join.0}}"), this.GetPosition("{{Join.1}}"), this.GetAction("{{ AssignedActionId }}"), {{ AllowLoops }}){{#each Access}}
+              .Condition({{> Access .}}){{/each}}{{#if Effects }}
+              .AddEffects(new AccessCondition[] { {{#each Effects}}
+                  {{>Access}}, {{/each}} }){{/if}};
+            
+        {{/each}}
+
+        // create permissions
+        {{#each AllowCreate}}
+        this.AddCreatePermissions({{> Access}});
+        {{/each}}
+
+        // entry permissions
+        {{#each AllowJoin}}
+        this.AddJoinPermissions({{> Access}});
+        {{/each}}
+
+        // IMPORTANT: this needs to be called to initialise connections
+
+        this.Init();
+    }
+}
+#endregion

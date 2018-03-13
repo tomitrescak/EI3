@@ -24,5 +24,17 @@ namespace Ei.Tests.Persistence
 
             Assert.Equal("Fishing", institution.Name);
         }
+        
+        [Fact]
+        public void LoadFromEiFile() {
+            var institution = JsonInstitutionLoader.Instance.LoadFromFile("Files/Ei.json");
+
+            Assert.Equal(2, institution.Workflows.Count);
+
+            var w = institution.Workflows[1];
+            Assert.Equal(4, w.Connections.Length);
+
+            Assert.Equal("Connection Test 1", institution.Name);
+        }
     }
 }

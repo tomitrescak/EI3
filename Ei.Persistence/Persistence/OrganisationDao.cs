@@ -19,8 +19,6 @@ namespace Ei.Persistence
             this.Parent != null && InstitutionDao.Instance != null 
             ? InstitutionDao.Instance.Organisations.Find(o => o.Id == this.Parent).ClassName
             : "Organisation";
-  
-        public object Assert { get; private set; }
 
         public string GenerateCode() {
             return CodeGenerator.Organisation(this);

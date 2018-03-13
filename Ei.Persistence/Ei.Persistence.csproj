@@ -5,17 +5,42 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Templates\Access.mustache" />
     <None Remove="Templates\Authorisation.mustache" />
     <None Remove="Templates\Class.mustache" />
     <None Remove="Templates\Institution.mustache" />
     <None Remove="Templates\Organisation.mustache" />
+    <None Remove="Templates\Parameters.mustache" />
     <None Remove="Templates\ParentResources.mustache" />
     <None Remove="Templates\Resources.mustache" />
     <None Remove="Templates\Role.mustache" />
+    <None Remove="Templates\State.mustache" />
+    <None Remove="Templates\TransitionBinaryDecision.mustache" />
+    <None Remove="Templates\TransitionJoin.mustache" />
+    <None Remove="Templates\TransitionSplit.mustache" />
+    <None Remove="Templates\Workflow.mustache" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Templates\Access.mustache">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\TransitionBinaryDecision.mustache">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\TransitionJoin.mustache">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\TransitionSplit.mustache">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\State.mustache">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Templates\Authorisation.mustache">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\Parameters.mustache">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Templates\Class.mustache">
@@ -34,6 +59,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Templates\Role.mustache">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\Workflow.mustache">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
