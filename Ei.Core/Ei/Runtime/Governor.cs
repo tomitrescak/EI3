@@ -36,7 +36,7 @@ namespace Ei.Runtime
             public struct Group
             {
                 public SearchableState Organisation;
-                public SearchableState Role;
+                public RoleState Role;
             }
             private List<Group> groups;
             public int CreatedInstanceId;
@@ -74,7 +74,10 @@ namespace Ei.Runtime
                     if (!addedRoles.ContainsKey(group.Role)) {
                         addedRoles.Add(group.Role, group.Role.CreateState());
                     }
-                    this.groups.Add(new Group { Organisation = group.Organisation.Resources, Role = addedRoles[group.Role] });
+                    this.groups.Add(new Group {
+                        Organisation = group.Organisation.Resources, 
+                        Role = addedRoles[group.Role]
+                    });
                 }
             }
 

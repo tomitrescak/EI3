@@ -74,9 +74,21 @@ namespace Ei.Server
                 var json = JsonConvert.SerializeObject(result);
                 await InvokeClientMethodToAllAsync("queryResult", queryId, json);
             }
-            catch (Exception ex)
-            {
-                await InvokeClientMethodToAllAsync("queryResult", queryId, "{ \"result\": \"" + ex.Message + "\"}");
+            catch (Exception ex) {
+                var result = new Compiler.CompilationResult {
+                    Success = false,
+                    Code = "Parsing Error",
+                    Errors = new [] {
+                        new Compiler.CompilationError {
+                            Code = new string[0],
+                            Line = 0,
+                            Message = ex.Message,
+                            Severity = "error"
+                        }
+                    }
+                };
+                var json = JsonConvert.SerializeObject(result);
+                await InvokeClientMethodToAllAsync("queryResult", queryId, json);
             }
         }
         

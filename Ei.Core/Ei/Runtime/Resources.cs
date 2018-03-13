@@ -47,6 +47,11 @@ namespace Ei.Runtime
 
         public abstract GoalState[] ToGoalState();
     }
+    
+    public abstract class RoleState : SearchableState
+    {
+        public abstract Governor.GovernorState Agent { get; }
+    }
 
     public class EmptyResources : SearchableState
     {

@@ -1,8 +1,8 @@
 ﻿#region class {{ClassName}}
 class {{ClassName}}: {{ParentClassName}} {
 
-{{#if Parent}}{{> ParentResources}}{{/if}}
-{{^Parent}}{{> Resources}}{{/Parent}}
+    {{#if Parent}}{{> ParentResources}}{{/if}}
+    {{^Parent}}{{> Resources}}{{/Parent}}
 
     public {{ClassName}}() : base("{{Id}}") {
         this.Name = "{{Name}}";
