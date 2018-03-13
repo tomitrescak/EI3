@@ -80,7 +80,7 @@ export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: Det
     <>
       <Accordion.Title active={active} index={index} onClick={handleClick}>
         <Icon name="dropdown" />
-        <Icon name="sitemap" />
+        {/* <Icon name="sitemap" /> */}
         {workflow.Name}
         <Button
           to={`/workflows/${workflow.Name.toUrlName()}/${workflow.Id.toUrlName()}`}
@@ -128,6 +128,7 @@ export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: Det
             viewAction={ei.store.viewStore.showTransitionClick}
             createAction={workflow.createTransition}
             ei={ei}
+            showId={true}
           />
 
           <WorkflowComponentList
@@ -139,6 +140,8 @@ export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: Det
             route="connection"
             viewAction={ei.store.viewStore.showConnectionClick}
             ei={ei}
+            showId={true}
+            createAction={workflow.addConnection}
           />
 
         </Accordion>

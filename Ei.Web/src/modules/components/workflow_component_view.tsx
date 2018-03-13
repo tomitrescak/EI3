@@ -3,6 +3,7 @@ import * as React from 'react';
 import { IObservableArray } from 'mobx';
 import { observer } from 'mobx-react';
 import { Accordion, Button, Icon, Label, List } from 'semantic-ui-react';
+import { style } from 'typestyle';
 
 import { Link } from '../../config/router';
 import { AccordionHandler } from '../../config/store';
@@ -12,6 +13,7 @@ import { Entity, entitySort } from '../ei/entity_model';
 import { Workflow } from '../ei/workflow_model';
 import { accordionButton } from './hierarchic_entity_view';
 import { accordionContent } from './workflow_list_view';
+
 
 interface WorkflowElementProps {
   workflow: Workflow;
@@ -23,8 +25,11 @@ interface WorkflowElementProps {
   viewAction: any;
   createAction?: any;
   ei: Ei;
+  showId?: boolean;
 }
 let entity: Entity;
+
+let idLabel = style({ color: 'grey', fontSize: '9px', float: 'right', marginRight: '12px'})
 
 export const WorkflowComponentList = observer(
   ({
@@ -37,6 +42,7 @@ export const WorkflowComponentList = observer(
     title,
     viewAction,
     workflow,
+    showId,
   }: WorkflowElementProps) => (
     <>
       <Accordion.Title active={handler.isActive(index)} index={index} onClick={handler.handleClick}>
@@ -71,7 +77,7 @@ export const WorkflowComponentList = observer(
               data-id={entity.Id}
             >
               <IconView entity={entity} />
-              {entity.Name || entity.Id}
+              {entity.Name || entity.Id} { showId && <span className={idLabel}>[{entity.Id}]</span>}
             </List.Item>
           </For>
         </List>

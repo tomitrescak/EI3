@@ -14,7 +14,9 @@ export class ParametricEntity extends Entity {
   constructor(model: Partial<ParametricEntityDao>, allowEditIcon = false) {
     super(model, allowEditIcon);
     this.Properties = observable(
-      ((model && model.Properties) || emptyProperties).map(p => new Property(p))
+      ((model && model.Properties) || emptyProperties)
+        .map(p => new Property(p))
+        .sort((a, b) => (a.Name < b.Name ? -1 : 1))
     );
   }
 

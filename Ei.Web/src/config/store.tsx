@@ -72,7 +72,7 @@ export class StoreModel {
     }
   }
 
-  createAccordionHandler(id: string) {
+  createAccordionHandler(id: string, openedNodes: number[] = []) {
     // we store all in local storage
 
     if (this.storedHandlers == null) {
@@ -80,7 +80,7 @@ export class StoreModel {
       this.storedHandlers = storedString != null ? JSON.parse(storedString) : {};
     }
     if (this.storedHandlers[id] == null) {
-      this.storedHandlers[id] = [];
+      this.storedHandlers[id] = openedNodes;
     }
     let storedIndices = this.storedHandlers[id];
     let activeIndices = observable(storedIndices);

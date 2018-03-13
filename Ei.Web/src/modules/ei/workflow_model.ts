@@ -4,6 +4,7 @@ import { DiagramModel } from 'storm-react-diagrams';
 
 import { context } from '../../config/context';
 import { Ui } from '../../helpers/client_helpers';
+import { WorkflowLinkModel } from '../diagrams/model/workflow/workflow_link_model';
 import { AccessCondition, AccessConditionDao } from './access_model';
 import {
   Action,
@@ -283,6 +284,16 @@ export class Workflow extends ParametricEntity {
 
     Ui.history.step();
   };
+
+  @action addConnection = (e: any) => {
+    e.stopPropagation();
+    
+    const connection = this.createConnection();
+    connection.link = new WorkflowLinkModel(connection, this);
+    connection.update();
+
+    this.Connections.push(connection);
+  }
 
   createConnection = () => {
 

@@ -73,7 +73,7 @@ export class Connection extends Entity {
     this.Access = observable((connection.Access || []).map(a => new AccessCondition(a)));
     this.Effects = observable((connection.Effects || []).map(a => new AccessCondition(a)));
     this.ActionId = connection.ActionId;
-    this.AllowLoops = connection.AllowLoops;
+    this.AllowLoops = connection.AllowLoops || 0;
     this.RotateLabel = connection.RotateLabel;
     this.ActionDisplay = connection.ActionDisplay || ActionDisplayType.IconAndText;
 
@@ -137,6 +137,9 @@ export class Connection extends Entity {
       this.Name = `${fromPosition ? fromPosition.Name : '[Open]'} → ${toPosition ? toPosition.Name : '[Open]'}`;
     }
 
+    let x: number;
+    let y: number;
+
     // free joints are displayed as separate nodes
     if (fromPosition) {
       if (this.link.sourcePort == null) {
@@ -148,7 +151,9 @@ export class Connection extends Entity {
     } else {
       this.fromJoint = new FreeJoint(workflow);
       const to = toPosition ? { x: toPosition.x, y: toPosition.y } : random;
-      const { x, y } = connection.FreeFrom ? connection.FreeFrom : { x: to.x - 60, y: to.y };
+      x = connection.FreeFrom ? connection.FreeFrom.x : to.x - 60;
+      y = connection.FreeFrom ? connection.FreeFrom.y: to.y;
+
       this.fromJoint.setPosition(x, y);
       this.link.setSourcePort(this.fromJoint.getPort('left'));
     }
@@ -163,9 +168,14 @@ export class Connection extends Entity {
       this.toJoint = new FreeJoint(workflow);
       const from = fromPosition ? { x: fromPosition.x, y: fromPosition.y } : random;
       const point = this.link.points[1];
-      const { x, y } = connection.FreeTo
-        ? connection.FreeTo
-        : point ? point : { x: from.x + 80, y: from.y };
+      const hasPoint = point && (point.x !== 0 || point.y !== 0);
+
+      x = connection.FreeTo ? connection.FreeTo.x : (hasPoint ? point.x : from.x + 60);
+      y = connection.FreeTo ? connection.FreeTo.y: (hasPoint ? point.y : from.y);
+
+      // const { x, y } = connection.FreeTo
+      //   ? connection.FreeTo
+      //   : (point ? point : { x: from.x + 80, y: from.y });
       this.toJoint.setPosition(x, y);
       this.link.setTargetPort(this.toJoint.getPort('left'));
     }

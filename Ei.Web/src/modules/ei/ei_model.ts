@@ -162,6 +162,12 @@ export class Ei extends ParametricEntity {
     return this.Roles.map(w => ({ text: w.Name, value: w.Id }));
   }
 
+  editorHeight(value: string) {
+    let lines = (value || '').split('\n').length;
+    let height = (lines) * 18 + 5;
+    return height < 100 ? 100 : height;
+  }
+
   roleName(id: string) {
     let entity = this.Roles.find(r => r.Id === id);
     return entity ? entity.Name : '<Role Deleted>';
@@ -178,8 +184,9 @@ export class Ei extends ParametricEntity {
     autorun(() => {
       if (observer.loading) {
         // console.log('Compiling ...');
-      } else {
-        const result = observer.data.CompileInstitution;
+      } else {     
+        let result = observer.data.CompileInstitution;
+
         this.store.compiledCode = result.Code;
         this.store.errors.replace(result.Errors ? result.Errors : empty);
         this.store.compiling = false;

@@ -64,6 +64,10 @@ export class PropertyView extends React.Component<Props> {
     }
   };
 
+  sort = () => {
+    this.props.owner.Properties.sort((a, b) => a.Name < b.Name ? -1 : 1);
+  }
+
   render() {
     return (
       <>
@@ -89,6 +93,15 @@ export class PropertyView extends React.Component<Props> {
           icon="plus"
           labelPosition="left"
           onClick={this.addField}
+        />
+
+        <Button
+          type="button"
+          floated="right"
+          title="Sort"
+          default
+          icon="sort"
+          onClick={this.sort}
         />
       </>
     );

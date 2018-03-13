@@ -45,7 +45,7 @@ export class Entity extends FormNodeStore {
   deselect() { /**/ }
 
   protected randomPosition() {
-    return Math.floor(Math.random() * 200 + 1);
+    return Math.floor(Math.random() * -100 + 1);
   }
 
   get safeName() {

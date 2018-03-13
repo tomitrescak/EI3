@@ -43,10 +43,10 @@ export class WorkflowEditor extends React.Component<Props> {
         <PropertyView owner={workflow} types={ei.types} /> 
 
         <Header as="h4" icon="legal" content="Allow Create" dividing />
-        <AccessEditor ei={ei} access={workflow.AllowCreate} name={'allow_create_' + workflow.Id} />
+        <AccessEditor ei={ei} access={workflow.AllowCreate} name={'allow_create_' + workflow.Id} workflow={workflow} />
 
         <Header as="h4" icon="legal" content="Allow Join" />
-        <AccessEditor ei={ei} access={workflow.AllowJoin} name={'allow_join_' + workflow.Id} />
+        <AccessEditor ei={ei} access={workflow.AllowJoin} name={'allow_join_' + workflow.Id} workflow={workflow} />
 
         
 
@@ -59,6 +59,7 @@ export class WorkflowEditor extends React.Component<Props> {
               content="Delete"
               labelPosition="left"
               color="red"
+              type="button"
               onClick={workflow.delete}
             />
           </div>

@@ -58,6 +58,11 @@ export class WorkflowView extends React.Component<Props> {
     model.setGridSize(10);
     model.version;
 
+    let workflow = this.workflow;
+    if (!workflow) {
+      return <div>Workflow Deleted!</div>
+    }
+
     // add states
     for (let node of this.workflow.States) {
       model.addNode(node);
@@ -93,8 +98,8 @@ export class WorkflowView extends React.Component<Props> {
     });
 
     // set offsets
-    const currentOffsetX = localStorage.getItem(`EntityDiagram.Workflow.${this.props.id}.offsetX`);
-    const currentOffsetY = localStorage.getItem(`EntityDiagram.Workflow.${this.props.id}.offsetY`);
+    const currentOffsetX = localStorage.getItem(`EntityDiagram.Workflow.${this.props.id}.offsetX`) || '200';
+    const currentOffsetY = localStorage.getItem(`EntityDiagram.Workflow.${this.props.id}.offsetY`) || '200';
     const currentZoom = localStorage.getItem(`EntityDiagram.Workflow.${this.props.id}.zoom`);
     if (currentOffsetX) {
       model.setOffset(parseInt(currentOffsetX, 10), parseInt(currentOffsetY, 10));

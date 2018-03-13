@@ -3,7 +3,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 
 import { Checkbox, field, Form, FormState, Label, Select, TextArea } from 'semantic-ui-mobx';
-import { Accordion, Button, Icon, Segment } from 'semantic-ui-react';
+import Header, { Accordion, Button, Icon, Label as SLabel, Popup, Segment } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { AccordionHandler } from '../../config/store';
@@ -175,7 +175,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
             {!hidePreconditions && (
               <Segment tertiary={true} attached as="h5" icon="legal">
                 <Icon name="legal" />
-                Precondition
+                <Popup trigger={<span>Precondition</span>} content={<Info />} />
                 <div style={{ float: 'right' }}>
                   <Checkbox owner={this.accessState.fields.showPrecondition} label="Show" />
                 </div>
@@ -187,7 +187,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                   <CodeEditor
                     update={this.actionUpdate}
                     value={this.actionValue}
-                    height={100}
+                    height={ei.editorHeight(this.actionValue())}
                     i={ei.Properties}
                     w={workflow && workflow.Properties}
                     o={organisation.Properties}
@@ -199,7 +199,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
             {!hideActionCondition && (
               <Segment tertiary attached as="h5" icon="legal">
                 <Icon name="legal" />
-                Postconditions
+                <Popup trigger={<span>Postconditions</span>} content={<Info />} />
                 <div style={{ float: 'right' }}>
                   <Checkbox owner={this.accessState.fields.showPostcondition} label="Show All" />
                 </div>
@@ -238,6 +238,20 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
     );
   }
 }
+
+const Info = () => (
+  <div>
+    <h5 style={{ borderBottom: 'solid 1px #cdcdcd'}}>Parameters</h5>
+    <ul style={{margin: '0px', paddingLeft: '20px'}}>
+      <li>i: Institution</li>
+      <li>w: Workflow</li>
+      <li>g: Governor</li>
+      <li>o: Organisation</li>
+      <li>r: Role</li>
+      <li>a: Action</li>
+    </ul>
+  </div>
+);
 
 interface PostconditionProps {
   ei: Ei;
@@ -292,7 +306,7 @@ export class PostconditionView extends React.Component<PostconditionProps> {
                 <CodeEditor
                   update={this.conditionUpdate}
                   value={this.conditionValue}
-                  height={100}
+                  height={ei.editorHeight(this.conditionValue())}
                   i={ei.Properties}
                   w={workflow && workflow.Properties}
                   o={organisation.Properties}
@@ -311,7 +325,7 @@ export class PostconditionView extends React.Component<PostconditionProps> {
               <CodeEditor
                 update={this.actionUpdate}
                 value={this.actionValue}
-                height={100}
+                height={ei.editorHeight(this.actionValue())}
                 i={ei.Properties}
                 w={workflow && workflow.Properties}
                 o={organisation.Properties}

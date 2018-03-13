@@ -174,7 +174,7 @@ export class ConnectionEditor extends React.Component<Props> {
 
     this.connection = connection;
 
-    const action = connection.workflow.Actions.find(a => a.Id === connection.ActionId);
+    const workflowAction = connection.workflow.Actions.find(a => a.Id === connection.ActionId);
 
     let fromOptions = emptyOptions;
     switch (connection.fromElementType) {
@@ -202,7 +202,7 @@ export class ConnectionEditor extends React.Component<Props> {
         break;
     }
 
-    let handler = this.props.context.store.createAccordionHandler('Connection_' + this.props.id);
+    let handler = this.props.context.store.createAccordionHandler('Connection_' + this.props.id, [0]);
 
     return (
       <Form className={limited}>
@@ -319,7 +319,7 @@ export class ConnectionEditor extends React.Component<Props> {
               access={connection.Access}
               name={'state_entry_' + connection.Id}
               workflow={connection.workflow}
-              action={action}
+              action={workflowAction}
             />
           </Accordion.Content>
 
@@ -340,7 +340,7 @@ export class ConnectionEditor extends React.Component<Props> {
               hideActionCondition={true}
               hidePreconditions={true}
               workflow={connection.workflow}
-              action={action}
+              action={workflowAction}
             />
           </Accordion.Content>
         </Accordion>
