@@ -1,3 +1,3 @@
 ﻿new AccessCondition<{{InstitutionStore}}, {{WorkflowStore}}, {{OrganisationStore}}, {{RoleStore}}, {{ParameterStore}}>(){{#if Precondition}}
-                  .Allow((i, w, o, r, a) => { {{{ Precondition }}} }){{/if}}{{#each Postconditions}}
-                  .Action({{#if Condition}}(i, w, o, r, a) => { {{{ Condition }}} }, {{/if}}(i, w, o, r, a) => { {{{ Action }}}; } ){{/each}}
+                  .Allow((i, w, g, o, r, a) => { {{{ Precondition }}} }){{/if}}{{#each Postconditions}}
+                  .Action({{#if Condition}}(i, w, g, o, r, a) => { {{{ Condition }}} }, {{/if}}(i, w, g, o, r, a) => { {{{ Action }}}; } ){{/each}}

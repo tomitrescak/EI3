@@ -75,6 +75,9 @@ namespace Ei.Server
                 await InvokeClientMethodToAllAsync("queryResult", queryId, json);
             }
             catch (Exception ex) {
+                if (ex.InnerException != null) {
+                    ex = ex.InnerException;
+                }
                 var result = new Compiler.CompilationResult {
                     Success = false,
                     Code = "Parsing Error",

@@ -92,16 +92,16 @@
     }
 
 
-    public class AccessCondition<I, W, O, G, A> : AccessCondition
+    public class AccessCondition<I, W, O, R, A> : AccessCondition
         where I : Institution.InstitutionState
         where W : Workflow.Store
         where O : SearchableState
-        where G : SearchableState
+        where R : SearchableState
         where A : ParameterState
     {
 
-        public delegate bool Precondition(I institutionState, W workflowState, O organisationState, G groupState, A actionParameters = null);
-        public delegate void Postcondition(I institutionState, W workflowState, O organisationState, G groupState, A actionParameters = null);
+        public delegate bool Precondition(I institutionState, W workflowState, Governor.GovernorState governorState, O organisationState, R roleState, A actionParameters = null);
+        public delegate void Postcondition(I institutionState, W workflowState, Governor.GovernorState governorState, O organisationState, R groupState, A actionParameters = null);
 
         #region class Condition
         public class Condition
@@ -124,12 +124,13 @@
 
 
                 foreach (var group in state.Roles) {
-                    if (group.Organisation is O && group.Role is G) {
+                    if (group.Organisation is O && group.Role is R) {
                         if (condition(
                             (I)state.Governor.Manager.Ei.Resources,
                             (W)workflowState,
+                            state,
                             (O)group.Organisation,
-                            (G)group.Role,
+                            (R)group.Role,
                             actionParameters != null ? (A)actionParameters : null
                             )) {
 
@@ -180,13 +181,14 @@
 
             private bool ApplyConditions(Governor.GovernorState state, Precondition condition, ParameterState actionParameters, bool planningMode) {
                 foreach (var group in state.Roles) {
-                    if (group.Organisation is O && group.Role is G) {
+                    if (group.Organisation is O && group.Role is R) {
                         // check first successful condition
                         if (condition == null || condition(
                                 (I)state.Governor.Manager.Ei.Resources,
                                 (W)state.Governor.Workflow.Resources,
+                                state,
                                 (O)group.Organisation,
-                                (G)group.Role,
+                                (R)group.Role,
                                 actionParameters != null ? (A)actionParameters : null
                                 )) {
                             // apply action
@@ -194,8 +196,9 @@
                                 this.action(
                                     (I)state.Governor.Manager.Ei.Resources,
                                     (W)state.Governor.Workflow.Resources,
+                                    state,
                                     (O)group.Organisation,
-                                    (G)group.Role,
+                                    (R)group.Role,
                                     actionParameters == null ? null : (A)actionParameters);
                             }
 
@@ -235,7 +238,7 @@
 
         // constructor helpers
 
-        public AccessCondition<I, W, O, G, A> Allow(Precondition allow) {
+        public AccessCondition<I, W, O, R, A> Allow(Precondition allow) {
             if (this.preConditions == null) {
                 this.preConditions = new List<Condition>();
             }
@@ -244,7 +247,7 @@
             return this;
         }
 
-        public AccessCondition<I, W, O, G, A> Action(Postcondition action = null) {
+        public AccessCondition<I, W, O, R, A> Action(Postcondition action = null) {
             if (this.postConditions == null) {
                 this.postConditions = new List<ConditionalAction>();
             }
@@ -252,7 +255,7 @@
             return this;
         }
 
-        public AccessCondition<I, W, O, G, A> Action(Precondition allow, Postcondition action = null) {
+        public AccessCondition<I, W, O, R, A> Action(Precondition allow, Postcondition action = null) {
             if (this.postConditions == null) {
                 this.postConditions = new List<ConditionalAction>();
             }

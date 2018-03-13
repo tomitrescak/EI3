@@ -269,29 +269,29 @@ namespace Ei.Tests.Bdd.Institutions
             this.Connect(ConnId, startState, endState)
                 .Condition(AccessFactory.MainDefaultCitizen
                     .Allow(
-                        (i, w, o, r, a) => {
+                        (i, w, g, o, r, a) => {
                             return r.ParentParameter > 0;
                         }
                      ));
 
             this.Connect(ConnId, startState, incState, null, 4)
                 .Condition(AccessFactory.MainDefaultCitizen
-                    .Action((i, w, o, r, a) => {
+                    .Action((i, w, g, o, r, a) => {
                         r.ParentParameter++;
                     }));
 
             this.Connect(ConnId, incState, incState)
                 .Condition(AccessFactory.MainDefaultCitizen
                     .Action(
-                        (i, w, o, r, a) => {
+                        (i, w, g, o, r, a) => {
                             return r.ParentParameter == 0;
                         },
-                        (i, w, o, r, a) => {
+                        (i, w, g, o, r, a) => {
                             r.ParentParameter += 10;
                         })
-                    .Action((i, w, o, r, a) => {
+                    .Action((i, w, g, o, r, a) => {
                         return r.ParentParameter > 0;
-                    }, (i, w, o, r, a) => {
+                    }, (i, w, g, o, r, a) => {
                         r.ParentParameter = 0;
                     }));
 
@@ -299,7 +299,7 @@ namespace Ei.Tests.Bdd.Institutions
             this.Connect(ConnId, incState, null);
             this.Connect(ConnId, null, incState)
                 .Condition(AccessFactory.MainDefaultCitizen
-                    .Action((i, w, o, r, a) => {
+                    .Action((i, w, g, o, r, a) => {
                         r.ParentParameter = 3;
                     })
                 );
@@ -405,7 +405,7 @@ namespace Ei.Tests.Bdd.Institutions
 
             this.Connect("1", startState, midState, sendAction)
                 .Condition(new AccessCondition<Institution.InstitutionState, SubWorkflow.Store, DefaultOrganisation.DefaultResources, CitizenRole.CitizenResources, SendActionParameters>()
-                    .Action((i, w, o, r, a) => {
+                    .Action((i, w, g, o, r, a) => {
                         w.Stones = a.Stones;
                     }));
 
@@ -416,7 +416,7 @@ namespace Ei.Tests.Bdd.Institutions
             // define constraints
 
             this.AddJoinPermissions(AccessFactory.SubWorkflowDefaultCitizen
-                .Allow((i, w, o, r, a) => {
+                .Allow((i, w, g, o, r, a) => {
                     return w.AgentCount < 2 || w.Stones > 2;
                 })
             );

@@ -15,6 +15,7 @@ namespace Ei.Persistence{
      * 
      */
     public class ParameterDao {
+        private string _defaultValue;
 
         public bool IsNullable {
             get {
@@ -39,7 +40,10 @@ namespace Ei.Persistence{
         /**
          * Default value for the parameter.
          */
-        public string DefaultValue { get; set; }
+        public string DefaultValue {
+            get { return this.Type == "float" ? (_defaultValue + "f") : _defaultValue; }
+            set { _defaultValue = value; }
+        }
 
         ///**
         // * Minimal value for the parameter.

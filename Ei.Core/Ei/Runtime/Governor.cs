@@ -36,7 +36,8 @@ namespace Ei.Runtime
             public struct Group
             {
                 public SearchableState Organisation;
-                public RoleState Role;
+                public SearchableState Role;
+                public GovernorState Agent;
             }
             private List<Group> groups;
             public int CreatedInstanceId;
@@ -57,7 +58,8 @@ namespace Ei.Runtime
 
                     this.groups.Add(new Group {
                         Organisation = organisation == -1 ? group.Organisation.Clone() : this.groups[organisation].Organisation,
-                        Role = role == -1 ? group.Role.Clone() : this.groups[role].Role
+                        Role = role == -1 ? group.Role.Clone() : this.groups[role].Role,
+                        Agent = this
                     });
                 }
             }
