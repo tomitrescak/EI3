@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -66,6 +67,7 @@ namespace Ei.Runtime.Planning
             this.Message.AppendLine(message);
 
             // Ei.Logs.if (Log.IsDebug) Log.Debug(LogSource, message);
+            Debug.WriteLine(message);
         }
 
         internal List<AStarNode> Plan(IHeuristics heuristics, IStrategy strategy, ICostManager costManager, int cycles = 2, int maxPlanLegth = 4)

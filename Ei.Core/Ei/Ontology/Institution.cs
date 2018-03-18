@@ -23,6 +23,7 @@
             }
             public long TimeMs { get { return this.ei.Time.ElapsedMilliseconds; } }
             public float TimeSeconds { get { return this.ei.Time.ElapsedMilliseconds / 1000f; } }
+            public float Tick { get; set; }
         }
 
         #region Fields
@@ -96,6 +97,7 @@
         // public methods
 
         public abstract void Start();
+        public abstract void Stop();
 
         public Workflow GetWorkflow(string id) {
             return this.Workflows.First(w => w.Id == id);
@@ -127,7 +129,7 @@
                 }
 
                 var org = this.Organisations[0];
-                var rl = this.Roles.FirstOrDefault(w => w.Name == role[0].Trim());
+                var rl = this.Roles.FirstOrDefault(w => w.Name.ToLower() == role[0].ToLower().Trim());
 
                 if (rl == null) {
                     throw new InstitutionException("Role does not exist: " + role[0]);
@@ -140,11 +142,11 @@
             if (role.Length == 2) {
                 var org = string.IsNullOrEmpty(role[0]) 
                     ? this.Organisations[0]
-                    : this.Organisations.FirstOrDefault(w => w.Name == role[0].Trim());
+                    : this.Organisations.FirstOrDefault(w => w.Name.ToLower() == role[0].ToLower().Trim());
                 if (org == null) {
                     throw new InstitutionException("Organisation does not exist: " + role[0]);
                 }
-                var rl = this.Roles.FirstOrDefault(w => w.Name == role[1].Trim());
+                var rl = this.Roles.FirstOrDefault(w => w.Name.ToLower() == role[1].ToLower().Trim());
                 if (rl == null) {
                     throw new InstitutionException("Role does not exist: " + role[1]);
                 }
@@ -236,8 +238,6 @@
 
         protected Institution(string id) : base(id) {
             this.expressions = new List<Action<T>>();
-
-            this.Start();
         }
 
         // methods 
@@ -264,10 +264,19 @@
             };
 
             this.expressionTimer.Elapsed += (sender, args) => {
+   
                 this.Expression((T)this.Resources);
             };
 
             this.expressionTimer.Start();
+        }
+
+        public override void Stop() {
+            this.Time.Stop();
+            this.expressionTimer.Stop();
+
+            // TODO: all workflows should come to halt
+            
         }
     }
 }

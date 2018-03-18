@@ -40,28 +40,39 @@ namespace Ei.Runtime
                 public GovernorState Agent;
             }
             private List<Group> groups;
+            private Dictionary<Role, SearchableState> roles;
             public int CreatedInstanceId;
             public string Name;
             public Governor Governor;
 
-            public List<Group> Roles { get { return this.groups; } }
+            public List<Group> Groups { get { return this.groups; } }
 
             public GovernorState(GovernorState cloneFrom) {
                 this.Name = cloneFrom.Name;
                 this.Governor = cloneFrom.Governor;
 
+                // DEEP CLONE
                 this.groups = new List<Group>();
-           
-                foreach (var group in cloneFrom.groups) {
-                    var organisation = this.groups.FindIndex(g => g.Organisation.GetType() == group.Organisation.GetType());
-                    var role = this.groups.FindIndex(g => g.Role.GetType() == group.Role.GetType());
 
-                    this.groups.Add(new Group {
-                        Organisation = organisation == -1 ? group.Organisation.Clone() : this.groups[organisation].Organisation,
-                        Role = role == -1 ? group.Role.Clone() : this.groups[role].Role,
+                var addedRoles = new Dictionary<Role, Runtime.SearchableState>();
+
+                foreach (var group in cloneFrom.groups) {
+                    var organisationIndex = this.groups.FindIndex(g => g.Organisation.GetType() == group.Organisation.GetType());
+                    var roleIndex = this.groups.FindIndex(g => g.Role.GetType() == group.Role.GetType());
+
+                    var grp = new Group {
+                        Organisation = organisationIndex == -1 ? group.Organisation.Clone() : this.groups[organisationIndex].Organisation,
+                        Role = roleIndex == -1 ? group.Role.Clone() : this.groups[roleIndex].Role,
                         Agent = this
-                    });
+                    };
+
+                    this.groups.Add(grp);
                 }
+
+                
+
+                // this.roles = cloneFrom.roles;
+                // this.groups = cloneFrom.groups;
             }
 
             public GovernorState(Governor agent) {
@@ -81,6 +92,8 @@ namespace Ei.Runtime
                         Role = addedRoles[group.Role]
                     });
                 }
+
+                this.roles = addedRoles;
             }
 
             public SearchableState FindProvider(string name) {
@@ -101,6 +114,10 @@ namespace Ei.Runtime
                 foreach (var item in this.groups) {
                     item.Role.ResetDirty();
                 }
+            }
+
+            public SearchableState FindRole(Type type) {
+                return this.Groups.Find(r => type.IsAssignableFrom(r.Role.GetType())).Role;
             }
 
             //public Runtime.ResourceState Clone(Runtime.ResourceState state) {
@@ -161,6 +178,8 @@ namespace Ei.Runtime
                 //                    this.Position != null ? this.Position.Id : "{}");
             }
         }
+
+        public Context CurrentContext => this.currentContext;
 
         #endregion
 

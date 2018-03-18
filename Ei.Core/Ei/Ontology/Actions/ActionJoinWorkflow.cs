@@ -100,6 +100,12 @@ namespace Ei.Ontology.Actions
         protected override IActionInfo PerformAction(Governor agent, Connection connection, ParameterState parameters) {
             this.workflow = ei.GetWorkflow(this.WorkflowId);
             var joinParameters = parameters as ActionJoinWorkflow.Parameters;
+            if (joinParameters == null) {
+                // no parameters are specified, try to create the workflow
+                joinParameters = new Parameters {
+                    InstanceId = -1
+                };
+            }
             joinParameters.RunningInstances = this.Workflows.Count;
 
             Workflow.Instance workflowInstance = null;

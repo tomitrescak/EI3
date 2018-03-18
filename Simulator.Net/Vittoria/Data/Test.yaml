@@ -1,0 +1,142 @@
+!Vittoria.Core.Project,%20Vittoria,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
+ProjectPath: Data/test.yaml
+Agents:
+- Components:
+  - !UnityEngine.Transform,%20UnityEngine,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null {}
+  - !Vittoria.Behaviours.Spawn,%20Vittoria,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
+    MinAgentCount: 1
+    MaxAgentCount: 1
+    SpawnPeriodMs: 50
+    MinSpeed: 40
+    MaxSpeed: 100
+    MinDecayRatePerSecond: 0.300000012
+    MaxDecayRatePerSecond: 1
+    MinInitialDecay: 90
+    MaxInitialDecay: 100
+    Type: Sim
+    DayLengthInSeconds: 240
+    SimObjects:
+    - Name: Cake
+      Icon: Images/cake.png
+      Count: 100
+      SeedPeriodInMinutes: 60
+      MinSeedCount: 25
+      MaxSeedCount: 25
+      NextSeed: 20
+      Actions:
+      - DurationInMinutes: 30
+        Name: Eat
+        Uses: 1
+        Modifiers:
+        - Type: Hunger
+          Delta: 180
+          PersonalityModifiers: []
+        Plan: []
+    - Name: Water
+      Icon: Images/Water.png
+      Count: 100
+      SeedPeriodInMinutes: 480
+      MinSeedCount: 100
+      MaxSeedCount: 100
+      Actions:
+      - DurationInMinutes: 3
+        Name: Drink
+        Uses: 2
+        Modifiers:
+        - Type: Bladder
+          Delta: 50
+          PersonalityModifiers: []
+        Plan: []
+    - Name: Wrench
+      Icon: Images/wrench.png
+      Count: 20
+      Actions:
+      - DurationInMinutes: 10
+        Name: Clean
+        Modifiers:
+        - Type: Room
+          Delta: 100
+          PersonalityModifiers: []
+        Plan: []
+    - Name: Shower
+      Icon: Images/shower.png
+      Count: 20
+      Actions:
+      - DurationInMinutes: 10
+        Name: Shower
+        Modifiers:
+        - Type: Hygiene
+          Delta: 100
+          PersonalityModifiers: []
+        Plan: []
+    - Name: Energy
+      Icon: Images/energy.png
+      Count: 20
+      Actions:
+      - DurationInMinutes: 30
+        Name: Charge
+        Modifiers:
+        - Type: Energy
+          Delta: 50
+          PersonalityModifiers: []
+        Plan: []
+    - Name: Film
+      Icon: Images/film.png
+      Count: 20
+      Actions:
+      - DurationInMinutes: 15
+        Name: WatchMovie
+        Modifiers:
+        - Type: Fun
+          Delta: 100
+          PersonalityModifiers: []
+        Plan: []
+    - Name: Heart
+      Icon: Images/heart.png
+      Count: 20
+      Actions:
+      - DurationInMinutes: 15
+        Name: MakeLove
+        Modifiers:
+        - Type: Comfort
+          Delta: 100
+          PersonalityModifiers: []
+        Plan: []
+    - Name: Friend
+      Icon: Images/Friend.png
+      Count: 10
+      Actions:
+      - DurationInMinutes: 15
+        Name: MakeFriend
+        Modifiers:
+        - Type: Social
+          Delta: 50
+          PersonalityModifiers: []
+        Plan: []
+    - Name: Wheat
+      Icon: Images/Wheat.png
+      Count: 200
+      SeedPeriodInMinutes: 60
+      MinSeedCount: 25
+      MaxSeedCount: 25
+      NextSeed: 20
+      Actions:
+      - DurationInMinutes: 15
+        Name: Wheat
+        Uses: 1
+        Modifiers:
+        - Type: Hunger
+          Delta: -10
+          PersonalityModifiers: []
+        Plan: []
+  Enabled: true
+  Started: true
+  name: SimSpawn
+  Selected: true
+- Components:
+  - !UnityEngine.Transform,%20UnityEngine,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null {}
+  - !Ei.Agents.Planning.EiProject,%20Ei.Agents.Planning,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
+    ProjectPath: c:\Projects\EI2\Vittoria\bin\Debug\Data\Uruk\Uruk.yaml
+    AgentsPerSecond: 3
+  Started: true
+  name: EiProject

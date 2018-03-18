@@ -46,6 +46,10 @@ namespace Ei.Runtime
         public abstract void ResetDirty();
 
         public abstract GoalState[] ToGoalState();
+
+        public override string ToString() {
+            return string.Join("; ", this.FilterByAccess(null).Select(s => s.Name + ": " + s.Value));
+        }
     }
     
     public abstract class RoleState : SearchableState

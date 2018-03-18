@@ -45,13 +45,13 @@ namespace Ei.Runtime.Planning.Environment
 
         public int RandomX {
             get {
-                return (int)(rnd.NextDouble() * this.width);
+                return (int)(rnd.NextDouble() * (this.width - 50));
             }
         }
 
         public int RandomY {
             get {
-                return (int)(rnd.NextDouble() * this.height);
+                return (int)(rnd.NextDouble() * (this.height - 50));
             }
         }
 
@@ -74,7 +74,7 @@ namespace Ei.Runtime.Planning.Environment
             this.width = width;
             this.height = height;
 
-            this.actionQueue = new Queue<System.Action>();
+            this.actionQueue = new Queue<System.Action>(1000);
             this.actionStop = new AutoResetEvent(false);
 
             var thread = new Thread(ProcessQueue);

@@ -35,7 +35,7 @@ namespace Ei.Ontology
         /// <summary>
         /// Combination of 
         /// </summary>
-        public Dictionary<string, object> MinSat { get { throw new NotImplementedException(); } }
+        // public Dictionary<string, object> MinSat { get { throw new NotImplementedException(); } }
 
         public int Cost { get { return 1; } }
 
@@ -77,6 +77,7 @@ namespace Ei.Ontology
             this.Action = conn.Action;
             this.Access = conn.Access;
             this.AllowLoops = conn.AllowLoops;
+            this.ExpectedEffects = conn.ExpectedEffects;
         }
 
         public Connection(Institution ei, string id, WorkflowPosition from, WorkflowPosition to, ActionBase action) : this(id, from, to) {
@@ -139,11 +140,11 @@ namespace Ei.Ontology
         //            return this.CanPass(agent.Groups, agent.Properties);
         //        }
 
-        public bool CanPass(Governor.GovernorState state) {
+        public bool CanPass(Governor.GovernorState state, Workflow.Store workflowState = null) {
             if (this.Access == null) {
                 return true;
             }
-            return this.Access.CanAccess(state);
+            return this.Access.CanAccess(state, workflowState);
 
         }
 

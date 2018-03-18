@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="Vittoria.Controls.Statistics"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:oxy="http://oxyplot.org/wpf"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600"
+             Background="White">
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button Content="Open" Click="LoadDataset" />
+                <Button Content="Save" Click="SaveDataset" />
+            </ToolBar>
+
+
+            <ToolBar>
+                <Label Content="Initial" />
+
+                <TextBox Width="50" Text="{Binding InitialRate}"></TextBox>
+                <Label Content="Increase" />
+                <TextBox Width="50" Text="{Binding Rate}" ></TextBox>
+            </ToolBar>
+
+            <ToolBar>
+                <Button Click="Relax" Content="Relax" />
+                <Button Click="Reset" Content="Reset" />
+                <!--                <Button Click="CutLeft" Content="Cut Left" />-->
+                <!--                <TextBox Width="20" Name="CutAmount" Text="5" />-->
+                <!--                <Button Click="CutRight" Content="Cut Right" />-->
+
+            </ToolBar>
+
+            <ToolBar>
+                <ComboBox Name="Styles" SelectionChanged="ApplyLineStyle" Width="100" IsEditable="True"></ComboBox>
+                <ComboBox Name="LineWidth" Width="30">
+                    <ComboBoxItem IsSelected="true" Content="1"></ComboBoxItem>
+                    <ComboBoxItem Content="2"></ComboBoxItem>
+                    <ComboBoxItem Content="3"></ComboBoxItem>
+                    <ComboBoxItem Content="4"></ComboBoxItem>
+                    <ComboBoxItem Content="5"></ComboBoxItem>
+                </ComboBox>
+                <xctk:ColorPicker Width="60" Name="LineColor"></xctk:ColorPicker>
+            </ToolBar>
+
+            <ToolBar>
+                <ComboBox Name="Font" Width="40" IsEditable="True" SelectionChanged="ChangeFont">
+                    <ComboBoxItem IsSelected="true" Content="10" Tag="10"></ComboBoxItem>
+                    <ComboBoxItem Content="11"></ComboBoxItem>
+                    <ComboBoxItem Content="12"></ComboBoxItem>
+                    <ComboBoxItem Content="13"></ComboBoxItem>
+                    <ComboBoxItem Content="14"></ComboBoxItem>
+                    <ComboBoxItem Content="15"></ComboBoxItem>
+                </ComboBox>
+
+            </ToolBar>
+
+            <ToolBar>
+                <Button Click="ExportPDF" Content="ExportPDF" />
+            </ToolBar>
+        </ToolBarTray>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <ListBox ItemsSource="{Binding StatisticData}" HorizontalAlignment="Stretch" SelectionChanged="Selector_OnSelectionChanged" Grid.ColumnSpan="2">
+                <ListBox.ItemTemplate>
+                    <HierarchicalDataTemplate>
+                        <CheckBox Content="{Binding Name}" Checked="AddTrait" Unchecked="RemoveTrait" Click="SelectLine" />
+                    </HierarchicalDataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <oxy:PlotView Grid.Column="2" Model="{Binding PlotModel}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </Grid>
+    </DockPanel>
+
+</UserControl>

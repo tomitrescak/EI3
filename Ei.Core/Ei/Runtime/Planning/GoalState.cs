@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Ei.Ontology;
+using Ei.Runtime;
 
 namespace Ei.Runtime.Planning
 {
@@ -13,8 +14,21 @@ namespace Ei.Runtime.Planning
         Equal
     }
 
+    public enum GoalUpdateStrategy
+    {
+        None,
+        Increment,
+        Decrement
+    }
 
-    public class GoalState
+    public interface IGoal
+    {
+        string Name { get; }
+        object Value { get; }
+        StateGoalStrategy Strategy { get; }
+    }
+
+    public class GoalState: IGoal
     {
         // static method
 
@@ -28,27 +42,43 @@ namespace Ei.Runtime.Planning
             // get the agent parameter and use it to parse the string value
             var name = str[0];
             var desc = str[1].Split(';');
-            var strategy = desc.Length == 2 ? (StateGoalStrategy)Enum.Parse(typeof(StateGoalStrategy), desc[0]) : StateGoalStrategy.Equal;
+            var strategy = StateGoalStrategy.Equal;
+            var updateStrategy = GoalUpdateStrategy.None;
+            var strexpression = desc[0];
+            var updateValue = 0;
 
-            var strexpression = desc.Length == 2 ? desc[1] : desc[0];
+            if (desc.Length > 1) {
+                strategy = (StateGoalStrategy)Enum.Parse(typeof(StateGoalStrategy), desc[0]);
+                strexpression = desc[1];
+            }
+
+            if (desc.Length > 2) {
+                updateStrategy = (GoalUpdateStrategy)Enum.Parse(typeof(GoalUpdateStrategy), desc[1]);
+                strexpression = "0";
+                updateValue = int.Parse(desc[2]);
+            }
            
-            return new GoalState(str[0], int.Parse(strexpression), strategy);
+            return new GoalState(str[0], int.Parse(strexpression), strategy, updateValue, updateStrategy);
 
         }
 
         // fields
 
-        public string Name;
-        public object Value;
-        public StateGoalStrategy Strategy;
+        public string Name { get; set; }
+        public object Value { get; set; }
+        public int UpdateValue { get; set; }
+        public StateGoalStrategy Strategy { get; set; }
+        public GoalUpdateStrategy UpdateStrategy { get; set; }
 
         // constructors
 
-        public GoalState(string name, object value, StateGoalStrategy strategy)
+        public GoalState(string name, object value, StateGoalStrategy strategy, int updateValue = 0, GoalUpdateStrategy updateStartegy = GoalUpdateStrategy.None)
         {
             this.Name = name;
             this.Value = value;
             this.Strategy = strategy;
+            this.UpdateStrategy = updateStartegy;
+            this.UpdateValue = updateValue;
         }
 
 
@@ -127,6 +157,20 @@ namespace Ei.Runtime.Planning
         public override string ToString()
         {
             return string.Format("{0} {1} {2}", Name, Strategy == StateGoalStrategy.Equal ? "==" : Strategy.ToString(), Value);
+        }
+
+        public void Update(Governor.GovernorState state) {
+            var provider = state.FindProvider(this.Name);
+            var value = provider.GetValue(this.Name);
+
+            switch (this.UpdateStrategy) {
+                case GoalUpdateStrategy.Increment:
+                    this.Value = (int)value + this.UpdateValue;
+                    break;
+                case GoalUpdateStrategy.Decrement:
+                    this.Value = (int)value - this.UpdateValue;
+                    break;
+            }
         }
 
         /// <summary>

@@ -123,7 +123,7 @@
                 }
 
 
-                foreach (var group in state.Roles) {
+                foreach (var group in state.Groups) {
                     if (group.Organisation is O && group.Role is R) {
                         if (condition(
                             (I)state.Governor.Manager.Ei.Resources,
@@ -180,7 +180,7 @@
             // private methods
 
             private bool ApplyConditions(Governor.GovernorState state, Precondition condition, ParameterState actionParameters, bool planningMode) {
-                foreach (var group in state.Roles) {
+                foreach (var group in state.Groups) {
                     if (group.Organisation is O && group.Role is R) {
                         // check first successful condition
                         if (condition == null || condition(
@@ -283,7 +283,7 @@
             if (this.preConditions == null) {
                 return true;
             }
-            return this.preConditions.Any(c => c.CanAccess(agentState, workflowState ?? agentState.Governor.Workflow.Resources, parameters));
+            return this.preConditions.Any(c => c.CanAccess(agentState, workflowState, parameters));
         }
 
 
