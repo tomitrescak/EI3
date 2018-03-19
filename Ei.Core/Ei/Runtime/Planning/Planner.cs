@@ -332,6 +332,7 @@ namespace Ei.Runtime.Planning
             newNode.Parent = currentNode;
             newNode.Resources = state;
             newNode.CostData = costData;
+            newNode.WorkflowState = currentNode.WorkflowState;
             
             this.Storage.AddToOpenList(newNode);
 
@@ -366,6 +367,7 @@ namespace Ei.Runtime.Planning
 
                     // mark this node as the successfull one
                     currentNode.Status = 3;
+                    currentNode.WorkflowState = wa.TestWorkflow.Resources.Clone();
 
                     var newStrategy = this.strategy.CreateNested(currentNode, wa.TestWorkflow, currentNode.Arc);
                     var newHeuristics = newStrategy.CreateHeuristicsForNestedSearch(currentNode);

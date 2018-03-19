@@ -678,7 +678,7 @@ namespace Ei.Runtime
                 var state = agentState.Clone();
 
                 // apply postconditions
-                conn.ApplyPostconditions(state, null, true);
+                conn.ApplyPostconditions(state, workflow.Resources, null, true);
 
                 // check 100% fulfilling goals
 
@@ -701,7 +701,7 @@ namespace Ei.Runtime
 
                     foreach (var effect in conn.ExpectedEffects) {
                         state = agentState.Clone();
-                        effect.ApplyPostconditions(state, null, true);
+                        effect.ApplyPostconditions(state, null, null, true);
 
                         maxRatio = CalculateRatio(goalState, agentState, state);
                         if (maxRatio >= 1) {

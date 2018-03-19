@@ -123,7 +123,7 @@ namespace Ei.Ontology
 
             // apply postconditions on connection
             if (this.Access != null) {
-                this.Access.ApplyPostconditions(agent.Resources, parameters);
+                this.Access.ApplyPostconditions(agent.Resources, agent.Workflow.Resources, parameters);
             }
 
             // open connections have To set to null, so we stay n the same state
@@ -174,11 +174,11 @@ namespace Ei.Ontology
         }
 
 
-        public void ApplyPostconditions(Governor.GovernorState state, ParameterState actionParameters, bool planningMode = false) {
+        public void ApplyPostconditions(Governor.GovernorState state, Workflow.Store workflowState, ParameterState actionParameters, bool planningMode = false) {
             if (this.Access == null) {
                 return;
             }
-            this.Access.ApplyPostconditions(state, actionParameters, planningMode);
+            this.Access.ApplyPostconditions(state, workflowState, actionParameters, planningMode);
         }
 
 
@@ -191,13 +191,13 @@ namespace Ei.Ontology
         //    }
         //}
 
-        public void ApplyExpectedEffects(Governor.GovernorState state, AccessCondition effect) {
+        public void ApplyExpectedEffects(Governor.GovernorState state, Workflow.Store workflowState, AccessCondition effect) {
             // we can either apply a single effect
             // or all of them
 
             if (effect != null) {
                 state.ResetDirty();
-                effect.ApplyPostconditions(state, null, true);
+                effect.ApplyPostconditions(state, workflowState, null, true);
             }
 
 
@@ -206,7 +206,7 @@ namespace Ei.Ontology
 
                 foreach (var postcondition in this.ExpectedEffects) {
                     // check if arc is constrained to the agent role
-                    postcondition.ApplyPostconditions(state, null, true);
+                    postcondition.ApplyPostconditions(state, workflowState, null, true);
                 }
             }
         }

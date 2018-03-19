@@ -20,6 +20,7 @@ namespace Ei.Runtime.Planning.Strategies
             this.InitialNode = new AStarNode(new Connection(null, null, agentPosition));
             this.InitialNode.Parent = null;
             this.InitialNode.Resources = agentState;
+            this.InitialNode.WorkflowState = agentState.Governor.Workflow.Resources.Clone();
         }
 
         // properties
@@ -80,13 +81,13 @@ namespace Ei.Runtime.Planning.Strategies
         {
             if (node.Arc != null)
             {
-                node.Arc.ApplyPostconditions(node.Resources, null, true);
+                node.Arc.ApplyPostconditions(node.Resources, null, null, true);
             }
         }
 
         public void ApplyEffect(AStarNode node, AccessCondition effect)
         {
-            effect.ApplyPostconditions(node.Resources, null, true);
+            effect.ApplyPostconditions(node.Resources, null, null, true);
         }
 
         public IStrategy CreateNested(AStarNode currentNode, Workflow.Instance workflow, Connection conn)
@@ -107,7 +108,7 @@ namespace Ei.Runtime.Planning.Strategies
             var finalState = currentNode.Resources.Clone();
 
             // we apply postcondition on the workflow node
-            currentNode.Arc.ApplyExpectedEffects(finalState, currentNode.AppliedEffect);
+            currentNode.Arc.ApplyExpectedEffects(finalState, null, currentNode.AppliedEffect);
 
             // we create this as a goal state
             GoalState[] nestedFinish = finalState.ToGoalState();

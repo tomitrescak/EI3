@@ -17,44 +17,14 @@ namespace Ei.Ontology
 
         #region class WorkflowState
         public class Store : Runtime.ResourceState {
-            // fields
 
-            private int agentCount;
-            private Governor.GovernorState last;
-            private Governor.GovernorState owner;
             // private Workflow workflow;
 
             // properties
 
-            public int AgentCount {
-                get {
-                    return agentCount;
-                }
-
-                set {
-                    this.agentCount = value;
-                }
-            }
-
-            public Governor.GovernorState Last {
-                get {
-                    return last;
-                }
-
-                set {
-                    this.last = value;
-                }
-            }
-
-            public Governor.GovernorState Owner {
-                get {
-                    return owner;
-                }
-
-                set {
-                    this.owner = value;
-                }
-            }
+            public int AgentCount { get; set; }
+            public Governor.GovernorState Last { get; set; }
+            public Governor.GovernorState Owner { get; set; }
 
             // abstract implementation
 
@@ -70,6 +40,18 @@ namespace Ei.Ontology
 
             protected void NotifyParameterChanged(string name, object value) {
                 this.NotifyParameterChanged(name, value);
+            }
+
+            public virtual Store Clone(Store store = null) {
+                if (store == null) {
+                    store = new Store();
+                }
+
+                store.AgentCount = this.AgentCount;
+                store.Last = this.Last;
+                store.Owner = this.Owner;
+
+                return store;
             }
         }
         #endregion
