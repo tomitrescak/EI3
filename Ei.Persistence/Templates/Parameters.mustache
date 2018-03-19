@@ -30,9 +30,9 @@
                     case "{{Name}}":
                         this.{{Name}} = {{Type}}.Parse(property.Value);
                         break;
-                    default:
-                        throw new Exception("Parameter does not exist: " + property.Name);
                     {{/each}}
+                default:
+                throw new Exception("Parameter does not exist: " + property.Name);
                 }
             }
         }
