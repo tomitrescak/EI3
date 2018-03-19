@@ -163,7 +163,7 @@
       <Name>Ei.Logs.Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ei.Agents\Ei.Agents.csproj">
-      <Project>{60defdcf-8026-480e-8d2d-5ee157eaa434}</Project>
+      <Project>{b9a7154d-6172-4c36-b4c5-d58bf03c8a51}</Project>
       <Name>Ei.Agents</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ei.Custom.Institutions\Ei.Custom.Institutions.csproj">

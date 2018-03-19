@@ -10,6 +10,7 @@ using Ei.Agents.Sims;
 using Ei.Agents.Core.Behaviours;
 using System.Threading;
 using Ei.Agents.Core;
+using System.IO;
 
 namespace Ei.Agents.Planning
 {
@@ -31,7 +32,9 @@ namespace Ei.Agents.Planning
             this.objectMappings = new Dictionary<EnvironmentData, GameObject>();
             this.agentMappings = new Dictionary<PhysiologyBasedAgent, GameObject>();
 
-            this.project = Project.Open(this.ProjectPath);
+            var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
+
+            this.project = Project.Open(path);
             // register listeners
             this.project.AgentLaunched += ProjectOnAgentLaunched;
 

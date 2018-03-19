@@ -201,7 +201,7 @@ namespace Ei.Simulator.Core
 
         }
 
-        const bool useCache = true;
+        const bool useCache = false;
 
         private void FindPlan(Governor agent, GoalState[] goal, string goalType) {
             // TODO: Dangerous! Should not happen ...
@@ -416,7 +416,7 @@ namespace Ei.Simulator.Core
                 });
 
                 if (planItem.Arc.Action is ActionExitWorkflow) {
-                    Log.Debug(agent.Name, "[WF] Enter workflow");
+                    Log.Debug(agent.Name, "[WF] exit workflow");
 
                     try {
                         var result = agent.ExitWorkflow();

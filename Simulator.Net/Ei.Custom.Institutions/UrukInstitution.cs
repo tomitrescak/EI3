@@ -41,10 +41,10 @@ namespace Ei.Custom.Institutions.Uruk
             // init roles
             this.AddRoles(new Role[] {
             new HumanRole(),
-            new BakerRole(),
-            new ShepherdRole(),
             new PotterRole(),
+            new BakerRole(),
             new FisherRole(),
+            new ShepherdRole(),
         });
 
             // init workflows
@@ -109,7 +109,7 @@ namespace Ei.Custom.Institutions.Uruk
             1f,
             0f,
             0,
-            1,
+            3,
             0f,
             0f,
             0.1333f,
@@ -154,7 +154,7 @@ namespace Ei.Custom.Institutions.Uruk
                 this.HungerModifier = 1f;
                 this.HungerReservoir = 0f;
                 this.Milk = 0;
-                this.Pots = 1;
+                this.Pots = 3;
                 this.Thirst = 0f;
                 this.ThirstDecay = 0f;
                 this.ThirstDecayVariable = 0.1333f;
@@ -389,190 +389,6 @@ namespace Ei.Custom.Institutions.Uruk
         }
     }
     #endregion
-    #region class BakerRole
-    public class BakerRole : HumanRole
-    {
-
-        #region class Store
-        public new class Store : HumanRole.Store
-        {
-            // Fields
-            private List<object> defaultValues = new List<object>() {
-            0,
-        };
-
-            // Properties
-
-            public int Wheat { get; set; }
-
-            // Ctor
-            public Store() {
-                this.Wheat = 0;
-            }
-
-            // Methods
-
-            public override SearchableState Clone(SearchableState cloneTo = null) {
-                var clone = new Store();
-                base.Clone(clone);
-
-                clone.Wheat = this.Wheat;
-
-                return clone;
-            }
-
-            public override bool Contains(string name) {
-                if (base.Contains(name)) return true;
-                if (name == "Wheat") return true;
-
-                return false;
-            }
-
-            public override List<VariableInstance> FilterByAccess(Governor governor) {
-                var list = base.FilterByAccess(governor);
-                list.AddRange(new List<VariableInstance> {
-                new VariableInstance("Wheat", this.Wheat.ToString()),
-            });
-                return list;
-            }
-
-            public override object GetValue(string name) {
-                if (base.Contains(name)) {
-                    return base.GetValue(name);
-                }
-                if (name == "Wheat") return this.Wheat;
-
-                throw new Exception("Key does not exists: " + name);
-            }
-
-            public override void SetValue(string name, object value) {
-                if (base.Contains(name)) {
-                    base.SetValue(name, value);
-                    return;
-                }
-                if (name == "Wheat") { this.Wheat = (int)value; return; }
-
-                throw new Exception("Key does not exists: " + name);
-            }
-
-            public override void ResetDirty() {
-                base.ResetDirty();
-
-                this.defaultValues[0] = this.Wheat;
-            }
-
-            public override GoalState[] ToGoalState() {
-                var list = new List<GoalState>();
-                list.AddRange(base.ToGoalState());
-
-                if (!this.Wheat.Equals(this.defaultValues[0])) {
-                    list.Add(new GoalState("Wheat", this.Wheat, StateGoalStrategy.Equal));
-                }
-
-                return list.ToArray();
-            }
-        }
-        #endregion
-
-
-
-        public BakerRole() : base("baker") {
-            this.Name = "Baker";
-        }
-
-        public BakerRole(string id) : base(id) { }
-
-        public override SearchableState CreateState() {
-            return new BakerRole.Store();
-        }
-    }
-    #endregion
-    #region class ShepherdRole
-    public class ShepherdRole : HumanRole
-    {
-
-        #region class Store
-        public new class Store : HumanRole.Store
-        {
-            // Fields
-            private List<object> defaultValues = new List<object>() {
-            };
-
-            // Properties
-
-
-            // Ctor
-            public Store() {
-            }
-
-            // Methods
-
-            public override SearchableState Clone(SearchableState cloneTo = null) {
-                var clone = new Store();
-                base.Clone(clone);
-
-
-                return clone;
-            }
-
-            public override bool Contains(string name) {
-                if (base.Contains(name)) return true;
-
-                return false;
-            }
-
-            public override List<VariableInstance> FilterByAccess(Governor governor) {
-                var list = base.FilterByAccess(governor);
-                list.AddRange(new List<VariableInstance> {
-                });
-                return list;
-            }
-
-            public override object GetValue(string name) {
-                if (base.Contains(name)) {
-                    return base.GetValue(name);
-                }
-
-                throw new Exception("Key does not exists: " + name);
-            }
-
-            public override void SetValue(string name, object value) {
-                if (base.Contains(name)) {
-                    base.SetValue(name, value);
-                    return;
-                }
-
-                throw new Exception("Key does not exists: " + name);
-            }
-
-            public override void ResetDirty() {
-                base.ResetDirty();
-
-            }
-
-            public override GoalState[] ToGoalState() {
-                var list = new List<GoalState>();
-                list.AddRange(base.ToGoalState());
-
-
-                return list.ToArray();
-            }
-        }
-        #endregion
-
-
-
-        public ShepherdRole() : base("shepherd") {
-            this.Name = "Shepherd";
-        }
-
-        public ShepherdRole(string id) : base(id) { }
-
-        public override SearchableState CreateState() {
-            return new ShepherdRole.Store();
-        }
-    }
-    #endregion
     #region class PotterRole
     public class PotterRole : HumanRole
     {
@@ -683,6 +499,104 @@ namespace Ei.Custom.Institutions.Uruk
         }
     }
     #endregion
+    #region class BakerRole
+    public class BakerRole : HumanRole
+    {
+
+        #region class Store
+        public new class Store : HumanRole.Store
+        {
+            // Fields
+            private List<object> defaultValues = new List<object>() {
+            0,
+        };
+
+            // Properties
+
+            public int Wheat { get; set; }
+
+            // Ctor
+            public Store() {
+                this.Wheat = 0;
+            }
+
+            // Methods
+
+            public override SearchableState Clone(SearchableState cloneTo = null) {
+                var clone = new Store();
+                base.Clone(clone);
+
+                clone.Wheat = this.Wheat;
+
+                return clone;
+            }
+
+            public override bool Contains(string name) {
+                if (base.Contains(name)) return true;
+                if (name == "Wheat") return true;
+
+                return false;
+            }
+
+            public override List<VariableInstance> FilterByAccess(Governor governor) {
+                var list = base.FilterByAccess(governor);
+                list.AddRange(new List<VariableInstance> {
+                new VariableInstance("Wheat", this.Wheat.ToString()),
+            });
+                return list;
+            }
+
+            public override object GetValue(string name) {
+                if (base.Contains(name)) {
+                    return base.GetValue(name);
+                }
+                if (name == "Wheat") return this.Wheat;
+
+                throw new Exception("Key does not exists: " + name);
+            }
+
+            public override void SetValue(string name, object value) {
+                if (base.Contains(name)) {
+                    base.SetValue(name, value);
+                    return;
+                }
+                if (name == "Wheat") { this.Wheat = (int)value; return; }
+
+                throw new Exception("Key does not exists: " + name);
+            }
+
+            public override void ResetDirty() {
+                base.ResetDirty();
+
+                this.defaultValues[0] = this.Wheat;
+            }
+
+            public override GoalState[] ToGoalState() {
+                var list = new List<GoalState>();
+                list.AddRange(base.ToGoalState());
+
+                if (!this.Wheat.Equals(this.defaultValues[0])) {
+                    list.Add(new GoalState("Wheat", this.Wheat, StateGoalStrategy.Equal));
+                }
+
+                return list.ToArray();
+            }
+        }
+        #endregion
+
+
+
+        public BakerRole() : base("baker") {
+            this.Name = "Baker";
+        }
+
+        public BakerRole(string id) : base(id) { }
+
+        public override SearchableState CreateState() {
+            return new BakerRole.Store();
+        }
+    }
+    #endregion
     #region class FisherRole
     public class FisherRole : HumanRole
     {
@@ -781,6 +695,92 @@ namespace Ei.Custom.Institutions.Uruk
         }
     }
     #endregion
+    #region class ShepherdRole
+    public class ShepherdRole : HumanRole
+    {
+
+        #region class Store
+        public new class Store : HumanRole.Store
+        {
+            // Fields
+            private List<object> defaultValues = new List<object>() {
+            };
+
+            // Properties
+
+
+            // Ctor
+            public Store() {
+            }
+
+            // Methods
+
+            public override SearchableState Clone(SearchableState cloneTo = null) {
+                var clone = new Store();
+                base.Clone(clone);
+
+
+                return clone;
+            }
+
+            public override bool Contains(string name) {
+                if (base.Contains(name)) return true;
+
+                return false;
+            }
+
+            public override List<VariableInstance> FilterByAccess(Governor governor) {
+                var list = base.FilterByAccess(governor);
+                list.AddRange(new List<VariableInstance> {
+                });
+                return list;
+            }
+
+            public override object GetValue(string name) {
+                if (base.Contains(name)) {
+                    return base.GetValue(name);
+                }
+
+                throw new Exception("Key does not exists: " + name);
+            }
+
+            public override void SetValue(string name, object value) {
+                if (base.Contains(name)) {
+                    base.SetValue(name, value);
+                    return;
+                }
+
+                throw new Exception("Key does not exists: " + name);
+            }
+
+            public override void ResetDirty() {
+                base.ResetDirty();
+
+            }
+
+            public override GoalState[] ToGoalState() {
+                var list = new List<GoalState>();
+                list.AddRange(base.ToGoalState());
+
+
+                return list.ToArray();
+            }
+        }
+        #endregion
+
+
+
+        public ShepherdRole() : base("shepherd") {
+            this.Name = "Shepherd";
+        }
+
+        public ShepherdRole(string id) : base(id) { }
+
+        public override SearchableState CreateState() {
+            return new ShepherdRole.Store();
+        }
+    }
+    #endregion
     #region class TribeOrganisation
     public class TribeOrganisation : Organisation
     {
@@ -863,6 +863,17 @@ namespace Ei.Custom.Institutions.Uruk
         #region Store
         public new class Store : Workflow.Store
         {
+
+            public override Workflow.Store Clone(Workflow.Store store = null) {
+                var current = new MainWorkflow.Store();
+
+                // clone parent properties
+                base.Clone(current);
+
+                // add workflow properties
+
+                return current;
+            }
         }
         #endregion
 
@@ -892,6 +903,8 @@ namespace Ei.Custom.Institutions.Uruk
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -924,6 +937,8 @@ namespace Ei.Custom.Institutions.Uruk
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -956,6 +971,8 @@ namespace Ei.Custom.Institutions.Uruk
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -988,6 +1005,8 @@ namespace Ei.Custom.Institutions.Uruk
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1020,6 +1039,8 @@ namespace Ei.Custom.Institutions.Uruk
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1052,6 +1073,8 @@ namespace Ei.Custom.Institutions.Uruk
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1084,6 +1107,8 @@ namespace Ei.Custom.Institutions.Uruk
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1112,6 +1137,8 @@ namespace Ei.Custom.Institutions.Uruk
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1140,6 +1167,8 @@ namespace Ei.Custom.Institutions.Uruk
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1168,6 +1197,8 @@ namespace Ei.Custom.Institutions.Uruk
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1212,6 +1243,8 @@ namespace Ei.Custom.Institutions.Uruk
                         case "Tick":
                             this.Tick = float.Parse(property.Value);
                             break;
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1296,28 +1329,34 @@ namespace Ei.Custom.Institutions.Uruk
                   .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, FisherRole.Store, FisherWorkflowActionParameters>()
                       .Allow((i, w, g, o, r, a) => { return true; }))
                   .AddEffects(new AccessCondition[] {
+                  new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, ParameterState>()
+                  .Action((i, w, g, o, r, a) => { r.Water++;; } ),
                   new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, FisherRole.Store, ParameterState>()
-                  .Action((i, w, g, o, r, a) => { r.Water++;
-r.Fish++;
-r.Wood++;
-r.Spear++;; } ),  });
+                  .Action((i, w, g, o, r, a) => { r.Fish++;; } ),
+                  new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, ParameterState>()
+                  .Action((i, w, g, o, r, a) => { r.Wood++;; } ),
+                  new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, FisherRole.Store, ParameterState>()
+                  .Action((i, w, g, o, r, a) => { r.Spear++;; } ),  });
 
             this.Connect("c9", this.GetPosition(""), this.GetPosition(""), this.GetAction("shepherdWorkflow"), 3)
                   .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, ShepherdRole.Store, ShepherdWorkflowActionParameters>()
                       .Allow((i, w, g, o, r, a) => { return true; }))
                   .AddEffects(new AccessCondition[] {
                   new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, ParameterState>()
-                  .Action((i, w, g, o, r, a) => { r.Water++;
-r.Milk++;; } ),  });
+                  .Action((i, w, g, o, r, a) => { r.Water++;; } ),
+                  new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, ParameterState>()
+                  .Action((i, w, g, o, r, a) => { r.Milk++;; } ),  });
 
             this.Connect("c8", this.GetPosition(""), this.GetPosition(""), this.GetAction("potterWorkflow"), 0)
                   .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, PotterRole.Store, PotterWorkflowActionParameters>()
                       .Allow((i, w, g, o, r, a) => { return true; }))
                   .AddEffects(new AccessCondition[] {
                   new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, PotterRole.Store, ParameterState>()
-                  .Action((i, w, g, o, r, a) => { r.Pots++;
-r.Water++;
-r.Clay++;; } ),  });
+                  .Action((i, w, g, o, r, a) => { r.Pots++;; } ),
+                  new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, ParameterState>()
+                  .Action((i, w, g, o, r, a) => { r.Water++;; } ),
+                  new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, PotterRole.Store, ParameterState>()
+                  .Action((i, w, g, o, r, a) => { r.Clay++;; } ),  });
 
             this.Connect("c11", this.GetPosition(""), this.GetPosition(""), this.GetAction("exchangeWorkflow"), 0)
                   .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, BakerRole.Store, ExchangeWorkflowActionParameters>()
@@ -1334,10 +1373,12 @@ r.Clay++;; } ),  });
                   .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, BakerRole.Store, BakerWorkflowActionParameters>()
                       .Allow((i, w, g, o, r, a) => { return true; }))
                   .AddEffects(new AccessCondition[] {
+                  new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, ParameterState>()
+                  .Action((i, w, g, o, r, a) => { r.Bread++;; } ),
+                  new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, ParameterState>()
+                  .Action((i, w, g, o, r, a) => { r.Water++;; } ),
                   new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, BakerRole.Store, ParameterState>()
-                  .Action((i, w, g, o, r, a) => { r.Bread++;
-r.Water++;
-r.Wheat++;; } ),  });
+                  .Action((i, w, g, o, r, a) => { r.Wheat++;; } ),  });
 
             this.Connect("c12", this.GetPosition(""), this.GetPosition(""), this.GetAction("drink"), 4)
                   .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, DrinkActionParameters>()
@@ -1401,6 +1442,17 @@ r.Bread = r.Bread - 1;; } ),  });
         #region Store
         public new class Store : Workflow.Store
         {
+
+            public override Workflow.Store Clone(Workflow.Store store = null) {
+                var current = new BakerWorkflow.Store();
+
+                // clone parent properties
+                base.Clone(current);
+
+                // add workflow properties
+
+                return current;
+            }
         }
         #endregion
 
@@ -1430,6 +1482,8 @@ r.Bread = r.Bread - 1;; } ),  });
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1458,6 +1512,8 @@ r.Bread = r.Bread - 1;; } ),  });
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1486,6 +1542,8 @@ r.Bread = r.Bread - 1;; } ),  });
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1520,7 +1578,8 @@ r.Bread = r.Bread - 1;; } ),  });
             // states
 
             this.AddStates(new State[] {
-            new State("Start", "Start", "", this, true, 0, true, true),
+            new State("Start", "Start", "", this, true, 0, true, false),
+            new State("End", "End", "", this, false, 0, false, true),
         });
 
             // transitions
@@ -1573,6 +1632,8 @@ r.Pots
                       })
                       .Action((i, w, g, o, r, a) => { r.Water = r.Water + 1; }));
 
+            this.Connect("c3", this.GetPosition("Start"), this.GetPosition("End"), this.GetAction(""), 0);
+
 
             // create permissions
             this.AddCreatePermissions(new AccessCondition<DefaultInstitution.Store, BakerWorkflow.Store, TribeOrganisation.Store, BakerRole.Store, ParameterState>()
@@ -1607,6 +1668,17 @@ r.Wheat > 1 &&
         #region Store
         public new class Store : Workflow.Store
         {
+
+            public override Workflow.Store Clone(Workflow.Store store = null) {
+                var current = new ExchangeWorkflow.Store();
+
+                // clone parent properties
+                base.Clone(current);
+
+                // add workflow properties
+
+                return current;
+            }
         }
         #endregion
 
@@ -1636,6 +1708,8 @@ r.Wheat > 1 &&
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1730,6 +1804,17 @@ r.Wheat > 1 &&
         #region Store
         public new class Store : Workflow.Store
         {
+
+            public override Workflow.Store Clone(Workflow.Store store = null) {
+                var current = new FishingWorkflow.Store();
+
+                // clone parent properties
+                base.Clone(current);
+
+                // add workflow properties
+
+                return current;
+            }
         }
         #endregion
 
@@ -1759,6 +1844,8 @@ r.Wheat > 1 &&
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1787,6 +1874,8 @@ r.Wheat > 1 &&
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1815,6 +1904,8 @@ r.Wheat > 1 &&
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1843,6 +1934,8 @@ r.Wheat > 1 &&
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -1878,7 +1971,8 @@ r.Wheat > 1 &&
             // states
 
             this.AddStates(new State[] {
-            new State("Start", "Start", "", this, true, 0, true, true),
+            new State("Start", "Start", "", this, true, 0, true, false),
+            new State("End", "End", "", this, false, 0, false, true),
         });
 
             // transitions
@@ -1924,6 +2018,8 @@ r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0;
                       })
                       .Action((i, w, g, o, r, a) => { r.Water++; ; }));
 
+            this.Connect("c4", this.GetPosition("Start"), this.GetPosition("End"), this.GetAction(""), 0);
+
 
             // create permissions
 
@@ -1943,6 +2039,17 @@ r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0;
         #region Store
         public new class Store : Workflow.Store
         {
+
+            public override Workflow.Store Clone(Workflow.Store store = null) {
+                var current = new PotterWorkflow.Store();
+
+                // clone parent properties
+                base.Clone(current);
+
+                // add workflow properties
+
+                return current;
+            }
         }
         #endregion
 
@@ -1972,6 +2079,8 @@ r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2000,6 +2109,8 @@ r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2028,6 +2139,8 @@ r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2056,6 +2169,8 @@ r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2091,7 +2206,8 @@ r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0;
             // states
 
             this.AddStates(new State[] {
-            new State("Start", "Start", "", this, true, 0, true, true),
+            new State("Start", "Start", "", this, true, 0, true, false),
+            new State("End", "End", "", this, false, 0, false, true),
         });
 
             // transitions
@@ -2131,6 +2247,8 @@ r.Water >= 1;
                   new AccessCondition<DefaultInstitution.Store, PotterWorkflow.Store, TribeOrganisation.Store, PotterRole.Store, ParameterState>()
                   .Action((i, w, g, o, r, a) => { r.ExchangeId = 1;; } ),  });
 
+            this.Connect("c4", this.GetPosition("Start"), this.GetPosition("End"), this.GetAction(""), 0);
+
 
             // create permissions
 
@@ -2150,6 +2268,17 @@ r.Water >= 1;
         #region Store
         public new class Store : Workflow.Store
         {
+
+            public override Workflow.Store Clone(Workflow.Store store = null) {
+                var current = new PhysiologyWorkflow.Store();
+
+                // clone parent properties
+                base.Clone(current);
+
+                // add workflow properties
+
+                return current;
+            }
         }
         #endregion
 
@@ -2179,6 +2308,8 @@ r.Water >= 1;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2207,6 +2338,8 @@ r.Water >= 1;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2235,6 +2368,8 @@ r.Water >= 1;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2263,6 +2398,8 @@ r.Water >= 1;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2291,6 +2428,8 @@ r.Water >= 1;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2323,6 +2462,8 @@ r.Water >= 1;
                         case "Fatigue":
                             this.Fatigue = float.Parse(property.Value);
                             break;
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2351,6 +2492,8 @@ r.Water >= 1;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2383,6 +2526,8 @@ r.Water >= 1;
                         case "Fatigue":
                             this.Fatigue = float.Parse(property.Value);
                             break;
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2415,6 +2560,8 @@ r.Water >= 1;
                         case "Hunger":
                             this.Hunger = float.Parse(property.Value);
                             break;
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2542,6 +2689,17 @@ r.Water >= 1;
         #region Store
         public new class Store : Workflow.Store
         {
+
+            public override Workflow.Store Clone(Workflow.Store store = null) {
+                var current = new ShepherdWorkflow.Store();
+
+                // clone parent properties
+                base.Clone(current);
+
+                // add workflow properties
+
+                return current;
+            }
         }
         #endregion
 
@@ -2571,6 +2729,8 @@ r.Water >= 1;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2599,6 +2759,8 @@ r.Water >= 1;
                 base.Parse(properties);
                 foreach (var property in properties) {
                     switch (property.Name) {
+                        default:
+                            throw new Exception("Parameter does not exist: " + property.Name);
                     }
                 }
             }
@@ -2632,7 +2794,8 @@ r.Water >= 1;
             // states
 
             this.AddStates(new State[] {
-            new State("Start", "Start", "", this, true, 0, true, true),
+            new State("Start", "Start", "", this, true, 0, true, false),
+            new State("End", "End", "", this, false, 0, false, true),
         });
 
             // transitions
@@ -2657,6 +2820,8 @@ r.Water <= 20 &&
 (r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Milk / 5f)) > 0;
                       })
                       .Action((i, w, g, o, r, a) => { r.Milk++; ; }));
+
+            this.Connect("c2", this.GetPosition("Start"), this.GetPosition("End"), this.GetAction(""), 0);
 
 
             // create permissions
