@@ -2,8 +2,6 @@
 
 namespace Ei.Persistence
 {
-    
-
     public class RoleDao : SearchableEntityDao
     {
         public override string ClassName => this.Name.ToId() + "Role";

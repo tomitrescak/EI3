@@ -84,7 +84,7 @@ export class Ei extends ParametricEntity {
             Name: 'Main',
             Static: true,
             Stateless: true,
-            States: [{ Id: 'start', Name: 'Start', IsStart: true, IsEnd: true, Open: false }]
+            States: [{ Id: 'start', Name: 'Start', IsStart: true, IsEnd: true, IsOpen: false }]
           }
         ],
         Authorisation: [],

@@ -105,7 +105,7 @@ export class StateWidget extends React.Component<StateNodeWidgetProps> {
               fill={node.IsStart ? 'black' : (node.selected ? 'salmon' : 'white')}
               stroke={node.selected ? 'salmon' : 'black'}
               strokeWidth={stroke}
-              strokeDasharray={node.Open ? '3 3' : null}
+              strokeDasharray={node.IsOpen ? '3 3' : null}
               strokeMiterlimit="10"
               rx={currentSize}
               ry={currentSize}
