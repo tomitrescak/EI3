@@ -59,12 +59,6 @@ namespace Ei
             if (this.authorisations == null) {
                 throw new Exception("You need to define authorisations!");
             }
-            if (!string.IsNullOrEmpty(user)) {
-                var authuser = this.authorisations.Find(w => w.User == user && w.Password == password);
-                if (!authuser.IsEmpty) {
-                    return authuser;
-                }
-            }
 
             if (!string.IsNullOrEmpty(organisation)) {
                 var authuser = this.authorisations.Find(w => w.Organisation == organisation && w.Password == password);
@@ -72,6 +66,15 @@ namespace Ei
                     return authuser;
                 }
             }
+
+            if (!string.IsNullOrEmpty(user)) {
+                var authuser = this.authorisations.Find(w => w.User == user && w.Password == password);
+                if (!authuser.IsEmpty) {
+                    return authuser;
+                }
+            }
+
+            
 
             return new AuthorisationInfo();
         }

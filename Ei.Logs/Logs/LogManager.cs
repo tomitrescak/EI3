@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace Ei.Logs
@@ -93,6 +94,11 @@ namespace Ei.Logs
                     Source = source
                 });
             }
+
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(message);
+#endif
+
         }
 
         private static void LogMessage(int level, string source, string code, params string[] parameters)

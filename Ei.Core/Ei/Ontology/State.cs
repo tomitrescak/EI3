@@ -141,7 +141,7 @@ namespace Ei.Ontology
 
         public override bool CanEnter(Governor agent) {
             // we add default values of parameters we are checking for
-            return this.EntryRules == null || this.EntryRules.CanAccess(agent.Resources);
+            return this.EntryRules == null || this.EntryRules.CanAccess(agent.Resources, agent.Workflow.Resources);
         }
 
         public override IActionInfo EnterAgent(Governor agent) {
@@ -166,7 +166,7 @@ namespace Ei.Ontology
 
         public override bool CanExit(Governor agent) {
             // we add default values of parameters we are checking for
-            return this.ExitRules == null || this.ExitRules.CanAccess(agent.Resources);
+            return this.ExitRules == null || this.ExitRules.CanAccess(agent.Resources, agent.Workflow.Resources);
         }
 
         //        public override string ToString()

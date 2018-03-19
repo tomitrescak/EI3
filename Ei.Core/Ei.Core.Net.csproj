@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ei.Logs\Ei.Logs.Net.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net46</TargetFramework>
+    <AssemblyName>Ei.Core.Net</AssemblyName>
+    <RootNamespace>Ei.Core.Net</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -35,7 +35,7 @@ namespace Ei.Ontology
         /// <summary>
         /// Combination of 
         /// </summary>
-        public Dictionary<string, object> MinSat { get { throw new NotImplementedException(); } }
+        // public Dictionary<string, object> MinSat { get { throw new NotImplementedException(); } }
 
         public int Cost { get { return 1; } }
 
@@ -77,6 +77,7 @@ namespace Ei.Ontology
             this.Action = conn.Action;
             this.Access = conn.Access;
             this.AllowLoops = conn.AllowLoops;
+            this.ExpectedEffects = conn.ExpectedEffects;
         }
 
         public Connection(Institution ei, string id, WorkflowPosition from, WorkflowPosition to, ActionBase action) : this(id, from, to) {
@@ -122,7 +123,7 @@ namespace Ei.Ontology
 
             // apply postconditions on connection
             if (this.Access != null) {
-                this.Access.ApplyPostconditions(agent.Resources, parameters);
+                this.Access.ApplyPostconditions(agent.Resources, agent.Workflow.Resources, parameters);
             }
 
             // open connections have To set to null, so we stay n the same state
@@ -139,11 +140,11 @@ namespace Ei.Ontology
         //            return this.CanPass(agent.Groups, agent.Properties);
         //        }
 
-        public bool CanPass(Governor.GovernorState state) {
+        public bool CanPass(Governor.GovernorState state, Workflow.Store workflowState = null) {
             if (this.Access == null) {
                 return true;
             }
-            return this.Access.CanAccess(state);
+            return this.Access.CanAccess(state, workflowState);
 
         }
 
@@ -173,11 +174,11 @@ namespace Ei.Ontology
         }
 
 
-        public void ApplyPostconditions(Governor.GovernorState state, ParameterState actionParameters, bool planningMode = false) {
+        public void ApplyPostconditions(Governor.GovernorState state, Workflow.Store workflowState, ParameterState actionParameters, bool planningMode = false) {
             if (this.Access == null) {
                 return;
             }
-            this.Access.ApplyPostconditions(state, actionParameters, planningMode);
+            this.Access.ApplyPostconditions(state, workflowState, actionParameters, planningMode);
         }
 
 
@@ -190,13 +191,13 @@ namespace Ei.Ontology
         //    }
         //}
 
-        public void ApplyExpectedEffects(Governor.GovernorState state, AccessCondition effect) {
+        public void ApplyExpectedEffects(Governor.GovernorState state, Workflow.Store workflowState, AccessCondition effect) {
             // we can either apply a single effect
             // or all of them
 
             if (effect != null) {
                 state.ResetDirty();
-                effect.ApplyPostconditions(state, null, true);
+                effect.ApplyPostconditions(state, workflowState, null, true);
             }
 
 
@@ -205,7 +206,7 @@ namespace Ei.Ontology
 
                 foreach (var postcondition in this.ExpectedEffects) {
                     // check if arc is constrained to the agent role
-                    postcondition.ApplyPostconditions(state, null, true);
+                    postcondition.ApplyPostconditions(state, workflowState, null, true);
                 }
             }
         }

@@ -23,6 +23,8 @@ namespace Ei.Runtime.Planning
 
         public Governor.GovernorState OriginalResources { get; set; }
 
+        public Workflow.Store WorkflowState { get; set; }
+
         public int Visited { get; set; }
 
         public int Length
