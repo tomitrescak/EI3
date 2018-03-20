@@ -121,7 +121,7 @@ namespace Vittoria.Statistics
 
             this.Series = new LineSeries {
                 Title = name,
-                Smooth = false,
+                // Smooth = false,
                 StrokeThickness = thickness,
                 LineStyle = lineStyle,
             };
