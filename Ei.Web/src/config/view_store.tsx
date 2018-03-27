@@ -39,6 +39,11 @@ export class ViewStoreModel {
   }
 
   @action
+  showExecution(eiId?: string, eiName?: string) {
+    this.showView('execution', { eiName, eiId });
+  }
+
+  @action
   showOrganisation(id: string, name: string, eiId?: string, eiName?: string) {
     this.showView('organisation', { eiName, eiId, id: id.toUrlName(), name: name.toUrlName() });
   }

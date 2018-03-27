@@ -142,6 +142,8 @@ export class Components extends React.Component<Props, State> {
               ei={ei}
             />
           </Accordion>
+
+          <Link to={`/${ei.Name.toUrlName()}/${ei.id}/execution`} action={() => context.store.viewStore.showExecution()}>Execution</Link>
         </div>
       </>
     );

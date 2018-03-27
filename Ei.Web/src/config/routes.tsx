@@ -11,6 +11,7 @@ import { EiEditor } from '../modules/ei/ei_editor';
 import { EiLayout } from '../modules/ei/ei_layout';
 import { EiList, EiListContainer } from '../modules/ei/ei_list';
 import { Ei } from '../modules/ei/ei_model';
+import { ExecutionView } from '../modules/execution/execution_view';
 import { StateEditor } from '../modules/states/state_editor';
 import { TransitionEditor } from '../modules/transitions/transitions_editor';
 import { WorkflowEditor } from '../modules/workflow/workflow_editor';
@@ -34,6 +35,16 @@ export function initRoutes(store: App.Store): Route[] {
           components: () => ({
             graph: (
               <EiEditor />
+            )
+          })
+        },
+        {
+          name: 'execution',
+          route: '/execution',
+          action: (eiName, eiId,) => view.showExecution(eiName, eiId),
+          components: () => ({
+            graph: (
+              <ExecutionView />
             )
           })
         },
