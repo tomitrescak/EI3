@@ -11,6 +11,7 @@ using Ei.Agents.Core.Behaviours;
 using System.Threading;
 using Ei.Agents.Core;
 using System.IO;
+using YamlDotNet.Serialization;
 
 namespace Ei.Agents.Planning
 {
@@ -22,17 +23,22 @@ namespace Ei.Agents.Planning
         public string ProjectPath { get; set; }
         public int AgentsPerSecond { get; set; }
         public int AgentsLaunched { get; private set; }
-
+        
+        [YamlIgnore]
         public Project project { get; set; }
 
         public void Init() {
-            var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
-            this.project = Project.Open(path);
+            if (!string.IsNullOrEmpty(this.ProjectPath)) {
+                var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
+                this.project = Project.Open(path);
+
+                this.InitProject(this.project);
+            }
         }
 
         public void InitProject(Project project) {
             this.project = project;
-            if (this.project != null) {
+            if (this.project != null && this.project.Manager != null) {
                 this.project.Manager.Stop();
             }
 

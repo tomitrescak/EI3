@@ -84,6 +84,7 @@ namespace Ei.Logs
 
         private static void LogMessage(int level, string message, string source = null)
         {
+            // return;
             if (level < (int) LogLevel) return; // ignore messages below specified log level
 
             foreach (var log in logs)
@@ -103,6 +104,7 @@ namespace Ei.Logs
 
         private static void LogMessage(int level, string source, string code, params string[] parameters)
         {
+            // return;
             if (level < (int)LogLevel) return; // ignore messages below specified log level
 
             foreach (var log in logs)

@@ -201,7 +201,7 @@ namespace Ei.Simulator.Core
 
         }
 
-        const bool useCache = false;
+        const bool useCache = true;
 
         private void FindPlan(Governor agent, GoalState[] goal, string goalType) {
             // TODO: Dangerous! Should not happen ...

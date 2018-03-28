@@ -58,10 +58,10 @@ namespace Ei.Simulator.Core
         public InstitutionManager Manager { get; private set; }
         public Institution Ei { get; private set; }
 
-        public static Project Current { get; private set; }
+        public static Project Current { get; set; }
         public List<SimulationAgent> Agents { get; set; }
 
-        public string Institution { get; private set; }
+        public string Institution { get; set; }
 
         public List<IExperiment> Experiments { get; private set; }
 
@@ -158,19 +158,23 @@ namespace Ei.Simulator.Core
 
             Current.SetDirectory(Path.GetDirectoryName(path));
 
-            // load institution
-            switch (Current.Institution) {
-                case "Uruk":
-                    Current.Ei = new DefaultInstitution();
-                    Current.Ei.Resources.Tick = (float) (86400f / Current.DayLengthInSeconds);
-                    break;
-                default:
-                    throw new Exception("Institution Not Found: " + Current.Institution);
-            }
-            
-            Current.Waiter = new ManualResetEvent(true);
+            Current.OpenInstitution();
 
             return Current;
+        }
+
+        public void OpenInstitution() {
+            // load institution
+            switch (this.Institution) {
+                case "Uruk":
+                    this.Ei = new DefaultInstitution();
+                    this.Ei.Resources.Tick = (float) (86400f / this.DayLengthInSeconds);
+                    break;
+                default:
+                    throw new Exception("Institution Not Found: " + this.Institution);
+            }
+            
+            this.Waiter = new ManualResetEvent(true);
         }
 
         public void SetDirectory(string dir)

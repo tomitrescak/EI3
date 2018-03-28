@@ -286,7 +286,7 @@ public class PhysiologyRole: HumanRole {
         // Methods
 
         public override SearchableState Clone(SearchableState cloneTo = null) {
-            var clone = new Store();
+            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
             base.Clone(clone);
             
             clone.Fatigue = this.Fatigue;
@@ -491,7 +491,7 @@ public class BakerRole: PhysiologyRole {
         // Methods
 
         public override SearchableState Clone(SearchableState cloneTo = null) {
-            var clone = new Store();
+            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
             base.Clone(clone);
             
             clone.Wheat = this.Wheat;
@@ -585,7 +585,7 @@ public class ShepherdRole: PhysiologyRole {
         // Methods
 
         public override SearchableState Clone(SearchableState cloneTo = null) {
-            var clone = new Store();
+            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
             base.Clone(clone);
             
 
@@ -676,7 +676,7 @@ public class PotterRole: PhysiologyRole {
         // Methods
 
         public override SearchableState Clone(SearchableState cloneTo = null) {
-            var clone = new Store();
+            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
             base.Clone(clone);
             
             clone.Clay = this.Clay;
@@ -782,7 +782,7 @@ public class FisherRole: PhysiologyRole {
         // Methods
 
         public override SearchableState Clone(SearchableState cloneTo = null) {
-            var clone = new Store();
+            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
             base.Clone(clone);
             
             clone.Spear = this.Spear;

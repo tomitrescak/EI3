@@ -162,6 +162,10 @@
       <Project>{70624af1-a5b0-43a2-896c-42cdcaf11f00}</Project>
       <Name>Ei.Logs.Net</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Ei.Persistence\Ei.Persistence.Net.csproj">
+      <Project>{1c6e4c7c-7d52-433c-b424-c27b630ebb55}</Project>
+      <Name>Ei.Persistence.Net</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ei.Agents\Ei.Agents.csproj">
       <Project>{b9a7154d-6172-4c36-b4c5-d58bf03c8a51}</Project>
       <Name>Ei.Agents</Name>
@@ -171,7 +175,7 @@
       <Name>Ei.Custom.Institutions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ei.Unity\Ei.Unity.csproj">
-      <Project>{cce0bf98-58ec-4676-9149-1c47862475e6}</Project>
+      <Project>{368e3361-92c5-4937-b3e0-ba8e5f315e44}</Project>
       <Name>Ei.Unity</Name>
     </ProjectReference>
     <ProjectReference Include="..\Xceed.Wpf.Toolkit\Xceed.Wpf.Toolkit.csproj">
