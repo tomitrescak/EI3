@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Ei.Custom.Institutions.Uruk;
 using Ei.Logs;
 using Ei.Ontology.Actions;
 using Ei.Runtime;
@@ -31,10 +30,10 @@ namespace Ei.Simulator.Core
 
         public Governor PhysiologyAgent { get; set; }
 
-        private HumanRole.Store Store {
+        private PhysiologyRole.Store Store {
             get {
                 var ei = (DefaultInstitution)Project.Current.Ei;
-                return (HumanRole.Store)this.Governor.Resources.FindRole(typeof(HumanRole.Store));
+                return (PhysiologyRole.Store)this.Governor.Resources.FindRole(typeof(PhysiologyRole.Store));
             }
         }
 
@@ -115,7 +114,7 @@ namespace Ei.Simulator.Core
 
             // if agent is tired agent will rest
             var ei = (DefaultInstitution)Project.Current.Ei;
-            var humanState = (HumanRole.Store)this.Governor.Resources.FindRole(typeof(HumanRole.Store));
+            var humanState = (PhysiologyRole.Store)this.Governor.Resources.FindRole(typeof(HumanRole.Store));
 
             if (humanState.Fatigue > Project.Current.FatigueTreshold) {
                 CurrentGoalAction = "Rest";

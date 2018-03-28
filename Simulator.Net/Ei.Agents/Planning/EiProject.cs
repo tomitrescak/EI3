@@ -23,25 +23,28 @@ namespace Ei.Agents.Planning
         public int AgentsPerSecond { get; set; }
         public int AgentsLaunched { get; private set; }
 
-        private Project project { get; set; }
+        public Project project { get; set; }
 
         public void Init() {
+            var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
+            this.project = Project.Open(path);
+        }
+
+        public void InitProject(Project project) {
+            this.project = project;
             if (this.project != null) {
                 this.project.Manager.Stop();
             }
+
             this.objectMappings = new Dictionary<EnvironmentData, GameObject>();
             this.agentMappings = new Dictionary<PhysiologyBasedAgent, GameObject>();
 
-            var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
-
-            this.project = Project.Open(path);
             // register listeners
             this.project.AgentLaunched += ProjectOnAgentLaunched;
 
             // load environment
             this.project.Environment.ObjectAdded += AddObjectToCanvas;
             this.project.Environment.ObjectRemoved += RemoveObjectFromCanvas;
-           
         }
 
         public void Start() {
@@ -53,7 +56,7 @@ namespace Ei.Agents.Planning
             //thread.IsBackground = true;
             //thread.Priority = ThreadPriority.Lowest;
             thread.Start();
-            
+
         }
 
         private void RemoveObjectFromCanvas(AgentEnvironment environment, EnvironmentData obj) {

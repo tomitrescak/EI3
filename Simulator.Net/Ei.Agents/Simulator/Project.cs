@@ -161,7 +161,7 @@ namespace Ei.Simulator.Core
             // load institution
             switch (Current.Institution) {
                 case "Uruk":
-                    Current.Ei = new Ei.Custom.Institutions.Uruk.DefaultInstitution();
+                    Current.Ei = new DefaultInstitution();
                     Current.Ei.Resources.Tick = (float) (86400f / Current.DayLengthInSeconds);
                     break;
                 default:
