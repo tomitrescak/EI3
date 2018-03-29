@@ -18,9 +18,9 @@ using System.Timers;
 
 namespace Ei.Simulator.Core
 {
-   
 
-    public class Project: INotifyPropertyChanged
+
+    public class Project : INotifyPropertyChanged
     {
         // fields
 
@@ -29,7 +29,7 @@ namespace Ei.Simulator.Core
         private bool paused;
 
         // properties
-        
+
         public int Width { get; set; }
         public int Height { get; set; }
         public AgentCount[] AgentCounts { get; set; }
@@ -65,10 +65,8 @@ namespace Ei.Simulator.Core
 
         public List<IExperiment> Experiments { get; private set; }
 
-        public string RealTime
-        {
-            get
-            {
+        public string RealTime {
+            get {
                 var realSeconds = Ei.Time.ElapsedMilliseconds / 1000f;
 
                 TimeSpan t1 = TimeSpan.FromSeconds(realSeconds);
@@ -77,33 +75,26 @@ namespace Ei.Simulator.Core
                     t1.Hours,
                     t1.Minutes,
                     t1.Seconds);
-              
+
             }
         }
 
-        public double SimulatedTime
-        {
-            get
-            {
+        public double SimulatedTime {
+            get {
                 var realSeconds = Ei.Time.ElapsedMilliseconds / 1000f;
                 return realSeconds * (86400 / DayLengthInSeconds);
             }
         }
 
-        public string SimulatedTimeString
-        {
-            get
-            {
+        public string SimulatedTimeString {
+            get {
                 return FormatTime(this.SimulatedTime);
             }
         }
 
-        public AgentEnvironment Environment
-        {
-            get
-            {
-                if (this.environment == null)
-                {
+        public AgentEnvironment Environment {
+            get {
+                if (this.environment == null) {
                     this.environment = new AgentEnvironment(this.EnvironmentDefinition);
                 }
                 return this.environment;
@@ -112,18 +103,14 @@ namespace Ei.Simulator.Core
 
         public double SimulatedSecond { get { return 86400 / this.DayLengthInSeconds; } }
 
-        public bool Paused
-        {
+        public bool Paused {
             get { return this.paused; }
-            set
-            {
+            set {
                 this.paused = value;
-                if (value)
-                {
+                if (value) {
                     this.Waiter.Reset();
                 }
-                else
-                {
+                else {
                     this.Waiter.Set();
                 }
             }
@@ -140,15 +127,13 @@ namespace Ei.Simulator.Core
 
         // constructor
 
-        public Project()
-        {
+        public Project() {
             this.Experiments = new List<IExperiment>();
-        } 
+        }
 
         // methods
 
-        public static Project Open(string path)
-        {
+        public static Project Open(string path) {
             var input = new StringReader(File.ReadAllText(path));
             var deserializer = new Deserializer();
 
@@ -168,17 +153,16 @@ namespace Ei.Simulator.Core
             switch (this.Institution) {
                 case "Uruk":
                     this.Ei = new DefaultInstitution();
-                    this.Ei.Resources.Tick = (float) (86400f / this.DayLengthInSeconds);
+                    this.Ei.Resources.Tick = (float)(86400f / this.DayLengthInSeconds);
                     break;
                 default:
                     throw new Exception("Institution Not Found: " + this.Institution);
             }
-            
+
             this.Waiter = new ManualResetEvent(true);
         }
 
-        public void SetDirectory(string dir)
-        {
+        public void SetDirectory(string dir) {
             this.directory = dir;
         }
 
@@ -207,12 +191,25 @@ namespace Ei.Simulator.Core
             this.launchQueue = new Queue<Action>();
 
             // launch all agents
-            foreach (var agentCount in this.AgentCounts) {
-                totalAgents += agentCount.Count;
+            var counts = new int[this.AgentCounts.Length];
 
-                for (var i = 0; i < agentCount.Count; i++) {
+            for (var i = 0; i < this.AgentCounts.Length; i++) {
+                totalAgents += this.AgentCounts[i].Count;
+                counts[i] = this.AgentCounts[i].Count;
+            }
+
+            // we are launching agents one by category
+            while (totalAgents > 0) {
+                for (var i = 0; i < this.AgentCounts.Length; i++) {
+                    if (counts[i] == 0) {
+                        continue;
+                    }
+                    counts[i] = counts[i] - 1;
+                    totalAgents--;
+
+                    var agentCount = this.AgentCounts[i];
                     // connect agent to the institutions
-                    
+
                     this.launchQueue.Enqueue(() => {
                         var agent = new PhysiologyBasedAgent(agentCount.Groups[0][1], agentCount.FreeTimeGoals);
 
@@ -232,7 +229,8 @@ namespace Ei.Simulator.Core
                         agent.Connect(this.Manager, this.Organisation, this.Password, agentCount.Groups);
                     });
 
-                    
+
+
                 }
             }
 
@@ -254,8 +252,7 @@ namespace Ei.Simulator.Core
             this.launchTimer.Start();
         }
 
-        public void Start(bool async = true)
-        {
+        public void Start(bool async = true) {
             // init
             this.Agents = new List<SimulationAgent>();
 
@@ -268,24 +265,21 @@ namespace Ei.Simulator.Core
             int totalAgents = 0;
 
             // launch all agents
-            foreach (var agentCount in this.AgentCounts)
-            {
+            foreach (var agentCount in this.AgentCounts) {
                 totalAgents += agentCount.Count;
 
-                for (var i = 0; i < agentCount.Count; i++)
-                {
+                for (var i = 0; i < agentCount.Count; i++) {
                     var agent = new PhysiologyBasedAgent(agentCount.Groups[0][0], agentCount.FreeTimeGoals);
 
                     // set color
-                    if (agentCount.Color == null) agent.Color = new byte[] {255, 255, 0};
+                    if (agentCount.Color == null) agent.Color = new byte[] { 255, 255, 0 };
                     else agent.Color = agentCount.Color;
 
                     // add a new agent
                     this.Agents.Add(agent);
 
                     // notify ui that new agent was created
-                    if (this.AgentLaunched != null)
-                    {
+                    if (this.AgentLaunched != null) {
                         this.AgentLaunched(agent);
                     }
 
@@ -299,7 +293,8 @@ namespace Ei.Simulator.Core
                                 Project.Current.Started = true;
                             }
                         }).Start();
-                    } else {
+                    }
+                    else {
                         Log.Info("Project", "Launching: " + agent.Name);
                         agent.Connect(this.Manager, this.Organisation, this.Password, agentCount.Groups);
 
@@ -309,26 +304,23 @@ namespace Ei.Simulator.Core
                     }
                 }
             }
-            
+
 
             // start environment evolution
 
             this.Environment.Start();
         }
 
-        public string GetPath(string path)
-        {
+        public string GetPath(string path) {
             return Path.Combine(this.directory, path);
         }
 
 
-        public double CalculateDuration(float waitTimeInSeconds)
-        {
+        public double CalculateDuration(float waitTimeInSeconds) {
             return waitTimeInSeconds / SimulatedSecond;
         }
 
-        public static string FormatTime(double simulatedSeconds)
-        {
+        public static string FormatTime(double simulatedSeconds) {
             TimeSpan t2 = TimeSpan.FromSeconds(simulatedSeconds);
 
             return string.Format("{0}d {1:D2}:{2:D2}",
@@ -338,7 +330,7 @@ namespace Ei.Simulator.Core
                 t2.Seconds);
         }
 
-        
+
     }
 
     public class AgentCount

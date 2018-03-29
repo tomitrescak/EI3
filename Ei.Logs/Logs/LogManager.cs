@@ -10,7 +10,9 @@ namespace Ei.Logs
         {
             Debug,
             Info,
-            Error
+            Warning,
+            Error,
+            Off
         }
 
         static Log()

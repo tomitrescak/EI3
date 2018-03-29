@@ -30,10 +30,10 @@ namespace Ei.Simulator.Core
 
         public Governor PhysiologyAgent { get; set; }
 
-        private PhysiologyRole.Store Store {
+        private HumanRole.Store Store {
             get {
                 var ei = (DefaultInstitution)Project.Current.Ei;
-                return (PhysiologyRole.Store)this.Governor.Resources.FindRole(typeof(PhysiologyRole.Store));
+                return (HumanRole.Store)this.Governor.Resources.FindRole(typeof(HumanRole.Store));
             }
         }
 
@@ -114,7 +114,7 @@ namespace Ei.Simulator.Core
 
             // if agent is tired agent will rest
             var ei = (DefaultInstitution)Project.Current.Ei;
-            var humanState = (PhysiologyRole.Store)this.Governor.Resources.FindRole(typeof(HumanRole.Store));
+            var humanState = (HumanRole.Store)this.Governor.Resources.FindRole(typeof(HumanRole.Store));
 
             if (humanState.Fatigue > Project.Current.FatigueTreshold) {
                 CurrentGoalAction = "Rest";

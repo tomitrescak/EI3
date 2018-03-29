@@ -37,11 +37,10 @@ public class DefaultInstitution : Institution<DefaultInstitution.Store>
         // init roles
         this.AddRoles(new Role[] {
             new HumanRole(),
-            new PhysiologyRole(),
-            new BakerRole(),
-            new ShepherdRole(),
             new PotterRole(),
+            new BakerRole(),
             new FisherRole(),
+            new ShepherdRole(),
         });
 
         // init workflows
@@ -93,9 +92,22 @@ public class HumanRole: Role {
 
         private List<object> defaultValues = new List<object>() {
             0,
+            0f,
+            0f,
+            1f,
             0,
+            0f,
+            0f,
+            343.33f,
+            1f,
+            0f,
             0,
             3,
+            0f,
+            0f,
+            0.1333f,
+            1f,
+            0f,
             0,
             0,
         };
@@ -103,18 +115,44 @@ public class HumanRole: Role {
         // Properties
 
         public int Bread { get; set; }
+        public float Fatigue { get; set; }
+        public float FatigueDecay { get; set; }
+        public float FatigueModifier { get; set; }
         public int Fish { get; set; }
+        public float Hunger { get; set; }
+        public float HungerDecay { get; set; }
+        public float HungerDecayVariable { get; set; }
+        public float HungerModifier { get; set; }
+        public float HungerReservoir { get; set; }
         public int Milk { get; set; }
         public int Pots { get; set; }
+        public float Thirst { get; set; }
+        public float ThirstDecay { get; set; }
+        public float ThirstDecayVariable { get; set; }
+        public float ThirstModifier { get; set; }
+        public float ThirstReservoir { get; set; }
         public int Water { get; set; }
         public int Wood { get; set; }
        
         // Ctor
         public Store() {
             this.Bread = 0;
+            this.Fatigue = 0f;
+            this.FatigueDecay = 0f;
+            this.FatigueModifier = 1f;
             this.Fish = 0;
+            this.Hunger = 0f;
+            this.HungerDecay = 0f;
+            this.HungerDecayVariable = 343.33f;
+            this.HungerModifier = 1f;
+            this.HungerReservoir = 0f;
             this.Milk = 0;
             this.Pots = 3;
+            this.Thirst = 0f;
+            this.ThirstDecay = 0f;
+            this.ThirstDecayVariable = 0.1333f;
+            this.ThirstModifier = 1f;
+            this.ThirstReservoir = 0f;
             this.Water = 0;
             this.Wood = 0;
         } 
@@ -127,9 +165,22 @@ public class HumanRole: Role {
                 : (HumanRole.Store) cloneTo;
 
             clone.Bread = this.Bread;
+            clone.Fatigue = this.Fatigue;
+            clone.FatigueDecay = this.FatigueDecay;
+            clone.FatigueModifier = this.FatigueModifier;
             clone.Fish = this.Fish;
+            clone.Hunger = this.Hunger;
+            clone.HungerDecay = this.HungerDecay;
+            clone.HungerDecayVariable = this.HungerDecayVariable;
+            clone.HungerModifier = this.HungerModifier;
+            clone.HungerReservoir = this.HungerReservoir;
             clone.Milk = this.Milk;
             clone.Pots = this.Pots;
+            clone.Thirst = this.Thirst;
+            clone.ThirstDecay = this.ThirstDecay;
+            clone.ThirstDecayVariable = this.ThirstDecayVariable;
+            clone.ThirstModifier = this.ThirstModifier;
+            clone.ThirstReservoir = this.ThirstReservoir;
             clone.Water = this.Water;
             clone.Wood = this.Wood;
 
@@ -138,9 +189,22 @@ public class HumanRole: Role {
 
         public override bool Contains(string name) {
             if (name == "Bread") return true;
+            if (name == "Fatigue") return true;
+            if (name == "FatigueDecay") return true;
+            if (name == "FatigueModifier") return true;
             if (name == "Fish") return true;
+            if (name == "Hunger") return true;
+            if (name == "HungerDecay") return true;
+            if (name == "HungerDecayVariable") return true;
+            if (name == "HungerModifier") return true;
+            if (name == "HungerReservoir") return true;
             if (name == "Milk") return true;
             if (name == "Pots") return true;
+            if (name == "Thirst") return true;
+            if (name == "ThirstDecay") return true;
+            if (name == "ThirstDecayVariable") return true;
+            if (name == "ThirstModifier") return true;
+            if (name == "ThirstReservoir") return true;
             if (name == "Water") return true;
             if (name == "Wood") return true;
     
@@ -150,9 +214,22 @@ public class HumanRole: Role {
         public override List<VariableInstance> FilterByAccess(Governor governor) {
             return new List<VariableInstance> {
                 new VariableInstance("Bread", this.Bread.ToString()),
+                new VariableInstance("Fatigue", this.Fatigue.ToString()),
+                new VariableInstance("FatigueDecay", this.FatigueDecay.ToString()),
+                new VariableInstance("FatigueModifier", this.FatigueModifier.ToString()),
                 new VariableInstance("Fish", this.Fish.ToString()),
+                new VariableInstance("Hunger", this.Hunger.ToString()),
+                new VariableInstance("HungerDecay", this.HungerDecay.ToString()),
+                new VariableInstance("HungerDecayVariable", this.HungerDecayVariable.ToString()),
+                new VariableInstance("HungerModifier", this.HungerModifier.ToString()),
+                new VariableInstance("HungerReservoir", this.HungerReservoir.ToString()),
                 new VariableInstance("Milk", this.Milk.ToString()),
                 new VariableInstance("Pots", this.Pots.ToString()),
+                new VariableInstance("Thirst", this.Thirst.ToString()),
+                new VariableInstance("ThirstDecay", this.ThirstDecay.ToString()),
+                new VariableInstance("ThirstDecayVariable", this.ThirstDecayVariable.ToString()),
+                new VariableInstance("ThirstModifier", this.ThirstModifier.ToString()),
+                new VariableInstance("ThirstReservoir", this.ThirstReservoir.ToString()),
                 new VariableInstance("Water", this.Water.ToString()),
                 new VariableInstance("Wood", this.Wood.ToString()),
             };
@@ -160,9 +237,22 @@ public class HumanRole: Role {
 
         public override object GetValue(string name) {
             if (name == "Bread") return this.Bread;
+            if (name == "Fatigue") return this.Fatigue;
+            if (name == "FatigueDecay") return this.FatigueDecay;
+            if (name == "FatigueModifier") return this.FatigueModifier;
             if (name == "Fish") return this.Fish;
+            if (name == "Hunger") return this.Hunger;
+            if (name == "HungerDecay") return this.HungerDecay;
+            if (name == "HungerDecayVariable") return this.HungerDecayVariable;
+            if (name == "HungerModifier") return this.HungerModifier;
+            if (name == "HungerReservoir") return this.HungerReservoir;
             if (name == "Milk") return this.Milk;
             if (name == "Pots") return this.Pots;
+            if (name == "Thirst") return this.Thirst;
+            if (name == "ThirstDecay") return this.ThirstDecay;
+            if (name == "ThirstDecayVariable") return this.ThirstDecayVariable;
+            if (name == "ThirstModifier") return this.ThirstModifier;
+            if (name == "ThirstReservoir") return this.ThirstReservoir;
             if (name == "Water") return this.Water;
             if (name == "Wood") return this.Wood;
 
@@ -171,9 +261,22 @@ public class HumanRole: Role {
 
         public override void SetValue(string name, object value) {
             if (name == "Bread") { this.Bread = (int) value; return; }
+            if (name == "Fatigue") { this.Fatigue = (float) value; return; }
+            if (name == "FatigueDecay") { this.FatigueDecay = (float) value; return; }
+            if (name == "FatigueModifier") { this.FatigueModifier = (float) value; return; }
             if (name == "Fish") { this.Fish = (int) value; return; }
+            if (name == "Hunger") { this.Hunger = (float) value; return; }
+            if (name == "HungerDecay") { this.HungerDecay = (float) value; return; }
+            if (name == "HungerDecayVariable") { this.HungerDecayVariable = (float) value; return; }
+            if (name == "HungerModifier") { this.HungerModifier = (float) value; return; }
+            if (name == "HungerReservoir") { this.HungerReservoir = (float) value; return; }
             if (name == "Milk") { this.Milk = (int) value; return; }
             if (name == "Pots") { this.Pots = (int) value; return; }
+            if (name == "Thirst") { this.Thirst = (float) value; return; }
+            if (name == "ThirstDecay") { this.ThirstDecay = (float) value; return; }
+            if (name == "ThirstDecayVariable") { this.ThirstDecayVariable = (float) value; return; }
+            if (name == "ThirstModifier") { this.ThirstModifier = (float) value; return; }
+            if (name == "ThirstReservoir") { this.ThirstReservoir = (float) value; return; }
             if (name == "Water") { this.Water = (int) value; return; }
             if (name == "Wood") { this.Wood = (int) value; return; }
 
@@ -182,11 +285,24 @@ public class HumanRole: Role {
 
         public override void ResetDirty() {
             this.defaultValues[0] = this.Bread;
-            this.defaultValues[1] = this.Fish;
-            this.defaultValues[2] = this.Milk;
-            this.defaultValues[3] = this.Pots;
-            this.defaultValues[4] = this.Water;
-            this.defaultValues[5] = this.Wood;
+            this.defaultValues[1] = this.Fatigue;
+            this.defaultValues[2] = this.FatigueDecay;
+            this.defaultValues[3] = this.FatigueModifier;
+            this.defaultValues[4] = this.Fish;
+            this.defaultValues[5] = this.Hunger;
+            this.defaultValues[6] = this.HungerDecay;
+            this.defaultValues[7] = this.HungerDecayVariable;
+            this.defaultValues[8] = this.HungerModifier;
+            this.defaultValues[9] = this.HungerReservoir;
+            this.defaultValues[10] = this.Milk;
+            this.defaultValues[11] = this.Pots;
+            this.defaultValues[12] = this.Thirst;
+            this.defaultValues[13] = this.ThirstDecay;
+            this.defaultValues[14] = this.ThirstDecayVariable;
+            this.defaultValues[15] = this.ThirstModifier;
+            this.defaultValues[16] = this.ThirstReservoir;
+            this.defaultValues[17] = this.Water;
+            this.defaultValues[18] = this.Wood;
         }
 
         public override GoalState[] ToGoalState() {
@@ -194,19 +310,58 @@ public class HumanRole: Role {
             if (!this.Bread.Equals(this.defaultValues[0])) {
                 list.Add(new GoalState("Bread", this.Bread, StateGoalStrategy.Equal));
             }
-            if (!this.Fish.Equals(this.defaultValues[1])) {
+            if (!this.Fatigue.Equals(this.defaultValues[1])) {
+                list.Add(new GoalState("Fatigue", this.Fatigue, StateGoalStrategy.Equal));
+            }
+            if (!this.FatigueDecay.Equals(this.defaultValues[2])) {
+                list.Add(new GoalState("FatigueDecay", this.FatigueDecay, StateGoalStrategy.Equal));
+            }
+            if (!this.FatigueModifier.Equals(this.defaultValues[3])) {
+                list.Add(new GoalState("FatigueModifier", this.FatigueModifier, StateGoalStrategy.Equal));
+            }
+            if (!this.Fish.Equals(this.defaultValues[4])) {
                 list.Add(new GoalState("Fish", this.Fish, StateGoalStrategy.Equal));
             }
-            if (!this.Milk.Equals(this.defaultValues[2])) {
+            if (!this.Hunger.Equals(this.defaultValues[5])) {
+                list.Add(new GoalState("Hunger", this.Hunger, StateGoalStrategy.Equal));
+            }
+            if (!this.HungerDecay.Equals(this.defaultValues[6])) {
+                list.Add(new GoalState("HungerDecay", this.HungerDecay, StateGoalStrategy.Equal));
+            }
+            if (!this.HungerDecayVariable.Equals(this.defaultValues[7])) {
+                list.Add(new GoalState("HungerDecayVariable", this.HungerDecayVariable, StateGoalStrategy.Equal));
+            }
+            if (!this.HungerModifier.Equals(this.defaultValues[8])) {
+                list.Add(new GoalState("HungerModifier", this.HungerModifier, StateGoalStrategy.Equal));
+            }
+            if (!this.HungerReservoir.Equals(this.defaultValues[9])) {
+                list.Add(new GoalState("HungerReservoir", this.HungerReservoir, StateGoalStrategy.Equal));
+            }
+            if (!this.Milk.Equals(this.defaultValues[10])) {
                 list.Add(new GoalState("Milk", this.Milk, StateGoalStrategy.Equal));
             }
-            if (!this.Pots.Equals(this.defaultValues[3])) {
+            if (!this.Pots.Equals(this.defaultValues[11])) {
                 list.Add(new GoalState("Pots", this.Pots, StateGoalStrategy.Equal));
             }
-            if (!this.Water.Equals(this.defaultValues[4])) {
+            if (!this.Thirst.Equals(this.defaultValues[12])) {
+                list.Add(new GoalState("Thirst", this.Thirst, StateGoalStrategy.Equal));
+            }
+            if (!this.ThirstDecay.Equals(this.defaultValues[13])) {
+                list.Add(new GoalState("ThirstDecay", this.ThirstDecay, StateGoalStrategy.Equal));
+            }
+            if (!this.ThirstDecayVariable.Equals(this.defaultValues[14])) {
+                list.Add(new GoalState("ThirstDecayVariable", this.ThirstDecayVariable, StateGoalStrategy.Equal));
+            }
+            if (!this.ThirstModifier.Equals(this.defaultValues[15])) {
+                list.Add(new GoalState("ThirstModifier", this.ThirstModifier, StateGoalStrategy.Equal));
+            }
+            if (!this.ThirstReservoir.Equals(this.defaultValues[16])) {
+                list.Add(new GoalState("ThirstReservoir", this.ThirstReservoir, StateGoalStrategy.Equal));
+            }
+            if (!this.Water.Equals(this.defaultValues[17])) {
                 list.Add(new GoalState("Water", this.Water, StateGoalStrategy.Equal));
             }
-            if (!this.Wood.Equals(this.defaultValues[5])) {
+            if (!this.Wood.Equals(this.defaultValues[18])) {
                 list.Add(new GoalState("Wood", this.Wood, StateGoalStrategy.Equal));
             }
             
@@ -227,434 +382,11 @@ public class HumanRole: Role {
     }
 }
 #endregion
-#region class PhysiologyRole
-public class PhysiologyRole: HumanRole {
+#region class PotterRole
+public class PotterRole: HumanRole {
 
         #region class Store
     public new class Store : HumanRole.Store
-    {
-        // Fields
-        private List<object> defaultValues = new List<object>() {
-            0f,
-            0f,
-            1f,
-            0f,
-            343.33f,
-            1f,
-            0f,
-            0f,
-            0f,
-            0.1333f,
-            1f,
-            0f,
-            0f,
-        };
-
-        // Properties
-
-        public float Fatigue { get; set; }
-        public float FatigueDecay { get; set; }
-        public float FatigueModifier { get; set; }
-        public float HungerDecay { get; set; }
-        public float HungerDecayVariable { get; set; }
-        public float HungerModifier { get; set; }
-        public float HungerReservoir { get; set; }
-        public float Thirst { get; set; }
-        public float ThirstDecay { get; set; }
-        public float ThirstDecayVariable { get; set; }
-        public float ThirstModifier { get; set; }
-        public float ThirstReservoir { get; set; }
-        public float Hunger { get; set; }
-       
-        // Ctor
-        public Store() {
-            this.Fatigue = 0f;
-            this.FatigueDecay = 0f;
-            this.FatigueModifier = 1f;
-            this.HungerDecay = 0f;
-            this.HungerDecayVariable = 343.33f;
-            this.HungerModifier = 1f;
-            this.HungerReservoir = 0f;
-            this.Thirst = 0f;
-            this.ThirstDecay = 0f;
-            this.ThirstDecayVariable = 0.1333f;
-            this.ThirstModifier = 1f;
-            this.ThirstReservoir = 0f;
-            this.Hunger = 0f;
-        } 
-
-        // Methods
-
-        public override SearchableState Clone(SearchableState cloneTo = null) {
-            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
-            base.Clone(clone);
-            
-            clone.Fatigue = this.Fatigue;
-            clone.FatigueDecay = this.FatigueDecay;
-            clone.FatigueModifier = this.FatigueModifier;
-            clone.HungerDecay = this.HungerDecay;
-            clone.HungerDecayVariable = this.HungerDecayVariable;
-            clone.HungerModifier = this.HungerModifier;
-            clone.HungerReservoir = this.HungerReservoir;
-            clone.Thirst = this.Thirst;
-            clone.ThirstDecay = this.ThirstDecay;
-            clone.ThirstDecayVariable = this.ThirstDecayVariable;
-            clone.ThirstModifier = this.ThirstModifier;
-            clone.ThirstReservoir = this.ThirstReservoir;
-            clone.Hunger = this.Hunger;
-
-            return clone;
-        }
-
-        public override bool Contains(string name) {
-            if (base.Contains(name)) return true;
-            if (name == "Fatigue") return true;
-            if (name == "FatigueDecay") return true;
-            if (name == "FatigueModifier") return true;
-            if (name == "HungerDecay") return true;
-            if (name == "HungerDecayVariable") return true;
-            if (name == "HungerModifier") return true;
-            if (name == "HungerReservoir") return true;
-            if (name == "Thirst") return true;
-            if (name == "ThirstDecay") return true;
-            if (name == "ThirstDecayVariable") return true;
-            if (name == "ThirstModifier") return true;
-            if (name == "ThirstReservoir") return true;
-            if (name == "Hunger") return true;
-    
-            return false; 
-        }
-
-        public override List<VariableInstance> FilterByAccess(Governor governor) {
-            var list = base.FilterByAccess(governor);
-            list.AddRange(new List<VariableInstance> {
-                new VariableInstance("Fatigue", this.Fatigue.ToString()),
-                new VariableInstance("FatigueDecay", this.FatigueDecay.ToString()),
-                new VariableInstance("FatigueModifier", this.FatigueModifier.ToString()),
-                new VariableInstance("HungerDecay", this.HungerDecay.ToString()),
-                new VariableInstance("HungerDecayVariable", this.HungerDecayVariable.ToString()),
-                new VariableInstance("HungerModifier", this.HungerModifier.ToString()),
-                new VariableInstance("HungerReservoir", this.HungerReservoir.ToString()),
-                new VariableInstance("Thirst", this.Thirst.ToString()),
-                new VariableInstance("ThirstDecay", this.ThirstDecay.ToString()),
-                new VariableInstance("ThirstDecayVariable", this.ThirstDecayVariable.ToString()),
-                new VariableInstance("ThirstModifier", this.ThirstModifier.ToString()),
-                new VariableInstance("ThirstReservoir", this.ThirstReservoir.ToString()),
-                new VariableInstance("Hunger", this.Hunger.ToString()),
-            });
-            return list;
-        }
-
-        public override object GetValue(string name) {
-            if (base.Contains(name)) {
-                return base.GetValue(name);
-            } 
-            if (name == "Fatigue") return this.Fatigue;
-            if (name == "FatigueDecay") return this.FatigueDecay;
-            if (name == "FatigueModifier") return this.FatigueModifier;
-            if (name == "HungerDecay") return this.HungerDecay;
-            if (name == "HungerDecayVariable") return this.HungerDecayVariable;
-            if (name == "HungerModifier") return this.HungerModifier;
-            if (name == "HungerReservoir") return this.HungerReservoir;
-            if (name == "Thirst") return this.Thirst;
-            if (name == "ThirstDecay") return this.ThirstDecay;
-            if (name == "ThirstDecayVariable") return this.ThirstDecayVariable;
-            if (name == "ThirstModifier") return this.ThirstModifier;
-            if (name == "ThirstReservoir") return this.ThirstReservoir;
-            if (name == "Hunger") return this.Hunger;
-
-            throw new Exception("Key does not exists: " + name);
-        }
-
-        public override void SetValue(string name, object value) {
-            if (base.Contains(name)) {
-                base.SetValue(name, value);
-                return;
-            }
-            if (name == "Fatigue") { this.Fatigue = (float) value; return; }
-            if (name == "FatigueDecay") { this.FatigueDecay = (float) value; return; }
-            if (name == "FatigueModifier") { this.FatigueModifier = (float) value; return; }
-            if (name == "HungerDecay") { this.HungerDecay = (float) value; return; }
-            if (name == "HungerDecayVariable") { this.HungerDecayVariable = (float) value; return; }
-            if (name == "HungerModifier") { this.HungerModifier = (float) value; return; }
-            if (name == "HungerReservoir") { this.HungerReservoir = (float) value; return; }
-            if (name == "Thirst") { this.Thirst = (float) value; return; }
-            if (name == "ThirstDecay") { this.ThirstDecay = (float) value; return; }
-            if (name == "ThirstDecayVariable") { this.ThirstDecayVariable = (float) value; return; }
-            if (name == "ThirstModifier") { this.ThirstModifier = (float) value; return; }
-            if (name == "ThirstReservoir") { this.ThirstReservoir = (float) value; return; }
-            if (name == "Hunger") { this.Hunger = (float) value; return; }
-
-            throw new Exception("Key does not exists: " + name);
-        }
-
-        public override void ResetDirty() {
-            base.ResetDirty();
-
-            this.defaultValues[0] = this.Fatigue;
-            this.defaultValues[1] = this.FatigueDecay;
-            this.defaultValues[2] = this.FatigueModifier;
-            this.defaultValues[3] = this.HungerDecay;
-            this.defaultValues[4] = this.HungerDecayVariable;
-            this.defaultValues[5] = this.HungerModifier;
-            this.defaultValues[6] = this.HungerReservoir;
-            this.defaultValues[7] = this.Thirst;
-            this.defaultValues[8] = this.ThirstDecay;
-            this.defaultValues[9] = this.ThirstDecayVariable;
-            this.defaultValues[10] = this.ThirstModifier;
-            this.defaultValues[11] = this.ThirstReservoir;
-            this.defaultValues[12] = this.Hunger;
-        }
-
-        public override GoalState[] ToGoalState() {
-            var list = new List<GoalState>();
-            list.AddRange(base.ToGoalState());
-
-            if (!this.Fatigue.Equals(this.defaultValues[0])) {
-                list.Add(new GoalState("Fatigue", this.Fatigue, StateGoalStrategy.Equal));
-            }
-            if (!this.FatigueDecay.Equals(this.defaultValues[1])) {
-                list.Add(new GoalState("FatigueDecay", this.FatigueDecay, StateGoalStrategy.Equal));
-            }
-            if (!this.FatigueModifier.Equals(this.defaultValues[2])) {
-                list.Add(new GoalState("FatigueModifier", this.FatigueModifier, StateGoalStrategy.Equal));
-            }
-            if (!this.HungerDecay.Equals(this.defaultValues[3])) {
-                list.Add(new GoalState("HungerDecay", this.HungerDecay, StateGoalStrategy.Equal));
-            }
-            if (!this.HungerDecayVariable.Equals(this.defaultValues[4])) {
-                list.Add(new GoalState("HungerDecayVariable", this.HungerDecayVariable, StateGoalStrategy.Equal));
-            }
-            if (!this.HungerModifier.Equals(this.defaultValues[5])) {
-                list.Add(new GoalState("HungerModifier", this.HungerModifier, StateGoalStrategy.Equal));
-            }
-            if (!this.HungerReservoir.Equals(this.defaultValues[6])) {
-                list.Add(new GoalState("HungerReservoir", this.HungerReservoir, StateGoalStrategy.Equal));
-            }
-            if (!this.Thirst.Equals(this.defaultValues[7])) {
-                list.Add(new GoalState("Thirst", this.Thirst, StateGoalStrategy.Equal));
-            }
-            if (!this.ThirstDecay.Equals(this.defaultValues[8])) {
-                list.Add(new GoalState("ThirstDecay", this.ThirstDecay, StateGoalStrategy.Equal));
-            }
-            if (!this.ThirstDecayVariable.Equals(this.defaultValues[9])) {
-                list.Add(new GoalState("ThirstDecayVariable", this.ThirstDecayVariable, StateGoalStrategy.Equal));
-            }
-            if (!this.ThirstModifier.Equals(this.defaultValues[10])) {
-                list.Add(new GoalState("ThirstModifier", this.ThirstModifier, StateGoalStrategy.Equal));
-            }
-            if (!this.ThirstReservoir.Equals(this.defaultValues[11])) {
-                list.Add(new GoalState("ThirstReservoir", this.ThirstReservoir, StateGoalStrategy.Equal));
-            }
-            if (!this.Hunger.Equals(this.defaultValues[12])) {
-                list.Add(new GoalState("Hunger", this.Hunger, StateGoalStrategy.Equal));
-            }
-            
-            return list.ToArray();
-        }
-    }
-    #endregion
-
-    
-
-    public PhysiologyRole() : base("Physiology") {
-        this.Name = "Physiology";
-    }
-
-    public PhysiologyRole(string id) : base(id) { }
-
-    public override SearchableState CreateState() {
-        return new PhysiologyRole.Store();
-    }
-}
-#endregion
-#region class BakerRole
-public class BakerRole: PhysiologyRole {
-
-        #region class Store
-    public new class Store : PhysiologyRole.Store
-    {
-        // Fields
-        private List<object> defaultValues = new List<object>() {
-            0,
-        };
-
-        // Properties
-
-        public int Wheat { get; set; }
-       
-        // Ctor
-        public Store() {
-            this.Wheat = 0;
-        } 
-
-        // Methods
-
-        public override SearchableState Clone(SearchableState cloneTo = null) {
-            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
-            base.Clone(clone);
-            
-            clone.Wheat = this.Wheat;
-
-            return clone;
-        }
-
-        public override bool Contains(string name) {
-            if (base.Contains(name)) return true;
-            if (name == "Wheat") return true;
-    
-            return false; 
-        }
-
-        public override List<VariableInstance> FilterByAccess(Governor governor) {
-            var list = base.FilterByAccess(governor);
-            list.AddRange(new List<VariableInstance> {
-                new VariableInstance("Wheat", this.Wheat.ToString()),
-            });
-            return list;
-        }
-
-        public override object GetValue(string name) {
-            if (base.Contains(name)) {
-                return base.GetValue(name);
-            } 
-            if (name == "Wheat") return this.Wheat;
-
-            throw new Exception("Key does not exists: " + name);
-        }
-
-        public override void SetValue(string name, object value) {
-            if (base.Contains(name)) {
-                base.SetValue(name, value);
-                return;
-            }
-            if (name == "Wheat") { this.Wheat = (int) value; return; }
-
-            throw new Exception("Key does not exists: " + name);
-        }
-
-        public override void ResetDirty() {
-            base.ResetDirty();
-
-            this.defaultValues[0] = this.Wheat;
-        }
-
-        public override GoalState[] ToGoalState() {
-            var list = new List<GoalState>();
-            list.AddRange(base.ToGoalState());
-
-            if (!this.Wheat.Equals(this.defaultValues[0])) {
-                list.Add(new GoalState("Wheat", this.Wheat, StateGoalStrategy.Equal));
-            }
-            
-            return list.ToArray();
-        }
-    }
-    #endregion
-
-    
-
-    public BakerRole() : base("baker") {
-        this.Name = "Baker";
-    }
-
-    public BakerRole(string id) : base(id) { }
-
-    public override SearchableState CreateState() {
-        return new BakerRole.Store();
-    }
-}
-#endregion
-#region class ShepherdRole
-public class ShepherdRole: PhysiologyRole {
-
-        #region class Store
-    public new class Store : PhysiologyRole.Store
-    {
-        // Fields
-        private List<object> defaultValues = new List<object>() {
-        };
-
-        // Properties
-
-       
-        // Ctor
-        public Store() {
-        } 
-
-        // Methods
-
-        public override SearchableState Clone(SearchableState cloneTo = null) {
-            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
-            base.Clone(clone);
-            
-
-            return clone;
-        }
-
-        public override bool Contains(string name) {
-            if (base.Contains(name)) return true;
-    
-            return false; 
-        }
-
-        public override List<VariableInstance> FilterByAccess(Governor governor) {
-            var list = base.FilterByAccess(governor);
-            list.AddRange(new List<VariableInstance> {
-            });
-            return list;
-        }
-
-        public override object GetValue(string name) {
-            if (base.Contains(name)) {
-                return base.GetValue(name);
-            } 
-
-            throw new Exception("Key does not exists: " + name);
-        }
-
-        public override void SetValue(string name, object value) {
-            if (base.Contains(name)) {
-                base.SetValue(name, value);
-                return;
-            }
-
-            throw new Exception("Key does not exists: " + name);
-        }
-
-        public override void ResetDirty() {
-            base.ResetDirty();
-
-        }
-
-        public override GoalState[] ToGoalState() {
-            var list = new List<GoalState>();
-            list.AddRange(base.ToGoalState());
-
-            
-            return list.ToArray();
-        }
-    }
-    #endregion
-
-    
-
-    public ShepherdRole() : base("shepherd") {
-        this.Name = "Shepherd";
-    }
-
-    public ShepherdRole(string id) : base(id) { }
-
-    public override SearchableState CreateState() {
-        return new ShepherdRole.Store();
-    }
-}
-#endregion
-#region class PotterRole
-public class PotterRole: PhysiologyRole {
-
-        #region class Store
-    public new class Store : PhysiologyRole.Store
     {
         // Fields
         private List<object> defaultValues = new List<object>() {
@@ -759,11 +491,108 @@ public class PotterRole: PhysiologyRole {
     }
 }
 #endregion
-#region class FisherRole
-public class FisherRole: PhysiologyRole {
+#region class BakerRole
+public class BakerRole: HumanRole {
 
         #region class Store
-    public new class Store : PhysiologyRole.Store
+    public new class Store : HumanRole.Store
+    {
+        // Fields
+        private List<object> defaultValues = new List<object>() {
+            0,
+        };
+
+        // Properties
+
+        public int Wheat { get; set; }
+       
+        // Ctor
+        public Store() {
+            this.Wheat = 0;
+        } 
+
+        // Methods
+
+        public override SearchableState Clone(SearchableState cloneTo = null) {
+            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
+            base.Clone(clone);
+            
+            clone.Wheat = this.Wheat;
+
+            return clone;
+        }
+
+        public override bool Contains(string name) {
+            if (base.Contains(name)) return true;
+            if (name == "Wheat") return true;
+    
+            return false; 
+        }
+
+        public override List<VariableInstance> FilterByAccess(Governor governor) {
+            var list = base.FilterByAccess(governor);
+            list.AddRange(new List<VariableInstance> {
+                new VariableInstance("Wheat", this.Wheat.ToString()),
+            });
+            return list;
+        }
+
+        public override object GetValue(string name) {
+            if (base.Contains(name)) {
+                return base.GetValue(name);
+            } 
+            if (name == "Wheat") return this.Wheat;
+
+            throw new Exception("Key does not exists: " + name);
+        }
+
+        public override void SetValue(string name, object value) {
+            if (base.Contains(name)) {
+                base.SetValue(name, value);
+                return;
+            }
+            if (name == "Wheat") { this.Wheat = (int) value; return; }
+
+            throw new Exception("Key does not exists: " + name);
+        }
+
+        public override void ResetDirty() {
+            base.ResetDirty();
+
+            this.defaultValues[0] = this.Wheat;
+        }
+
+        public override GoalState[] ToGoalState() {
+            var list = new List<GoalState>();
+            list.AddRange(base.ToGoalState());
+
+            if (!this.Wheat.Equals(this.defaultValues[0])) {
+                list.Add(new GoalState("Wheat", this.Wheat, StateGoalStrategy.Equal));
+            }
+            
+            return list.ToArray();
+        }
+    }
+    #endregion
+
+    
+
+    public BakerRole() : base("baker") {
+        this.Name = "Baker";
+    }
+
+    public BakerRole(string id) : base(id) { }
+
+    public override SearchableState CreateState() {
+        return new BakerRole.Store();
+    }
+}
+#endregion
+#region class FisherRole
+public class FisherRole: HumanRole {
+
+        #region class Store
+    public new class Store : HumanRole.Store
     {
         // Fields
         private List<object> defaultValues = new List<object>() {
@@ -853,6 +682,91 @@ public class FisherRole: PhysiologyRole {
 
     public override SearchableState CreateState() {
         return new FisherRole.Store();
+    }
+}
+#endregion
+#region class ShepherdRole
+public class ShepherdRole: HumanRole {
+
+        #region class Store
+    public new class Store : HumanRole.Store
+    {
+        // Fields
+        private List<object> defaultValues = new List<object>() {
+        };
+
+        // Properties
+
+       
+        // Ctor
+        public Store() {
+        } 
+
+        // Methods
+
+        public override SearchableState Clone(SearchableState cloneTo = null) {
+            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
+            base.Clone(clone);
+            
+
+            return clone;
+        }
+
+        public override bool Contains(string name) {
+            if (base.Contains(name)) return true;
+    
+            return false; 
+        }
+
+        public override List<VariableInstance> FilterByAccess(Governor governor) {
+            var list = base.FilterByAccess(governor);
+            list.AddRange(new List<VariableInstance> {
+            });
+            return list;
+        }
+
+        public override object GetValue(string name) {
+            if (base.Contains(name)) {
+                return base.GetValue(name);
+            } 
+
+            throw new Exception("Key does not exists: " + name);
+        }
+
+        public override void SetValue(string name, object value) {
+            if (base.Contains(name)) {
+                base.SetValue(name, value);
+                return;
+            }
+
+            throw new Exception("Key does not exists: " + name);
+        }
+
+        public override void ResetDirty() {
+            base.ResetDirty();
+
+        }
+
+        public override GoalState[] ToGoalState() {
+            var list = new List<GoalState>();
+            list.AddRange(base.ToGoalState());
+
+            
+            return list.ToArray();
+        }
+    }
+    #endregion
+
+    
+
+    public ShepherdRole() : base("shepherd") {
+        this.Name = "Shepherd";
+    }
+
+    public ShepherdRole(string id) : base(id) { }
+
+    public override SearchableState CreateState() {
+        return new ShepherdRole.Store();
     }
 }
 #endregion
@@ -1353,7 +1267,6 @@ public class MainWorkflow : Workflow {
             new State("init", "Init", "", this, false, 0, false, false),
             new State("wait", "Wait", "", this, true, 0, false, false),
             new State("physiology", "Physiology", "", this, false, 0, false, false),
-            new State("Alternative", "Alternative", "", this, false, 0, true, false),
         });
 
         // transitions
@@ -1368,7 +1281,7 @@ public class MainWorkflow : Workflow {
 
         // connections
         this.Connect("c0", this.GetPosition("start"), this.GetPosition("init"), this.GetAction("initAgent"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, InitAgentActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, InitAgentActionParameters>()
                   .Action((i, w, g, o, r, a) => { r.HungerModifier = a.HungerModifier;
 r.ThirstModifier = a.ThirstModifier;
 r.FatigueModifier = a.FatigueModifier;; } ));
@@ -1441,7 +1354,7 @@ r.FatigueModifier = a.FatigueModifier;; } ));
                   .Action((i, w, g, o, r, a) => { r.Wheat++;; } ),  });
             
         this.Connect("c12", this.GetPosition(""), this.GetPosition(""), this.GetAction("drink"), 4)
-              .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, DrinkActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, DrinkActionParameters>()
                   .Allow((i, w, g, o, r, a) => { return r.Milk > 0 && r.Thirst > 0.5; })
                   .Action((i, w, g, o, r, a) => { r.ThirstDecay = r.ThirstDecay - 1;
 r.ThirstReservoir = 1 - ((3.2f - r.ThirstDecay) / 3.2f);
@@ -1449,7 +1362,7 @@ r.Thirst = (i.Circadian + r.ThirstReservoir) / 2;
 r.Water = r.Water - 1;; } ));
             
         this.Connect("c13", this.GetPosition(""), this.GetPosition(""), this.GetAction("drinkMilk"), 2)
-              .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, DrinkMilkActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, DrinkMilkActionParameters>()
                   .Allow((i, w, g, o, r, a) => { return r.Milk > 0 && r.Hunger > 0.5; })
                   .Action((i, w, g, o, r, a) => { r.ThirstDecay = r.ThirstDecay - 0.5f;
 r.ThirstReservoir = 1 - ((3.2f - r.ThirstDecay) / 3.2f);
@@ -1460,7 +1373,7 @@ r.Hunger = (i.Circadian + r.HungerReservoir) / 2;
 r.Milk = r.Milk - 1;; } ));
             
         this.Connect("c14", this.GetPosition(""), this.GetPosition(""), this.GetAction("eatFish"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, EatFishActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, EatFishActionParameters>()
                   .Allow((i, w, g, o, r, a) => { return r.Fish > 0 && r.Hunger > 0.5; })
                   .Action((i, w, g, o, r, a) => { r.HungerDecay = r.HungerDecay - 4560; // 456 kj/100g (Assumin 1kg fish)
 r.HungerReservoir = 1 - ((8336 - r.HungerDecay) / 8336);
@@ -1468,16 +1381,14 @@ r.Hunger = (i.Circadian + r.HungerReservoir) / 2;
 r.Fish = r.Fish - 1;; } ));
             
         this.Connect("c15", this.GetPosition(""), this.GetPosition(""), this.GetAction("eatBread"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, EatBreadActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, EatBreadActionParameters>()
                   .Allow((i, w, g, o, r, a) => { return r.Bread > 0 && r.Hunger > 0.5; }))
               .AddEffects(new AccessCondition[] { 
-                  new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, ParameterState>()
+                  new AccessCondition<DefaultInstitution.Store, MainWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, ParameterState>()
                   .Action((i, w, g, o, r, a) => { r.HungerDecay = r.HungerDecay - 2400; // 1200 kj/100g (Assumin double serve)
 r.HungerReservoir = 1 - ((8336 - r.HungerDecay) / 8336);
 r.Hunger = (i.Circadian + r.HungerReservoir) / 2;
 r.Bread = r.Bread - 1;; } ),  });
-            
-        this.Connect("c16", this.GetPosition("Alternative"), this.GetPosition("wait"), this.GetAction(""), 0);
             
 
         // create permissions
@@ -1641,38 +1552,42 @@ public class BakerWorkflow : Workflow {
         // connections
         this.Connect("c0", this.GetPosition(""), this.GetPosition(""), this.GetAction("MakeBread"), 0)
               .Condition(new AccessCondition<DefaultInstitution.Store, BakerWorkflow.Store, TribeOrganisation.Store, BakerRole.Store, MakeBreadActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Water >= 1 &&
-r.Wheat >= 2 &&
-(
+                  .Allow((i, w, g, o, r, a) => { return r.Water >= 1
+&& r.Wheat >= 2 
+/*&& (
     r.Pots 
     - Math.Ceiling(r.Water / 5f) 
     - Math.Ceiling(r.Wheat / 5f) 
     - Math.Ceiling(r.Bread / 3f) > 0
-); })
+)*/; })
                   .Action((i, w, g, o, r, a) => { r.Bread = r.Bread + 1;
 r.Water = r.Water - 1;
 r.Wheat = r.Wheat - 2;; } ));
             
         this.Connect("c1", this.GetPosition(""), this.GetPosition(""), this.GetAction("FindWheat"), 2)
               .Condition(new AccessCondition<DefaultInstitution.Store, BakerWorkflow.Store, TribeOrganisation.Store, BakerRole.Store, FindWheatActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Wheat <= 30 &&
+                  .Allow((i, w, g, o, r, a) => { return true
+/*
+r.Wheat <= 30 &&
 (
     r.Pots 
     - Math.Ceiling(r.Water / 5f) 
     - Math.Ceiling(r.Wheat / 5f) 
     - Math.Ceiling(r.Bread / 3f) > 0
-); })
+)
+*/; })
                   .Action((i, w, g, o, r, a) => { r.Wheat = r.Wheat + 1;; } ));
             
         this.Connect("c2", this.GetPosition(""), this.GetPosition(""), this.GetAction("FindWater"), 0)
               .Condition(new AccessCondition<DefaultInstitution.Store, BakerWorkflow.Store, TribeOrganisation.Store, BakerRole.Store, FindWaterActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Water <= 20 &&
-( // Check free pots
+                  .Allow((i, w, g, o, r, a) => { return true
+/* r.Water <= 20 
+&& ( // Check free pots
     r.Pots 
     - Math.Ceiling(r.Water / 5f) 
     - Math.Ceiling(r.Wheat / 5f) 
     - Math.Ceiling(r.Bread / 3f) > 0
-); })
+)*/; })
                   .Action((i, w, g, o, r, a) => { r.Water = r.Water + 1; } ));
             
         this.Connect("c3", this.GetPosition("Start"), this.GetPosition("End"), this.GetAction(""), 0);
@@ -2016,29 +1931,35 @@ public class FishingWorkflow : Workflow {
         // connections
         this.Connect("c0", this.GetPosition(""), this.GetPosition(""), this.GetAction("FindWood"), 2)
               .Condition(new AccessCondition<DefaultInstitution.Store, FishingWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, FindWoodActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Wood <= 5; })
+                  .Allow((i, w, g, o, r, a) => { return true 
+/*r.Wood <= 5*/; })
                   .Action((i, w, g, o, r, a) => { r.Wood++;; } ));
             
         this.Connect("c1", this.GetPosition(""), this.GetPosition(""), this.GetAction("CatchFish"), 0)
               .Condition(new AccessCondition<DefaultInstitution.Store, FishingWorkflow.Store, TribeOrganisation.Store, FisherRole.Store, CatchFishActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Spear > 0 &&
+                  .Allow((i, w, g, o, r, a) => { return r.Spear > 0 
+
+/* &&
 r.Fish <= 50 &&
 // check if there is a pot to store the bread (we store max 5 per pot)
-r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0; })
+r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0
+*/; })
                   .Action((i, w, g, o, r, a) => { r.Fish++;
 r.Spear = r.Spear - (new Random().Next() % 2);; } ));
             
         this.Connect("c2", this.GetPosition(""), this.GetPosition(""), this.GetAction("MakeSpear"), 0)
               .Condition(new AccessCondition<DefaultInstitution.Store, FishingWorkflow.Store, TribeOrganisation.Store, FisherRole.Store, MakeSpearActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Spear <= 3 &&
-r.Wood >= 2; })
+                  .Allow((i, w, g, o, r, a) => { return r.Wood >= 2
+; })
                   .Action((i, w, g, o, r, a) => { r.Wood -= 2;
 r.Spear++;; } ));
             
         this.Connect("c3", this.GetPosition(""), this.GetPosition(""), this.GetAction("FindWater"), 0)
               .Condition(new AccessCondition<DefaultInstitution.Store, FishingWorkflow.Store, TribeOrganisation.Store, FisherRole.Store, FindWaterActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Water <= 20 &&
-r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0; })
+                  .Allow((i, w, g, o, r, a) => { return true
+/*r.Water <= 20 &&
+r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0
+*/; })
                   .Action((i, w, g, o, r, a) => { r.Water++;; } ));
             
         this.Connect("c4", this.GetPosition("Start"), this.GetPosition("End"), this.GetAction(""), 0);
@@ -2235,7 +2156,7 @@ public class PotterWorkflow : Workflow {
         // connections
         this.Connect("c0", this.GetPosition(""), this.GetPosition(""), this.GetAction("MakePot"), 0)
               .Condition(new AccessCondition<DefaultInstitution.Store, PotterWorkflow.Store, TribeOrganisation.Store, PotterRole.Store, MakePotActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.ExchangeId >= 0 &&
+                  .Allow((i, w, g, o, r, a) => { return /*r.ExchangeId >= 0 &&*/
 r.Clay >= 1 &&
 r.Water >= 1; })
                   .Action((i, w, g, o, r, a) => { r.Pots += 1;
@@ -2244,21 +2165,15 @@ r.Clay -= 1;; } ));
             
         this.Connect("c1", this.GetPosition(""), this.GetPosition(""), this.GetAction("FindClay"), 0)
               .Condition(new AccessCondition<DefaultInstitution.Store, PotterWorkflow.Store, TribeOrganisation.Store, PotterRole.Store, FindClayActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Clay <= 10; })
+                  .Allow((i, w, g, o, r, a) => { return true
+/*r.Clay <= 10*/; })
                   .Action((i, w, g, o, r, a) => { r.Clay++;; } ));
             
         this.Connect("c2", this.GetPosition(""), this.GetPosition(""), this.GetAction("FindWater"), 0)
               .Condition(new AccessCondition<DefaultInstitution.Store, PotterWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, FindWaterActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Water <= 20; })
+                  .Allow((i, w, g, o, r, a) => { return true
+/* r.Water <= 20 */; })
                   .Action((i, w, g, o, r, a) => { r.Water++;; } ));
-            
-        this.Connect("c3", this.GetPosition(""), this.GetPosition(""), this.GetAction("ExchangePot"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, PotterWorkflow.Store, TribeOrganisation.Store, PotterRole.Store, ExchangePotActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.ExchangeId == -1; })
-                  .Action((i, w, g, o, r, a) => { r.ExchangeId = g.CreatedInstanceId;; } ))
-              .AddEffects(new AccessCondition[] { 
-                  new AccessCondition<DefaultInstitution.Store, PotterWorkflow.Store, TribeOrganisation.Store, PotterRole.Store, ParameterState>()
-                  .Action((i, w, g, o, r, a) => { r.ExchangeId = 1;; } ),  });
             
         this.Connect("c4", this.GetPosition("Start"), this.GetPosition("End"), this.GetAction(""), 0);
             
@@ -2617,8 +2532,8 @@ public class PhysiologyWorkflow : Workflow {
         this.Connect("c0", this.GetPosition("Start"), this.GetPosition("End"), this.GetAction(""), 0);
             
         this.Connect("c1", this.GetPosition("Start"), this.GetPosition("Start"), this.GetAction("Timeout"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, TimeoutActionParameters>()
-                  .Action((i, w, g, o, r, a) => { var owner = (PhysiologyRole.Store) w.Owner.FindRole(typeof(HumanRole.Store));
+              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, TimeoutActionParameters>()
+                  .Action((i, w, g, o, r, a) => { var owner = (HumanRole.Store) w.Owner.FindRole(typeof(HumanRole.Store));
 owner.Hunger = (i.Circadian + owner.HungerReservoir) / 2;
 owner.HungerDecay += ((owner.HungerDecayVariable * (i.Tick / 3600)) * owner.HungerModifier);
 owner.HungerReservoir = 1 - ((8336 - owner.HungerDecay) / 8336);
@@ -2628,40 +2543,40 @@ owner.ThirstReservoir = 1 - ((3.2f - owner.ThirstDecay) / 3.2f);
 owner.Fatigue += owner.FatigueModifier * ((7 * (i.Tick / 3600)) / 3);; } ));
             
         this.Connect("c2", this.GetPosition(""), this.GetPosition(""), this.GetAction("Sleep"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, SleepActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, SleepActionParameters>()
                   .Action((i, w, g, o, r, a) => { r.FatigueModifier = -1.5f;
 r.HungerDecayVariable = 311.17f;
 r.ThirstDecayVariable = 0.06f;; } ));
             
         this.Connect("c3", this.GetPosition(""), this.GetPosition(""), this.GetAction("WakeUp"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, WakeUpActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, WakeUpActionParameters>()
                   .Action((i, w, g, o, r, a) => { r.FatigueModifier = 1;
 r.HungerDecayVariable = 343.33f;
 r.ThirstDecayVariable = 0.1333f;; } ));
             
         this.Connect("c4", this.GetPosition(""), this.GetPosition(""), this.GetAction("Moving"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, MovingActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, MovingActionParameters>()
                   .Action((i, w, g, o, r, a) => { r.FatigueModifier = 1;; } ));
             
         this.Connect("c5", this.GetPosition(""), this.GetPosition(""), this.GetAction("Stopped"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, StoppedActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, StoppedActionParameters>()
                   .Action((i, w, g, o, r, a) => { r.FatigueModifier = 0.00001f;; } ));
             
         this.Connect("c6", this.GetPosition(""), this.GetPosition(""), this.GetAction("Rest"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, RestActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, RestActionParameters>()
                   .Action((i, w, g, o, r, a) => { r.Fatigue = a.Fatigue;
 r.FatigueModifier /= 10000;; } ));
             
         this.Connect("c7", this.GetPosition(""), this.GetPosition(""), this.GetAction("Rested"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, RestedActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, RestedActionParameters>()
                   .Action((i, w, g, o, r, a) => { r.FatigueModifier *= 10000;; } ));
             
         this.Connect("c8", this.GetPosition(""), this.GetPosition(""), this.GetAction("SetFatigue"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, SetFatigueActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, SetFatigueActionParameters>()
                   .Action((i, w, g, o, r, a) => { r.Fatigue = a.Fatigue;; } ));
             
         this.Connect("c9", this.GetPosition(""), this.GetPosition(""), this.GetAction("Eat"), 0)
-              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, PhysiologyRole.Store, EatActionParameters>()
+              .Condition(new AccessCondition<DefaultInstitution.Store, PhysiologyWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, EatActionParameters>()
                   .Action((i, w, g, o, r, a) => { r.Hunger = a.Hunger;; } ));
             
 
@@ -2796,15 +2711,18 @@ public class ShepherdWorkflow : Workflow {
         // connections
         this.Connect("c0", this.GetPosition(""), this.GetPosition(""), this.GetAction("FindWater"), 0)
               .Condition(new AccessCondition<DefaultInstitution.Store, ShepherdWorkflow.Store, TribeOrganisation.Store, HumanRole.Store, FindWaterActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Water <= 20 &&
-r.Water <= 20 &&
-(r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Milk / 5f)) > 0; })
+                  .Allow((i, w, g, o, r, a) => { return true
+/*r.Water <= 20 &&
+(r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Milk / 5f)) > 0
+*/; })
                   .Action((i, w, g, o, r, a) => { r.Water++;; } ));
             
         this.Connect("c1", this.GetPosition(""), this.GetPosition(""), this.GetAction("MilkCow"), 0)
               .Condition(new AccessCondition<DefaultInstitution.Store, ShepherdWorkflow.Store, TribeOrganisation.Store, ShepherdRole.Store, MilkCowActionParameters>()
-                  .Allow((i, w, g, o, r, a) => { return r.Milk <= 30 &&
-(r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Milk / 5f)) > 0; })
+                  .Allow((i, w, g, o, r, a) => { return true
+/*r.Milk <= 30 &&
+(r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Milk / 5f)) > 0
+*/; })
                   .Action((i, w, g, o, r, a) => { r.Milk++;; } ));
             
         this.Connect("c2", this.GetPosition("Start"), this.GetPosition("End"), this.GetAction(""), 0);

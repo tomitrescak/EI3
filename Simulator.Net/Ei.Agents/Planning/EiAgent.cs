@@ -93,6 +93,10 @@ namespace Ei.Agents.Planning
             this.OnPropertyChanged("AgentProperties");
         }
 
+        public void PropertyValueChanged() {
+            this.OnPropertyChanged("AgentProperties");
+        }
+
         public void MoveToLocation(double x, double y, double speedModifier) {
             this.navigation.SpeedPxPerSecond = (float) speedModifier;
             this.navigation.MoveToDestination((float) x, (float) y);

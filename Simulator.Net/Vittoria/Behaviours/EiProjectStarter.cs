@@ -37,38 +37,71 @@ namespace Vittoria.Behaviours
 
         // properties
 
+        [Category("General")]
         public string Institution { get; set; }
-        public List<AgentCount> AgentCounts { get; set; }
 
-
-        public double DayLengthInSeconds { get; set; }
-        public double MetersPerPixel { get; set; }
-
-        public double AgentSpeed { get; set; }
-        public List<double> SpeedDiversity { get; set; }
-        public List<double> PhysiologyDiversity { get; set; }
-
-        public double HungerTreshold { get; set; }
-        public double FatigueTreshold { get; set; }
-        public double ThirstThreshold { get; set; }
-
-        public double KillThirstThreshold { get; set; }
-        public double KillHungerThreshold { get; set; }
-
-        public double RestSpeed { get; set; }
-
+        [Category("General")]
         public string Organisation { get; set; }
+
+        [Category("General")]
         public string Password { get; set; }
 
+
+        [Category("Runtime")]
+        public double DayLengthInSeconds { get; set; }
+
+        [Category("Runtime")]
         public int AgentsPerSecond { get; set; }
+
+        [Category("Runtime")]
         public int AgentsLaunched { get; private set; }
 
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public List<EnvironmentDataAction> ActionsWithNoLocation { get; set; }
-        public List<EnvironmentDataDefinition> Elements { get; set; }
 
-        public bool Started { get; set; }
+        [Category("Agents")]
+        public List<AgentCount> AgentCounts { get; set; }
+
+        [Category("Agents")]
+        public double AgentSpeed { get; set; }
+
+        [Category("Agents")]
+        public List<double> SpeedDiversity { get; set; }
+
+        [Category("Agents")]
+        public double MetersPerPixel { get; set; }
+
+        [Category("Physiology")]
+        public List<double> PhysiologyDiversity { get; set; }
+
+        [Category("Physiology")]
+        public double HungerTreshold { get; set; }
+
+        [Category("Physiology")]
+        public double FatigueTreshold { get; set; }
+
+        [Category("Physiology")]
+        public double ThirstThreshold { get; set; }
+
+        [Category("Physiology")]
+        public double KillThirstThreshold { get; set; }
+
+        [Category("Physiology")]
+        public double KillHungerThreshold { get; set; }
+
+        [Category("Physiology")]
+        public double RestSpeed { get; set; }
+
+
+        [Category("Environment")]
+        public int Width { get; set; }
+
+        [Category("Environment")]
+        public int Height { get; set; }
+
+        [Category("Environment")]
+        public List<EnvironmentDataAction> ActionsWithNoLocation { get; set; }
+
+        [Category("Environment")]
+        public List<EnvironmentDataDefinition> Elements { get; set; }
 
         // constructor
 

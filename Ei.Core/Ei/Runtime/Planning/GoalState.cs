@@ -26,6 +26,8 @@ namespace Ei.Runtime.Planning
         string Name { get; }
         object Value { get; }
         StateGoalStrategy Strategy { get; }
+        GoalUpdateStrategy UpdateStrategy { get; }
+        object UpdateValue { get; }
     }
 
     public class GoalState: IGoal
@@ -66,7 +68,7 @@ namespace Ei.Runtime.Planning
 
         public string Name { get; set; }
         public object Value { get; set; }
-        public int UpdateValue { get; set; }
+        public object UpdateValue { get; set; }
         public StateGoalStrategy Strategy { get; set; }
         public GoalUpdateStrategy UpdateStrategy { get; set; }
 
@@ -165,10 +167,10 @@ namespace Ei.Runtime.Planning
 
             switch (this.UpdateStrategy) {
                 case GoalUpdateStrategy.Increment:
-                    this.Value = (int)value + this.UpdateValue;
+                    this.Value = (int)value + (int) this.UpdateValue;
                     break;
                 case GoalUpdateStrategy.Decrement:
-                    this.Value = (int)value - this.UpdateValue;
+                    this.Value = (int)value - (int) this.UpdateValue;
                     break;
             }
         }

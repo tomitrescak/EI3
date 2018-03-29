@@ -96,6 +96,7 @@
                     <ComboBoxItem>Info</ComboBoxItem>
                     <ComboBoxItem>Warning</ComboBoxItem>
                     <ComboBoxItem>Error</ComboBoxItem>
+                    <ComboBoxItem>Off</ComboBoxItem>
                 </ComboBox>
                 <Separator />
                 <Label>Source:</Label>
