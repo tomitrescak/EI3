@@ -66,7 +66,7 @@ export class HierarchicEntityEditor extends React.Component<Props> {
 
   render() {
     let ei = this.props.context.store.ei;
-    let entity = this.props.collection(ei).find(o => o.Id === this.props.id);
+    let entity = this.props.collection(ei).find(o => o.Id.toLowerCase() === this.props.id.toLowerCase());
 
     if (!entity) {
       return <Message content="Deleted" />;

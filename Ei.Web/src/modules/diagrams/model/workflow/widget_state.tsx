@@ -102,7 +102,7 @@ export class StateWidget extends React.Component<StateNodeWidgetProps> {
             )}
           <g id="Layer_2">
             <ellipse
-              fill={node.IsStart ? 'black' : (node.selected ? 'salmon' : 'white')}
+              fill={node.IsStart ? 'black' : (node.selected ? 'salmon' : 'silver')}
               stroke={node.selected ? 'salmon' : 'black'}
               strokeWidth={stroke}
               strokeDasharray={node.IsOpen ? '3 3' : null}
@@ -113,7 +113,7 @@ export class StateWidget extends React.Component<StateNodeWidgetProps> {
               cy={height / 2}
             />
             <rect
-              fill={node.IsStart ? 'black' : 'white'}
+              fill={node.IsStart ? 'black' : '#e0e0e0'}
               width={labelSize}
               height={20}
               x={labelX}

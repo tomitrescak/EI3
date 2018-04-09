@@ -27,7 +27,7 @@ export class EntitiesView extends React.Component<Props> {
 
   componentWillMount() {
     if (this.props.id) {
-      this.selectedNode = this.entities().find(o => o.Id === this.props.id) as HierarchicEntity;
+      this.selectedNode = this.entities().find(o => o.Id.toLowerCase() === this.props.id.toLowerCase()) as HierarchicEntity;
       this.selectedNode.setSelected(true);
     }
   }
@@ -52,9 +52,11 @@ export class EntitiesView extends React.Component<Props> {
     for (let node of this.entities()) {
       model.addNode(node);
       if (node.parentLink) {
-        node.Parent; // subscribe
         model.addLink(node.parentLink);
+        
       }
+      node.Parent; // subscribe
+      
     }
 
     // listen and store offsets

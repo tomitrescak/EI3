@@ -52,27 +52,35 @@ export abstract class HierarchicEntity extends ParametricEntity {
     });
 
     if (model) {
-      this.Parent = model.Parent;
+      this.setParent(model.Parent);
 
       // if there is a panel, create a link
-      this.update();
+      // this.update();
     }
   }
 
   update() {
     if (this.Parent) {
-      // create links
-      this.parentLink = new EntityLinkModel();
+      // get the link
+      let topPort = this.getPort('top');
+      let topPortKeys = Object.getOwnPropertyNames(topPort.links);
+      if (topPortKeys.length === 1) {
+        this.parentLink = topPort.links[topPortKeys[0]] as EntityLinkModel;
+      } else if (topPortKeys.length > 1) {
+        throw new Error('Too many links');
+      } else {
+        this.parentLink = new EntityLinkModel();
 
-      // create points
-      if (this.points && this.points.length) {
-        this.parentLink.setPoints(this.points.map(p => new PointModel(this.parentLink, p)));
+        // create points
+        if (this.points && this.points.length) {
+          this.parentLink.setPoints(this.points.map(p => new PointModel(this.parentLink, p)));
+        }
+
+        // add ports
+        const parent = this.parents.find(p => p.Id === this.Parent);
+        this.parentLink.setSourcePort(parent.getPort('bottom'));
+        this.parentLink.setTargetPort(topPort);
       }
-
-      // add ports
-      const parent = this.parents.find(p => p.Id === this.Parent);
-      this.parentLink.setSourcePort(parent.getPort('bottom'));
-      this.parentLink.setTargetPort(this.getPort('top'));
     } else {
       this.parentLink = null;
     }
@@ -92,7 +100,7 @@ export abstract class HierarchicEntity extends ParametricEntity {
     return this._parent;
   }
 
-  set Parent(parent: string) {
+  @action setParent(parent: string) {
     this._parent = parent;
     this.update();
   }
@@ -100,13 +108,13 @@ export abstract class HierarchicEntity extends ParametricEntity {
   @action
   removeItem() {
     // remove from collection
-    this.Parent = null;
+    this.setParent(null);
     this.parents.remove(this);
 
     // adjust all children
     for (let entity of this.parents) {
       if (entity.Parent === this.Id) {
-        entity.Parent = null;
+        entity.setParent(null);
         entity.parentLink = null;
       }
     }

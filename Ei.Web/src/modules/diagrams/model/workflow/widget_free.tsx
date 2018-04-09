@@ -68,7 +68,7 @@ export class FreeWidget extends React.Component<FreeWidgetProps> {
           <g id="Layer_1" />
           <g id="Layer_2">
             <ellipse
-              fill="white"
+              fill="silver"
               style={{opacity: 0.4}}
               rx={size}
               ry={size}
