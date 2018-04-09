@@ -112,7 +112,11 @@ namespace Ei.Ontology.Actions
 
             // 1. create a new workflow or join static workflow
             if (joinParameters.InstanceId == -1) {
-                if (workflow.Static && this.Workflows.Count > 0) {
+                // static workflow are lazily created 
+                // TODO: Check logic of static workflows wheter lazy loading is ok
+                if (workflow.Static && this.Workflows.Count == 0) {
+                    workflowInstance = this.Create(agent, parameters);
+                } else if (workflow.Static && this.Workflows.Count > 0) {
                     workflowInstance = this.workflow.GetInstance(this.Workflows[0]);
                 }
                 else if (this.workflow.CreatePermissions == null 

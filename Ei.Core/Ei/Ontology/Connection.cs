@@ -198,6 +198,7 @@ namespace Ei.Ontology
             if (effect != null) {
                 state.ResetDirty();
                 effect.ApplyPostconditions(state, workflowState, null, true);
+                return;
             }
 
 

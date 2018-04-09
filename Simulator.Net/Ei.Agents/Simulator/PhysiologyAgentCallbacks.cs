@@ -72,6 +72,8 @@ namespace Ei.Simulator.Core
             else
             {
                 param.Value = value.ToString();
+                this.owner.View.PropertyValueChanged();
+                    
             }
         }
 

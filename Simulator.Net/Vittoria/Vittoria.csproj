@@ -39,12 +39,10 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="OxyPlot, Version=1.0.0.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9, processorArchitecture=MSIL">
-      <HintPath>..\packages\OxyPlot.Core.1.0.0\lib\net45\OxyPlot.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\OxyPlot.Core.1.0.0\lib\net45\OxyPlot.dll</HintPath>
     </Reference>
     <Reference Include="OxyPlot.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=75e952ba404cdbb0, processorArchitecture=MSIL">
-      <HintPath>..\packages\OxyPlot.Wpf.1.0.0\lib\net45\OxyPlot.Wpf.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\OxyPlot.Wpf.1.0.0\lib\net45\OxyPlot.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -58,11 +56,10 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WriteableBitmapEx.Wpf, Version=1.5.0.0, Culture=neutral, PublicKeyToken=50375ca6144f1c69, processorArchitecture=MSIL">
-      <HintPath>..\packages\WriteableBitmapEx.1.5.0.0\lib\net40\WriteableBitmapEx.Wpf.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\WriteableBitmapEx.1.5.1.0\lib\net40\WriteableBitmapEx.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="YamlDotNet, Version=4.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YamlDotNet.4.3.1\lib\net45\YamlDotNet.dll</HintPath>
+      <HintPath>..\..\packages\YamlDotNet.4.3.1\lib\net45\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -162,8 +159,12 @@
       <Project>{70624af1-a5b0-43a2-896c-42cdcaf11f00}</Project>
       <Name>Ei.Logs.Net</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Ei.Persistence\Ei.Persistence.Net.csproj">
+      <Project>{1c6e4c7c-7d52-433c-b424-c27b630ebb55}</Project>
+      <Name>Ei.Persistence.Net</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ei.Agents\Ei.Agents.csproj">
-      <Project>{60defdcf-8026-480e-8d2d-5ee157eaa434}</Project>
+      <Project>{b9a7154d-6172-4c36-b4c5-d58bf03c8a51}</Project>
       <Name>Ei.Agents</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ei.Custom.Institutions\Ei.Custom.Institutions.csproj">
@@ -171,7 +172,7 @@
       <Name>Ei.Custom.Institutions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ei.Unity\Ei.Unity.csproj">
-      <Project>{cce0bf98-58ec-4676-9149-1c47862475e6}</Project>
+      <Project>{368e3361-92c5-4937-b3e0-ba8e5f315e44}</Project>
       <Name>Ei.Unity</Name>
     </ProjectReference>
     <ProjectReference Include="..\Xceed.Wpf.Toolkit\Xceed.Wpf.Toolkit.csproj">

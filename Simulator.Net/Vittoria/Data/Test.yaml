@@ -2,8 +2,7 @@
 ProjectPath: Data/test.yaml
 Agents:
 - Components:
-  - !UnityEngine.Transform,%20UnityEngine,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null {}
-  - !Vittoria.Behaviours.Spawn,%20Vittoria,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
+  - !spawn
     MinAgentCount: 1
     MaxAgentCount: 1
     SpawnPeriodMs: 50
@@ -14,14 +13,14 @@ Agents:
     MinInitialDecay: 90
     MaxInitialDecay: 100
     Type: Sim
-    DayLengthInSeconds: 240
+    DayLengthInSeconds: 1200 #240
     SimObjects:
     - Name: Cake
       Icon: Images/cake.png
-      Count: 100
-      SeedPeriodInMinutes: 60
-      MinSeedCount: 25
-      MaxSeedCount: 25
+      Count: 200
+      SeedPeriodInMinutes: 120
+      MinSeedCount: 50
+      MaxSeedCount: 50
       NextSeed: 20
       Actions:
       - DurationInMinutes: 30
@@ -31,7 +30,10 @@ Agents:
         - Type: Hunger
           Delta: 180
           PersonalityModifiers: []
-        Plan: []
+        Plan:
+        - Wheat
+        - Wheat
+        - Drink
     - Name: Water
       Icon: Images/Water.png
       Count: 100
@@ -117,8 +119,8 @@ Agents:
       Icon: Images/Wheat.png
       Count: 200
       SeedPeriodInMinutes: 60
-      MinSeedCount: 25
-      MaxSeedCount: 25
+      MinSeedCount: 50
+      MaxSeedCount: 50
       NextSeed: 20
       Actions:
       - DurationInMinutes: 15
@@ -129,14 +131,13 @@ Agents:
           Delta: -10
           PersonalityModifiers: []
         Plan: []
-  Enabled: true
   Started: true
   name: SimSpawn
-  Selected: true
 - Components:
-  - !UnityEngine.Transform,%20UnityEngine,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null {}
-  - !Ei.Agents.Planning.EiProject,%20Ei.Agents.Planning,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
-    ProjectPath: c:\Projects\EI2\Vittoria\bin\Debug\Data\Uruk\Uruk.yaml
+  - !eiproject
+    ProjectPath: Data\Uruk\Uruk.yaml
     AgentsPerSecond: 3
+  Enabled: true
   Started: true
   name: EiProject
+  Selected: true

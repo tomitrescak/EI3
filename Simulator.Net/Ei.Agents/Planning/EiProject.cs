@@ -10,6 +10,8 @@ using Ei.Agents.Sims;
 using Ei.Agents.Core.Behaviours;
 using System.Threading;
 using Ei.Agents.Core;
+using System.IO;
+using YamlDotNet.Serialization;
 
 namespace Ei.Agents.Planning
 {
@@ -21,24 +23,34 @@ namespace Ei.Agents.Planning
         public string ProjectPath { get; set; }
         public int AgentsPerSecond { get; set; }
         public int AgentsLaunched { get; private set; }
-
-        private Project project { get; set; }
+        
+        [YamlIgnore]
+        public Project project { get; set; }
 
         public void Init() {
-            if (this.project != null) {
+            if (!string.IsNullOrEmpty(this.ProjectPath)) {
+                var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
+                this.project = Project.Open(path);
+
+                this.InitProject(this.project);
+            }
+        }
+
+        public void InitProject(Project project) {
+            this.project = project;
+            if (this.project != null && this.project.Manager != null) {
                 this.project.Manager.Stop();
             }
+
             this.objectMappings = new Dictionary<EnvironmentData, GameObject>();
             this.agentMappings = new Dictionary<PhysiologyBasedAgent, GameObject>();
 
-            this.project = Project.Open(this.ProjectPath);
             // register listeners
             this.project.AgentLaunched += ProjectOnAgentLaunched;
 
             // load environment
             this.project.Environment.ObjectAdded += AddObjectToCanvas;
             this.project.Environment.ObjectRemoved += RemoveObjectFromCanvas;
-           
         }
 
         public void Start() {
@@ -50,7 +62,7 @@ namespace Ei.Agents.Planning
             //thread.IsBackground = true;
             //thread.Priority = ThreadPriority.Lowest;
             thread.Start();
-            
+
         }
 
         private void RemoveObjectFromCanvas(AgentEnvironment environment, EnvironmentData obj) {

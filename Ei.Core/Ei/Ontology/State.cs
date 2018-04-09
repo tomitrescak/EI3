@@ -52,7 +52,7 @@ namespace Ei.Ontology
                         timer.Elapsed += this.Timedout;
                     }
                     timer.Stop();
-                    timer.Interval = (state.Timeout / 1000f);
+                    timer.Interval = state.Timeout;
                     timer.Start();
                     timer.Enabled = true;
 

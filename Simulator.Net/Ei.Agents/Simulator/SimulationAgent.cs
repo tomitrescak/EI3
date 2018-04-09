@@ -190,11 +190,11 @@ namespace Ei.Simulator.Core
         protected void CreatePlan(Governor agent, GoalState[] goal, string goalType = null) {
             this.State = AgentState.Planning;
 
-            var t = new Thread(() => FindPlan(agent, goal, goalType));
-            t.Name = "Thread_" + tid++;
-            t.Start();
+            // var t = new Thread(() => FindPlan(agent, goal, goalType));
+            // t.Name = "Thread_" + tid++;
+            // t.Start();
 
-            // FindPlan(agent, goal, goalType);
+            FindPlan(agent, goal, goalType);
         }
 
         private void UpdatePlan() {
@@ -416,7 +416,7 @@ namespace Ei.Simulator.Core
                 });
 
                 if (planItem.Arc.Action is ActionExitWorkflow) {
-                    Log.Debug(agent.Name, "[WF] Enter workflow");
+                    Log.Debug(agent.Name, "[WF] exit workflow");
 
                     try {
                         var result = agent.ExitWorkflow();

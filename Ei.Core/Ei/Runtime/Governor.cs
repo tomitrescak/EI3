@@ -463,6 +463,7 @@ namespace Ei.Runtime
             if (workflow.Join(this)) {
                 // set properties of the current workflow
                 // this.VariableState.WorkflowVariableState = workflow.VariableState;
+                // this.Workflow = workflow;
             }
             else {
                 this.LogAction(
@@ -758,7 +759,7 @@ namespace Ei.Runtime
 
             switch (strategy) {
                 case PlanStrategy.ForwardSearch:
-                    return planner.Plan(h, new ForwardSearch(this.Position, state, this.Groups), costManager);
+                    return planner.Plan(h, new ForwardSearch(this.Position, state, this.Workflow.Resources, this.Groups), costManager);
                     //case PlanStrategy.BackwardSearch:
                     //    var startConnection = this.Workflow.Connections.First(w => w.Action != null && w.Action.Id == actionName);
                     //    var startState = state.ToGoalState();
@@ -786,7 +787,7 @@ namespace Ei.Runtime
 
             switch (strategy) {
                 case PlanStrategy.ForwardSearch:
-                    var s = new ForwardSearch(this.Position, state, this.Groups);
+                    var s = new ForwardSearch(this.Position, state, this.Workflow.Resources, this.Groups);
                     var h = new ResourceBasedHeuristics(goals);
                     return planner.Plan(h, s, costManager);
                     //case PlanStrategy.BackwardSearch:

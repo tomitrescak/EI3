@@ -13,14 +13,14 @@ namespace Ei.Runtime.Planning.Strategies
         
         protected Group[] Groups { get; set; }
 
-        internal ForwardSearch(WorkflowPosition agentPosition, Governor.GovernorState agentState, Group[] agentGroups)
+        internal ForwardSearch(WorkflowPosition agentPosition, Governor.GovernorState agentState, Workflow.Store workflowState, Group[] agentGroups)
         {
             this.Groups = agentGroups;
 
             this.InitialNode = new AStarNode(new Connection(null, null, agentPosition));
             this.InitialNode.Parent = null;
             this.InitialNode.Resources = agentState;
-            this.InitialNode.WorkflowState = agentState.Governor.Workflow.Resources.Clone();
+            this.InitialNode.WorkflowState = workflowState.Clone();
         }
 
         // properties
@@ -81,7 +81,7 @@ namespace Ei.Runtime.Planning.Strategies
         {
             if (node.Arc != null)
             {
-                node.Arc.ApplyPostconditions(node.Resources, null, null, true);
+                node.Arc.ApplyPostconditions(node.Resources, node.WorkflowState, null, true);
             }
         }
 
@@ -99,7 +99,7 @@ namespace Ei.Runtime.Planning.Strategies
             // currentNode.Arc.ApplyBacktrackPostconditions(this.Groups, nestedInitialState);
 
             // we need to find a way of how to get from "Start" node to the goal state
-            return new ForwardSearch(workflow.Start, nestedInitialState, this.Groups);
+            return new ForwardSearch(workflow.Start, nestedInitialState, workflow.Resources, this.Groups);
         }
 
         public bool ExpandEffects { get { return true; } }
