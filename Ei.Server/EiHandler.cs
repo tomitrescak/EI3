@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Reflection;
@@ -6,14 +7,35 @@ using System.Threading.Tasks;
 using Ei.Compilation;
 using Ei.Ontology;
 using Ei.Persistence.Json;
+using Ei.Simulation.Physiology;
+using Ei.Simulation.Physiology.Behaviours;
 using Newtonsoft.Json;
 using WebSocketManager;
 using WebSocketManager.Common;
+using Ei.Simulation.Simulator;
+using UnityEngine;
 
 namespace Ei.Server
 {
     public class EiHandler : WebSocketHandler
     {
+        enum ResultType
+        {
+            Error,
+            Ok
+        }
+        
+        class Result
+        {
+            public string ResultType;
+            public string Mesasage;
+            public object Payload;
+        }
+        
+        private Institution currentEi;
+        private Project project;
+        private Simulation.Simulator.Runner runner;
+        
         public EiHandler(WebSocketConnectionManager webSocketConnectionManager) : base(webSocketConnectionManager)
         {
         }
@@ -63,16 +85,90 @@ namespace Ei.Server
                 Console.Write(ex.Message);
             }
         }
+
+        public void Run(string projectSource) {
+            Console.Write("Running Project");
+
+            if (this.currentEi == null) {
+                throw new Exception("You need to compile the institution first!");
+            }
+            
+            // init the project that contains parameters of the simulation
+            this.project = JsonConvert.DeserializeObject(projectSource, typeof(PhysiologyProject)) as PhysiologyProject;
+
+            // physilogy runner is simulation behaviour
+            var physiologyProjectRunner = new PhysiologyProjectRunner();
+            physiologyProjectRunner.InitProject(this.project);
+            
+            // add new game object
+            var go = new GameObject("PhysiologyProjectRunner");
+            go.AddComponent<PhysiologyProjectRunner>();
+            
+            // add behaviour to the scene
+            var scene = new Scene(new List<GameObject> {
+                go
+            });
+            
+            // initialise runner
+            this.runner = new Runner(scene);
+            
+            // start the simulation
+            this.runner.Start();
+        }
+        
+        public async Task RunInstitution(long queryId, string projectSource)
+        {
+            try {
+                this.Run(projectSource);
+            }
+            catch (Exception ex) {
+                var result = new Result {
+                    ResultType = ResultType.Error.ToString(),
+                    Mesasage = ex.Message
+                };
+                var json = JsonConvert.SerializeObject(result);
+                await InvokeClientMethodToAllAsync("queryResult", queryId, json);
+            }
+
+//            try
+//            {
+//                var ei = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Files/AllComponents.json"));
+//                await InvokeClientMethodToAllAsync("queryResult", queryId, ei);
+//            }
+//            catch (Exception ex)
+//            {
+//                Console.Write(ex.Message);
+//            }
+        }
+        
+        public async Task MonitorInstitution(long queryId)
+        {
+            // send the state of all current objects
+            Console.Write("Initialising Project");
+//            try
+//            {
+//                var ei = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Files/AllComponents.json"));
+//                await InvokeClientMethodToAllAsync("queryResult", queryId, ei);
+//            }
+//            catch (Exception ex)
+//            {
+//                Console.Write(ex.Message);
+//            }
+        }
         
         public async Task CompileInstitution(long queryId, string source)
         {
             Console.Write("Compiling Institution");
             try {
+                this.currentEi = null;
+                
                 var institution = JsonInstitutionLoader.Instance.Load(source, null);
                 var code = institution.GenerateAll();
                 var result = Compiler.Compile(code, "DefaultInstitution", out Institution TestEi);
                 var json = JsonConvert.SerializeObject(result);
                 await InvokeClientMethodToAllAsync("queryResult", queryId, json);
+
+                this.currentEi = TestEi;
             }
             catch (Exception ex) {
                 if (ex.InnerException != null) {

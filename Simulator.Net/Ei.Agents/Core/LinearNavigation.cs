@@ -1,14 +1,11 @@
 ﻿// using Glide;
-using Ei.Logs;
+
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using Ei.Logs;
 using UnityEngine;
 
-namespace Ei.Agents.Core.Behaviours
+namespace Ei.Simulation.Core
 {
     [DisplayName("Linear Navigation")]
     public class LinearNavigation : EiBehaviour, IUpdates

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel;
 using UnityEngine;
 
-namespace Ei.Agents.Core.Behaviours
+namespace Ei.Simulation.Core
 {
     [DisplayName("Random Navigation")]
     public class RandomNavigation : EiBehaviour, IUpdates

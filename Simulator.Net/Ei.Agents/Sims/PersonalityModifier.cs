@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ei.Agents.Sims
+namespace Ei.Simulation.Sims
 {
     [Serializable]
     public class PersonalityModifier

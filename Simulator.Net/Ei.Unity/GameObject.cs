@@ -88,9 +88,7 @@ namespace UnityEngine
         public void InitComponent(MonoBehaviour component, ISimulation simulation) {
             this.Simulator = simulation;
             component.gameObject = this;
-            if (component.InitAction != null) {
-                component.InitAction();
-            }
+            component.InitAction?.Invoke();
         }
 
         public void UpdateComponents(MonoBehaviour component) {
@@ -102,7 +100,7 @@ namespace UnityEngine
             if (!GameObject.simulation.Behaviours[componentType].Contains(component)) {
                 GameObject.simulation.Behaviours[componentType].Add(component);
             }
-            this._updatebleComponents = this.Components.Where(c => c is IUpdates).Cast<IUpdates>().ToArray<IUpdates>();
+            this._updatebleComponents = this.Components.Where(c => c is IUpdates).Cast<IUpdates>().ToArray();
         }
 
         public static void Destroy(GameObject gameObject) {
@@ -160,10 +158,6 @@ namespace UnityEngine
             
             return this.AddComponent(component);
         }
-
-        // protected methods
-
-        // callback methods
 
     }
 }

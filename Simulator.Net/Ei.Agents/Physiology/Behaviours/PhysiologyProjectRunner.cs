@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Ei.Runtime.Planning.Environment;
-using Ei.Simulator.Core;
-using UnityEngine;
-using Project = Ei.Simulator.Core.Project;
-using Ei.Agents.Sims;
-using Ei.Agents.Core.Behaviours;
+﻿using System.Collections.Generic;
 using System.Threading;
-using Ei.Agents.Core;
-using System.IO;
-using YamlDotNet.Serialization;
+using Ei.Agents.Planning;
+using Ei.Runtime.Planning.Environment;
+using Ei.Simulation.Core;
+using Ei.Simulation.Sims.Behaviours;
+using Ei.Simulation.Simulator;
+using UnityEngine;
+using Project = Ei.Simulation.Simulator.Project;
 
-namespace Ei.Agents.Planning
+namespace Ei.Simulation.Physiology.Behaviours
 {
-    public class EiProject : EiBehaviour
+    public class PhysiologyProjectRunner : EiBehaviour
     {
         private Dictionary<EnvironmentData, GameObject> objectMappings;
         private Dictionary<PhysiologyBasedAgent, GameObject> agentMappings;
@@ -24,17 +19,16 @@ namespace Ei.Agents.Planning
         public int AgentsPerSecond { get; set; }
         public int AgentsLaunched { get; private set; }
         
-        [YamlIgnore]
-        public Project project { get; set; }
+        public Project project { get; private set; }
 
-        public void Init() {
-            if (!string.IsNullOrEmpty(this.ProjectPath)) {
-                var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
-                this.project = Project.Open(path);
-
-                this.InitProject(this.project);
-            }
-        }
+//        public void Init() {
+//            if (!string.IsNullOrEmpty(this.ProjectPath)) {
+//                var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
+//                this.project = Project.Open(path);
+//
+//                this.InitProject(this.project);
+//            }
+//        }
 
         public void InitProject(Project project) {
             this.project = project;
@@ -58,7 +52,7 @@ namespace Ei.Agents.Planning
             this.project.Environment.OpenEnvironment();
 
             // start this project
-            var thread = new Thread(() => this.project.LazyStart(this.AgentsPerSecond));
+            var thread = new Thread(() => this.project.Start(this.AgentsPerSecond));
             //thread.IsBackground = true;
             //thread.Priority = ThreadPriority.Lowest;
             thread.Start();
@@ -85,17 +79,18 @@ namespace Ei.Agents.Planning
             this.CreateInstance(agent, true, 2);
         }
 
-        private void ProjectOnAgentLaunched(PhysiologyBasedAgent agent) {
+        private void ProjectOnAgentLaunched(SimulationAgent agent) {
             // instantiate new simobject
             var newObj = new GameObject(agent.Name);
+            var a = agent as PhysiologyBasedAgent;
             newObj.transform.position = new Vector3(agent.X, agent.Y, 0);
 
             var sim = newObj.AddComponent<LinearNavigation>();
-            this.agentMappings.Add(agent, newObj);
+            this.agentMappings.Add(a, newObj);
 
             var eiAgent = newObj.AddComponent<EiAgent>();
 
-            eiAgent.agent = agent;
+            eiAgent.agent = a;
             agent.View = eiAgent;
 
             var color = newObj.AddComponent<ColorProvider>();

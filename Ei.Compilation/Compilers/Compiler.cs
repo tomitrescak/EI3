@@ -76,6 +76,7 @@ using System.Collections.Generic;
 
             references.Add(MetadataReference.CreateFromFile(typeof(Organisation).GetTypeInfo().Assembly.Location));
             references.Add(MetadataReference.CreateFromFile(typeof(Log).GetTypeInfo().Assembly.Location));
+            references.Add(MetadataReference.CreateFromFile(typeof(Simulation.Simulator.Runner).GetTypeInfo().Assembly.Location));
 
             // Console.WriteLine(string.Join("\n", references.Select(s => s.Display).ToArray()));
 
@@ -128,8 +129,6 @@ using System.Collections.Generic;
                             Line = line,
                             Message = f.GetMessage()
                         };
-                        
-                        
                     });
 
 

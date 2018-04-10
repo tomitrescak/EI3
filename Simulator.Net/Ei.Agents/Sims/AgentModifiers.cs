@@ -1,8 +1,8 @@
 ﻿using Ei.Agents.Core;
-using System.Diagnostics;
+using Ei.Simulation.Core;
 using UnityEngine;
 
-namespace Ei.Agents.Sims
+namespace Ei.Simulation.Sims
 {
     public abstract class Modifier
     {

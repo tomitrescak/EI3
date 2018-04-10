@@ -11,7 +11,7 @@ namespace Ei.Persistence
                 ? InstitutionDao.Instance.Roles.Find(o => o.Id == this.Parent).ClassName
                 : "Role";
         
-        public string GenerateCode() {
+        public override string GenerateCode() {
              return CodeGenerator.Role(this);
         }
     }

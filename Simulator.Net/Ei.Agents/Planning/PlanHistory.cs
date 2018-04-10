@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using Ei.Runtime.Planning;
 
-namespace Ei.Simulator.Core
+namespace Ei.Simulation.Planning
 {
     public class PlanHistory: INotifyPropertyChanged
     {
