@@ -1,8 +1,10 @@
 ﻿
 
-namespace Ei.Ontology.Transitions
+using Ei.Core.Ontology;
+
+namespace Ei.Core.Ontology.Transitions
 {
-    using Ei.Runtime;
+    using Core.Runtime;
     using System.Collections.Generic;
     using System.Linq;
 

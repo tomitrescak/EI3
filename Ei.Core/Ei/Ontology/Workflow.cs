@@ -1,22 +1,21 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Ei.Core.Runtime;
+using Ei.Logs;
+using Ei.Core.Ontology;
+using Ei.Core.Ontology.Actions;
+using Ei.Core.Ontology.Transitions;
 
-namespace Ei.Ontology
+namespace Ei.Core.Ontology
 {
-    using System;
-    using System.Runtime.CompilerServices;
-    using Ei.Logs;
-    using Ei.Ontology.Transitions;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using Ei.Runtime;
-    using ActionBase = Ei.Ontology.Actions.ActionBase;
-    using Ei.Runtime.Planning;
+    using ActionBase = ActionBase;
 
     public abstract class Workflow : Entity {
 
         #region class WorkflowState
-        public class Store : Runtime.ResourceState {
+        public class Store : ResourceState {
 
             // private Workflow workflow;
 
@@ -102,7 +101,7 @@ namespace Ei.Ontology
                     this.state.GetInstance(this.InstanceId).EnterPosition();
 
                     // log state change
-                    if (Log.IsInfo) Log.Info(this.workflow.Id, InstitutionCodes.WorkflowChangedState,
+                    if (Log.IsInfo) Logger.Info(this.workflow.Id, InstitutionCodes.WorkflowChangedState,
                         this.state.Id,
                         this.workflow.Id,
                         this.InstanceId.ToString());
@@ -182,7 +181,7 @@ namespace Ei.Ontology
 
             public void NotifyParameterChanged(string parameterName, object newValue) {
                 // log the result
-                if (Log.IsInfo) Log.Info(this.Id, InstitutionCodes.WorkflowParameterChanged, this.Id, this.InstanceId.ToString(), parameterName, newValue.ToString());
+                if (Log.IsInfo) Logger.Info(this.Id, InstitutionCodes.WorkflowParameterChanged, this.Id, this.InstanceId.ToString(), parameterName, newValue.ToString());
 
                 // notify all agents
                 for (int i = this.agents.Count - 1; i >= 0; i--) {

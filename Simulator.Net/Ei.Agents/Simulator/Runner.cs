@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using Ei.Simulation.Statistics;
 
@@ -19,6 +21,8 @@ namespace Ei.Simulation.Simulator
         private bool changedStructure;
         private List<Thread> processThreads;
 
+        private object locker = new object();
+        
         // properties
         
         public Collection<GameObject> Agents { get; private set; }
@@ -40,6 +44,8 @@ namespace Ei.Simulation.Simulator
             foreach (var agent in this.Agents) {
                 agent.Init(this);
             }
+            
+            this.processThreads = new List<Thread>();
         }
         
         // events
@@ -51,6 +57,7 @@ namespace Ei.Simulation.Simulator
         // methods
 
         public void Start() {
+
             // init timer
             Time.Start();
 
@@ -61,17 +68,25 @@ namespace Ei.Simulation.Simulator
                     this.CreateInstance(this.Agents[i], false);
                 }
             }
+            
+            // start processing frames
+            this.RunUpdate();
         }
 
         public void Stop() {
             foreach (var thread in this.processThreads) {
                 thread.Abort();
             }
+            this.processThreads.Clear();
         }
 
+        
         public void ProcessFrame() {
-            if (this.changedStructure) {
-                this._updatableAgents = this.Agents.Where(a => a.Updates).OrderBy(a => a.layer).ToArray();
+            
+            lock (locker) {
+                if (this.changedStructure) {
+                    this._updatableAgents = this.Agents.Where(a => a.Updates).OrderBy(a => a.layer).ToArray();
+                }
             }
 
             // start all agents 
@@ -80,20 +95,22 @@ namespace Ei.Simulation.Simulator
                 if (!agent.Enabled) {
                     continue;
                 }
-                if (!agent.Started) {
-                    agent.Start();
+//                if (!agent.Started) {
+//                    agent.Start();
+//                }
+
+                if (agent.Started) {
+                    agent.Update();
                 }
-                agent.Update();
             }
             
+            // sleep for the rest if we are over 120 FPS
+            
+            Time.FrameEnd();
         }
         
         public void ProcessStatistics(IStatistic statistic)
         {
-            if (this.processThreads == null) {
-                this.processThreads = new List<Thread>();
-                    
-            }
             // add given traits
             this.StatisticData.AddRange(statistic.Traits);
 
@@ -110,7 +127,7 @@ namespace Ei.Simulation.Simulator
 
             // sort traits by name
             this.StatisticData.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
-
+            
             // init datacontext
             var thread = new Thread(() => {
                 while (true) {
@@ -118,8 +135,7 @@ namespace Ei.Simulation.Simulator
                     // this.PlotModel.InvalidatePlot(true);
                     Thread.Sleep(statistic.ProcessTimeInMilliseconds);
                 }
-            });
-            thread.IsBackground = true;
+            }) {IsBackground = true};
             thread.Start();
 
             this.processThreads.Add(thread);
@@ -133,23 +149,38 @@ namespace Ei.Simulation.Simulator
         /// <param name="renderer">0 = Nothing, 1=Fast Renderer, 2=Icon Renderer, 3=Sim Renderer</param>
         /// <returns>Created GameObject</returns>
         public GameObject CreateInstance(GameObject agent, bool init = false, int renderer = 0) {
-            agent.Enabled = true;
+            lock (locker) {
+                agent.Enabled = true;
 
-            if (init) {
-                agent.Init(this);
+                if (init) {
+                    agent.Init(this);
+                }
+
+                agent.Start();
+                agent.Started = true;
+
+                // add it to the agents
+                if (this.Agents.IndexOf(agent) == -1) {
+                    this.AddAgent(agent);
+                }
+
+                // filter 
+                this.changedStructure = true;
+
+                return agent;
             }
-            agent.Start();
-            agent.Started = true;
+        }
 
-            // add it to the agents
-            if (this.Agents.IndexOf(agent) == -1) {
-                this.AddAgent(agent);
-            }
+        private void RunUpdate() {
+            var thread = new Thread(() => {
+                while (true) {
+                    this.ProcessFrame();
+                }
+            });
+            thread.IsBackground = true;
+            thread.Start();
 
-            // filter 
-            this.changedStructure = true;
-
-            return agent;
+            this.processThreads.Add(thread);
         }
 
         private void AddAgent(GameObject agent) {

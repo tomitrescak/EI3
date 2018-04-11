@@ -42,7 +42,7 @@ namespace UnityEngine
         static float lastSeconds = 0;
  
         public static void FrameEnd() {
-
+            
             time = (float) globalTimer.Elapsed.TotalSeconds;
             deltaTime = time - lastSeconds;
             lastSeconds = time;
@@ -50,7 +50,12 @@ namespace UnityEngine
             total += deltaTime;
 
             frames++;
+            
+            // Console.WriteLine("Frame {0} at {1}", frames, time);
+            
             if (fpsTimer.ElapsedMilliseconds >= 1000) {
+                // Console.WriteLine("Ending frame at: " + time + ": " + Fps);
+                
                 Fps = frames;
                 frames = 0;
                 fpsTimer.Reset();

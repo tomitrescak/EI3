@@ -1,6 +1,5 @@
-﻿namespace Ei.Runtime.Planning.Heuristics
+﻿namespace Ei.Core.Runtime.Planning.Heuristics
 {
-    using Ei.Ontology;
 
     internal class StaticHeuristics : IHeuristics
     {

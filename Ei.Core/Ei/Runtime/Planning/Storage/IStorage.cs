@@ -1,6 +1,6 @@
-﻿using Ei.Ontology;
+﻿using Ei.Core.Ontology;
 
-namespace Ei.Runtime.Planning.Storage
+namespace Ei.Core.Runtime.Planning.Storage
 {
     public interface IStorage
     {

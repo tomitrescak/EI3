@@ -49,10 +49,10 @@ namespace Ei.Logs
             LogMessage(1, message);
         }
 
-        public static void Info(string source, Enum code, params string[] parameters)
-        {
-            LogMessage(1, source, code.ToString(), parameters);
-        }
+//        public static void Info(string source, Enum code, params string[] parameters)
+//        {
+//            LogMessage(1, source, code.ToString(), parameters);
+//        }
 
         public static void Info(string source, string message)
         {

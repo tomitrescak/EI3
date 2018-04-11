@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Ei.Runtime;
+﻿using Ei.Core.Runtime;
+using Ei.Core.Ontology;
 
-namespace Ei.Ontology.Actions
+namespace Ei.Core.Ontology.Actions
 {
     public class ActionExitWorkflow : ActionBase
     {

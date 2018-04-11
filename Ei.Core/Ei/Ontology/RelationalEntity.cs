@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Ei.Runtime;
+using Ei.Core.Runtime;
 
-namespace Ei.Ontology
+namespace Ei.Core.Ontology
 {
     public abstract class RelationalEntity : Entity
     {

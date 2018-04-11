@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ei.Ontology;
+using Ei.Core.Ontology;
 
-namespace Ei.Runtime.Planning.Heuristics
+namespace Ei.Core.Runtime.Planning.Heuristics
 {
     public enum PlanHeuristics
     {

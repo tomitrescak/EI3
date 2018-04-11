@@ -1,0 +1,2996 @@
+﻿{
+  "Id": "uruk",
+  "Name": "Uruk",
+  "Description": "",
+  "x": 73,
+  "y": 198,
+  "Properties": [
+    {
+      "Name": "Circadian",
+      "DefaultValue": "0",
+      "Type": "float"
+    },
+    {
+      "Name": "SimulatedTime",
+      "DefaultValue": "0",
+      "Type": "float"
+    },
+    {
+      "Name": "Tick",
+      "DefaultValue": "1440",
+      "Type": "float"
+    }
+  ],
+  "MainWorkflow": "main",
+  "Expressions": "i.SimulatedTime = i.TimeSeconds * i.Tick;\ni.Circadian = (float) Math.Sqrt(Math.Cos((i.SimulatedTime * 3.1415926) / 21600) * Math.Cos((i.SimulatedTime * 3.1415926) / 21600));",
+  "Organisations": [
+    {
+      "Id": "default",
+      "Name": "Tribe",
+      "Icon": "🧠",
+      "x": 81.91666666666669,
+      "y": 148.66666666666663,
+      "Properties": [],
+      "LinkPoints": []
+    }
+  ],
+  "Roles": [
+    {
+      "Id": "default",
+      "Name": "Human",
+      "Icon": "👨🏽",
+      "x": 289,
+      "y": 68,
+      "Interface": "Ei.Simulation.Physiology.IPhysiologyStore",
+      "Properties": [
+        {
+          "Name": "Bread",
+          "DefaultValue": "0",
+          "Type": "int"
+        },
+        {
+          "Name": "Fatigue",
+          "DefaultValue": "0",
+          "Type": "float"
+        },
+        {
+          "Name": "FatigueDecay",
+          "DefaultValue": "0",
+          "Type": "float"
+        },
+        {
+          "Name": "FatigueModifier",
+          "DefaultValue": "1",
+          "Type": "float"
+        },
+        {
+          "Name": "Fish",
+          "DefaultValue": "0",
+          "Type": "int"
+        },
+        {
+          "Name": "Hunger",
+          "DefaultValue": "0",
+          "Type": "float"
+        },
+        {
+          "Name": "HungerDecay",
+          "DefaultValue": "0",
+          "Type": "float"
+        },
+        {
+          "Name": "HungerDecayVariable",
+          "DefaultValue": "343.33",
+          "Type": "float"
+        },
+        {
+          "Name": "HungerModifier",
+          "DefaultValue": "1",
+          "Type": "float"
+        },
+        {
+          "Name": "HungerReservoir",
+          "DefaultValue": "0",
+          "Type": "float"
+        },
+        {
+          "Name": "Milk",
+          "DefaultValue": "0",
+          "Type": "int"
+        },
+        {
+          "Name": "Pots",
+          "DefaultValue": "3",
+          "Type": "int"
+        },
+        {
+          "Name": "Thirst",
+          "DefaultValue": "0",
+          "Type": "float"
+        },
+        {
+          "Name": "ThirstDecay",
+          "DefaultValue": "0",
+          "Type": "float"
+        },
+        {
+          "Name": "ThirstDecayVariable",
+          "DefaultValue": "0.1333",
+          "Type": "float"
+        },
+        {
+          "Name": "ThirstModifier",
+          "DefaultValue": "1",
+          "Type": "float"
+        },
+        {
+          "Name": "ThirstReservoir",
+          "DefaultValue": "0",
+          "Type": "float"
+        },
+        {
+          "Name": "Water",
+          "DefaultValue": "0",
+          "Type": "int"
+        },
+        {
+          "Name": "Wood",
+          "DefaultValue": "0",
+          "Type": "int"
+        }
+      ],
+      "LinkPoints": []
+    },
+    {
+      "Id": "shepherd",
+      "Name": "Shepherd",
+      "Icon": "🐑",
+      "x": 446,
+      "y": 219,
+      "Properties": [],
+      "Parent": "default",
+      "LinkPoints": [
+        {
+          "x": 323.5,
+          "y": 127.5
+        },
+        {
+          "x": 492.5,
+          "y": 218.5
+        }
+      ]
+    },
+    {
+      "Id": "fisher",
+      "Name": "Fisher",
+      "Icon": "🐟",
+      "x": 113,
+      "y": 219,
+      "Properties": [
+        {
+          "Name": "Spear",
+          "DefaultValue": "0",
+          "Type": "int"
+        }
+      ],
+      "Parent": "default",
+      "LinkPoints": [
+        {
+          "x": 323.5,
+          "y": 127.5
+        },
+        {
+          "x": 151.5,
+          "y": 218.5
+        }
+      ]
+    },
+    {
+      "Id": "baker",
+      "Name": "Baker",
+      "Icon": "🥖",
+      "x": 336,
+      "y": 219,
+      "Properties": [
+        {
+          "Name": "Wheat",
+          "DefaultValue": "0",
+          "Type": "int"
+        }
+      ],
+      "Parent": "default",
+      "LinkPoints": [
+        {
+          "x": 323.5,
+          "y": 127.5
+        },
+        {
+          "x": 370.5,
+          "y": 218.5
+        }
+      ]
+    },
+    {
+      "Id": "potter",
+      "Name": "Potter",
+      "Icon": "⚱️",
+      "x": 223,
+      "y": 218,
+      "Properties": [
+        {
+          "Name": "Clay",
+          "DefaultValue": "0",
+          "Type": "int"
+        },
+        {
+          "Name": "ExchangeId",
+          "DefaultValue": "-1",
+          "Type": "int"
+        }
+      ],
+      "Parent": "default",
+      "LinkPoints": [
+        {
+          "x": 323.5,
+          "y": 127.5
+        },
+        {
+          "x": 261.5,
+          "y": 217.5
+        }
+      ]
+    }
+  ],
+  "Types": [],
+  "Workflows": [
+    {
+      "Id": "main",
+      "Name": "Main",
+      "x": 156,
+      "y": 147,
+      "Properties": [],
+      "Stateless": true,
+      "Static": true,
+      "States": [
+        {
+          "Id": "start",
+          "Name": "Start",
+          "x": 97.04683602585027,
+          "y": 33.44930274696287,
+          "IsStart": true,
+          "IsEnd": false,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "end",
+          "Name": "End",
+          "x": 119.27812281562404,
+          "y": 560.8620058435483,
+          "IsEnd": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "init",
+          "Name": "Init",
+          "x": 104.06686568630238,
+          "y": 205.1070869918988,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "wait",
+          "Name": "Wait",
+          "x": 7.809139336308355,
+          "y": 388.95857402245946,
+          "IsOpen": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "physiology",
+          "Name": "Physiology",
+          "x": 173.89507222917368,
+          "y": 389.18907098998346,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionJoinWorkflowDao",
+          "Id": "physiologyworkflow",
+          "Name": "Physiology Workflow",
+          "x": 75,
+          "y": 27,
+          "Properties": [],
+          "WorkflowId": "PhysiologyWorkflow"
+        },
+        {
+          "$type": "ActionJoinWorkflowDao",
+          "Id": "bakerWorkflow",
+          "Name": "Baker Workflow",
+          "x": 78,
+          "y": 34,
+          "Properties": [],
+          "WorkflowId": "BakerWorkflow"
+        },
+        {
+          "$type": "ActionJoinWorkflowDao",
+          "Id": "potterWorkflow",
+          "Name": "Potter Workflow",
+          "x": 29,
+          "y": 68,
+          "Properties": [],
+          "WorkflowId": "PotterWorkflow"
+        },
+        {
+          "$type": "ActionJoinWorkflowDao",
+          "Id": "exchangeWorkflow",
+          "Name": "Exchange Workflow",
+          "x": 156,
+          "y": 50,
+          "Properties": [],
+          "WorkflowId": "ExchangeWorkflow"
+        },
+        {
+          "$type": "ActionJoinWorkflowDao",
+          "Id": "shepherdWorkflow",
+          "Name": "Shepherd Workflow",
+          "x": 164,
+          "y": 83,
+          "Properties": [],
+          "WorkflowId": "ShepherdWorkflow"
+        },
+        {
+          "$type": "ActionJoinWorkflowDao",
+          "Id": "fisherWorkflow",
+          "Name": "Fisher Workflow",
+          "x": 134,
+          "y": 137,
+          "Properties": [],
+          "WorkflowId": "FisherWorkflow"
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "drink",
+          "Name": "Drink",
+          "x": 171,
+          "y": 128,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "drinkMilk",
+          "Name": "Drink Milk",
+          "x": 161,
+          "y": 84,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "eatFish",
+          "Name": "Eat Fish",
+          "x": 54,
+          "y": 31,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "eatBread",
+          "Name": "Eat Bread",
+          "x": 168,
+          "y": 187,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "initAgent",
+          "Name": "Init Agent",
+          "x": 163,
+          "y": 35,
+          "Properties": [
+            {
+              "Name": "FatigueModifier",
+              "DefaultValue": "0",
+              "Type": "float"
+            },
+            {
+              "Name": "HungerModifier",
+              "DefaultValue": "0",
+              "Type": "float"
+            },
+            {
+              "Name": "ThirstModifier",
+              "DefaultValue": "0",
+              "Type": "float"
+            },
+            {
+              "Name": "Tick",
+              "DefaultValue": "0",
+              "Type": "float"
+            }
+          ],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        }
+      ],
+      "Transitions": [
+        {
+          "$type": "TransitionSplitDao",
+          "Id": "split",
+          "Name": "Split",
+          "x": 86.0738239220922,
+          "y": 285.00714678394723,
+          "Horizontal": true,
+          "Names": [
+            [
+              "wait",
+              "Main"
+            ],
+            [
+              "physiology",
+              "Physiology"
+            ]
+          ]
+        },
+        {
+          "$type": "TransitionJoinDao",
+          "Id": "join",
+          "Name": "Join",
+          "x": 94.22434428316784,
+          "y": 482.1005856888209,
+          "Horizontal": true
+        }
+      ],
+      "Connections": [
+        {
+          "Id": "c0",
+          "Name": "Start → Init",
+          "x": 163,
+          "y": 14,
+          "Join": [
+            "start",
+            "init"
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.HungerModifier = a.HungerModifier;\nr.ThirstModifier = a.ThirstModifier;\nr.FatigueModifier = a.FatigueModifier;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "initAgent",
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 121.5312350526148,
+              "y": 66.93749875438456
+            },
+            {
+              "x": 124.56250249123087,
+              "y": 199.59375186842314
+            }
+          ],
+          "SourcePort": "south",
+          "TargetPort": "north",
+          "ActionDisplay": "full"
+        },
+        {
+          "Id": "c4",
+          "Name": "Init → Split",
+          "x": 157,
+          "y": 169,
+          "Join": [
+            "init",
+            "split"
+          ],
+          "Access": [],
+          "Effects": [],
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 124.56250249123087,
+              "y": 238.59373754384566
+            },
+            {
+              "x": 126.56252491230867,
+              "y": 282.5
+            }
+          ],
+          "SourcePort": "south",
+          "TargetPort": "input",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c1",
+          "Name": "Split → Wait",
+          "x": 63,
+          "y": 119,
+          "Join": [
+            "split",
+            "wait"
+          ],
+          "Access": [],
+          "Effects": [],
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 98.5625224210778,
+              "y": 309.499991280692
+            },
+            {
+              "x": 28.296919842155614,
+              "y": 383.4531137894611
+            }
+          ],
+          "SourcePort": "split1",
+          "TargetPort": "north",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c2",
+          "Name": "Split → Physiology",
+          "x": 137,
+          "y": 184,
+          "Join": [
+            "split",
+            "physiology"
+          ],
+          "Access": [],
+          "Effects": [],
+          "ActionId": "physiologyworkflow",
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 153.5624850526148,
+              "y": 309.499991280692
+            },
+            {
+              "x": 218.3906025789222,
+              "y": 383.6875074736926
+            }
+          ],
+          "SourcePort": "split3",
+          "TargetPort": "north",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c3",
+          "Name": "Wait → Join",
+          "x": 98,
+          "y": 175,
+          "Join": [
+            "wait",
+            "join"
+          ],
+          "Access": [],
+          "Effects": [],
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 28.296919842155614,
+              "y": 422.45311503507656
+            },
+            {
+              "x": 106.71875,
+              "y": 479.5937612105389
+            }
+          ],
+          "SourcePort": "south",
+          "TargetPort": "join1",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c5",
+          "Name": "Physiology → Join",
+          "x": 35,
+          "y": 167,
+          "Join": [
+            "physiology",
+            "join"
+          ],
+          "Access": [],
+          "Effects": [],
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 218.3906025789222,
+              "y": 422.687508719308
+            },
+            {
+              "x": 161.71877491230867,
+              "y": 479.5937612105389
+            }
+          ],
+          "SourcePort": "south",
+          "TargetPort": "join3",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c6",
+          "Name": "Join → End",
+          "x": 58,
+          "y": 54,
+          "Join": [
+            "join",
+            "end"
+          ],
+          "Access": [],
+          "Effects": [],
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 134.71875249123087,
+              "y": 506.5937524912309
+            },
+            {
+              "x": 136.7656100526148,
+              "y": 555.3593475964605
+            }
+          ],
+          "SourcePort": "yield",
+          "TargetPort": "north",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c10",
+          "Name": "{Open] ⚡️ Fisher",
+          "x": 38,
+          "y": 14,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "fisher",
+              "Organisation": "default",
+              "Precondition": "true",
+              "Postconditions": []
+            }
+          ],
+          "Effects": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Water++;"
+                }
+              ]
+            },
+            {
+              "Role": "fisher",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Fish++;"
+                }
+              ]
+            },
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Wood++;"
+                }
+              ]
+            },
+            {
+              "Role": "fisher",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Spear++;"
+                }
+              ]
+            }
+          ],
+          "ActionId": "fisherWorkflow",
+          "AllowLoops": "2",
+          "FreeFrom": {
+            "x": -250,
+            "y": 220
+          },
+          "FreeTo": {
+            "x": -50,
+            "y": 220
+          },
+          "LinkPoints": [
+            {
+              "x": -234.5000099649235,
+              "y": 235.50000249123087
+            },
+            {
+              "x": -34.50000996492348,
+              "y": 235.50000249123087
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c9",
+          "Name": "[Open] ⚡️Shepherd",
+          "x": 17,
+          "y": 2,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "shepherd",
+              "Organisation": "default",
+              "Precondition": "true",
+              "Postconditions": []
+            }
+          ],
+          "Effects": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Water++;"
+                }
+              ]
+            },
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Milk++;"
+                }
+              ]
+            }
+          ],
+          "ActionId": "shepherdWorkflow",
+          "AllowLoops": "3",
+          "FreeFrom": {
+            "x": -250,
+            "y": 300
+          },
+          "FreeTo": {
+            "x": -50,
+            "y": 290
+          },
+          "LinkPoints": [
+            {
+              "x": -235.92187998246175,
+              "y": 312.89061877192285
+            },
+            {
+              "x": -38.45309510522959,
+              "y": 304.328133719308
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c8",
+          "Name": "[Open] ⚡️ Potter",
+          "x": 2,
+          "y": 94,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "potter",
+              "Organisation": "default",
+              "Precondition": "true",
+              "Postconditions": []
+            }
+          ],
+          "Effects": [
+            {
+              "Role": "potter",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Pots++;"
+                }
+              ]
+            },
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Water++;"
+                }
+              ]
+            },
+            {
+              "Role": "potter",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Clay++;"
+                }
+              ]
+            }
+          ],
+          "ActionId": "potterWorkflow",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -250,
+            "y": 370
+          },
+          "FreeTo": {
+            "x": -50,
+            "y": 360
+          },
+          "LinkPoints": [
+            {
+              "x": -233.34376743861606,
+              "y": 382.14063994738524
+            },
+            {
+              "x": -34.87500249123087,
+              "y": 380.29687998246175
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c11",
+          "Name": "[Open]  ⚡️ Exchange",
+          "x": 27,
+          "y": 200,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "baker",
+              "Organisation": "default",
+              "Precondition": "r.Bread > 1",
+              "Postconditions": []
+            },
+            {
+              "Role": "shepherd",
+              "Organisation": "default",
+              "Precondition": "r.Milk > 1",
+              "Postconditions": []
+            },
+            {
+              "Role": "fisher",
+              "Organisation": "default",
+              "Precondition": "r.Fish > 2",
+              "Postconditions": []
+            }
+          ],
+          "Effects": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Pots ++;"
+                }
+              ]
+            }
+          ],
+          "ActionId": "exchangeWorkflow",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -250,
+            "y": 440
+          },
+          "FreeTo": {
+            "x": -50,
+            "y": 440
+          },
+          "LinkPoints": [
+            {
+              "x": -236.6249987543846,
+              "y": 457.5624987543846
+            },
+            {
+              "x": -36.43750249123087,
+              "y": 454.8593887017698
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c7",
+          "Name": "[Open] ⚡️  Baker",
+          "x": 160,
+          "y": 88,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "baker",
+              "Organisation": "default",
+              "Precondition": "true",
+              "Postconditions": []
+            }
+          ],
+          "Effects": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Bread++;"
+                }
+              ]
+            },
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Water++;"
+                }
+              ]
+            },
+            {
+              "Role": "baker",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Wheat++;"
+                }
+              ]
+            }
+          ],
+          "ActionId": "bakerWorkflow",
+          "AllowLoops": "2",
+          "FreeFrom": {
+            "x": -250,
+            "y": 510
+          },
+          "FreeTo": {
+            "x": -50,
+            "y": 510
+          },
+          "LinkPoints": [
+            {
+              "x": -236.50000124561546,
+              "y": 527.4999750876914
+            },
+            {
+              "x": -36.640600087691325,
+              "y": 530.843767438616
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c12",
+          "Name": "[Open] ⚡️ Drink",
+          "x": 12,
+          "y": 169,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Precondition": "r.Milk > 0 && r.Thirst > 0.5",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.ThirstDecay = r.ThirstDecay - 1;\nr.ThirstReservoir = 1 - ((3.2f - r.ThirstDecay) / 3.2f);\nr.Thirst = (i.Circadian + r.ThirstReservoir) / 2;\nr.Water = r.Water - 1;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "drink",
+          "AllowLoops": "4",
+          "FreeFrom": {
+            "x": 320,
+            "y": 250
+          },
+          "FreeTo": {
+            "x": 520,
+            "y": 250
+          },
+          "LinkPoints": [
+            {
+              "x": 335.5000896843112,
+              "y": 265.4999962631537
+            },
+            {
+              "x": 535.4999651227679,
+              "y": 265.4999962631537
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c13",
+          "Name": "[Open] ⚡️Drink Milk",
+          "x": 152,
+          "y": 122,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Precondition": "r.Milk > 0 && r.Hunger > 0.5;",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.ThirstDecay = r.ThirstDecay - 0.5f;\nr.ThirstReservoir = 1 - ((3.2f - r.ThirstDecay) / 3.2f);\nr.Thirst = (i.Circadian + r.ThirstReservoir) / 2;\nr.HungerDecay = r.HungerDecay - 1100;\nr.HungerReservoir = 1 - ((8336 - r.HungerDecay) / 8336);\nr.Hunger = (i.Circadian + r.HungerReservoir) / 2;\nr.Milk = r.Milk - 1;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "drinkMilk",
+          "AllowLoops": "2",
+          "FreeFrom": {
+            "x": 320,
+            "y": 330
+          },
+          "FreeTo": {
+            "x": 520,
+            "y": 330
+          },
+          "LinkPoints": [
+            {
+              "x": 335.5000896843112,
+              "y": 345.49999003507656
+            },
+            {
+              "x": 535.4999651227679,
+              "y": 345.49999003507656
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c14",
+          "Name": "Wait → [Open]",
+          "x": 35,
+          "y": 63,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Precondition": "r.Fish > 0 && r.Hunger > 0.5",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.HungerDecay = r.HungerDecay - 4560; // 456 kj/100g (Assumin 1kg fish)\nr.HungerReservoir = 1 - ((8336 - r.HungerDecay) / 8336);\nr.Hunger = (i.Circadian + r.HungerReservoir) / 2;\nr.Fish = r.Fish - 1;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "eatFish",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": 320,
+            "y": 400
+          },
+          "FreeTo": {
+            "x": 520,
+            "y": 400
+          },
+          "LinkPoints": [
+            {
+              "x": 335.5000896843112,
+              "y": 415.4999962631537
+            },
+            {
+              "x": 535.4999651227679,
+              "y": 415.4999962631537
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c15",
+          "Name": "[Open] ⚡️Eat Bread",
+          "x": 112,
+          "y": 146,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Precondition": "r.Bread > 0 && r.Hunger > 0.5",
+              "Postconditions": []
+            }
+          ],
+          "Effects": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.HungerDecay = r.HungerDecay - 2400; // 1200 kj/100g (Assumin double serve)\nr.HungerReservoir = 1 - ((8336 - r.HungerDecay) / 8336);\nr.Hunger = (i.Circadian + r.HungerReservoir) / 2;\nr.Bread = r.Bread - 1;"
+                }
+              ]
+            }
+          ],
+          "ActionId": "eatBread",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": 320,
+            "y": 470
+          },
+          "FreeTo": {
+            "x": 520,
+            "y": 470
+          },
+          "LinkPoints": [
+            {
+              "x": 335.5000896843112,
+              "y": 485.5000024912309
+            },
+            {
+              "x": 535.4999651227679,
+              "y": 485.5000024912309
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        }
+      ],
+      "AllowCreate": [],
+      "AllowJoin": []
+    },
+    {
+      "Id": "BakerWorkflow",
+      "Name": "Baker",
+      "x": 51,
+      "y": 122,
+      "Properties": [],
+      "Stateless": true,
+      "Static": true,
+      "States": [
+        {
+          "Id": "Start",
+          "Name": "Start",
+          "x": 40,
+          "y": 60,
+          "IsOpen": true,
+          "IsStart": true,
+          "IsEnd": false,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "End",
+          "Name": "End",
+          "x": 50,
+          "y": -20,
+          "IsEnd": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionMessageDao",
+          "Id": "FindWater",
+          "Name": "Find Water",
+          "x": -82,
+          "y": -41,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "MakeBread",
+          "Name": "Make Bread",
+          "x": -68,
+          "y": -93,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "FindWheat",
+          "Name": "Find Wheat",
+          "x": -6,
+          "y": -59,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        }
+      ],
+      "Transitions": [],
+      "Connections": [
+        {
+          "Id": "c0",
+          "Name": "[Open] ⚡️Make Bread",
+          "x": -50,
+          "y": -56,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "baker",
+              "Organisation": "default",
+              "Precondition": "r.Water >= 1\n&& r.Wheat >= 2 \n/*&& (\n    r.Pots \n    - Math.Ceiling(r.Water / 5f) \n    - Math.Ceiling(r.Wheat / 5f) \n    - Math.Ceiling(r.Bread / 3f) > 0\n)*/",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Bread = r.Bread + 1;\nr.Water = r.Water - 1;\nr.Wheat = r.Wheat - 2;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "MakeBread",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": 170,
+            "y": 130
+          },
+          "FreeTo": {
+            "x": 330,
+            "y": 130
+          },
+          "LinkPoints": [
+            {
+              "x": 178.00000508626303,
+              "y": 138.0000114440918
+            },
+            {
+              "x": 337.99997965494794,
+              "y": 138.0000114440918
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c1",
+          "Name": "[Open] ⚡️Find Wheat",
+          "x": -74,
+          "y": -90,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "baker",
+              "Organisation": "default",
+              "Precondition": "true\n/*\nr.Wheat <= 30 &&\n(\n    r.Pots \n    - Math.Ceiling(r.Water / 5f) \n    - Math.Ceiling(r.Wheat / 5f) \n    - Math.Ceiling(r.Bread / 3f) > 0\n)\n*/",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Wheat = r.Wheat + 1;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "FindWheat",
+          "AllowLoops": "2",
+          "FreeFrom": {
+            "x": -20,
+            "y": 130
+          },
+          "FreeTo": {
+            "x": 140,
+            "y": 130
+          },
+          "LinkPoints": [
+            {
+              "x": -12.000020345052084,
+              "y": 138.0000114440918
+            },
+            {
+              "x": 148.0000178019206,
+              "y": 138.0000114440918
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c2",
+          "Name": "[Open] ⚡️Find Water",
+          "x": -3,
+          "y": -71,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "baker",
+              "Organisation": "default",
+              "Precondition": "true\n/* r.Water <= 20 \n&& ( // Check free pots\n    r.Pots \n    - Math.Ceiling(r.Water / 5f) \n    - Math.Ceiling(r.Wheat / 5f) \n    - Math.Ceiling(r.Bread / 3f) > 0\n)*/",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Water = r.Water + 1"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "FindWater",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -200,
+            "y": 130
+          },
+          "FreeTo": {
+            "x": -50,
+            "y": 130
+          },
+          "LinkPoints": [
+            {
+              "x": -192.00000762939453,
+              "y": 138.0000114440918
+            },
+            {
+              "x": -42.00000762939453,
+              "y": 138.0000114440918
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c3",
+          "Name": "Start → End",
+          "x": -1,
+          "y": -93,
+          "Join": [
+            "Start",
+            "End"
+          ],
+          "Access": [],
+          "Effects": [],
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 64.49996948242188,
+              "y": 54.499994913736984
+            },
+            {
+              "x": 67.4999745686849,
+              "y": 13.500010172526043
+            }
+          ],
+          "SourcePort": "north",
+          "TargetPort": "south",
+          "ActionDisplay": "iconAndText"
+        }
+      ],
+      "AllowCreate": [
+        {
+          "Role": "baker",
+          "Organisation": "default",
+          "Precondition": "r.Water > 0 && \nr.Wheat > 1 && \n// Check free pots\n(r.Pots \n    - Math.Ceiling(r.Water / 5f) \n    - Math.Ceiling(r.Wheat / 5f) \n    - Math.Ceiling(r.Bread / 3f) > 0)",
+          "Postconditions": [
+            {
+              "Condition": "",
+              "Action": "r.Bread = r.Bread + 1;\nr.Water = r.Water - 1;\nr.Wheat = r.Wheat - 2;"
+            }
+          ]
+        }
+      ],
+      "AllowJoin": []
+    },
+    {
+      "Id": "ExchangeWorkflow",
+      "Name": "Exchange",
+      "x": -84,
+      "y": -50,
+      "Properties": [],
+      "Stateless": true,
+      "Static": false,
+      "States": [
+        {
+          "Id": "Start",
+          "Name": "Start",
+          "x": -60,
+          "y": -70,
+          "IsStart": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "End",
+          "Name": "End",
+          "x": -50,
+          "y": 140,
+          "IsEnd": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionMessageDao",
+          "Id": "ExchangePot",
+          "Name": "Exchange Pot",
+          "x": -77,
+          "y": -23,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        }
+      ],
+      "Transitions": [],
+      "Connections": [
+        {
+          "Id": "c0",
+          "Name": "Action 🥖 Exchange Pot",
+          "x": -66,
+          "y": -90,
+          "Join": [
+            "Start",
+            "End"
+          ],
+          "Access": [
+            {
+              "Role": "baker",
+              "Organisation": "default",
+              "Precondition": "r.Bread > 2",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "if (w.Owner == null) {\n    return;\n}\nvar potter = (PotterRole.Store) w.Owner.FindProvider(\"Pots\");\npotter.Pots = potter.Pots - 1;\npotter.Bread = potter.Bread + 2;\nr.Pots = r.Pots + 1;\nr.Bread = r.Bread - 2;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "ExchangePot",
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": -52.50002466066919,
+              "y": -40.00000154129182
+            },
+            {
+              "x": -220,
+              "y": 80
+            },
+            {
+              "x": -45.999965475063135,
+              "y": 141.99999876696654
+            }
+          ],
+          "SourcePort": "southwest",
+          "TargetPort": "northwest",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c1",
+          "Name": "Action 🐑Exchange Pot",
+          "x": -89,
+          "y": -3,
+          "Join": [
+            "Start",
+            "End"
+          ],
+          "Access": [
+            {
+              "Role": "shepherd",
+              "Organisation": "default",
+              "Precondition": "r.Milk >= 3",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "if (w.Owner == null) {\n    return;\n}\nvar potter = (PotterRole.Store) w.Owner.FindProvider(\"Pots\");\npotter.Pots = potter.Pots - 1;\npotter.Milk = potter.Milk + 3;\nr.Pots = r.Pots + 1;\nr.Bread = r.Milk - 3;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "ExchangePot",
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": -35.50000739820076,
+              "y": -36.49999753393308
+            },
+            {
+              "x": -32.49997533933081,
+              "y": 134.50001109730113
+            }
+          ],
+          "SourcePort": "south",
+          "TargetPort": "north",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c2",
+          "Name": "Action 🐟Echange Pot",
+          "x": -86,
+          "y": -5,
+          "Join": [
+            "Start",
+            "End"
+          ],
+          "Access": [
+            {
+              "Role": "fisher",
+              "Organisation": "default",
+              "Precondition": "r.Fish >= 2",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "if (w.Owner == null) {\n    return;\n}\nvar potter = (PotterRole.Store) w.Owner.FindProvider(\"Pots\");\npotter.Pots = potter.Pots - 1;\npotter.Milk = potter.Fish + 2;\nr.Pots = r.Pots + 1;\nr.Bread = r.Fish - 2;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "ExchangePot",
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": -16.50000986426768,
+              "y": -40.00000154129182
+            },
+            {
+              "x": 150,
+              "y": 70
+            },
+            {
+              "x": -17.000004932133837,
+              "y": 141.99999876696654
+            }
+          ],
+          "SourcePort": "southeast",
+          "TargetPort": "northeast",
+          "ActionDisplay": "iconAndText"
+        }
+      ],
+      "AllowCreate": [],
+      "AllowJoin": []
+    },
+    {
+      "Id": "FisherWorkflow",
+      "Name": "Fishing",
+      "x": -33,
+      "y": -71,
+      "Properties": [],
+      "Stateless": true,
+      "Static": true,
+      "States": [
+        {
+          "Id": "Start",
+          "Name": "Start",
+          "x": 40,
+          "y": -140,
+          "IsOpen": true,
+          "IsStart": true,
+          "IsEnd": false,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "End",
+          "Name": "End",
+          "x": 160,
+          "y": -140,
+          "IsEnd": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionMessageDao",
+          "Id": "FindWater",
+          "Name": "Find Water",
+          "x": -30,
+          "y": -8,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "FindWood",
+          "Name": "Find Wood",
+          "x": -19,
+          "y": -56,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "MakeSpear",
+          "Name": "Make Spear",
+          "x": -90,
+          "y": -89,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "CatchFish",
+          "Name": "Catch Fish",
+          "x": -9,
+          "y": -29,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        }
+      ],
+      "Transitions": [],
+      "Connections": [
+        {
+          "Id": "c0",
+          "Name": "[Open] ⚡️Find Wood",
+          "x": -10,
+          "y": -94,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Precondition": "true \n/*r.Wood <= 5*/",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Wood++;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "FindWood",
+          "AllowLoops": "2",
+          "FreeFrom": {
+            "x": -290,
+            "y": -70
+          },
+          "FreeTo": {
+            "x": -150,
+            "y": -70
+          },
+          "LinkPoints": [
+            {
+              "x": -282,
+              "y": -62
+            },
+            {
+              "x": -142,
+              "y": -62
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c1",
+          "Name": "[Open] ⚡️Catch Fish",
+          "x": -56,
+          "y": -71,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "fisher",
+              "Organisation": "default",
+              "Precondition": "r.Spear > 0 \n\n/* &&\nr.Fish <= 50 &&\n// check if there is a pot to store the bread (we store max 5 per pot)\nr.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0\n*/",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Fish++;\nr.Spear = r.Spear - (new Random().Next() % 2);"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "CatchFish",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": 260,
+            "y": -70
+          },
+          "FreeTo": {
+            "x": 410,
+            "y": -70
+          },
+          "LinkPoints": [
+            {
+              "x": 268,
+              "y": -62
+            },
+            {
+              "x": 418,
+              "y": -62
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c2",
+          "Name": "[Open] ⚡️Make Spear",
+          "x": -75,
+          "y": -65,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "fisher",
+              "Organisation": "default",
+              "Precondition": "r.Wood >= 2\n",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Wood -= 2;\nr.Spear++;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "MakeSpear",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -110,
+            "y": -70
+          },
+          "FreeTo": {
+            "x": 40,
+            "y": -70
+          },
+          "LinkPoints": [
+            {
+              "x": -102,
+              "y": -62
+            },
+            {
+              "x": 48,
+              "y": -62
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c3",
+          "Name": "[Open] ⚡️Find Water",
+          "x": -34,
+          "y": -83,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "fisher",
+              "Organisation": "default",
+              "Precondition": "true\n/*r.Water <= 20 &&\nr.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Fish / 3f) > 0\n*/",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Water++;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "FindWater",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": 70,
+            "y": -70
+          },
+          "FreeTo": {
+            "x": 220,
+            "y": -70
+          },
+          "LinkPoints": [
+            {
+              "x": 78,
+              "y": -62
+            },
+            {
+              "x": 228,
+              "y": -62
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c4",
+          "Name": "Start → End",
+          "x": -41,
+          "y": -71,
+          "Join": [
+            "Start",
+            "End"
+          ],
+          "Access": [],
+          "Effects": [],
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 91.5,
+              "y": -123.5
+            },
+            {
+              "x": 154.5,
+              "y": -123.5
+            }
+          ],
+          "SourcePort": "east",
+          "TargetPort": "west",
+          "ActionDisplay": "iconAndText"
+        }
+      ],
+      "AllowCreate": [],
+      "AllowJoin": []
+    },
+    {
+      "Id": "PotterWorkflow",
+      "Name": "Potter",
+      "x": -17,
+      "y": -41,
+      "Properties": [],
+      "Stateless": true,
+      "Static": true,
+      "States": [
+        {
+          "Id": "Start",
+          "Name": "Start",
+          "x": -60,
+          "y": -110,
+          "IsOpen": true,
+          "IsStart": true,
+          "IsEnd": false,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "End",
+          "Name": "End",
+          "x": 40,
+          "y": -110,
+          "IsEnd": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionMessageDao",
+          "Id": "FindWater",
+          "Name": "Find Water",
+          "x": -11,
+          "y": -23,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "MakePot",
+          "Name": "Make Pot",
+          "x": -27,
+          "y": -31,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "FindClay",
+          "Name": "Find Clay",
+          "x": -4,
+          "y": -87,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionJoinWorkflowDao",
+          "Id": "ExchangePot",
+          "Name": "Exchange Pot",
+          "x": -26,
+          "y": -71,
+          "Properties": []
+        }
+      ],
+      "Transitions": [],
+      "Connections": [
+        {
+          "Id": "c0",
+          "Name": "[Open] ⚡️Make Pot",
+          "x": -44,
+          "y": -27,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "potter",
+              "Organisation": "default",
+              "Precondition": "/*r.ExchangeId >= 0 &&*/\nr.Clay >= 1 &&\nr.Water >= 1",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Pots += 1;\nr.Water -= 1;\nr.Clay -= 1;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "MakePot",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -120,
+            "y": -10
+          },
+          "FreeTo": {
+            "x": 30,
+            "y": -10
+          },
+          "LinkPoints": [
+            {
+              "x": -112.00000493213383,
+              "y": -2.0000110973011362
+            },
+            {
+              "x": 37.99999506786616,
+              "y": -2.0000110973011362
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c1",
+          "Name": "[Open] ⚡️ Find Clay",
+          "x": -86,
+          "y": -67,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "potter",
+              "Organisation": "default",
+              "Precondition": "true\n/*r.Clay <= 10*/",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Clay++;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "FindClay",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -120,
+            "y": 40
+          },
+          "FreeTo": {
+            "x": 30,
+            "y": 40
+          },
+          "LinkPoints": [
+            {
+              "x": -112.00000493213383,
+              "y": 47.99998890269887
+            },
+            {
+              "x": 37.99999506786616,
+              "y": 47.99998890269887
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c2",
+          "Name": "[Open] ⚡️Find Water",
+          "x": -32,
+          "y": -62,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Precondition": "true\n/* r.Water <= 20 */",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Water++;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "FindWater",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -120,
+            "y": 90
+          },
+          "FreeTo": {
+            "x": 30,
+            "y": 90
+          },
+          "LinkPoints": [
+            {
+              "x": -112.00000493213383,
+              "y": 97.99998890269886
+            },
+            {
+              "x": 37.99999506786616,
+              "y": 97.99998890269886
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c4",
+          "Name": "Start → End",
+          "x": -96,
+          "y": -10,
+          "Join": [
+            "Start",
+            "End"
+          ],
+          "Access": [],
+          "Effects": [],
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": -8.499965475063131,
+              "y": -93.50000554865056
+            },
+            {
+              "x": 34.49998027146465,
+              "y": -93.50000554865056
+            }
+          ],
+          "SourcePort": "east",
+          "TargetPort": "west",
+          "ActionDisplay": "iconAndText"
+        }
+      ],
+      "AllowCreate": [],
+      "AllowJoin": []
+    },
+    {
+      "Id": "PhysiologyWorkflow",
+      "Name": "Physiology",
+      "x": -18,
+      "y": -23,
+      "Properties": [],
+      "Stateless": false,
+      "Static": false,
+      "States": [
+        {
+          "Id": "Start",
+          "Name": "Start",
+          "x": 220,
+          "y": 80,
+          "IsOpen": true,
+          "Timeout": "0",
+          "IsStart": true,
+          "IsEnd": false,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "End",
+          "Name": "End",
+          "x": 240,
+          "y": 160,
+          "IsEnd": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionTimeoutDao",
+          "Id": "Timeout",
+          "Name": "timeout",
+          "x": -26,
+          "y": -78,
+          "Properties": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "Sleep",
+          "Name": "Sleep",
+          "x": -37,
+          "y": -49,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "WakeUp",
+          "Name": "Wake Up",
+          "x": -15,
+          "y": -96,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "Moving",
+          "Name": "Moving",
+          "x": -22,
+          "y": -81,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "Stopped",
+          "Name": "Stopped",
+          "x": -78,
+          "y": -94,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "Rest",
+          "Name": "Rest",
+          "x": -5,
+          "y": -4,
+          "Properties": [
+            {
+              "Name": "Fatigue",
+              "DefaultValue": "0",
+              "Type": "float"
+            }
+          ],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "Rested",
+          "Name": "Rested",
+          "x": -63,
+          "y": -64,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "SetFatigue",
+          "Name": "Set Fatigue",
+          "x": -73,
+          "y": -30,
+          "Properties": [
+            {
+              "Name": "Fatigue",
+              "DefaultValue": "0",
+              "Type": "float"
+            }
+          ],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "Eat",
+          "Name": "Eat",
+          "x": -89,
+          "y": -58,
+          "Properties": [
+            {
+              "Name": "Hunger",
+              "DefaultValue": "0",
+              "Type": "float"
+            }
+          ],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        }
+      ],
+      "Transitions": [],
+      "Connections": [
+        {
+          "Id": "c0",
+          "Name": "Start → End",
+          "x": -87,
+          "y": -68,
+          "Join": [
+            "Start",
+            "End"
+          ],
+          "Access": [],
+          "Effects": [],
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 252.49998766966542,
+              "y": 113.50000246606692
+            },
+            {
+              "x": 257.5,
+              "y": 154.49999876696654
+            }
+          ],
+          "SourcePort": "south",
+          "TargetPort": "north",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c1",
+          "Name": "Start → Start ⏱",
+          "x": -40,
+          "y": -40,
+          "Join": [
+            "Start",
+            "Start"
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "var owner = (HumanRole.Store) w.Owner.FindRole(typeof(HumanRole.Store));\nowner.Hunger = (i.Circadian + owner.HungerReservoir) / 2;\nowner.HungerDecay += ((owner.HungerDecayVariable * (i.Tick / 3600)) * owner.HungerModifier);\nowner.HungerReservoir = 1 - ((8336 - owner.HungerDecay) / 8336);\nowner.Thirst = (i.Circadian + owner.ThirstReservoir) / 2;\nowner.ThirstDecay += ((owner.ThirstDecayVariable * (i.Tick / 3600)) * owner.ThirstModifier);\nowner.ThirstReservoir = 1 - ((3.2f - owner.ThirstDecay) / 3.2f);\nowner.Fatigue += owner.FatigueModifier * ((7 * (i.Tick / 3600)) / 3);"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "Timeout",
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": 231.50000986426767,
+              "y": 110.00000616516729
+            },
+            {
+              "x": 150,
+              "y": 140
+            },
+            {
+              "x": 150,
+              "y": 40
+            },
+            {
+              "x": 231.50000986426767,
+              "y": 82.00000493213383
+            }
+          ],
+          "SourcePort": "southwest",
+          "TargetPort": "northwest",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c2",
+          "Name": "[Open] ⚡️ Sleep",
+          "x": -84,
+          "y": -14,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.FatigueModifier = -1.5f;\nr.HungerDecayVariable = 311.17f;\nr.ThirstDecayVariable = 0.06f;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "Sleep",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -90,
+            "y": 80
+          },
+          "FreeTo": {
+            "x": 50,
+            "y": 80
+          },
+          "LinkPoints": [
+            {
+              "x": -81.99999260179925,
+              "y": 87.99999506786617
+            },
+            {
+              "x": 58.00004438920455,
+              "y": 87.99999506786617
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c3",
+          "Name": "[Open] ⚡️Wake Up",
+          "x": -1,
+          "y": -67,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.FatigueModifier = 1;\nr.HungerDecayVariable = 343.33f;\nr.ThirstDecayVariable = 0.1333f;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "WakeUp",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -90,
+            "y": 130
+          },
+          "FreeTo": {
+            "x": 50,
+            "y": 130
+          },
+          "LinkPoints": [
+            {
+              "x": -81.99999260179925,
+              "y": 137.99999506786617
+            },
+            {
+              "x": 58.00004438920455,
+              "y": 137.99999506786617
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c4",
+          "Name": "[Open] ⚡️Moving",
+          "x": -38,
+          "y": -68,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.FatigueModifier = 1;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "Moving",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -90,
+            "y": 180
+          },
+          "FreeTo": {
+            "x": 50,
+            "y": 170
+          },
+          "LinkPoints": [
+            {
+              "x": -81.99999260179925,
+              "y": 187.99999506786617
+            },
+            {
+              "x": 58.00004438920455,
+              "y": 178.00000123303346
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c5",
+          "Name": "[Open] ⚡️Stopped",
+          "x": -79,
+          "y": -43,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.FatigueModifier = 0.00001f;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "Stopped",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -90,
+            "y": 30
+          },
+          "FreeTo": {
+            "x": 50,
+            "y": 30
+          },
+          "LinkPoints": [
+            {
+              "x": -81.99999260179925,
+              "y": 37.99999506786616
+            },
+            {
+              "x": 58.00004438920455,
+              "y": 37.99999506786616
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c6",
+          "Name": "[Open] ⚡️Rest",
+          "x": -36,
+          "y": -65,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Fatigue = a.Fatigue;\nr.FatigueModifier /= 10000;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "Rest",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -90,
+            "y": 230
+          },
+          "FreeTo": {
+            "x": 50,
+            "y": 230
+          },
+          "LinkPoints": [
+            {
+              "x": -81.99999260179925,
+              "y": 237.99999506786617
+            },
+            {
+              "x": 58.00004438920455,
+              "y": 237.99999506786617
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c7",
+          "Name": "[Open] ⚡️Rested",
+          "x": -18,
+          "y": -42,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.FatigueModifier *= 10000;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "Rested",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -90,
+            "y": 280
+          },
+          "FreeTo": {
+            "x": 50,
+            "y": 280
+          },
+          "LinkPoints": [
+            {
+              "x": -81.99999260179925,
+              "y": 287.99999506786617
+            },
+            {
+              "x": 58.00004438920455,
+              "y": 287.99999506786617
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c8",
+          "Name": "[Open] ⚡️Set Fatigue",
+          "x": -55,
+          "y": -96,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Fatigue = a.Fatigue;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "SetFatigue",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -90,
+            "y": -20
+          },
+          "FreeTo": {
+            "x": 50,
+            "y": -20
+          },
+          "LinkPoints": [
+            {
+              "x": -81.99999260179925,
+              "y": -12.00000493213384
+            },
+            {
+              "x": 58.00004438920455,
+              "y": -12.00000493213384
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c9",
+          "Name": "[Open] ⚡️Eat",
+          "x": -65,
+          "y": -35,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Hunger = a.Hunger;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "Eat",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -90,
+            "y": -70
+          },
+          "FreeTo": {
+            "x": 50,
+            "y": -70
+          },
+          "LinkPoints": [
+            {
+              "x": -81.99999260179925,
+              "y": -61.99999722567472
+            },
+            {
+              "x": 58.00004438920455,
+              "y": -61.99999722567472
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        }
+      ],
+      "AllowCreate": [],
+      "AllowJoin": []
+    },
+    {
+      "Id": "ShepherdWorkflow",
+      "Name": "Shepherd",
+      "x": -95,
+      "y": -16,
+      "Properties": [],
+      "Stateless": true,
+      "Static": true,
+      "States": [
+        {
+          "Id": "Start",
+          "Name": "Start",
+          "x": -70,
+          "y": -100,
+          "IsOpen": true,
+          "IsStart": true,
+          "IsEnd": false,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        },
+        {
+          "Id": "End",
+          "Name": "End",
+          "x": 70,
+          "y": -100,
+          "IsEnd": true,
+          "ShowRules": true,
+          "EntryRules": [],
+          "ExitRules": []
+        }
+      ],
+      "Actions": [
+        {
+          "$type": "ActionMessageDao",
+          "Id": "FindWater",
+          "Name": "Find Water",
+          "x": -2,
+          "y": -62,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        },
+        {
+          "$type": "ActionMessageDao",
+          "Id": "MilkCow",
+          "Name": "Milk Cow",
+          "x": -17,
+          "y": -58,
+          "Properties": [],
+          "NotifyAgents": [],
+          "NotifyGroups": []
+        }
+      ],
+      "Transitions": [],
+      "Connections": [
+        {
+          "Id": "c0",
+          "Name": "[Open] ⚡️Find Water",
+          "x": -59,
+          "y": -81,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "default",
+              "Organisation": "default",
+              "Precondition": "true\n/*r.Water <= 20 &&\n(r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Milk / 5f)) > 0\n*/",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Water++;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "FindWater",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -130,
+            "y": -30
+          },
+          "FreeTo": {
+            "x": 20,
+            "y": -30
+          },
+          "LinkPoints": [
+            {
+              "x": -122,
+              "y": -22
+            },
+            {
+              "x": 28,
+              "y": -22
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c1",
+          "Name": "[Open] ⚡️Milk Cow",
+          "x": -29,
+          "y": -17,
+          "Join": [
+            "",
+            ""
+          ],
+          "Access": [
+            {
+              "Role": "shepherd",
+              "Organisation": "default",
+              "Precondition": "true\n/*r.Milk <= 30 &&\n(r.Pots - Math.Ceiling(r.Water / 5f) - Math.Ceiling(r.Milk / 5f)) > 0\n*/",
+              "Postconditions": [
+                {
+                  "Condition": "",
+                  "Action": "r.Milk++;"
+                }
+              ]
+            }
+          ],
+          "Effects": [],
+          "ActionId": "MilkCow",
+          "AllowLoops": 0,
+          "FreeFrom": {
+            "x": -130,
+            "y": 30
+          },
+          "FreeTo": {
+            "x": 20,
+            "y": 30
+          },
+          "LinkPoints": [
+            {
+              "x": -122,
+              "y": 38
+            },
+            {
+              "x": 28,
+              "y": 38
+            }
+          ],
+          "SourcePort": "left",
+          "TargetPort": "left",
+          "ActionDisplay": "iconAndText"
+        },
+        {
+          "Id": "c2",
+          "Name": "Start → End",
+          "x": -44,
+          "y": -48,
+          "Join": [
+            "Start",
+            "End"
+          ],
+          "Access": [],
+          "Effects": [],
+          "AllowLoops": 0,
+          "FreeFrom": null,
+          "FreeTo": null,
+          "LinkPoints": [
+            {
+              "x": -18.5,
+              "y": -83.5
+            },
+            {
+              "x": 64.5,
+              "y": -83.5
+            }
+          ],
+          "SourcePort": "east",
+          "TargetPort": "west",
+          "ActionDisplay": "iconAndText"
+        }
+      ],
+      "AllowCreate": [],
+      "AllowJoin": []
+    }
+  ],
+  "Authorisation": [
+    {
+      "Organisation": "default",
+      "User": "",
+      "Groups": [
+        {
+          "OrganisationId": "default",
+          "RoleId": "fisher"
+        },
+        {
+          "OrganisationId": "default",
+          "RoleId": "potter"
+        },
+        {
+          "OrganisationId": "default",
+          "RoleId": "baker"
+        },
+        {
+          "OrganisationId": "default",
+          "RoleId": "shepherd"
+        }
+      ]
+    }
+  ]
+}

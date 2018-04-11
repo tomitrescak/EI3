@@ -1,12 +1,11 @@
-﻿using Ei.Ontology;
-using Ei.Runtime.Planning;
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Linq.Expressions;
+using System.Linq;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
 
-namespace Ei.Runtime
+namespace Ei.Core.Runtime
 { 
     public struct ValidationError
     {

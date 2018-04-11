@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ei.Ontology.Actions;
+using Ei.Core.Ontology.Actions;
 
-namespace Ei.Runtime.Planning.Environment
+namespace Ei.Core.Runtime.Planning.Environment
 {
     [Serializable]
     public class EnvironmentDataDefinition

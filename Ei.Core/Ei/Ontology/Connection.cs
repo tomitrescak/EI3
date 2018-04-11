@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ei.Runtime;
-using ActionBase = Ei.Ontology.Actions.ActionBase;
-using Ei.Ontology.Actions;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime;
+using ActionBase = Ei.Core.Ontology.Actions.ActionBase;
+using Ei.Core.Ontology.Actions;
 
-namespace Ei.Ontology
+namespace Ei.Core.Ontology
 {
     public class Connection
     {

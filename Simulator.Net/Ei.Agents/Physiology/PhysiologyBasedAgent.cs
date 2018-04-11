@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using Ei.Logs;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
 using Ei.Simulation.Simulator;
 
 namespace Ei.Simulation.Physiology

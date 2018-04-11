@@ -1,10 +1,12 @@
 ﻿
 
-namespace Ei.Ontology.Transitions
+using Ei.Core.Ontology;
+
+namespace Ei.Core.Ontology.Transitions
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using Ei.Runtime;
+    using Core.Runtime;
 
     public class TransitionBinaryDecision : Transition
     {

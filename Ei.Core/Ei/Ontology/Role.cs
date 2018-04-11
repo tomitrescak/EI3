@@ -1,9 +1,9 @@
 ﻿
 using System;
 using System.Linq;
-using Ei.Runtime;
+using Ei.Core.Runtime;
 
-namespace Ei.Ontology
+namespace Ei.Core.Ontology
 {
 
 

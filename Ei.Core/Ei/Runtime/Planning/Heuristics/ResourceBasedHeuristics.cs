@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Ei.Logs;
-using Ei.Ontology;
+using Ei.Core.Ontology;
 
-namespace Ei.Runtime.Planning.Heuristics
+namespace Ei.Core.Runtime.Planning.Heuristics
 {
     internal class ResourceBasedHeuristics : IHeuristics
     {

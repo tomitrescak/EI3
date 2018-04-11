@@ -1,6 +1,8 @@
-﻿namespace Ei.Ontology.Actions
+﻿using Ei.Core.Runtime;
+
+namespace Ei.Core.Ontology.Actions
 {
-    using Ei.Runtime;
+    using Core.Runtime;
     public class ActionTimeout : ActionBase
     {
         public ActionTimeout(string id, Institution ei) : base(ei, id)

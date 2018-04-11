@@ -11,7 +11,11 @@ namespace Ei.Simulation.Statistics
 
         public DataPoint(double x, double y) {
             this.X = x;
-            this.Y = Y;
+            this.Y = y;
+        }
+
+        public override string ToString() {
+            return string.Format("[{0}:{1}]", this.X, this.Y);
         }
     }
     public enum StatisticRelaxationStrategy

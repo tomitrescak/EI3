@@ -1,11 +1,11 @@
-﻿using Ei.Runtime;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static Ei.Ontology.Institution;
+using Ei.Core.Runtime;
+using static Ei.Core.Ontology.Institution;
 
-namespace Ei.Ontology.Actions
+namespace Ei.Core.Ontology.Actions
 {
     public abstract class ActionWithParameters : ActionBase
     {

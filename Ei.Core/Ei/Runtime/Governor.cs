@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime.Planning;
+using Ei.Core.Runtime.Planning.Costs;
+using Ei.Core.Runtime.Planning.Heuristics;
+using Ei.Core.Runtime.Planning.Strategies;
 using Ei.Logs;
-using Ei.Ontology.Actions;
-using Ei.Runtime.Planning;
-using Ei.Runtime.Planning.Costs;
-using Ei.Runtime.Planning.Heuristics;
-using Ei.Runtime.Planning.Strategies;
-using ActionBase = Ei.Ontology.Actions.ActionBase;
+using Ei.Core.Ontology.Actions;
+using ActionBase = Ei.Core.Ontology.Actions.ActionBase;
 
-namespace Ei.Runtime
+namespace Ei.Core.Runtime
 {
-    using Ei.Ontology;
-
     public class Governor : IGovernor, IStateProvider
     {
         #region struct Context
@@ -54,7 +50,7 @@ namespace Ei.Runtime
                 // DEEP CLONE
                 this.groups = new List<Group>();
 
-                var addedRoles = new Dictionary<Role, Runtime.SearchableState>();
+                var addedRoles = new Dictionary<Role, SearchableState>();
 
                 foreach (var group in cloneFrom.groups) {
                     var organisationIndex = this.groups.FindIndex(g => g.Organisation.GetType() == group.Organisation.GetType());
@@ -81,7 +77,7 @@ namespace Ei.Runtime
 
                 this.groups = new List<Group>();
 
-                var addedRoles = new Dictionary<Role, Runtime.SearchableState>();
+                var addedRoles = new Dictionary<Role, SearchableState>();
 
                 foreach (var group in agent.Groups) {
                     if (!addedRoles.ContainsKey(group.Role)) {
@@ -541,7 +537,7 @@ namespace Ei.Runtime
         }
 
         public void LogAction(InstitutionCodes code, params string[] parameters) {
-            if (Log.IsInfo) Log.Info(this.Name, code, parameters);
+            if (Log.IsInfo) Logger.Info(this.Name, code, parameters);
         }
 
         private IActionInfo FindClone(string cloneName, out Governor clone) {

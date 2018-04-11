@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Ei.Runtime.Planning;
+using Ei.Core.Runtime.Planning;
 
 namespace Ei.Simulation.Planning
 {

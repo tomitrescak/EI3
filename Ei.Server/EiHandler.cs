@@ -5,7 +5,8 @@ using System.Net.WebSockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using Ei.Compilation;
-using Ei.Ontology;
+using Ei.Logs;
+using Ei.Core.Ontology;
 using Ei.Persistence.Json;
 using Ei.Simulation.Physiology;
 using Ei.Simulation.Physiology.Behaviours;
@@ -13,12 +14,17 @@ using Newtonsoft.Json;
 using WebSocketManager;
 using WebSocketManager.Common;
 using Ei.Simulation.Simulator;
+using Ei.Simulation.Statistics;
 using UnityEngine;
 
 namespace Ei.Server
 {
     public class EiHandler : WebSocketHandler
     {
+        static EiHandler() {
+            Ei.Logs.Log.Register(new ConsoleLog());    
+        }
+        
         enum ResultType
         {
             Error,
@@ -95,22 +101,31 @@ namespace Ei.Server
             
             // init the project that contains parameters of the simulation
             this.project = JsonConvert.DeserializeObject(projectSource, typeof(PhysiologyProject)) as PhysiologyProject;
-
-            // physilogy runner is simulation behaviour
-            var physiologyProjectRunner = new PhysiologyProjectRunner();
-            physiologyProjectRunner.InitProject(this.project);
             
-            // add new game object
+            
+            // physiology runner is a behaviour that launches a new project
+            var physiologyProjectRunner = new PhysiologyProjectRunner();
+            physiologyProjectRunner.AgentsPerSecond = 1;
+            physiologyProjectRunner.InitProject(this.project, this.currentEi);
+            
+            
+            // add new game object that will be added to the scene (Experiment)
             var go = new GameObject("PhysiologyProjectRunner");
-            go.AddComponent<PhysiologyProjectRunner>();
+            
+            go.AddComponent(physiologyProjectRunner);
+            go.Enabled = true;
             
             // add behaviour to the scene
             var scene = new Scene(new List<GameObject> {
                 go
             });
             
-            // initialise runner
+            // initialise runner that launches current scene
             this.runner = new Runner(scene);
+            this.runner.GameObjectAdded += (runner1, o) => Console.WriteLine("Added: " + o.name);
+            this.runner.StatisticTraitUpdated +=
+                (trait, point) => Console.WriteLine("Stats for " + trait.Name + ": " + point);
+            this.runner.ProcessStatistics(new FpsStatistics());
             
             // start the simulation
             this.runner.Start();
@@ -155,20 +170,26 @@ namespace Ei.Server
 //                Console.Write(ex.Message);
 //            }
         }
+
+        public Compiler.CompilationResult Compile(string source) {
+            this.currentEi = null;
+                
+            var institution = JsonInstitutionLoader.Instance.Load(source, null);
+            var code = institution.GenerateAll();
+            var result = Compiler.Compile(code, "DefaultInstitution", out Institution TestEi);
+            
+            this.currentEi = TestEi;
+            return result;
+        }
         
         public async Task CompileInstitution(long queryId, string source)
         {
             Console.Write("Compiling Institution");
             try {
-                this.currentEi = null;
+                var result = this.Compile(source);
                 
-                var institution = JsonInstitutionLoader.Instance.Load(source, null);
-                var code = institution.GenerateAll();
-                var result = Compiler.Compile(code, "DefaultInstitution", out Institution TestEi);
                 var json = JsonConvert.SerializeObject(result);
                 await InvokeClientMethodToAllAsync("queryResult", queryId, json);
-
-                this.currentEi = TestEi;
             }
             catch (Exception ex) {
                 if (ex.InnerException != null) {

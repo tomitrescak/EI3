@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Ei.Ontology;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
-using Ei.Runtime.Planning.Heuristics;
-using Ei.Runtime.Planning.Strategies;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
+using Ei.Core.Runtime.Planning.Heuristics;
+using Ei.Core.Runtime.Planning.Strategies;
 using Moq;
 using Xunit;
 

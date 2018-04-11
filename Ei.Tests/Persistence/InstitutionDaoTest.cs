@@ -1,5 +1,5 @@
 ﻿using Ei.Compilation;
-using Ei.Ontology;
+using Ei.Core.Ontology;
 using Ei.Persistence;
 using System;
 using System.Collections.Generic;

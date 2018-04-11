@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ei.Runtime
+namespace Ei.Core.Runtime
 {
     public struct VariableInstance
     {

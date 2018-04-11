@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Ei.Core.Runtime;
 
-namespace Ei.Runtime
+namespace Ei.Core.Runtime
 {
     public interface IGovernorCallbacks
     {

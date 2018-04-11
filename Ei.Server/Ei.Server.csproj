@@ -10,6 +10,14 @@
     <Content Include="Files\AllComponents.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Remove="Files\Ei.json" />
+    <Content Include="Files\Ei.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="Files\PhysiologyProject.json" />
+    <Content Include="Files\PhysiologyProject.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.1" />

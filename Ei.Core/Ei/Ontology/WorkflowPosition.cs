@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Ei.Core.Ontology;
+using Ei.Core.Ontology.Transitions;
 using Ei.Logs;
-using Ei.Ontology.Transitions;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
 
-namespace Ei.Ontology
+namespace Ei.Core.Ontology
 {
     public abstract class WorkflowPosition : Entity
     {

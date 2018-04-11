@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Timers;
 using Ei.Logs;
-using Ei.Ontology;
-using Ei.Runtime.Planning.Environment;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime.Planning.Environment;
 
 namespace Ei.Simulation.Simulator
 {
@@ -106,8 +106,9 @@ namespace Ei.Simulation.Simulator
             this.directory = dir;
         }
     
-        public void Start(int launchAgentsPerSecond) {
+        public void Start(Institution ei, int launchAgentsPerSecond) {
             // init institution
+            this.Ei = ei;
             this.Ei.Resources.Tick = (float)(86400f / this.DayLengthInSeconds);
             this.Waiter = new ManualResetEvent(true);
             

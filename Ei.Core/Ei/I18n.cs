@@ -1,34 +1,40 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//
-//namespace Ei
-//{
-//    public static class I18N
-//    {
-//        public static Dictionary<string, string> En = 
-//            new Dictionary<string, string>
-//                {
-//                    { "ActionEnterExit", "Agent entered workflow" },
-//                    { "ActionExit", "Agent exited workflow" }
-//                };
-//
-//        public static Dictionary<string, string> CurrentDictionary = En;
-//
-//        public static string Get(string key, params object[] list)
-//        {
-//            if (!CurrentDictionary.ContainsKey(key))
-//            {
-//                return "<" + key + ">";
-//            }
-//
-//            if (list.Length > 0)
-//            {
-//                return string.Format(CurrentDictionary[key], list);
-//            }
-//            return CurrentDictionary[key];
-//        }
-//    }
-//}
+﻿using System;
+using System.Linq;
+using Ei.Core.Properties;
+using EiLog=Ei.Logs.Log;
+
+namespace Ei.Core
+{
+    public static class I18N
+    {
+        public static string Get(string key, params object[] list)
+        {
+            
+            var str = Resources.ResourceManager.GetString(key);
+            if (string.IsNullOrEmpty(str))
+            {
+                return "<" + key + "> " + string.Join(";", list.Select(w => w.ToString()).ToArray());
+            }
+
+            if (list.Length > 0)
+            {
+                return string.Format(str, list);
+            }
+            return str;
+        }
+        
+        public static string Get(Enum key, params object[] list)
+        {
+            return Get(key.ToString(), list);
+        }
+        
+        
+    }
+
+    public static class Logger
+    {
+        public static void Info(string source, InstitutionCodes code, params object[] parameters) {
+            if (EiLog.IsInfo) EiLog.Info(source, I18N.Get(code, parameters));
+        }
+    }
+}

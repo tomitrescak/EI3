@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Ei.Agents.Planning;
-using Ei.Runtime.Planning.Environment;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime.Planning.Environment;
 using Ei.Simulation.Core;
 using Ei.Simulation.Sims.Behaviours;
 using Ei.Simulation.Simulator;
@@ -15,23 +17,27 @@ namespace Ei.Simulation.Physiology.Behaviours
         private Dictionary<EnvironmentData, GameObject> objectMappings;
         private Dictionary<PhysiologyBasedAgent, GameObject> agentMappings;
 
-        public string ProjectPath { get; set; }
         public int AgentsPerSecond { get; set; }
         public int AgentsLaunched { get; private set; }
         
         public Project project { get; private set; }
-
+        public Institution ei { get; private set; }
 //        public void Init() {
 //            if (!string.IsNullOrEmpty(this.ProjectPath)) {
 //                var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
 //                this.project = Project.Open(path);
 //
 //                this.InitProject(this.project);
-//            }
+//            }    
 //        }
 
-        public void InitProject(Project project) {
+        public void InitProject(Project project, Institution ei) {
+            if (this.AgentsPerSecond == 0) {
+                throw new Exception("You need to launch at least one agent per second!");
+            }
             this.project = project;
+            this.ei = ei;
+            
             if (this.project != null && this.project.Manager != null) {
                 this.project.Manager.Stop();
             }
@@ -52,7 +58,7 @@ namespace Ei.Simulation.Physiology.Behaviours
             this.project.Environment.OpenEnvironment();
 
             // start this project
-            var thread = new Thread(() => this.project.Start(this.AgentsPerSecond));
+            var thread = new Thread(() => this.project.Start(this.ei, this.AgentsPerSecond));
             //thread.IsBackground = true;
             //thread.Priority = ThreadPriority.Lowest;
             thread.Start();

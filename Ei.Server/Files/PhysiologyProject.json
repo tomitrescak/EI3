@@ -1,0 +1,309 @@
+﻿{
+  "Institution": "Uruk",
+  "Organisation": "default",
+  "DayLengthInSeconds": 120,
+  "MetersPerPixel": 5,
+  "AgentSpeed": 1.47,
+  "SpeedDiversity": [
+    1,
+    1
+  ],
+  "PhysiologyDiversity": [
+    1,
+    1
+  ],
+  "HungerTreshold": 0.5,
+  "FatigueTreshold": 5,
+  "ThirstThreshold": 0.5,
+  "KillThirstThreshold": 2,
+  "KillHungerThreshold": 2,
+  "RestSpeed": 1,
+  "AgentCounts": [
+    {
+      "Count": 1,
+      "Groups": [
+        [
+          "Tribe",
+          "Baker"
+        ]
+      ],
+      "FreeTimeGoals": [
+        "Water=Min;Increment;1",
+        "Bread=Min;Increment;1"
+      ],
+      "Color": [
+        255,
+        255,
+        0
+      ]
+    },
+    {
+      "Count": 0,
+      "Groups": [
+        [
+          "Tribe",
+          "potter"
+        ]
+      ],
+      "FreeTimeGoals": [
+        "Pots=Min;Increment;1",
+        "Water=Min;Increment;1",
+        "Clay=Min;Increment;1"
+      ],
+      "Color": [
+        0,
+        255,
+        255
+      ]
+    },
+    {
+      "Count": 0,
+      "Groups": [
+        [
+          "Tribe",
+          "shepherd"
+        ]
+      ],
+      "FreeTimeGoals": [
+        "Milk=Min;Increment;1"
+      ],
+      "Color": [
+        255,
+        0,
+        255
+      ]
+    },
+    {
+      "Count": 0,
+      "Groups": [
+        [
+          "Tribe",
+          "fisher"
+        ]
+      ],
+      "FreeTimeGoals": [
+        "Fish=Min;Increment;1"
+      ],
+      "Color": [
+        190,
+        190,
+        190
+      ]
+    }
+  ],
+  "EnvironmentDefinition": {
+    "Width": 800,
+    "Height": 800,
+    "ActionsWithNoLocation": [
+      {
+        "Id": "potterWorkflow",
+        "Duration": 0
+      },
+      {
+        "Id": "exchangeWorkflow",
+        "Duration": 0
+      },
+      {
+        "Id": "bakerWorkflow",
+        "Duration": 0
+      },
+      {
+        "Id": "startExchange",
+        "Duration": 1
+      },
+      {
+        "Id": "shepherdWorkflow",
+        "Duration": 0
+      },
+      {
+        "Id": "fisherWorkflow",
+        "Duration": 0
+      },
+      {
+        "Id": "makeSpear",
+        "Duration": 3600
+      },
+      {
+        "Id": "drink",
+        "Duration": 60
+      },
+      {
+        "Id": "drinkMilk",
+        "Duration": 900
+      },
+      {
+        "Id": "eatBread",
+        "Duration": 900
+      },
+      {
+        "Id": "eatFish",
+        "Duration": 900
+      },
+      {
+        "Id": "spillWater",
+        "Duration": 60
+      }
+    ],
+    "Elements": [
+      {
+        "Id": "Water",
+        "Image": "Images/Water.png",
+        "Seed": 60,
+        "Range": [
+          0,
+          0
+        ],
+        "Probability": 0,
+        "Max": 20,
+        "Actions": [
+          {
+            "Id": "FindWater",
+            "DestroyAfter": 0,
+            "Duration": 60
+          }
+        ]
+      },
+      {
+        "Id": "Wheat",
+        "Image": "Images/Wheat.png",
+        "Seed": 50,
+        "Range": [
+          30,
+          30
+        ],
+        "Probability": 0,
+        "Max": 100,
+        "Actions": [
+          {
+            "Id": "FindWheat",
+            "DestroyAfter": 0,
+            "Duration": 1800
+          }
+        ]
+      },
+      {
+        "Id": "Pot",
+        "Image": "Images/Pot.png",
+        "Seed": 20,
+        "Range": [
+          0,
+          0
+        ],
+        "Probability": 0,
+        "Max": 100,
+        "Actions": [
+          {
+            "Id": "ExchangeWorkflow",
+            "DestroyAfter": 0,
+            "Duration": 1
+          },
+          {
+            "Id": "ExchangePot",
+            "DestroyAfter": 0,
+            "Duration": 5
+          }
+        ]
+      },
+      {
+        "Id": "Clay",
+        "Image": "Images/Clay.png",
+        "Seed": 15,
+        "Range": [
+          0,
+          0
+        ],
+        "Probability": 0,
+        "Max": 15,
+        "Actions": [
+          {
+            "Id": "FindClay",
+            "DestroyAfter": 0,
+            "Duration": 1800
+          }
+        ]
+      },
+      {
+        "Id": "Cow",
+        "Image": "Images/Cow.png",
+        "Seed": 15,
+        "Range": [
+          0,
+          0
+        ],
+        "Probability": 0,
+        "Max": 15,
+        "Actions": [
+          {
+            "Id": "MilkCow",
+            "DestroyAfter": 0,
+            "Duration": 1800
+          }
+        ]
+      },
+      {
+        "Id": "Tree",
+        "Image": "Images/Tree.png",
+        "Seed": 30,
+        "Range": [
+          15,
+          15
+        ],
+        "Probability": 0,
+        "Max": 60,
+        "Actions": [
+          {
+            "Id": "FindWood",
+            "DestroyAfter": 0,
+            "Duration": 1800
+          }
+        ]
+      },
+      {
+        "Id": "Fish",
+        "Image": "Images/Fish.png",
+        "Seed": 30,
+        "Range": [
+          15,
+          15
+        ],
+        "Probability": 0,
+        "Max": 60,
+        "Actions": [
+          {
+            "Id": "CatchFish",
+            "DestroyAfter": 0,
+            "Duration": 3600
+          }
+        ]
+      },
+      {
+        "Id": "Campfire",
+        "Image": "Images/Campfire.png",
+        "Seed": 10,
+        "Range": [
+          0,
+          0
+        ],
+        "Probability": 0,
+        "Max": 10,
+        "Actions": [
+          {
+            "Id": "MakeBread",
+            "DestroyAfter": 0,
+            "Duration": 1800
+          },
+          {
+            "Id": "CookFish",
+            "DestroyAfter": 0,
+            "Duration": 1800
+          },
+          {
+            "Id": "MakePot",
+            "DestroyAfter": 0,
+            "Duration": 1800
+          }
+        ]
+      }
+    ]
+  }
+}

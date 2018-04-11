@@ -1,5 +1,4 @@
-﻿using Ei.Agents.Core;
-using Ei.Simulation.Core;
+﻿using Ei.Simulation.Core;
 using UnityEngine;
 
 namespace Ei.Simulation.Sims

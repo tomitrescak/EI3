@@ -1,4 +1,8 @@
-﻿namespace Ei.Ontology
+﻿using Ei.Core.Ontology;
+using Ei.Core.Ontology.Actions;
+using Ei.Logs;
+
+namespace Ei.Core.Ontology
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -6,11 +10,11 @@
     using System.Diagnostics;
     using System.Threading;
     using Ei.Logs;
-    using Ei.Runtime;
-    using ActionBase = Ei.Ontology.Actions.ActionBase;
+    using Core.Runtime;
+    using ActionBase = ActionBase;
     using Timer = System.Timers.Timer;
     using System;
-    using Ei.Runtime.Planning;
+    using Core.Runtime.Planning;
 
     public abstract class Institution : Entity, IStateProvider
     {

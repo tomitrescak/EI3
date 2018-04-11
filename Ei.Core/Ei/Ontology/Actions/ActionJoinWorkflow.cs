@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Ei.Core;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime;
 using Ei.Logs;
-using Ei.Runtime;
 
-namespace Ei.Ontology.Actions
+namespace Ei.Core.Ontology.Actions
 {
 
 
@@ -87,7 +89,7 @@ namespace Ei.Ontology.Actions
 
             this.Workflows.Add(newWorkflow.InstanceId);
 
-            if (Log.IsInfo) Log.Info(newWorkflow.Name, InstitutionCodes.WorkflowStarted,
+            if (Log.IsInfo) Logger.Info(newWorkflow.Name, InstitutionCodes.WorkflowStarted,
                 newWorkflow.Name,
                 newWorkflow.Id,
                 newWorkflow.ToString());

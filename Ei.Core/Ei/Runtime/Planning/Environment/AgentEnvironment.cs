@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Timers;
-using Ei.Ontology.Actions;
-using Action = Ei.Ontology.Actions.ActionBase;
+using Ei.Core.Ontology.Actions;
+using Action = Ei.Core.Ontology.Actions.ActionBase;
 
-namespace Ei.Runtime.Planning.Environment
+namespace Ei.Core.Runtime.Planning.Environment
 {
     public class AgentEnvironment
     {

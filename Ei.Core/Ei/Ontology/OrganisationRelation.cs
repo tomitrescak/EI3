@@ -1,4 +1,4 @@
-﻿namespace Ei.Ontology
+﻿namespace Ei.Core.Ontology
 {
     public enum OrganisationRelationType
     {

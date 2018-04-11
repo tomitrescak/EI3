@@ -7,7 +7,7 @@ using System.Runtime.Loader;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
-using Ei.Ontology;
+using Ei.Core.Ontology;
 using Ei.Logs;
 using System.Collections;
 using System.Diagnostics;
@@ -45,11 +45,12 @@ namespace Ei.Compilation
 
             codeToCompile = @"
 using Ei;
-using Ei.Ontology;
-using Ei.Ontology.Actions;
-using Ei.Ontology.Transitions;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
+using Ei.Core;
+using Ei.Core.Ontology;
+using Ei.Core.Ontology.Actions;
+using Ei.Core.Ontology.Transitions;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
 using System;
 using System.Collections.Generic;
 

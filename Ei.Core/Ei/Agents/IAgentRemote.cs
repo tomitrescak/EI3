@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Ei.Ontology;
+﻿using Ei.Core.Ontology;
 
-namespace Ei.Agents
+namespace Ei.Core.Agents
 {
     public interface IAgentRemote
     {

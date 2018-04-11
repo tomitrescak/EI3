@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ei.Ontology
+namespace Ei.Core.Ontology
 {
     public interface IStateProvider
     {

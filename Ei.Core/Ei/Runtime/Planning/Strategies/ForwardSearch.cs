@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ei.Ontology;
-using Ei.Runtime.Planning.Heuristics;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning.Heuristics;
 
-namespace Ei.Runtime.Planning.Strategies
+namespace Ei.Core.Runtime.Planning.Strategies
 {
     internal class ForwardSearch : IStrategy
     {

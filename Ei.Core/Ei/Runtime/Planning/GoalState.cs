@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ei.Ontology;
-using Ei.Runtime;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime;
 
-namespace Ei.Runtime.Planning
+namespace Ei.Core.Runtime.Planning
 {
     public enum StateGoalStrategy
     {
