@@ -230,3 +230,51 @@
   - c0
   - ExitWorkflow
 
+- Role: default|baker
+  StartStateId: wait
+  StartWorkflowId: main
+  Goals:
+  - Name: Water
+    RawValue: 7
+    Type: Int32
+    UpdateType: Int32
+    RawUpdateValue: 1
+    UpdateStrategy: Increment
+  Connections:
+  - c7
+  - c2
+  - ExitWorkflow
+
+- Role: default|baker
+  StartStateId: wait
+  StartWorkflowId: main
+  Goals:
+  - Name: Bread
+    RawValue: 9
+    Type: Int32
+    UpdateType: Int32
+    RawUpdateValue: 1
+    UpdateStrategy: Increment
+  Connections:
+  - c7
+  - c1
+  - c2
+  - c1
+  - c0
+  - ExitWorkflow
+
+- Role: default|baker
+  StartStateId: wait
+  StartWorkflowId: main
+  Goals:
+  - Name: Water
+    RawValue: 8
+    Type: Int32
+    UpdateType: Int32
+    RawUpdateValue: 1
+    UpdateStrategy: Increment
+  Connections:
+  - c7
+  - c2
+  - ExitWorkflow
+

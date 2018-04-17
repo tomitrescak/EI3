@@ -166,7 +166,7 @@ namespace Ei.Simulation.Simulator
 
                 // filter 
                 this.changedStructure = true;
-
+                
                 return agent;
             }
         }
@@ -185,10 +185,16 @@ namespace Ei.Simulation.Simulator
 
         private void AddAgent(GameObject agent) {
             this.Agents.Add(agent);
+            
+            // notify
+            this.OnGameObjectAdded(this, agent);
         }
 
         public void RemoveAgent(GameObject agent) {
             this.Agents.Remove(agent);
+            
+            // notify
+            this.OnGameObjectRemoved(this, agent);
         }
 
         protected virtual void OnGameObjectAdded(Runner sender, GameObject gameObject) {

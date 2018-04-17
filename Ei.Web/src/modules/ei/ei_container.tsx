@@ -7,6 +7,7 @@ import { compose } from '../ws/utils';
 import { EiLayout } from './ei_layout';
 import { Ei } from './ei_model';
 
+let m: string = 1;
 
 type Data = {
   LoadInstitution: string;
