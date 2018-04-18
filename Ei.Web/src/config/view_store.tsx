@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { action, observable } from 'mobx';
-import { Ei, EiDao } from '../modules/ei/ei_model';
+import { EiDao } from '../modules/ei/ei_model';
 import { MobxRouter, Route } from './mobx_router';
 
 declare global {
@@ -39,8 +39,8 @@ export class ViewStoreModel {
   }
 
   @action
-  showExecution(eiId?: string, eiName?: string) {
-    this.showView('execution', { eiName, eiId });
+  showExecution(eiId: string, eiName: string, experimentId: string, experimentName: string, viewName: string) {
+    this.showView(viewName, { eiName, eiId, experimentId, experimentName });
   }
 
   @action

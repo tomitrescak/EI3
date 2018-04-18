@@ -45,8 +45,8 @@ export function ws<DataResult = {}, QueryProps = {}, TChildProps = ChildProps<Qu
         return <Wrapper {...newProps} />;
       }
 
-      componentWillUpdate(nextProps: WProps) {
-        const client = nextProps.client;
+      componentWillUpdate(_nextProps: WProps) {
+        // const client = nextProps.client;
         this.observe.check(variables);
       }
 

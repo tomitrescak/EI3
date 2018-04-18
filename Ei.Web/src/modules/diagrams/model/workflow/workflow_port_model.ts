@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import * as SRD from 'storm-react-diagrams';
 
-import { Ui } from '../../../../helpers/client_helpers';
 import { Workflow } from '../../../ei/workflow_model';
 import { WorkflowLinkModel } from './workflow_link_model';
 

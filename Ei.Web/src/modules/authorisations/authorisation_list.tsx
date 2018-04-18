@@ -2,12 +2,10 @@ import * as React from 'react';
 
 import { observer } from 'mobx-react';
 import { Accordion, Button, Icon, Label, List } from 'semantic-ui-react';
-import { style } from 'typestyle';
 
 import { Link } from '../../config/router';
 import { accordionButton, accordionContent } from '../components/hierarchic_entity_view';
 import { nestedAccordion } from '../components/workflow_list_view';
-import { IconView } from '../core/entity_icon_view';
 import { Authorisation } from '../ei/authorisation_model';
 import { Ei } from '../ei/ei_model';
 

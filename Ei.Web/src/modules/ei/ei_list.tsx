@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { Button, Header, Icon, List, Segment } from 'semantic-ui-react';
 import { style } from 'typestyle';
 import { Link } from '../../config/router';
-import { Ei, EiDao } from './ei_model';
+import { Ei } from './ei_model';
 
 const homeStyle = style({
   margin: '12px!important'

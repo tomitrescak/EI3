@@ -1,15 +1,14 @@
 import * as React from 'react';
 
-import { Accordion, Loader, Menu } from 'semantic-ui-react';
+import { Accordion, Icon, Label, List, Loader, Menu } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 import { style } from 'typestyle';
 import { Link } from '../../config/router';
 import { AccordionHandler } from '../../config/store';
 import { AuthorisationList } from '../authorisations/authorisation_list';
-import { Ei } from '../ei/ei_model';
 import { SocketClient } from '../ws/socket_client';
-import { HierarchicEntityView } from './hierarchic_entity_view';
+import { accordionContent, HierarchicEntityView } from './hierarchic_entity_view';
 import { WorkflowList } from './workflow_list_view';
 
 const componentsType = style({
@@ -141,9 +140,42 @@ export class Components extends React.Component<Props, State> {
               handleClick={this.handler.handleClick}
               ei={ei}
             />
-          </Accordion>
 
-          <Link to={`/${ei.Name.toUrlName()}/${ei.id}/execution`} action={() => context.store.viewStore.showExecution()}>Execution</Link>
+            <Accordion.Title
+              active={this.handler.isActive(5)}
+              index={5}
+              onClick={this.handler.handleClick}
+            >
+              <Icon name="dropdown" />
+              <Label size="tiny" color="blue" circular content="1" /> Execution
+            </Accordion.Title>
+
+            <Accordion.Content active={this.handler.isActive(5)} className={accordionContent}>
+              <List>
+                <List.Item
+                  as={Link}
+                  to={`/${ei.Name.toUrlName()}/${ei.id}/experiment/default/general/1`}
+                  action={() => context.store.viewStore.showExecution(ei.id, ei.Name.toUrlName(), '1', 'default', 'experimentGeneral')}
+                >
+                  General
+                </List.Item>
+                <List.Item
+                  as={Link}
+                  to={`/${ei.Name.toUrlName()}/${ei.id}/experiment/default/agents/1`}
+                  action={() => context.store.viewStore.showExecution(ei.id, ei.Name.toUrlName(), '1', 'default', 'experimentAgents')}
+                >
+                  Agents
+                </List.Item>
+                <List.Item
+                  as={Link}
+                  to={`/${ei.Name.toUrlName()}/${ei.id}/experiment/default/environment/1`}
+                  action={() => context.store.viewStore.showExecution(ei.id, ei.Name.toUrlName(), '1', 'default', 'experimentEnvironment')}
+                >
+                  Environment
+                </List.Item>
+              </List>
+            </Accordion.Content>
+          </Accordion>
         </div>
       </>
     );

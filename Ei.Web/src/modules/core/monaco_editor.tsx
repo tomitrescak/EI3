@@ -33,7 +33,7 @@ const editor = style({
 });
 
 @observer
-export class CodeEditor<T, K extends keyof T> extends React.Component<Props> {
+export class CodeEditor extends React.Component<Props> {
   monaco: any;
   previous: any;
   editor: any;
@@ -121,7 +121,7 @@ export class CodeEditor<T, K extends keyof T> extends React.Component<Props> {
   render() {
     this.updateDefinitions(this.props);
 
-    const { update, value } = this.props;
+    const { value } = this.props;
     return (
       <div className={editor} ref={node => (this.holder = node)}>
         <MonacoEditor

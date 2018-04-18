@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { inject, observer } from 'mobx-react';
-import { Form, Select, TextArea } from 'semantic-ui-mobx';
+import { Form, Select } from 'semantic-ui-mobx';
 import { Header, Message } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
@@ -22,7 +22,7 @@ const pane = style({
 export class EiEditor extends React.Component<Props> {
   static displayName = 'EiEditor';
 
-  update = value => {
+  update = (value: any) => {
     this.props.context.store.ei.Expressions = value
   };
 

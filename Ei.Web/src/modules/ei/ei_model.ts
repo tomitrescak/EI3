@@ -6,6 +6,7 @@ import { DefaultNodeFactory, DiagramEngine } from 'storm-react-diagrams';
 import { Ui } from '../../helpers/client_helpers';
 import { EntityLinkFactory } from '../diagrams/model/entity/entity_link_factory';
 import { EntityNodeFactory } from '../diagrams/model/entity/entity_node_factory';
+import { Experiment } from '../experiments/experiment_model';
 import { SocketClient } from '../ws/socket_client';
 import { Authorisation, AuthorisationDao } from './authorisation_model';
 import { Entity } from './entity_model';
@@ -106,6 +107,7 @@ export class Ei extends ParametricEntity {
   Types: IObservableArray<HierarchicEntity>;
   Workflows: IObservableArray<Workflow>;
   Authorisation: IObservableArray<Authorisation>;
+  Experiments: IObservableArray<Experiment>;
 
   constructor(model: EiDao, store: App.Store) {
     super(model);
@@ -121,6 +123,8 @@ export class Ei extends ParametricEntity {
 
     this.engine.maxNumberPointsPerLink = 1;
 
+    this.Experiments = observable([new Experiment()]);
+    
     this.Expressions = model.Expressions;
     this.MainWorkflow = model.MainWorkflow;
     this.Organisations = this.initHierarchy(model.Organisations, observable([]), Organisation);

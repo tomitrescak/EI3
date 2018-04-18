@@ -50,7 +50,7 @@ class Environment {
     blob.x = x;
     blob.y = y;
 
-    // rememeber object for further manipulation
+    // remember object for further manipulation
     this.objects[id] = blob;
 
     // add to canvas
@@ -62,7 +62,7 @@ class Environment {
     agent.name = 'cat';
     agent.vy = 1;
 
-    // rememeber object for further manipulation
+    // remember object for further manipulation
     this.objects[id] = agent;
 
     // add to canvas

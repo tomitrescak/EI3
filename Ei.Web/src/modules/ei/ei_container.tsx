@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { inject } from 'mobx-react';
 
 import { ls } from '../ws/ls_container';

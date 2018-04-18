@@ -62,7 +62,7 @@ export class WorkflowDiagramModel extends DiagramModel {
           document.addEventListener('mouseup', checkConnection);
 
           e.link.addListener({
-            targetPortChanged: _f => {
+            targetPortChanged: () => {
               // // we may be modifying exiting connection
               // if (link.workflow.Connections.some(c => c.Id === link.connection.Id)) {
               //   return;
@@ -105,7 +105,7 @@ export class WorkflowDiagramModel extends DiagramModel {
               // let childNodeBottomPort = childNode.getPort('bottom') as WorkflowPortModel;
               // let parentLinks = parentNodeTopPort.linkArray;
             }
-          });
+          } as any);
         }
       }
     });

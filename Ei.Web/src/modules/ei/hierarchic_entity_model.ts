@@ -3,7 +3,6 @@ import { field } from 'semantic-ui-mobx';
 import { PointModel } from 'storm-react-diagrams';
 
 import { Ui } from '../../helpers/client_helpers';
-import { EntityDiagramModel } from '../diagrams/model/entity/entity_diagram_model';
 import { EntityLinkModel } from '../diagrams/model/entity/entity_link_model';
 import { EntityPortModel } from '../diagrams/model/entity/entity_port_model';
 import { Ei } from './ei_model';

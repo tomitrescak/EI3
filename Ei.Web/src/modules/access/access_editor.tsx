@@ -2,8 +2,8 @@ import * as React from 'react';
 
 import { observer } from 'mobx-react';
 
-import { Checkbox, field, Form, FormState, Label, Select, TextArea } from 'semantic-ui-mobx';
-import Header, { Accordion, Button, Icon, Label as SLabel, Popup, Segment } from 'semantic-ui-react';
+import { Checkbox, field, Form, FormState, Select } from 'semantic-ui-mobx';
+import { Accordion, Button, Icon, Popup, Segment } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { AccordionHandler } from '../../config/store';
@@ -18,7 +18,7 @@ interface AccessProps {
   ei: Ei;
   name: string;
   action?: Action;
-  workflow: Workflow;
+  workflow?: Workflow;
   hidePreconditions?: boolean;
   hideActionCondition?: boolean;
 }
@@ -283,7 +283,6 @@ export class PostconditionView extends React.Component<PostconditionProps> {
   render() {
     const {
       p,
-      i,
       remove,
       showAll,
       ei,

@@ -65,22 +65,22 @@ const layoutStyle = style({
   }
 });
 
-const pane = style({
-  padding: '12px',
-  overflow: 'auto',
-  height: '100%',
-  $nest: {
-    '.storm-diagrams-canvas': {
-      background: 'rgba(0, 0, 0, 0.8)',
-      backgroundImage:
-        'linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent)',
-      backgroundSize: '50px 50px',
-      height: '100%',
-      minHeight: '400px',
-      margin: '-12px'
-    }
-  }
-});
+// const pane = style({
+//   padding: '12px',
+//   overflow: 'auto',
+//   height: '100%',
+//   $nest: {
+//     '.storm-diagrams-canvas': {
+//       background: 'rgba(0, 0, 0, 0.8)',
+//       backgroundImage:
+//         'linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent)',
+//       backgroundSize: '50px 50px',
+//       height: '100%',
+//       minHeight: '400px',
+//       margin: '-12px'
+//     }
+//   }
+// });
 
 const barePane = style({
   height: '100%',

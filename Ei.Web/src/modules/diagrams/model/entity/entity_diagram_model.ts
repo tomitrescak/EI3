@@ -37,7 +37,7 @@ export class EntityDiagramModel extends DiagramModel {
           document.addEventListener('mouseup', checkConnection);
 
           e.link.addListener({
-            targetPortChanged: _f => {
+            targetPortChanged: () => {
 
               /////////////////////////////////////////////
               // links can only be created parent to child
@@ -80,7 +80,7 @@ export class EntityDiagramModel extends DiagramModel {
               childNode.Parent = parentNode.Id;
               childNode.parentLink = link;
             }
-          });
+          } as any);
         }
       }
     });

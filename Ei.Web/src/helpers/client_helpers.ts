@@ -1,5 +1,3 @@
-import { IArrayChange, IArraySplice } from 'mobx';
-
 import { WorkHistory } from '../modules/history/history';
 
 let a: any;
