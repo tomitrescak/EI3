@@ -39,7 +39,12 @@ export class ViewStoreModel {
   }
 
   @action
-  showExecution(eiId: string, eiName: string, experimentId: string, experimentName: string, viewName: string) {
+  showExecution(eiId: string, eiName: string) {
+    this.showView('execution', { eiName, eiId });
+  }
+
+  @action
+  showExperiment(eiId: string, eiName: string, experimentId: string, experimentName: string, viewName: string) {
     this.showView(viewName, { eiName, eiId, experimentId, experimentName });
   }
 

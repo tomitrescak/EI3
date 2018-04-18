@@ -11,13 +11,13 @@ import { Button } from 'semantic-ui-react';
 // class Agent {
 // 	x: number;
 //   y: number;
-  
+
 // 	constructor (x: number, y: number){
 //     this.x = x;
 //     this.y = y;
 //   }
 // 	moveToLocation(x: number, y: number) {
-// 		return; 
+// 		return;
 // 	}
 // }
 
@@ -27,12 +27,12 @@ import { Button } from 'semantic-ui-react';
 
 // then we need to also have a map of environment
 class EnvironmentObject {
-	name: string;
-	image: string;
+  name: string;
+  image: string;
 }
 
 class Project {
-	objects: EnvironmentObject[];
+  objects: EnvironmentObject[];
 }
 
 class Environment {
@@ -43,7 +43,7 @@ class Environment {
     this.stage = stage;
   }
 
-	addObject(id: string, name: string, x: number, y:number) { 
+  addObject(id: string, name: string, x: number, y: number) {
     let blob = new PIXI.Sprite(PIXI.loader.resources['/images/blob.png'].texture);
     blob.name = 'Blob';
     blob.vy = 1;
@@ -56,7 +56,7 @@ class Environment {
     // add to canvas
     this.stage.addChild(blob);
   }
-  
+
   addAgent(id: string, x: number, y: number) {
     let agent = new PIXI.Sprite(PIXI.loader.resources['/images/explorer.png'].texture);
     agent.name = 'cat';
@@ -69,21 +69,61 @@ class Environment {
     this.stage.addChild(agent);
   }
 
-  removeObject(id: string){
+  removeObject(id: string) {
     this.stage.removeChild(this.objects[id]);
   }
 }
 
+interface IServerObject {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+}
 
 export class ExecutionView extends React.Component {
   canvas: HTMLElement;
   app: PIXI.Application;
+
+  loadFromServer(items: IServerObject[]) {
+    // do your magic
+  }
+
+  addNew(item: IServerObject) {
+    // do your magic
+  }
+
+  remove(id: string) {
+    // do your magic
+  }
+
+  move(id: string, pixelsPerSecond: number) {
+    // do your magic
+  }
 
   // REACT METHODS
   render() {
     return (
       <>
         <div ref={n => (this.canvas = n)} id="pixiCanvas" />
+        <hr />
+        <button
+          onClick={() =>
+            this.loadFromServer([
+              { id: '1', name: 'object1', x: 20, y: 100 },
+              { id: '2', name: 'object1', x: 60, y: 120 },
+              { id: '2', name: 'object3', x: 120, y: 200 },
+              { id: '3', name: 'object2', x: 80, y: 100 },
+              { id: '4', name: 'object1', x: 170, y: 300 }
+            ])
+          }
+        >
+          Load From Server
+        </button>
+        <button onClick={() => this.addNew({ id: '5', name: 'object1', x: 30, y: 222 })}>Add New Object</button>
+        <button onClick={() => this.remove('4')}>Remove Object</button>
+        <button onClick={() => this.move('2', 10)}>Move Object</button>
+
         <ReactiveForm />
       </>
     );
@@ -102,18 +142,23 @@ export class ExecutionView extends React.Component {
     });
 
     PIXI.loader.reset();
-    PIXI.loader.add('/images/explorer.png').add('/images/dungeon.png').add('/images/blob.png').load(this.setup);
+    PIXI.loader
+      .add('/images/explorer.png')
+      .add('/images/dungeon.png')
+      .add('/images/blob.png')
+      .load(this.setup);
 
     this.app = app;
     this.canvas.appendChild(app.view);
 
     // test
     let project = new Project();
-    project.objects = [{
-      name: 'Blob',
-      image: '/images/blob.png'
-    }];
-    
+    project.objects = [
+      {
+        name: 'Blob',
+        image: '/images/blob.png'
+      }
+    ];
   }
 
   // CLASS METHODS
@@ -129,7 +174,7 @@ export class ExecutionView extends React.Component {
     e.addObject('id1', 'Blob', 10, 10); // displays the object
     // e.removeObject('id1'); // removes the object
     e.addAgent('agent1', 20, 30); // adds agent */
-  }
+  };
 }
 
 ///// AVISHKA
@@ -137,7 +182,7 @@ export class ExecutionView extends React.Component {
 class Reactive extends FormState {
   @field testField = '';
   @observable testArray: string[] = [];
-  
+
   @field newArrayMember = '';
 }
 
@@ -145,25 +190,24 @@ let data = new Reactive();
 
 @observer
 class ReactiveForm extends React.Component {
-
   render() {
     return (
       <Form>
         <Input owner={data.fields.testField} label="Test Text (.fields used only with owner)" />
-        <div style={{background: 'salmon'}}>{data.testField}</div>
+        <div style={{ background: 'salmon' }}>{data.testField}</div>
 
         <div>Let's do arrays</div>
-        { 
-          data.testArray.map((element, index) => (
-            <div key={index}>
-              <div >[{index}]: { element }</div>
-              <Button color="red" icon="trash" onClick={() => data.testArray.splice(index, 1)} />
+        {data.testArray.map((element, index) => (
+          <div key={index}>
+            <div>
+              [{index}]: {element}
             </div>
-          )) 
-        }
+            <Button color="red" icon="trash" onClick={() => data.testArray.splice(index, 1)} />
+          </div>
+        ))}
         <Input owner={data.fields.newArrayMember} label="New Member" />
-        <Button  icon="plus" color="blue" onClick={() => data.testArray.push(data.newArrayMember) } />
+        <Button icon="plus" color="blue" onClick={() => data.testArray.push(data.newArrayMember)} />
       </Form>
-    )
+    );
   }
 }

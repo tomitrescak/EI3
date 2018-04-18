@@ -10,6 +10,7 @@ import { EiContainer } from '../modules/ei/ei_container';
 import { EiEditor } from '../modules/ei/ei_editor';
 import { EiListContainer } from '../modules/ei/ei_list';
 import { Ei } from '../modules/ei/ei_model';
+import { ExecutionView } from '../modules/execution/execution_view';
 import { ExperimentAgents } from '../modules/experiments/experiment_agents_view';
 import { ExperimentEnvironment } from '../modules/experiments/experiment_enviroment_view';
 import { ExperimentGeneral } from '../modules/experiments/experiment_general_view';
@@ -38,10 +39,20 @@ export function initRoutes(store: App.Store): Route[] {
           })
         },
         {
+          name: 'execution',
+          route: '/execution',
+          action: (eiName, eiId,) => view.showExecution(eiName, eiId),
+          components: () => ({
+            graph: (
+              <ExecutionView />
+            )
+          })
+        },
+        {
           name: 'experimentGeneral',
           route: '/experiment/:experimentName/general/:experimentId',
           action: (eiName, eiId, experimentName, experimentId) =>
-            view.showExecution(eiId, eiName, experimentId, experimentName, 'experimentGeneral'),
+            view.showExperiment(eiId, eiName, experimentId, experimentName, 'experimentGeneral'),
           components: () => ({
             graph: <ExperimentGeneral />
           })
@@ -50,7 +61,7 @@ export function initRoutes(store: App.Store): Route[] {
           name: 'experimentAgents',
           route: '/experiment/:experimentName/agents/:experimentId',
           action: (eiName, eiId, experimentName, experimentId) =>
-            view.showExecution(eiId, eiName, experimentId, experimentName, 'experimentAgents'),
+            view.showExperiment(eiId, eiName, experimentId, experimentName, 'experimentAgents'),
           components: () => ({
             graph: <ExperimentAgents />
           })
@@ -59,7 +70,7 @@ export function initRoutes(store: App.Store): Route[] {
           name: 'experimentEnvironment',
           route: '/experiment/:experimentName/environment/:experimentId',
           action: (eiName, eiId, experimentName, experimentId) =>
-            view.showExecution(eiId, eiName, experimentId, experimentName, 'experimentEnvironment'),
+            view.showExperiment(eiId, eiName, experimentId, experimentName, 'experimentEnvironment'),
           components: () => ({
             graph: <ExperimentEnvironment />
           })

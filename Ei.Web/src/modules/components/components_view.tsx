@@ -74,6 +74,7 @@ export class Components extends React.Component<Props, State> {
             </Link>
           </Menu.Item>
           <Menu.Menu position="right">
+            <Menu.Item icon="play" as={Link} to={`/${ei.Name.toUrlName()}/${ei.id}/execution`} action={() => context.store.viewStore.showExecution()} />
             <Menu.Item icon="reply" onClick={context.Ui.history.undo} title="Undo" />
             <Menu.Item icon="mail forward" onClick={context.Ui.history.redo} title="Redo" />
             {store.compiling ? (
@@ -147,7 +148,7 @@ export class Components extends React.Component<Props, State> {
               onClick={this.handler.handleClick}
             >
               <Icon name="dropdown" />
-              <Label size="tiny" color="blue" circular content="1" /> Execution
+              <Label size="tiny" color="blue" circular content="1" /> Experiments
             </Accordion.Title>
 
             <Accordion.Content active={this.handler.isActive(5)} className={accordionContent}>
@@ -155,21 +156,21 @@ export class Components extends React.Component<Props, State> {
                 <List.Item
                   as={Link}
                   to={`/${ei.Name.toUrlName()}/${ei.id}/experiment/default/general/1`}
-                  action={() => context.store.viewStore.showExecution(ei.id, ei.Name.toUrlName(), '1', 'default', 'experimentGeneral')}
+                  action={() => context.store.viewStore.showExperiment(ei.id, ei.Name.toUrlName(), '1', 'default', 'experimentGeneral')}
                 >
                   General
                 </List.Item>
                 <List.Item
                   as={Link}
                   to={`/${ei.Name.toUrlName()}/${ei.id}/experiment/default/agents/1`}
-                  action={() => context.store.viewStore.showExecution(ei.id, ei.Name.toUrlName(), '1', 'default', 'experimentAgents')}
+                  action={() => context.store.viewStore.showExperiment(ei.id, ei.Name.toUrlName(), '1', 'default', 'experimentAgents')}
                 >
                   Agents
                 </List.Item>
                 <List.Item
                   as={Link}
                   to={`/${ei.Name.toUrlName()}/${ei.id}/experiment/default/environment/1`}
-                  action={() => context.store.viewStore.showExecution(ei.id, ei.Name.toUrlName(), '1', 'default', 'experimentEnvironment')}
+                  action={() => context.store.viewStore.showExperiment(ei.id, ei.Name.toUrlName(), '1', 'default', 'experimentEnvironment')}
                 >
                   Environment
                 </List.Item>

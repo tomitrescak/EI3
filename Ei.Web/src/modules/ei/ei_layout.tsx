@@ -136,7 +136,7 @@ const MiddleLayout = ({ views }: any) => (
 
 export const EiLayout = ({ views }: ChildProps<Props, Query>) => {
   return (
-    <SplitPane split="vertical" minSize={100} defaultSize={250} className={layoutStyle}>
+    <SplitPane split="vertical" minSize={100} defaultSize={300} className={layoutStyle}>
       <div className={componentsType}>
         <Components />
       </div>
