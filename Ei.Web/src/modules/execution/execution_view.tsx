@@ -5,27 +5,8 @@ import * as React from 'react';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { field, Form, FormState, Input } from 'semantic-ui-mobx';
-import { Button } from 'semantic-ui-react';
+import Item, { Button } from 'semantic-ui-react';
 
-// // you need to create a model of agent
-// class Agent {
-// 	x: number;
-//   y: number;
-
-// 	constructor (x: number, y: number){
-//     this.x = x;
-//     this.y = y;
-//   }
-// 	moveToLocation(x: number, y: number) {
-// 		return;
-// 	}
-// }
-
-// test
-// let agent = new Agent(10, 30);
-// agent.moveToLocation(100, 300);
-
-// then we need to also have a map of environment
 class EnvironmentObject {
   name: string;
   image: string;
@@ -33,45 +14,6 @@ class EnvironmentObject {
 
 class Project {
   objects: EnvironmentObject[];
-}
-
-class Environment {
-  objects: { [index: string]: PIXI.Sprite } = {};
-  stage: PIXI.Container;
-
-  constructor(stage: PIXI.Container) {
-    this.stage = stage;
-  }
-
-  addObject(id: string, name: string, x: number, y: number) {
-    let blob = new PIXI.Sprite(PIXI.loader.resources['/images/blob.png'].texture);
-    blob.name = 'Blob';
-    blob.vy = 1;
-    blob.x = x;
-    blob.y = y;
-
-    // remember object for further manipulation
-    this.objects[id] = blob;
-
-    // add to canvas
-    this.stage.addChild(blob);
-  }
-
-  addAgent(id: string, x: number, y: number) {
-    let agent = new PIXI.Sprite(PIXI.loader.resources['/images/explorer.png'].texture);
-    agent.name = 'cat';
-    agent.vy = 1;
-
-    // remember object for further manipulation
-    this.objects[id] = agent;
-
-    // add to canvas
-    this.stage.addChild(agent);
-  }
-
-  removeObject(id: string) {
-    this.stage.removeChild(this.objects[id]);
-  }
 }
 
 interface IServerObject {
@@ -84,21 +26,70 @@ interface IServerObject {
 export class ExecutionView extends React.Component {
   canvas: HTMLElement;
   app: PIXI.Application;
+  objects: { [index: string]: PIXI.Sprite } = {};
 
   loadFromServer(items: IServerObject[]) {
     // do your magic
+    // Access array parameters here
+    for (let item of items) {
+      let object = new PIXI.Sprite(PIXI.loader.resources['/images/blob.png'].texture);
+      this.objects[item.id] = object;
+        object.id = item.id; 
+        object.name = item.name;
+        object.x = item.x;
+        object.y = item.y; 
+        this.app.stage.addChild(object);
+      };
   }
 
   addNew(item: IServerObject) {
     // do your magic
+    let agent = new PIXI.Sprite(PIXI.loader.resources['/images/explorer.png'].texture);
+    this.objects[item.id] = agent;
+    agent.id = item.id;
+    agent.name = item.name;
+    agent.x = item.x;
+    agent.y = item.y;
+
+    this.app.stage.addChild(agent);
+
+    alert('Adding Object' + '\nObject Id: ' + agent.id + '\nObject Name: ' + agent.name +
+          '\nPosition X: ' + agent.x + '\nPosition Y: ' + agent.y);
   }
 
   remove(id: string) {
     // do your magic
+    this.app.stage.removeChild(this.objects[id]);
   }
 
-  move(id: string, pixelsPerSecond: number) {
+  move(id: string, x: number, y: number, timeInMs: number) {
     // do your magic
+    // time paramater, animate: move(to, from, time), move to (x, y)
+    // utilise the app ticker functionality and set the variable delta as the velocity which equals
+    // the total number of frames divided by the distance. To calculate the total frames, times the 
+    // frame rate per second with the specified time to reach the x2, y2 position. Distance equals,
+    // the square root of x1, x2 to the power of two plus x2, y2 to the power of two.
+      let timeInSeconds = timeInMs / 1000; 
+      let framesPerSec = 60;
+      let distance = Math.sqrt((Math.pow(x - this.objects[id].x, 2)) + (Math.pow(y - this.objects[id].y, 2)));
+      let totalFrames = framesPerSec * timeInSeconds; 
+      let delta = distance / totalFrames;
+        this.app.ticker.add(()=> {
+          if(this.objects[id].x < x){
+            this.objects[id].x += delta;
+          }
+          else {
+            this.objects[id].x += 0;
+          }
+
+          if (this.objects[id].y < y){
+            this.objects[id].y += delta;
+          }
+          else {
+            this.objects[id].y += 0;
+          }
+
+        });
   }
 
   // REACT METHODS
@@ -112,9 +103,9 @@ export class ExecutionView extends React.Component {
             this.loadFromServer([
               { id: '1', name: 'object1', x: 20, y: 100 },
               { id: '2', name: 'object1', x: 60, y: 120 },
-              { id: '2', name: 'object3', x: 120, y: 200 },
-              { id: '3', name: 'object2', x: 80, y: 100 },
-              { id: '4', name: 'object1', x: 170, y: 300 }
+              { id: '3', name: 'object3', x: 120, y: 200 },
+              { id: '4', name: 'object2', x: 80, y: 100 },
+              { id: '5', name: 'object1', x: 170, y: 300 }
             ])
           }
         >
@@ -122,7 +113,7 @@ export class ExecutionView extends React.Component {
         </button>
         <button onClick={() => this.addNew({ id: '5', name: 'object1', x: 30, y: 222 })}>Add New Object</button>
         <button onClick={() => this.remove('4')}>Remove Object</button>
-        <button onClick={() => this.move('2', 10)}>Move Object</button>
+        <button onClick={() => this.move('2', 240, 300, 500)}>Move Object</button>
 
         <ReactiveForm />
       </>
@@ -167,13 +158,6 @@ export class ExecutionView extends React.Component {
     let background = new PIXI.Sprite(PIXI.loader.resources['/images/dungeon.png'].texture);
     // Add the cat to the stage
     this.app.stage.addChild(background);
-
-    // add the rest
-
-    let e = new Environment(this.app.stage);
-    e.addObject('id1', 'Blob', 10, 10); // displays the object
-    // e.removeObject('id1'); // removes the object
-    e.addAgent('agent1', 20, 30); // adds agent */
   };
 }
 
