@@ -1,11 +1,7 @@
+import * as Chart from 'chart.js';
 import * as PIXI from 'pixi.js';
 import * as React from 'react';
-
-// AVISHKA
-import { observable } from 'mobx';
-import { observer } from 'mobx-react';
-import { field, Form, FormState, Input } from 'semantic-ui-mobx';
-import Item, { Button } from 'semantic-ui-react';
+import {Chart, Line} from 'react-chartjs-2';
 
 class EnvironmentObject {
   name: string;
@@ -65,7 +61,7 @@ export class ExecutionView extends React.Component {
   move(id: string, x: number, y: number, timeInMs: number) {
     // do your magic
     // time paramater, animate: move(to, from, time), move to (x, y)
-    // utilise the app ticker functionality and set the variable delta as the velocity which equals
+    // utilise the app ticker functionality and set the letiable delta as the velocity which equals
     // the total number of frames divided by the distance. To calculate the total frames, times the 
     // frame rate per second with the specified time to reach the x2, y2 position. Distance equals,
     // the square root of x1, x2 to the power of two plus x2, y2 to the power of two.
@@ -114,8 +110,8 @@ export class ExecutionView extends React.Component {
         <button onClick={() => this.addNew({ id: '5', name: 'object1', x: 30, y: 222 })}>Add New Object</button>
         <button onClick={() => this.remove('4')}>Remove Object</button>
         <button onClick={() => this.move('2', 240, 300, 500)}>Move Object</button>
-
-        <ReactiveForm />
+        <hr />
+        <LineChart />
       </>
     );
   }
@@ -156,42 +152,88 @@ export class ExecutionView extends React.Component {
 
   setup = () => {
     let background = new PIXI.Sprite(PIXI.loader.resources['/images/dungeon.png'].texture);
-    // Add the cat to the stage
     this.app.stage.addChild(background);
   };
 }
 
-///// AVISHKA
 
-class Reactive extends FormState {
-  @field testField = '';
-  @observable testArray: string[] = [];
+const data = {
+    labels: [],
+    datasets: [{
+      label: 'Hunger Level Dataset',
+      data: [],
+      fill: false,
+      backgroundColor: 'rgba(75,192,192,0.4)',
+      borderColor: 'rgba(75,192,192,1)',
+      borderCapStyle: 'butt',
+      borderDash: [],
+      borderDashOffset: 0.0,
+      borderJoinStyle: 'miter',
+      lineTension: 0, 
+      pointBorderColor: 'rgba(75,192,192,1)',
+      pointBackgroundColor: '#fff',
+      pointBorderWidth: 1,
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+      pointHoverBorderColor: 'rgba(220,220,220,1)',
+      pointHoverBorderWidth: 2,
+      pointRadius: 1,
+      pointHitRadius: 10
+    }]
+  };
 
-  @field newArrayMember = '';
-}
+const options = {
+        title: {
+            display: true,
+            text: 'Hunger Level'
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          yAxes: [{
+              ticks: {
+                  max: 100,
+                  min: 0,
+                  stepSize: 10
+              },
+              scaleLabel: {
+                  display: true,
+                  labelString: 'Hunger Value'
+              }
+          }],
+          xAxes: [{
+              scaleLabel: {
+                  display: true,
+                  labelString: 'Time (Seconds)'
+              }
+          }]
+        },
+        elements: {
+          line: {
+              tension: 0, // disables bezier curves
+          }
+      }
+    }
 
-let data = new Reactive();
+export class LineChart extends React.Component {
+  line: Line;
 
-@observer
-class ReactiveForm extends React.Component {
+  componentDidMount() {
+    setInterval(() => {
+      data.labels.push(data.labels.length/2);
+      data.datasets[0].data.push(Math.floor(Math.random()*100));
+      this.line.chartInstance.update();
+      }, 500)
+  }
+  
   render() {
-    return (
-      <Form>
-        <Input owner={data.fields.testField} label="Test Text (.fields used only with owner)" />
-        <div style={{ background: 'salmon' }}>{data.testField}</div>
-
-        <div>Let's do arrays</div>
-        {data.testArray.map((element, index) => (
-          <div key={index}>
-            <div>
-              [{index}]: {element}
-            </div>
-            <Button color="red" icon="trash" onClick={() => data.testArray.splice(index, 1)} />
-          </div>
-        ))}
-        <Input owner={data.fields.newArrayMember} label="New Member" />
-        <Button icon="plus" color="blue" onClick={() => data.testArray.push(data.newArrayMember)} />
-      </Form>
-    );
+    return(
+      <div>
+        <Line ref={(node) => this.line = node} options={options} data={data} width = {600} height = {500}/>
+      </div>
+    )
   }
 }
+
+
+
