@@ -1,8 +1,11 @@
+import * as jsPDF from 'jspdf';
 import * as PIXI from 'pixi.js';
 import * as React from 'react';
+import { Scrollbars } from 'react-custom-scrollbars'
 
 import { observable } from 'mobx';
 import { Line } from 'react-chartjs-2';
+
 
 class EnvironmentObject {
   name: string;
@@ -49,8 +52,9 @@ class StatisticModel {
   options = {
     title: {
       display: true,
-      text: 'Hunger Level'
+      text: 'Hunger Level',
     },
+    events: ['click'],
     responsive: true,
     maintainAspectRatio: false,
     scales: {
@@ -82,6 +86,10 @@ class StatisticModel {
       }
     }
   };
+
+  
+
+  
 }
 
 class ServerModel {
@@ -125,7 +133,9 @@ class ServerModel {
   }
 
   setup = () => {
-    let background = new PIXI.Sprite(PIXI.loader.resources['/images/dungeon.png'].texture);
+    let background = new PIXI.Sprite(
+      PIXI.loader.resources['/images/dungeon.png'].texture
+    );
     this.app.stage.addChild(background);
 
     // init items
@@ -137,7 +147,7 @@ class ServerModel {
     //   { id: 5, name: 'Blob', x: 170, y: 300 }
     // ]);
 
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 100; i++) {
       let obj = this.getRandomKey(this.theme);
       this.addNew({
         id: this.maxId + 1,
@@ -148,7 +158,7 @@ class ServerModel {
     }
 
     // start random execution
-    setInterval(this.randomAction, 50);
+    setInterval(this.randomAction, 500);
   };
 
   getRandomInt(max: number) {
@@ -169,12 +179,15 @@ class ServerModel {
   }
 
   randomAction = () => {
-    let rnd = this.getRandomInt(1);
+    let rnd = this.getRandomInt(3);
 
     switch (rnd) {
       case 0:
         let movable = this.getRandomItem(this.objects);
-        model.move(movable.id, Math.random() * 400, Math.random() * 400, Math.random() * 5000);
+        let x = Math.random() * 400;
+        let y = Math.random() * 400;
+        console.log(`Moving to ${x},${y}`);
+        model.move(movable.id, x, y, Math.random() * 5000);
         break;
       case 1:
         let obj = this.getRandomKey(this.theme);
@@ -242,29 +255,22 @@ class ServerModel {
     // do your magic
     // time paramater, animate: move(to, from, time), move to (x, y)
     // utilise the app ticker functionality and set the letiable delta as the velocity which equals
-    // the total number of frames divided by the distance. To calculate the total frames, times the
-    // frame rate per second with the specified time to reach the x2, y2 position. Distance equals,
-    // the square root of x1, x2 to the power of two plus x2, y2 to the power of two.
+    // the total number of frames divided by the distance. 
     let timeInSeconds = timeInMs / 1000;
     let framesPerSec = 60;
-    let distance = Math.sqrt(
-      Math.pow(x - this.objects[id].x, 2) + Math.pow(y - this.objects[id].y, 2)
-    );
-    let totalFrames = framesPerSec * timeInSeconds;
-    let delta = distance / totalFrames;
-    this.app.ticker.add(() => {
-      if (this.objects[id].x < x) {
-        this.objects[id].x += delta;
-      } else {
-        this.objects[id].x += 0;
-      }
 
-      if (this.objects[id].y < y) {
-        this.objects[id].y += delta;
-      } else {
-        this.objects[id].y += 0;
-      }
-    });
+    let distanceX =  x - this.objects[id].x;
+    let distanceY =  y - this.objects[id].y;
+
+    let totalFrames = framesPerSec * timeInSeconds;
+    let deltaX = distanceX / totalFrames;
+    let deltaY = distanceY / totalFrames;
+
+    this.app.ticker.add(() => {
+      this.objects[id].x += deltaX;
+      this.objects[id].y += deltaY;
+    });  
+    // debugger;   
   }
 }
 
@@ -277,13 +283,29 @@ interface IdentifiableSprite extends PIXI.Sprite {
 export class ExecutionView extends React.Component {
   canvas: HTMLElement;
 
+  downloadPDF = () => {
+    let canvas = document.querySelector('.chartjs-render-monitor');
+    // creates image
+    let canvasImg = canvas.toDataURL('#ffffff','image/jpeg', 1.0);
+    
+    // creates PDF from img
+    let pdf = new jsPDF('landscape');
+    pdf.addImage(canvasImg, 'JPEG', 20, 20, 250, 175);
+    pdf.save('chart.pdf');
+  }
+
   // REACT METHODS
   render() {
     return (
       <>
+      <Scrollbars style={{height: '100vh'}}>
         <div ref={n => (this.canvas = n)} id="pixiCanvas" />
         <hr />
-        <LineChart model={model} />
+        <LineChart model={model} id = "LineChart" />
+        <div>
+          <button type="button" id="download-pdf" onClick={this.downloadPDF} > Download PDF </button>
+        </div>
+      </Scrollbars>
       </>
     );
   }
@@ -306,7 +328,9 @@ export class LineChart extends React.Component<ChartProps> {
       this.props.model.statistics.data.labels.push(
         this.props.model.statistics.data.labels.length / 2
       );
-      this.props.model.statistics.data.datasets[0].data.push(Math.floor(Math.random() * 100));
+      this.props.model.statistics.data.datasets[0].data.push(
+        Math.floor(Math.random() * 100)
+      );
       this.line.chartInstance.update();
     }, 500);
   }
@@ -315,6 +339,7 @@ export class LineChart extends React.Component<ChartProps> {
     return (
       <div>
         <Line
+          id="LineChart"
           ref={node => (this.line = node)}
           options={this.props.model.statistics.options}
           data={this.props.model.statistics.data}
