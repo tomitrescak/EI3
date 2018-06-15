@@ -158,7 +158,7 @@ class ServerModel {
     }
 
     // start random execution
-    setInterval(this.randomAction, 500);
+    setInterval(this.randomAction, 3000);
   };
 
   getRandomInt(max: number) {
@@ -187,7 +187,7 @@ class ServerModel {
         let x = Math.random() * 400;
         let y = Math.random() * 400;
         console.log(`Moving to ${x},${y}`);
-        model.move(movable.id, x, y, Math.random() * 5000);
+        model.move(movable.id, x, y, Math.random() * 2000);
         break;
       case 1:
         let obj = this.getRandomKey(this.theme);
@@ -255,22 +255,37 @@ class ServerModel {
     // do your magic
     // time paramater, animate: move(to, from, time), move to (x, y)
     // utilise the app ticker functionality and set the letiable delta as the velocity which equals
-    // the total number of frames divided by the distance. 
+    // the total number of frames divided by the distance. The distance is calculated through subtracting
+    // the specified position by the agent/object's position on the canvase.
+
     let timeInSeconds = timeInMs / 1000;
     let framesPerSec = 60;
 
     let distanceX =  x - this.objects[id].x;
     let distanceY =  y - this.objects[id].y;
 
+    // Calculates the total frames and the delta values for each position 
     let totalFrames = framesPerSec * timeInSeconds;
     let deltaX = distanceX / totalFrames;
     let deltaY = distanceY / totalFrames;
 
+    let posCheckX = Math.abs(this.objects[id].x - x);
+    let posCheckY = Math.abs(this.objects[id].y - y);
+
+    // Animates the agent/object movement and moves the agent/object
+    // to the specified position.
     this.app.ticker.add(() => {
-      this.objects[id].x += deltaX;
-      this.objects[id].y += deltaY;
-    });  
-    // debugger;   
+      posCheckX = Math.abs(this.objects[id].x - x);
+      posCheckY = Math.abs(this.objects[id].y - y);
+      if((posCheckX > 0.9999999999999999 && posCheckY > 0.9999999999999999)){
+        this.objects[id].x += 1 + deltaX;
+        this.objects[id].y += 1 + deltaY;
+      }
+      else{
+        deltaX = 0; 
+        deltaY = 0; 
+      }
+    });   
   }
 }
 
