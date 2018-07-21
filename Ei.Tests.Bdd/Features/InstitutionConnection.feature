@@ -25,9 +25,9 @@ Scenario: Successfull connection, Agent in and out
 	
 Scenario: Role inherits properties from parent
 	Given That institution 'InstitutionStart' is launched
-	When Agent 'user' connects to organisation 'main' 
-	Then Agent 'user' plays role 'King' and belong to the started institution
-	And Agent 'user' has parameter 'childParameter'
+	When Agent 'user' connects to organisation 'Default' 
+	Then Agent 'user' plays role 'Citizen' and belong to the started institution
+	And Agent 'user' has parameter 'ParentParameter'
 	And Agent 'user' has parameter 'parentParameter'
 	And Agent 'user' has parameter 'orgChildParameter'
 	And Agent 'user' has parameter 'orgParentParameter'

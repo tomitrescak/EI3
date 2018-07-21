@@ -5,68 +5,11 @@ namespace Ei.Ontology
     using System.Collections.Generic;
     using System.Linq;
 
-    /// <summary>
-    /// Contains a list of applicable organisation roles and a list of string conditions 
-    /// </summary>
     public abstract class AccessCondition
     {
-        // fields
-        private readonly EiExpression expression;
-        private readonly Institution ei;
-        private readonly Group group;
-
-        private System.Object lockThis = new System.Object();
-
-        // properties
-
-        public bool HasActivityParameter { get { return this.expression != null && this.expression.HasActivityParameters; } }
-        public bool HasAgentParameter { get { return this.expression != null && this.expression.HasAgentParameters; } }
-
-        // ctor
-
-        public AccessCondition(Institution ei, Group group, EiExpression expression) {
-            this.ei = ei;
-            this.group = group;
-            this.expression = expression;
-        }
-
-
-        // EXPRESSIONS
-
-        public abstract bool CheckConditions(VariableState state);
-
-        public void ApplyPostconditions(VariableState state, bool planningMode) {
-            // we do not consider runtime expressions
-            // runtime expressions contain function parameters, owners ...
-            if (planningMode && this.expression.IsRuntimeExpression) {
-                return;
-            }
-
-            // consider locking
-            lock (lockThis) {
-                this.expression.Evaluate(state, planningMode);
-            }
-        }
-
-        /// <summary>
-        /// Checks whether this Access condition applies to agent with give groups
-        /// </summary>
-        /// <param name="groups"></param>
-        /// <returns></returns>
-        public bool AppliesTo(IEnumerable<Group> groups) {
-            return this.group == null ||
-                groups != null &&
-                groups.Any(agentRole => IsInGroup(agentRole, this.group));
-        }
-
-        public override string ToString() {
-            return (this.group == null
-                        ? string.Empty
-                        : this.group.ToString()) + " " +
-                   (this.expression == null
-                        ? string.Empty
-                        : this.expression.ToString());
-        }
+        public virtual bool HasActivityParameter { get { return false; } }
+        public virtual bool HasAgentParameter { get { return false; } }
+        public virtual bool IsRuntimeExpression { get { return false; } }
 
         // static methods
 
@@ -88,5 +31,33 @@ namespace Ei.Ontology
         public static bool CheckHasActivityParameters(IEnumerable<AccessCondition> checkConditions) {
             return checkConditions != null && checkConditions.Any(c => c.HasActivityParameter);
         }
+    }
+
+    /// <summary>
+    /// Contains a list of applicable organisation roles and a list of string conditions 
+    /// </summary>
+    public abstract class AccessCondition<I, W, G> : AccessCondition
+        where I : VariableState 
+        where W : VariableState
+        where G : VariableState
+    {
+        // EXPRESSIONS
+
+        public virtual bool CheckConditions(I institutionState, W workflowState, G agentState) { return true; }
+
+        public virtual void CheckPostconditions(I institutionState, W workflowState, G agentState) { }
+
+        public void ApplyPostconditions(I institutionState, W workflowState, G agentState, bool planningMode) {
+            // we do not consider runtime expressions
+            // runtime expressions contain function parameters, owners ...
+            if (planningMode && this.IsRuntimeExpression) {
+                return;
+            }
+
+            // consider locking
+            this.CheckPostconditions(institutionState, workflowState, agentState);
+        }
+
+        
     }
 }

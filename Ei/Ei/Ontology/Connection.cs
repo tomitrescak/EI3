@@ -12,13 +12,13 @@ namespace Ei.Ontology
         #region Properties
 
         public string Id { get; private set; }
-        public Access Preconditions { get; private set; }
-        public AccessCondition[] Postconditions { get; private set; }
-        public AccessCondition[] GeneratedNestedEffects { get; private set; }
+        public Access Preconditions { get; set; }
+        public AccessCondition[] Postconditions { get; set; }
+        public AccessCondition[] GeneratedNestedEffects { get; set; }
 
-        public Access BacktrackPreconditions { get; private set; }
-        public AccessCondition[] BacktrackPostconditions { get; private set; }
-        public AccessCondition[] ExpectedEffects { get; private set; }
+        public Access BacktrackPreconditions { get; set; }
+        public AccessCondition[] BacktrackPostconditions { get; set; }
+        public AccessCondition[] ExpectedEffects { get; set; }
 
         public WorkflowPosition From { get; private set; }
         public WorkflowPosition To { get; private set; }
@@ -111,7 +111,7 @@ namespace Ei.Ontology
             // leave the original state
             if (this.From != null)
             {
-                this.From.ExitPosition(agent);
+                this.From.GetInstance(agent.Workflow.InstanceId).ExitPosition(agent);
             }
 
             if (this.Action != null)

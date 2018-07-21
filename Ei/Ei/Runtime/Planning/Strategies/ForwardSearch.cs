@@ -96,7 +96,7 @@ namespace Ei.Runtime.Planning.Strategies
             }
         }
 
-        public IStrategy CreateNested(AStarNode currentNode, Workflow workflow, Connection conn)
+        public IStrategy CreateNested(AStarNode currentNode, Workflow.Instance workflow, Connection conn)
         {
             // the start state is the current state
             var nestedInitialState = currentNode.VariableState.Clone();

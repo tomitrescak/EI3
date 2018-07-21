@@ -13,7 +13,6 @@ namespace Ei.Runtime
         VariableState Instance(VariableState cloneFrom);
     }
 
-
     public class VariableStateCreator<T>: IVariableStateCreator where T : VariableState
     {
         private static Func<VariableState, T> _new;

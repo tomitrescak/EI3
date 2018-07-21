@@ -124,11 +124,11 @@ this.ScenarioSetup(scenarioInfo);
 #line 27
  testRunner.Given("That institution \'InstitutionStart\' is launched", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 28
- testRunner.When("Agent \'user\' connects to organisation \'main\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("Agent \'user\' connects to organisation \'Default\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 29
- testRunner.Then("Agent \'user\' plays role \'King\' and belong to the started institution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("Agent \'user\' plays role \'Citizen\' and belong to the started institution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 30
- testRunner.And("Agent \'user\' has parameter \'childParameter\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("Agent \'user\' has parameter \'ParentParameter\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 31
  testRunner.And("Agent \'user\' has parameter \'parentParameter\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 32

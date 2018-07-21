@@ -25,7 +25,7 @@ namespace Ei.Runtime.Planning.Strategies
         void ApplyPostConditions(AStarNode node);
         void ApplyEffect(AStarNode node, AccessCondition effect);
 
-        IStrategy CreateNested(AStarNode currentNode, Workflow workflow, Connection conn);
+        IStrategy CreateNested(AStarNode currentNode, Workflow.Instance workflow, Connection conn);
         bool ExpandEffects { get; }
         IHeuristics CreateHeuristicsForNestedSearch(AStarNode currentNode);
     }

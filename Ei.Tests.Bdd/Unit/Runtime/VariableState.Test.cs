@@ -12,6 +12,15 @@ namespace Ei.Tests.Bdd.Unit.Runtime
     [TestFixture]
     class VariableState_Test
     {
+        public class OtherVariableState : VariableState
+        {
+            public int Boo { get; set; }
+
+            public OtherVariableState() { }
+            public OtherVariableState(VariableState state) : base(state) { }
+            public OtherVariableState(VariableInstance[] variables) : base(variables) { }
+        }
+
         public class ParentVariableState : VariableState
         {
             public int Foo { get; set; }
@@ -135,13 +144,19 @@ namespace Ei.Tests.Bdd.Unit.Runtime
             };
             var state2 = new ChildVariableState
             {
-                Foo = 10
+                Foo = 10,
             };
 
             state1.Merge(state2);
 
             Assert.AreEqual(10, state1.Foo);
             Assert.AreEqual("4", state1.Bar);
+
+            var state3 = new OtherVariableState {
+                Boo = 7
+            };
+
+            state1.Merge(state3);
         }
 
         [TestCase]
