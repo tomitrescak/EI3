@@ -1,15 +1,11 @@
 ﻿using Ei.Agents.Planning;
-using Ei.Agents.Sims;
-using OxyPlot;
 using OxyPlot.Axes;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ei.Simulation.Sims.Behaviours;
 using UnityEngine;
-using Vittoria.Core;
 
 namespace Vittoria.Statistics
 {

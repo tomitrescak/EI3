@@ -190,7 +190,7 @@ namespace Vittoria.Behaviours
             agent.name = obj.Name + "_" + k;
 
             // add advertisement
-            var adv = agent.AddComponent<Ei.Agents.Sims.SimObject>();
+            var adv = agent.AddComponent<SimObject>();
             adv.Actions = obj.Actions.Select(s => new SimAction(
                 s.Name,
                 s.Uses,
