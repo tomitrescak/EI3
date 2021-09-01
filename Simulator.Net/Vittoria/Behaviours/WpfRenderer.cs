@@ -1,9 +1,8 @@
-﻿using Ei.Agents.Core;
-using Ei.Agents.Core.Behaviours;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Ei.Simulation.Core;
 using Vittoria.Core;
 
 namespace Vittoria.Behaviours

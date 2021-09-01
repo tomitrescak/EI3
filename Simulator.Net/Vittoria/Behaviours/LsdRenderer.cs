@@ -1,16 +1,7 @@
-﻿using Ei.Agents.Core;
-using Ei.Agents.Core.Behaviours;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Ei.Simulation.Core;
 using Vittoria.Core;
 
 namespace Vittoria.Behaviours

@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Vittoria.Properties;
-using Ei.Agents.Core;
 using Vittoria.Core;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 using Ei.Logs;
@@ -17,10 +16,12 @@ using Vittoria.Behaviours;
 using UnityEngine;
 using Vittoria.Statistics;
 using System.Windows.Data;
-using Ei.Agents.Sims;
-using Ei.Agents.Core.Behaviours;
 using Ei.Agents.Planning;
+using Ei.Simulation.Core;
+using Ei.Simulation.Physiology;
+using Ei.Simulation.Sims.Behaviours;
 using Microsoft.Win32;
+using Spawn = Vittoria.Behaviours.Spawn;
 
 namespace Vittoria
 {
@@ -293,7 +294,7 @@ namespace Vittoria
                     behaviour = this.SelectedAgent.AddComponent<Spawn>();
                     break;
                 case "EiProject":
-                    behaviour = this.SelectedAgent.AddComponent<EiProject>();
+                    behaviour = this.SelectedAgent.AddComponent<PhysiologyProject>();
                     break;
                 case "EiProjectStarter":
                     behaviour = this.SelectedAgent.AddComponent<EiProjectStarter>();

@@ -1,21 +1,12 @@
-﻿using Ei.Agents.Core;
-using Ei.Agents.Core.Behaviours;
-using Ei.Agents.Sims;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using Ei.Simulation.Core;
+using Ei.Simulation.Sims.Behaviours;
 using UnityEngine;
 using Vittoria.Core;
 
@@ -32,7 +23,7 @@ namespace Vittoria.Behaviours
         public void Init() {
             this.simulation = (Simulation)this.gameObject.GetSimulator();
 
-            this.icon = this.GetComponent<Ei.Agents.Sims.SimObject>().Icon;
+            this.icon = this.GetComponent<SimObject>().Icon;
 
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", icon).Replace("/", "\\");
             if (!File.Exists(path)) {

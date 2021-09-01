@@ -1,9 +1,9 @@
 ﻿using Ei;
-using Ei.Ontology;
-using Ei.Ontology.Actions;
-using Ei.Ontology.Transitions;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
+using Ei.Core.Ontology;
+using Ei.Core.Ontology.Actions;
+using Ei.Core.Ontology.Transitions;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
 using System;
 using System.Collections.Generic;
 

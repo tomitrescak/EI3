@@ -1,19 +1,15 @@
-﻿using Ei.Agents.Core;
-using Ei.Agents.Core.Behaviours;
-using Ei.Agents.Planning;
-using System;
+﻿
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ei.Simulation.Core;
+using Ei.Simulation.Physiology;
 using UnityEngine;
 using Vittoria.Behaviours;
 using YamlDotNet.Serialization;
 
 namespace Vittoria.Core
 {
-    public class Project : IProject
+    public class Project 
     {
         public string ProjectPath { get; set; } 
 
@@ -45,7 +41,7 @@ namespace Vittoria.Core
             deserializer.RegisterTagMapping("!linearNavigation", typeof(LinearNavigation));
             deserializer.RegisterTagMapping("!randomNavigation", typeof(RandomNavigation));
             deserializer.RegisterTagMapping("!renderer", typeof(WpfRenderer));
-            deserializer.RegisterTagMapping("!eiproject", typeof(EiProject));
+            deserializer.RegisterTagMapping("!eiproject", typeof(PhysiologyProject));
 
 
             return deserializer.Deserialize<T>(input);

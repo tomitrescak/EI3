@@ -1,6 +1,4 @@
-﻿using Ei.Agents.Core;
-using Ei.Agents.Sims;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -23,7 +21,7 @@ namespace Vittoria.Core
 
         public static Simulation Instance;
 
-        private IProject project;
+        private Project project;
         private Canvas canvas;
         private Dictionary<string, BitmapImage> images = new Dictionary<string, BitmapImage>();
         private Dictionary<string, Image> objects = new Dictionary<string, Image>();
@@ -41,7 +39,7 @@ namespace Vittoria.Core
 
         
 
-        public Simulation(IProject project, Canvas canvas, WriteableBitmap writeableBmp) {
+        public Simulation(Project project, Canvas canvas, WriteableBitmap writeableBmp) {
             Simulation.Instance = this;
             GameObject.simulation = this;
             this.project = project;

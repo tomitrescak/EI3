@@ -1,10 +1,10 @@
-﻿using Ei.Agents.Core;
-using Ei.Agents.Core.Behaviours;
-using Ei.Agents.Sims;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Ei.Simulation.Core;
+using Ei.Simulation.Sims;
+using Ei.Simulation.Sims.Behaviours;
 using UnityEngine;
 using Vittoria.Core;
 using Vittoria.Statistics;
