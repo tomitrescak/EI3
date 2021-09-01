@@ -1,16 +1,16 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { inject, observer } from 'mobx-react';
-import { Form } from 'semantic-ui-mobx';
+import { inject, observer } from "mobx-react";
+import { Form } from "semantic-ui-mobx";
 
-import { Message } from 'semantic-ui-react';
+import { Message } from "semantic-ui-react";
 
-import { IObservableArray } from 'mobx';
+import { IObservableArray } from "mobx";
 
-import { EntityEditor } from '../core/entity_view';
-import { Ei } from '../ei/ei_model';
-import { HierarchicEntity } from '../ei/hierarchic_entity_model';
-import { PropertyView } from '../properties/property_view';
+import { EntityEditor } from "../core/entity_view";
+import { Ei } from "../ei/ei_model";
+import { HierarchicEntity } from "../ei/hierarchic_entity_model";
+import { PropertyView } from "../properties/property_view";
 
 interface Props {
   context?: App.Context;
@@ -26,17 +26,16 @@ interface Props {
 //   textAlign: 'center'
 // });
 
-@inject('context')
+@inject("context")
 @observer
 export class HierarchicEntityEditor extends React.Component<Props> {
-  static displayName = 'EntityView';
+  static displayName = "EntityView";
 
   // deleteRecord = action(() => {
   //   let ei = this.props.context.store.ei;
   //   let collection = this.props.collection(ei);
   //   let entity = collection.find(o => o.Id === this.props.id);
 
-    
   //   // remove all child link
   //   if (entity.parentLink) {
   //     entity.parentLink.safeRemove(entity.model);
@@ -46,7 +45,7 @@ export class HierarchicEntityEditor extends React.Component<Props> {
   //   for (let child of collection.filter(c => c.Parent === entity.Id)) {
   //     child.parentLink.safeRemove(entity.model);
   //   }
-    
+
   //   // remove entity
   //   collection.remove(entity);
 
@@ -66,7 +65,9 @@ export class HierarchicEntityEditor extends React.Component<Props> {
 
   render() {
     let ei = this.props.context.store.ei;
-    let entity = this.props.collection(ei).find(o => o.Id.toLowerCase() === this.props.id.toLowerCase());
+    let entity = this.props
+      .collection(ei)
+      .find((o) => o.Id.toLowerCase() === this.props.id.toLowerCase());
 
     if (!entity) {
       return <Message content="Deleted" />;
@@ -77,7 +78,8 @@ export class HierarchicEntityEditor extends React.Component<Props> {
 
     let parent = entity.Parent;
     if (parent) {
-      parent = this.props.collection(ei).find(o => o.Id === parent).Name || '';
+      parent =
+        this.props.collection(ei).find((o) => o.Id === parent).Name || "";
     }
 
     return (
@@ -86,11 +88,11 @@ export class HierarchicEntityEditor extends React.Component<Props> {
           <EntityEditor entity={entity} />
 
           {/*<Select label="Parent" options={organisations} owner={getField(organisation, 'Parent')} placeholder="No Parent"  />*/}
-          <If condition={parent}>
+          {parent && (
             <div>
               <b>Parent: </b> {parent}
             </div>
-          </If>
+          )}
           <PropertyView owner={entity} types={ei.types} />
         </Form>
         {/*this.props.minCount < this.props.collection(ei).length && (

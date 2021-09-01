@@ -1,10 +1,10 @@
-import * as jsPDF from 'jspdf';
-import * as PIXI from 'pixi.js';
-import * as React from 'react';
-import { Scrollbars } from 'react-custom-scrollbars'
+import * as jsPDF from "jspdf";
+import * as PIXI from "pixi.js";
+import * as React from "react";
+import { Scrollbars } from "react-custom-scrollbars";
 
-import { observable } from 'mobx';
-import { Line } from 'react-chartjs-2';
+import { observable } from "mobx";
+import { Line } from "react-chartjs-2";
 
 class EnvironmentObject {
   name: string;
@@ -25,35 +25,35 @@ class StatisticModel {
     labels: [] as any[],
     datasets: [
       {
-        label: 'Hunger Level Dataset',
+        label: "Hunger Level Dataset",
         data: [] as any[],
         fill: false,
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
-        borderCapStyle: 'butt',
+        backgroundColor: "rgba(75,192,192,0.4)",
+        borderColor: "rgba(75,192,192,1)",
+        borderCapStyle: "butt",
         borderDash: [] as any[],
         borderDashOffset: 0.0,
-        borderJoinStyle: 'miter',
+        borderJoinStyle: "miter",
         lineTension: 0,
-        pointBorderColor: 'rgba(75,192,192,1)',
-        pointBackgroundColor: '#fff',
+        pointBorderColor: "rgba(75,192,192,1)",
+        pointBackgroundColor: "#fff",
         pointBorderWidth: 1,
         pointHoverRadius: 5,
-        pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-        pointHoverBorderColor: 'rgba(220,220,220,1)',
+        pointHoverBackgroundColor: "rgba(75,192,192,1)",
+        pointHoverBorderColor: "rgba(220,220,220,1)",
         pointHoverBorderWidth: 2,
         pointRadius: 1,
-        pointHitRadius: 10
-      }
-    ]
+        pointHitRadius: 10,
+      },
+    ],
   };
 
   options = {
     title: {
       display: true,
-      text: 'Hunger Level',
+      text: "Hunger Level",
     },
-    events: ['click'],
+    events: ["click"],
     responsive: true,
     maintainAspectRatio: false,
     scales: {
@@ -62,33 +62,29 @@ class StatisticModel {
           ticks: {
             max: 100,
             min: 0,
-            stepSize: 10
+            stepSize: 10,
           },
           scaleLabel: {
             display: true,
-            labelString: 'Hunger Value'
-          }
-        }
+            labelString: "Hunger Value",
+          },
+        },
       ],
       xAxes: [
         {
           scaleLabel: {
             display: true,
-            labelString: 'Time (Seconds)'
-          }
-        }
-      ]
+            labelString: "Time (Seconds)",
+          },
+        },
+      ],
     },
     elements: {
       line: {
-        tension: 0 // disables bezier curves
-      }
-    }
+        tension: 0, // disables bezier curves
+      },
+    },
   };
-
-  
-
-  
 }
 
 class ServerModel {
@@ -96,31 +92,31 @@ class ServerModel {
   app: PIXI.Application;
   objects: { [index: string]: IdentifiableSprite } = {};
   theme = {
-    Blob: '/images/blob.png',
-    Explorer: '/images/explorer.png'
+    Blob: "/images/blob.png",
+    Explorer: "/images/explorer.png",
   };
   maxId = 0;
 
   constructor() {
     // init pixi
-    let type = 'WebGL';
+    let type = "WebGL";
     if (!PIXI.utils.isWebGLSupported()) {
-      type = 'canvas';
+      type = "canvas";
     }
 
     // Create a Pixi Application
     let app = new PIXI.Application({
       width: 513,
       height: 513,
-      backgroundColor: 0xffffff
+      backgroundColor: 0xffffff,
     });
 
     PIXI.loader.reset();
     PIXI.loader
-      .add('/images/explorer.png')
-      .add('/images/dungeon.png')
-      .add('/images/blob.png')
-      .load(this.setup);
+      .add("/images/explorer.png")
+      .add("/images/dungeon.png")
+      .add("/images/blob.png");
+    //.load(this.setup);
 
     this.app = app;
 
@@ -133,7 +129,7 @@ class ServerModel {
 
   setup = () => {
     let background = new PIXI.Sprite(
-      PIXI.loader.resources['/images/dungeon.png'].texture
+      PIXI.loader.resources["/images/dungeon.png"].texture
     );
     this.app.stage.addChild(background);
 
@@ -152,7 +148,7 @@ class ServerModel {
         id: this.maxId + 1,
         name: obj,
         x: Math.random() * 400,
-        y: Math.random() * 400
+        y: Math.random() * 400,
       });
     }
 
@@ -194,7 +190,7 @@ class ServerModel {
           id: this.maxId + 1,
           name: obj,
           x: Math.random() * 400,
-          y: Math.random() * 400
+          y: Math.random() * 400,
         });
         break;
       case 2:
@@ -260,10 +256,10 @@ class ServerModel {
     let timeInSeconds = timeInMs / 1000;
     let framesPerSec = 60;
 
-    let distanceX =  x - this.objects[id].x;
-    let distanceY =  y - this.objects[id].y;
+    let distanceX = x - this.objects[id].x;
+    let distanceY = y - this.objects[id].y;
 
-    // Calculates the total frames and the delta values for each position 
+    // Calculates the total frames and the delta values for each position
     let totalFrames = framesPerSec * timeInSeconds;
     let deltaX = distanceX / totalFrames;
     let deltaY = distanceY / totalFrames;
@@ -276,15 +272,14 @@ class ServerModel {
     this.app.ticker.add(() => {
       posCheckX = Math.abs(this.objects[id].x - x);
       posCheckY = Math.abs(this.objects[id].y - y);
-      if((posCheckX > 0.9999999999999999 && posCheckY > 0.9999999999999999)){
+      if (posCheckX > 0.9999999999999999 && posCheckY > 0.9999999999999999) {
         this.objects[id].x += 1 + deltaX;
         this.objects[id].y += 1 + deltaY;
+      } else {
+        deltaX = 0;
+        deltaY = 0;
       }
-      else{
-        deltaX = 0; 
-        deltaY = 0; 
-      }
-    });   
+    });
   }
 }
 
@@ -298,28 +293,31 @@ export class ExecutionView extends React.Component {
   canvas: HTMLElement;
 
   downloadPDF = () => {
-    let canvas = document.querySelector('.chartjs-render-monitor');
+    let canvas = document.querySelector(".chartjs-render-monitor");
     // creates image
-    let canvasImg = canvas.toDataURL('#ffffff','image/jpeg', 1.0);
-    
+    let canvasImg = canvas.toDataURL("#ffffff", "image/jpeg", 1.0);
+
     // creates PDF from img
-    let pdf = new jsPDF('landscape');
-    pdf.addImage(canvasImg, 'JPEG', 20, 20, 250, 175);
-    pdf.save('chart.pdf');
-  }
+    let pdf = new jsPDF("landscape");
+    pdf.addImage(canvasImg, "JPEG", 20, 20, 250, 175);
+    pdf.save("chart.pdf");
+  };
 
   // REACT METHODS
   render() {
     return (
       <>
-      <Scrollbars style={{height: '100vh'}}>
-        <div ref={n => (this.canvas = n)} id="pixiCanvas" />
-        <hr />
-        <LineChart model={model} id = "LineChart" />
-        <div>
-          <button type="button" id="download-pdf" onClick={this.downloadPDF} > Download PDF </button>
-        </div>
-      </Scrollbars>
+        <Scrollbars style={{ height: "100vh" }}>
+          <div ref={(n) => (this.canvas = n)} id="pixiCanvas" />
+          <hr />
+          <LineChart model={model} id="LineChart" />
+          <div>
+            <button type="button" id="download-pdf" onClick={this.downloadPDF}>
+              {" "}
+              Download PDF{" "}
+            </button>
+          </div>
+        </Scrollbars>
       </>
     );
   }
@@ -354,7 +352,7 @@ export class LineChart extends React.Component<ChartProps> {
       <div>
         <Line
           id="LineChart"
-          ref={node => (this.line = node)}
+          ref={(node) => (this.line = node)}
           options={this.props.model.statistics.options}
           data={this.props.model.statistics.data}
           width={600}
