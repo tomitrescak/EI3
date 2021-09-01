@@ -19,27 +19,27 @@ namespace Ei.Server
     {
         static void Main(string[] args) {
             var tester = new Tester();
-            
+
             var ei = File.ReadAllText("Files/Ei.json");
             var project = File.ReadAllText("Files/PhysiologyProject.json");
-            
+
             var handler = new EiHandler(null);
             handler.Compile(ei);
             handler.Run(project);
 
             Console.ReadLine();
-            
-;//            var host = new WebHostBuilder()
-//                .UseKestrel()
-//                .UseUrls(
-//                    // "http://10.211.55.4:5000", 
-//                    "http://localhost:5000"
-//                )
-//                .UseContentRoot(Directory.GetCurrentDirectory())
-//                .UseIISIntegration()
-//                .UseStartup<Startup>()
-//                .Build();
-//            host.Run();
+
+            var host = new WebHostBuilder()
+                .UseKestrel()
+                .UseUrls(
+                    // "http://10.211.55.4:5000", 
+                    "http://localhost:5000"
+                )
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseIISIntegration()
+                .UseStartup<Startup>()
+                .Build();
+            host.Run();
         }
 
         
