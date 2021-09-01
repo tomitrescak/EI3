@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Ei.Ontology;
-using Ei.Runtime.Planning.Heuristics;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime.Planning.Heuristics;
 
-namespace Ei.Runtime.Planning.Strategies
+namespace Ei.Core.Runtime.Planning.Strategies
 {
     public enum PlanStrategy
     {

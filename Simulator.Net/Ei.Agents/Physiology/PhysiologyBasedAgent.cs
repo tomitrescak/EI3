@@ -1,40 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using Ei.Custom.Institutions.Uruk;
 using Ei.Logs;
-using Ei.Ontology.Actions;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
-using Ei.Runtime.Planning.Costs;
-using Ei.Runtime.Planning.Strategies;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
+using Ei.Simulation.Simulator;
 
-namespace Ei.Simulator.Core
+namespace Ei.Simulation.Physiology
 {
+
     public class PhysiologyBasedAgent : SimulationAgent
     {
         // constructor
-        public static byte[] KillColor { get { return new byte[] { 220, 220, 220 }; } }
+        private static PhysiologyProject physiologyProject;
 
-        public PhysiologyBasedAgent(string role, string[] freeTimeGoals, string name = null) : base(role, freeTimeGoals, name) {
+        public PhysiologyBasedAgent(PhysiologyProject project, string role, string[] freeTimeGoals, string name = null) : base(project, role, freeTimeGoals, name) {
+            physiologyProject = project;
             this.Callbacks = new PhysiologyAgentCallbacks(this);
         }
 
         // properties
+        
+        public static readonly byte[] KillColor = new byte[] { 220, 220, 220 };
 
         public Governor MainAgent { get; set; }
 
         public Governor PhysiologyAgent { get; set; }
 
-        private HumanRole.Store Store {
+        private IPhysiologyStore Store {
             get {
-                var ei = (DefaultInstitution)Project.Current.Ei;
-                return (HumanRole.Store)this.Governor.Resources.FindRole(typeof(HumanRole.Store));
+                var ei = project.Ei;
+                return this.Governor.Resources.FindRole(typeof(IPhysiologyStore)) as IPhysiologyStore;
             }
         }
 
@@ -42,7 +37,6 @@ namespace Ei.Simulator.Core
         // methods
 
         protected override bool Connected() {
-            var project = Project.Current;
 
             var hungerModifier = RandomInterval(project.PhysiologyDiversity[0], project.PhysiologyDiversity[1]);
             var thirstModifier = RandomInterval(project.PhysiologyDiversity[0], project.PhysiologyDiversity[1]);
@@ -50,7 +44,7 @@ namespace Ei.Simulator.Core
 
             var res = this.Governor.PerformAction("initAgent",
                 VariableInstance.Create(
-                    "Tick", (86400 / Project.Current.DayLengthInSeconds).ToString(CultureInfo.InvariantCulture),
+                    "Tick", (86400 / project.DayLengthInSeconds).ToString(CultureInfo.InvariantCulture),
                     "HungerModifier", hungerModifier.ToString(CultureInfo.InvariantCulture),
                     "ThirstModifier", thirstModifier.ToString(CultureInfo.InvariantCulture),
                     "FatigueModifier", fatigueModifier.ToString(CultureInfo.InvariantCulture)));
@@ -78,7 +72,7 @@ namespace Ei.Simulator.Core
 
         protected override void Reason() {
             // wait in case we pause
-            if (Project.Current.Paused) {
+            if (project.Paused) {
                 this.View.RunAfter(this.Reason, 1);
                 return;
             }
@@ -86,7 +80,7 @@ namespace Ei.Simulator.Core
             Log.Debug(this.MainAgent.Name, "Reasoning ...");
 
             // check if it is time for sleeping
-            var time = Project.Current.SimulatedTime;
+            var time = project.SimulatedTime;
             time = time % 86400;
 
             //if (time > 64800)
@@ -114,10 +108,9 @@ namespace Ei.Simulator.Core
 
 
             // if agent is tired agent will rest
-            var ei = (DefaultInstitution)Project.Current.Ei;
-            var humanState = (HumanRole.Store)this.Governor.Resources.FindRole(typeof(HumanRole.Store));
+            var humanState = this.Store;
 
-            if (humanState.Fatigue > Project.Current.FatigueTreshold) {
+            if (humanState.Fatigue > physiologyProject.FatigueTreshold) {
                 CurrentGoalAction = "Rest";
 
                 this.SatifyFatigue();
@@ -134,12 +127,12 @@ namespace Ei.Simulator.Core
 
             // if agent is thirsty agent will drink
             var thirst = humanState.Thirst;
-            if (thirst > Project.Current.KillThirstThreshold) {
+            if (thirst > physiologyProject.KillThirstThreshold) {
                 this.KillAgent("Thirst");
                 return;
             }
 
-            if (thirst > Project.Current.ThirstThreshold) {
+            if (thirst > physiologyProject.ThirstThreshold) {
                 CurrentGoalAction = "Thirst";
 
                 // check if agent did try to satisfy the thirst and failed
@@ -155,12 +148,12 @@ namespace Ei.Simulator.Core
             // we generate goal for hunger
 
             var hunger = humanState.Hunger;
-            if (hunger > Project.Current.KillHungerThreshold) {
+            if (hunger > physiologyProject.KillHungerThreshold) {
                 this.KillAgent("Hunger");
                 return;
             }
 
-            if (hunger > Project.Current.HungerTreshold) {
+            if (hunger > physiologyProject.HungerTreshold) {
                 CurrentGoalAction = "Hunger";
 
                 // check if agent did try to satisfy the hunger and failed
@@ -217,9 +210,6 @@ namespace Ei.Simulator.Core
             this.MainAgent.Move("join");
         }
 
-
-
-
         protected virtual void SatifyFatigue() {
             Log.Debug(this.MainAgent.Name, "Fatigued ...");
 
@@ -227,7 +217,7 @@ namespace Ei.Simulator.Core
 
             var fatigue = this.Store.Fatigue;
 
-            var finalFatigue = Math.Round(Project.Current.FatigueTreshold * random.NextDouble());
+            var finalFatigue = Math.Round(physiologyProject.FatigueTreshold * random.NextDouble());
             var difference = fatigue - finalFatigue; // agent can decide not to recuperate fully
 
             // notify institution about resting
@@ -237,7 +227,7 @@ namespace Ei.Simulator.Core
             // agent recuperates 1 fatigue points per 20 minutes (1200 sec)
             difference = difference * 1200;
 
-            var restingTime = difference / Project.Current.SimulatedSecond;
+            var restingTime = difference / project.SimulatedSecond;
 
             // display on view
             this.View.Rest(restingTime);
@@ -249,7 +239,7 @@ namespace Ei.Simulator.Core
             Log.Warning(this.MainAgent.Name, "Thirsty: " + thirst);
 
             // calculate how much we need to drink
-            // var finalthirst = Math.Round(Project.Current.ThirstThreshold * random.NextDouble(), 2);
+            // var finalthirst = Math.Round(project.ThirstThreshold * random.NextDouble(), 2);
 
             var finalThirst = Math.Round((thirst - 0.1) * 100) / 100f;
             if (finalThirst < 0) finalThirst = 0.01;
@@ -267,12 +257,11 @@ namespace Ei.Simulator.Core
             Log.Warning(this.MainAgent.Name, "Hungry: " + hunger);
 
             // calculate how much we need to drink
-            // var finalthirst = Math.Round(Project.Current.ThirstThreshold * random.NextDouble(), 2);
+            // var finalthirst = Math.Round(project.ThirstThreshold * random.NextDouble(), 2);
 
             var finalHunger = Math.Round((hunger - 0.1) * 100) / 100f;
             this.CreatePlan(this.MainAgent, new[]
             {
-
                 new GoalState("HungerDecay", finalHunger, StateGoalStrategy.Max)
             },
             "Hunger");

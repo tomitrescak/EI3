@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Ei.Runtime;
+using Ei.Core.Runtime;
 
-namespace Ei.Ontology.Actions
+namespace Ei.Core.Ontology.Actions
 {
     public class ActionMessage : ActionBase
     {

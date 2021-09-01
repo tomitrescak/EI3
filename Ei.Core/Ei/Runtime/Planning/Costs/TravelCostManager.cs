@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ei.Ontology;
-using Ei.Ontology.Actions;
-using Ei.Runtime.Planning.Environment;
+using Ei.Core.Runtime.Planning.Environment;
+using Ei.Core.Ontology;
+using Ei.Core.Ontology.Actions;
 
-namespace Ei.Runtime.Planning.Costs
+namespace Ei.Core.Runtime.Planning.Costs
 {
     public class TravelCostManager : ICostManager
     {

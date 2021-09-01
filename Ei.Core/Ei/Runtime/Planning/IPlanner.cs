@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using Ei.Ontology;
+using Ei.Core.Runtime;
+using Ei.Core.Ontology;
 
-namespace Ei.Runtime.Planning
+namespace Ei.Core.Runtime.Planning
 {
     interface IPlanner
     {

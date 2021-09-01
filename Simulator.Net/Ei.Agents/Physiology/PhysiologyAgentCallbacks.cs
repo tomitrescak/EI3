@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mime;
-using System.Text;
+using Ei.Core.Runtime;
 using Ei.Logs;
-using Ei.Ontology.Actions;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
-using Ei.Runtime.Planning.Strategies;
+using Ei.Simulation.Simulator;
 
-namespace Ei.Simulator.Core
+namespace Ei.Simulation.Physiology
 {
     public class PhysiologyAgentCallbacks : IGovernorCallbacks
     {
@@ -72,6 +66,8 @@ namespace Ei.Simulator.Core
             else
             {
                 param.Value = value.ToString();
+                this.owner.View.PropertyValueChanged();
+                    
             }
         }
 
@@ -83,16 +79,16 @@ namespace Ei.Simulator.Core
             ParameterState parameters)
         {
             // TODO: Separate callbacks for Potter
-            if (activityId == "makePot")
-            {
-                var exchangeId = this.owner.Properties.First(w => w.Label == "ExchangeId").Value;
-
-                var dic = new Dictionary<string, VariableInstance[]>();
-                dic.Add("exchangeWorkflow", new[] { new VariableInstance("instanceId", exchangeId) });
-
-                // place a new object to the environment
-                Project.Current.Environment.AddObject("Pot", (int) this.owner.X, (int) this.owner.Y, dic);
-            }
+//            if (activityId == "makePot")
+//            {
+//                var exchangeId = this.owner.Properties.First(w => w.Label == "ExchangeId").Value;
+//
+//                var dic = new Dictionary<string, VariableInstance[]>();
+//                dic.Add("exchangeWorkflow", new[] { new VariableInstance("instanceId", exchangeId) });
+//
+//                // place a new object to the environment
+//                Project.Current.Environment.AddObject("Pot", (int) this.owner.X, (int) this.owner.Y, dic);
+//            }
         }
 
         public void NotifyActivityFailed(string name, string id, int instanceId, string agentName, string activityId,

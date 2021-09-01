@@ -1,6 +1,6 @@
-﻿using Ei.Runtime;
+﻿using Ei.Core.Runtime;
 
-namespace Ei.Agents
+namespace Ei.Core.Agents
 {
     public class RemoteAgent : IRemoteAgent
     {

@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Timers;
+using Ei.Core.Runtime;
 using Ei.Logs;
-using Ei.Ontology.Actions;
-using Ei.Runtime;
+using Ei.Core.Ontology;
+using Ei.Core.Ontology.Actions;
 
-namespace Ei.Ontology
+namespace Ei.Core.Ontology
 {
     public class State : WorkflowPosition
     {
@@ -64,7 +63,7 @@ namespace Ei.Ontology
 
             private void Timedout(object sender, ElapsedEventArgs elapsedEventArgs) {
                 var workflow = state.workflow.GetInstance(this.Id);
-                if (Log.IsInfo) Log.Info("State", InstitutionCodes.TimeOut, workflow.Id, workflow.InstanceId.ToString(), this.Id.ToString());
+                if (Log.IsInfo) Logger.Info("State", InstitutionCodes.TimeOut, workflow.Id, workflow.InstanceId.ToString(), this.Id.ToString());
 
                 // find timeout connection
                 var connection = state.Outs.FirstOrDefault(w => w.Action is ActionTimeout);

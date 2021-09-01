@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Ei.Core.Runtime;
 using Ei.Logs;
-using Ei.Ontology;
-using Ei.Ontology.Actions;
-using Ei.Runtime;
+using Ei.Core.Ontology;
+using Ei.Core.Ontology.Actions;
 using Moq;
 using Xunit;
 

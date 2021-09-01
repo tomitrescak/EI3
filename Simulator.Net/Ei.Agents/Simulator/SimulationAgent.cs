@@ -1,26 +1,22 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Net.Mime;
-using System.Text;
 using System.Threading;
+using Ei.Core.Ontology.Actions;
 using Ei.Logs;
-using Ei.Ontology;
-using Ei.Ontology.Actions;
+using Ei.Core.Ontology;
 using Ei.Planning.Memory;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
-using Ei.Runtime.Planning.Costs;
-using Ei.Runtime.Planning.Environment;
-using Ei.Runtime.Planning.Strategies;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
+using Ei.Core.Runtime.Planning.Costs;
+using Ei.Core.Runtime.Planning.Environment;
+using Ei.Core.Runtime.Planning.Strategies;
+using Ei.Simulation.Physiology;
+using Ei.Simulation.Planning;
 
-namespace Ei.Simulator.Core
+namespace Ei.Simulation.Simulator
 {
     public enum AgentState
     {
@@ -32,22 +28,26 @@ namespace Ei.Simulator.Core
 
     public abstract class SimulationAgent : INotifyPropertyChanged
     {
+        // static fields
+        
         public static int TotalPlans;
         public static int FailedPlans;
         public static long ResponseTimes;
 
-        public string CurrentGoalAction { get; set; }
-
         protected static readonly Random random = new Random();
+        protected static Project project;
+        
         private static int index;
 
+        // fields
+        
         private float destinationX;
         private float destinationY;
 
         private readonly double speedPxPerSecond;
         private List<AStarNode> plan;
 
-        private string[] freeTimeGoalDefinition;
+        private readonly string[] freeTimeGoalDefinition;
         private GoalState[][] freeTimeGoals;
         private AgentState state;
         private string name;
@@ -61,11 +61,13 @@ namespace Ei.Simulator.Core
 
         // constructor
 
-        protected SimulationAgent(string role, string[] freeTimeGoals = null, string name = null) {
+        protected SimulationAgent(Project project, string role, string[] freeTimeGoals = null, string name = null) {
+            SimulationAgent.project = project;
+            
             this.freeTimeGoalDefinition = freeTimeGoals;
-            this.X = Project.Current.Environment.RandomX;
-            this.Y = Project.Current.Environment.RandomY;
-            this.name = name == null ? (role + "_" + index++) : name;
+            this.X = project.Environment.RandomX;
+            this.Y = project.Environment.RandomY;
+            this.name = name ?? (role + "_" + index++);
             this.PlanHistory = new List<PlanHistory>();
 
             //            var timer = new Timer();
@@ -79,18 +81,20 @@ namespace Ei.Simulator.Core
             // that is the speed expressed as S = px/sec
             // as a result we can calculate, that if agent needs to pass N pixels it will take agent N / S seconds
 
-            this.speedPxPerSecond = Project.Current.AgentSpeed * // base speed (e.g. 5 km/h = 1.47 m/s)
-                (86440 / Project.Current.DayLengthInSeconds) * // how many real seconds in one simulated second
-                RandomInterval(Project.Current.SpeedDiversity[0], Project.Current.SpeedDiversity[1]);
-            this.speedPxPerSecond = this.speedPxPerSecond / Project.Current.MetersPerPixel;
+            this.speedPxPerSecond = project.AgentSpeed * // base speed (e.g. 5 km/h = 1.47 m/s)
+                (86440 / project.DayLengthInSeconds) * // how many real seconds in one simulated second
+                RandomInterval(project.SpeedDiversity[0], project.SpeedDiversity[1]);
+            this.speedPxPerSecond = this.speedPxPerSecond / project.MetersPerPixel;
 
             this.Properties = new List<AgentProperty>();
         }
 
         // properties
+        
+        public string CurrentGoalAction { get; set; }
 
         public string Name {
-            get { return this.name; }
+            get => this.name;
             set {
                 this.name = value;
                 this.OnPropertyChanged("Name");
@@ -104,7 +108,7 @@ namespace Ei.Simulator.Core
         public float Y { get; private set; }
 
         public byte[] Color {
-            get { return this.color; }
+            get => this.color;
             set {
                 this.color = value;
                 this.OnPropertyChanged("Color");
@@ -114,7 +118,7 @@ namespace Ei.Simulator.Core
         public List<AgentProperty> Properties { get; private set; }
 
         public List<AStarNode> Plan {
-            get { return this.plan; }
+            get => this.plan;
             protected set {
                 this.plan = value;
                 this.OnPropertyChanged("Plan");
@@ -140,7 +144,7 @@ namespace Ei.Simulator.Core
         protected PhysiologyAgentCallbacks Callbacks { get; set; }
 
         public AgentState State {
-            get { return this.state; }
+            get => this.state;
             set {
                 this.state = value;
                 this.OnPropertyChanged("State");
@@ -190,18 +194,18 @@ namespace Ei.Simulator.Core
         protected void CreatePlan(Governor agent, GoalState[] goal, string goalType = null) {
             this.State = AgentState.Planning;
 
-            var t = new Thread(() => FindPlan(agent, goal, goalType));
-            t.Name = "Thread_" + tid++;
-            t.Start();
+            // var t = new Thread(() => FindPlan(agent, goal, goalType));
+            // t.Name = "Thread_" + tid++;
+            // t.Start();
 
-            // FindPlan(agent, goal, goalType);
+            FindPlan(agent, goal, goalType);
         }
 
         private void UpdatePlan() {
 
         }
 
-        const bool useCache = false;
+        const bool useCache = true;
 
         private void FindPlan(Governor agent, GoalState[] goal, string goalType) {
             // TODO: Dangerous! Should not happen ...
@@ -231,14 +235,14 @@ namespace Ei.Simulator.Core
                     // notify ui about the new plan
                     this.View.UpdateOnUi(() => {
                         //this.PlanHistory.Insert(0, new PlanHistory {
-                        //    StartString = Project.Current.SimulatedTimeString,
+                        //    StartString = project.SimulatedTimeString,
                         //    Goals = string.Join(";", goal.Select(w => w.ToString()).ToArray()),
                         //    Result = "Stored",
                         //    GoalType = goalType
                         //});
-                        this.PlanHistory = new List<Core.PlanHistory>() {
+                        this.PlanHistory = new List<PlanHistory>() {
                             new PlanHistory {
-                                StartString = Project.Current.SimulatedTimeString,
+                                StartString = project.SimulatedTimeString,
                                 Goals = string.Join(";", goal.Select(w => w.ToString()).ToArray()),
                                 Result = "Stored",
                                 GoalType = goalType
@@ -258,7 +262,7 @@ namespace Ei.Simulator.Core
                         node.CostData =
                             s.Arc == null || s.Arc.Action == null || s.Arc.Action.Id == null ?
                                 null :
-                                TravelCostManager.FindClosestAction(Project.Current.Environment, this.Governor, (int)this.X, (int)this.Y, s.Arc.Action.Id, action).objectId;
+                                TravelCostManager.FindClosestAction(project.Environment, this.Governor, (int)this.X, (int)this.Y, s.Arc.Action.Id, action).objectId;
                         action = node.CostData;
                         return node;
                     }).ToList();
@@ -289,14 +293,14 @@ namespace Ei.Simulator.Core
             this.View.UpdateOnUi(() => {
                 // TODO: Show
                 //this.PlanHistory.Insert(0, new PlanHistory {
-                //    StartString = Project.Current.SimulatedTimeString,
+                //    StartString = project.SimulatedTimeString,
                 //    Goals = string.Join(";", goal.Select(w => w.ToString()).ToArray()),
                 //    Result = "Planning",
                 //    GoalType = goalType
                 //});
 
-                this.PlanHistory = new List<Core.PlanHistory> { new PlanHistory {
-                    StartString = Project.Current.SimulatedTimeString,
+                this.PlanHistory = new List<PlanHistory> { new PlanHistory {
+                    StartString = project.SimulatedTimeString,
                     Goals = string.Join(";", goal.Select(w => w.ToString()).ToArray()),
                     Result = "Planning",
                     GoalType = goalType
@@ -316,7 +320,7 @@ namespace Ei.Simulator.Core
             try {
                 plan = agent.PlanGoalState(goal,
                     PlanStrategy.ForwardSearch,
-                    new TravelCostManager(agent, Project.Current.Environment, (int)this.X, (int)this.Y));
+                    new TravelCostManager(agent, project.Environment, (int)this.X, (int)this.Y));
 
                 // remember the initial node
                 this.PlanHistory[0].InitialNode = new List<AStarNode>() { agent.Planner.InitialNode };
@@ -452,19 +456,19 @@ namespace Ei.Simulator.Core
                         //EnvironmentDataAction action;
 
                         // if it is a simple action that does not generate any interactio simply wait a defined interwal
-                        if (Project.Current.Environment.NoLocationInfo(itemId) != null) {
+                        if (project.Environment.NoLocationInfo(itemId) != null) {
                             if (this.PerformAction(agent, planItem)) {
-                                waitTime = Project.Current.Environment.NoLocationInfo(itemId).Duration;
+                                waitTime = project.Environment.NoLocationInfo(itemId).Duration;
                             }
                         } else {
                             // this is environmental action
                             EnvironmentData obj;
 
-                            //lock (Project.Current.Environment.Objects)
+                            //lock (project.Environment.Objects)
                             {
                                 // object may have eventually disappeared, so we need to replan
 
-                                if (!Project.Current.Environment.TryGetValue(itemId, out obj)) {
+                                if (!project.Environment.TryGetValue(itemId, out obj)) {
                                     this.FailPlan(agent, "Missing resource " + itemId);
                                     return;
                                 }
@@ -479,13 +483,13 @@ namespace Ei.Simulator.Core
                                 // object exists, so execute the object in the institution and use this object
                                 if (this.PerformAction(agent, planItem, pars)) {
                                     Log.Debug(agent.Name, "[WF] Using object and sleeping: " + waitTime);
-                                    waitTime = Project.Current.Environment.UseObject(obj, planItem.Arc.Action.Id);
+                                    waitTime = project.Environment.UseObject(obj, planItem.Arc.Action.Id);
                                 }
                             }
                         }
 
                         if (waitTime > 0) {
-                            waitTime = (float)Project.Current.CalculateDuration(waitTime);
+                            waitTime = (float)project.CalculateDuration(waitTime);
 
                             Log.Debug(agent.Name, "[WF] Continuing plan after: " + waitTime);
                             this.View.RunAfter(() => ContinuePlan(agent), waitTime);
@@ -549,14 +553,14 @@ namespace Ei.Simulator.Core
                 // check whether it is an environmental object or object with no location
                 // item id is null for example for workflow actions
 
-                if (itemId == null || Project.Current.Environment.NoLocationInfo(itemId) != null) {
+                if (itemId == null || project.Environment.NoLocationInfo(itemId) != null) {
                     Log.Debug(agent.Name, "[CP] No travel needed ...");
 
                     this.ExecuteNextPlanStep(agent);
                 } else {
                     // travel to destination of the object
                     EnvironmentData obj;
-                    if (Project.Current.Environment.TryGetValue(itemId, out obj)) {
+                    if (project.Environment.TryGetValue(itemId, out obj)) {
                         this.destinationX = obj.X;
                         this.destinationY = obj.Y;
 
@@ -607,7 +611,7 @@ namespace Ei.Simulator.Core
         }
 
         protected void RandomWalk() {
-            this.MoveToDestination(Project.Current.Environment.RandomX, Project.Current.Environment.RandomY);
+            this.MoveToDestination(project.Environment.RandomX, project.Environment.RandomY);
         }
 
         protected virtual void MoveToDestination(float x, float y) {

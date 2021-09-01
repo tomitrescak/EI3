@@ -7,6 +7,10 @@ import { EntityDiagramModel } from './entity_diagram_model';
 
 export class EntityLinkModel extends LinkModel {
 
+  // constructor(child: HierarchicEntity, parent: string) {
+  //   super('default', parent + '->' + child.Id);
+  // }
+
   @action safeRemove(model: EntityDiagramModel) {
     this.safeRemoveParent();
 
@@ -16,14 +20,16 @@ export class EntityLinkModel extends LinkModel {
     if (this.targetPort) {
       this.targetPort.removeLink(this);
     }
-    model.removeLink(this);
+    if (model.links[this.id]) {
+      model.removeLink(this);
+    }
   }
 
   @action safeRemoveParent() {
     if (this.targetPort) {
       let port = this.targetPort.name === 'top' ? this.targetPort : this.sourcePort;
       let node = port.parentNode as HierarchicEntity;
-      node.Parent = null;
+      node.setParent(null);
       node.parentLink = null;
     }
   }

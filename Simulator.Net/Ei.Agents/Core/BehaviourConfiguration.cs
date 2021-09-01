@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Ei.Agents.Core
+﻿namespace Ei.Simulation.Core
 {
     public static class BehaviourConfiguration
     {

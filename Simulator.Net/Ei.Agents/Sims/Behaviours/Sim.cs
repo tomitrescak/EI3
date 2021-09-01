@@ -1,14 +1,8 @@
-﻿using Ei.Agents.Core;
-using Ei.Agents.Core.Behaviours;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel;
+using Ei.Simulation.Core;
 using UnityEngine;
 
-namespace Ei.Agents.Sims
+namespace Ei.Simulation.Sims.Behaviours
 {
     public class Sim : EiBehaviour, IUpdates
     {

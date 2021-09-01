@@ -3,7 +3,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 
 import { Checkbox, field, Form, FormState, Select } from 'semantic-ui-mobx';
-import { Accordion, Button, Icon, Popup, Segment } from 'semantic-ui-react';
+import { Accordion,Button, Icon, Popup, Segment } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { AccordionHandler } from '../../config/store';
@@ -18,7 +18,7 @@ interface AccessProps {
   ei: Ei;
   name: string;
   action?: Action;
-  workflow?: Workflow;
+  workflow: Workflow;
   hidePreconditions?: boolean;
   hideActionCondition?: boolean;
 }

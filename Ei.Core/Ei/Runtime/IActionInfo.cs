@@ -1,4 +1,4 @@
-﻿namespace Ei.Runtime
+﻿namespace Ei.Core.Runtime
 {
     public interface IActionInfo
     {

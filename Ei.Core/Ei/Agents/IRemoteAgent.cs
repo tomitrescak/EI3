@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using Ei.Runtime;
+﻿using Ei.Core.Runtime;
 
-namespace Ei.Agents
+namespace Ei.Core.Agents
 {
     public interface IRemoteAgent
     {

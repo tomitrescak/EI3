@@ -1,10 +1,13 @@
-﻿namespace Ei.Ontology
+﻿using Ei.Core.Ontology;
+using Ei.Core.Runtime;
+
+namespace Ei.Core.Ontology
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
 
-    using Ei.Runtime;
+    using Core.Runtime;
     using System;
 
     public class Access

@@ -1,12 +1,13 @@
-﻿using Ei.Ontology;
+﻿using Ei.Core.Ontology;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Ei.Core.Runtime;
 
-namespace Ei.Runtime
+namespace Ei.Core.Runtime
 {
     public enum VariableAccess
     {

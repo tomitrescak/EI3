@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Ei.Agents.Core.Behaviours
+namespace Ei.Simulation.Core
 {
     class Tweener
     {

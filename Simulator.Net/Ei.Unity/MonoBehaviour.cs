@@ -16,29 +16,26 @@ namespace UnityEngine
         private Dictionary<string, float> notifications = new Dictionary<string, float>();
 
         [Browsable(false)]
-        public Transform transform {
-            get {
-                return this.gameObject.transform;
-            }
-        }
+        public Transform transform => this.gameObject.transform;
+
         public GameObject gameObject;
 
         public delegate void ActionDelegate();
 
-        public ActionDelegate StartAction;
-        public ActionDelegate InitAction;
+        public readonly ActionDelegate StartAction;
+        public readonly ActionDelegate InitAction;
         public ActionDelegate UpdateAction;
 
         public MonoBehaviour() {
-            MethodInfo initMethod = this.GetType().GetMethod("Init");
+            var initMethod = this.GetType().GetMethod("Init");
             if (initMethod != null) {
                 this.InitAction = (ActionDelegate)Delegate.CreateDelegate(typeof(ActionDelegate), this, initMethod);
             }
-            MethodInfo startMethod = this.GetType().GetMethod("Start");
+            var startMethod = this.GetType().GetMethod("Start");
             if (startMethod != null) {
                 this.StartAction = (ActionDelegate)Delegate.CreateDelegate(typeof(ActionDelegate), this, startMethod);
             }
-            MethodInfo updateMethod = this.GetType().GetMethod("Update");
+            var updateMethod = this.GetType().GetMethod("Update");
             if (updateMethod != null) {
                 this.UpdateAction = (ActionDelegate)Delegate.CreateDelegate(typeof(ActionDelegate), this, updateMethod);
             }

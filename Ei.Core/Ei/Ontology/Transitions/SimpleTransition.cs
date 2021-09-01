@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ei.Core.Ontology;
 
-namespace Ei.Ontology.Transitions
+namespace Ei.Core.Ontology.Transitions
 {
     public abstract class SimpleTransition : Transition
     {

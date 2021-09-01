@@ -5,14 +5,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
-using Ei.Ontology;
-using Ei.Ontology.Actions;
-using Ei.Runtime.Planning.Costs;
-using Ei.Runtime.Planning.Heuristics;
-using Ei.Runtime.Planning.Storage;
-using Ei.Runtime.Planning.Strategies;
+using Ei.Core.Ontology.Actions;
+using Ei.Core.Runtime.Planning.Costs;
+using Ei.Core.Runtime.Planning.Heuristics;
+using Ei.Core.Runtime.Planning.Storage;
+using Ei.Core.Runtime.Planning.Strategies;
+using Ei.Core.Ontology;
 
-namespace Ei.Runtime.Planning
+namespace Ei.Core.Runtime.Planning
 {
     /// <summary>
     /// AStar implementation from https://en.wikipedia.org/wiki/A*_seConnectionh_algorithm

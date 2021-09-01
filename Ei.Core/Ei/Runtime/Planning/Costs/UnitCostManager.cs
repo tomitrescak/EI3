@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ei.Ontology;
+using Ei.Core.Ontology;
 
-namespace Ei.Runtime.Planning.Costs
+namespace Ei.Core.Runtime.Planning.Costs
 {
     class UnitCostManager: ICostManager
     {

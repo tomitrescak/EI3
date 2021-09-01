@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ei.Ontology;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
-using Ei.Runtime.Planning.Costs;
-using Ei.Runtime.Planning.Environment;
-using Ei.Runtime.Planning.Strategies;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
+using Ei.Core.Runtime.Planning.Costs;
+using Ei.Core.Runtime.Planning.Environment;
+using Ei.Core.Runtime.Planning.Strategies;
 using Moq;
 using Xunit;
 

@@ -1,8 +1,8 @@
-﻿namespace Ei.Ontology.Actions
-{
-    using Ei.Runtime;
-    using System;
+﻿using System;
+using Ei.Core.Runtime;
 
+namespace Ei.Core.Ontology.Actions
+{
     public abstract class ActionBase : Entity
     {
 

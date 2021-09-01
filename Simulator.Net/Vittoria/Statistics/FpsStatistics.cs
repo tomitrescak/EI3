@@ -63,10 +63,10 @@ namespace Vittoria.Statistics
 
         public void ProcessSamples() {
             // get samples
-            //var statistic = new FpsStatistic { Fps = Time.Fps, AgentCount = GameObject.FindObjectsOfType<Sim>().Count() + GameObject.FindObjectsOfType<EiAgent>().Count() };
+            var statistic = new FpsStatistic { Fps = Time.Fps, AgentCount = GameObject.FindObjectsOfType<Sim>().Count() + GameObject.FindObjectsOfType<EiAgent>().Count() };
 
             // process with all traits
-            //this.fpsTrait.Process(statistic.AgentCount, statistic);
+            this.fpsTrait.Process(statistic.AgentCount, statistic);
         }
 
         public bool LoadDataset(BinaryReader br) {

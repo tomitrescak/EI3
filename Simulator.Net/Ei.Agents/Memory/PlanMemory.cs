@@ -1,7 +1,7 @@
 ﻿using Ei.Logs;
-using Ei.Ontology;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
 using System;
 using System.Collections.Generic;
 using System.IO;

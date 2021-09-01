@@ -68,18 +68,19 @@ export const Errors = observer(({ context }: Props) => (
                 <List.Header>
                   Line {m.Line}: {m.Message}
                 </List.Header>
-                {m.Code && m.Code.length > 0 && (
-                  <List.Description>
-                    <SyntaxHighlighter
-                      language="cs"
-                      style={docco}
-                      showLineNumbers={true}
-                      startingLineNumber={m.Line - 5}
-                    >
-                      {m.Code.join('\n') || ''}
-                    </SyntaxHighlighter>
-                  </List.Description>
-                )}
+                {m.Code &&
+                  m.Code.length > 0 && (
+                    <List.Description>
+                      <SyntaxHighlighter
+                        language="cs"
+                        style={docco}
+                        showLineNumbers={true}
+                        startingLineNumber={m.Line - 5}
+                      >
+                        {m.Code.join('\n') || ''}
+                      </SyntaxHighlighter>
+                    </List.Description>
+                  )}
               </List.Content>
             </List.Item>
           );
@@ -103,6 +104,15 @@ export class MiddleView extends React.Component<Props> {
   isActive(name: string) {
     return name === this.state.activeItem ? activePane : hiddenPane;
   }
+
+  downloadCode = () => {
+    let myWindow = window.open('');
+    myWindow.document.write(('<pre>' + this.props.context.store.compiledCode.replace(/>/g, '&gt;').replace(/</g, '&lt;') + '</pre>') || 'No code was compiled');
+    let range = myWindow.document.createRange();
+    range.selectNode(myWindow.document.getElementById('hello'));
+    myWindow.getSelection().addRange(range);
+    (myWindow as any).select();
+  };
 
   render() {
     const { activeItem } = this.state;
@@ -134,6 +144,7 @@ export class MiddleView extends React.Component<Props> {
             onClick={this.handleItemClick}
           />
           <Menu.Menu position="right">
+            <Menu.Item icon="download" onClick={this.downloadCode} />
             <Menu.Item content="Clear" icon="remove" />
           </Menu.Menu>
         </Menu>

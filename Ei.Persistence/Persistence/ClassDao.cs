@@ -5,7 +5,7 @@ namespace Ei.Persistence
 {
     public class ClassDao : ParametricEntityDao
     {
-       public string GenerateCode() {
+       public override string GenerateCode() {
             return CodeGenerator.Class(this);
         }
     }

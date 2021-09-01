@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using Ei.Runtime;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime;
 
-namespace Ei.Ontology.Transitions
+namespace Ei.Core.Ontology.Transitions
 {
   public abstract class Transition : WorkflowPosition
   {

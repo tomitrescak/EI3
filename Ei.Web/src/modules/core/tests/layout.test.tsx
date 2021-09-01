@@ -9,7 +9,7 @@ const Component = () => <div>Rendered</div>
 
 describe('Layout @view', () => {
   it('renders child component', () => {
-    // expect(true).toBe(false);
+    expect(true).toBe(true);
     const m = mount(<Layout><Component /><div>ee</div></Layout>);
     
     expect(m.html()).toMatchSnapshot(); 

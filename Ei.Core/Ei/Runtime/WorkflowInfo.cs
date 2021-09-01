@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Ei.Runtime
+namespace Ei.Core.Runtime
 {
     public struct WorkflowInfo
     {

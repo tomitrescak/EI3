@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel;
 
-namespace Ei.Simulator.Core
+namespace Ei.Simulation.Simulator
 {
     public class AgentProperty : INotifyPropertyChanged
     {

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Ei
 {
-    using Ei.Ontology;
+    using Core.Ontology;
 
     public struct AuthorisationInfo
     {

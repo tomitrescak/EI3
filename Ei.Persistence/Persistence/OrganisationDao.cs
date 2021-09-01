@@ -20,7 +20,7 @@ namespace Ei.Persistence
             ? InstitutionDao.Instance.Organisations.Find(o => o.Id == this.Parent).ClassName
             : "Organisation";
 
-        public string GenerateCode() {
+        public override string GenerateCode() {
             return CodeGenerator.Organisation(this);
         }
     }

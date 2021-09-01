@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ei.Agents;
 using Ei.Logs;
 
-namespace Ei.Ontology
+namespace Ei.Core.Ontology
 {
-    using Ei.Runtime;
+    using Core.Runtime;
 
     public class InstitutionManager
     {
@@ -47,7 +46,7 @@ namespace Ei.Ontology
             this.MainWorkflow = this.Ei.CreateWorkflow(this.Ei.MainWorkflowId, null);
             this.agents = new List<Governor>();
 
-            if (Log.IsInfo) Log.Info("Manager", InstitutionCodes.InstitutionStarted, this.Ei.Name);
+            if (Log.IsInfo) Logger.Info("Manager", InstitutionCodes.InstitutionStarted, this.Ei.Name);
 
             return true;
         }

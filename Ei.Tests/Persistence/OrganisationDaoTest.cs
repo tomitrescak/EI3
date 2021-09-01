@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Ei.Compilation;
-using Ei.Ontology;
+using Ei.Core.Ontology;
 using Ei.Persistence;
 using Xunit;
 

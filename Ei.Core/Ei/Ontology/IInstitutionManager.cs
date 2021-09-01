@@ -1,6 +1,6 @@
-﻿using Ei.Runtime;
+﻿using Ei.Core.Runtime;
 
-namespace Ei.Ontology
+namespace Ei.Core.Ontology
 {
 
     public interface IInstitutionManager

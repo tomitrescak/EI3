@@ -24,7 +24,7 @@ export class EntityDiagramModel extends DiagramModel {
         const link = e.link as EntityLinkModel;
         // link deleted
         if (!e.isCreated) {
-          link.safeRemoveParent();
+          link.safeRemove(this);
         }
         if (e.isCreated) {
           // validate on mouse up
@@ -77,7 +77,7 @@ export class EntityDiagramModel extends DiagramModel {
                 return;
               }
 
-              childNode.Parent = parentNode.Id;
+              childNode.setParent(parentNode.Id);
               childNode.parentLink = link;
             }
           } as any);

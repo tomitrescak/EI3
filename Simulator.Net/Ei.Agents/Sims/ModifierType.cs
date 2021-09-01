@@ -1,4 +1,4 @@
-﻿namespace Ei.Agents.Sims
+﻿namespace Ei.Simulation.Sims
 {
     public enum ModifierType
     {

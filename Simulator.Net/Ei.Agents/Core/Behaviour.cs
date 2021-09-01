@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Ei.Agents.Core.Behaviours
+namespace Ei.Simulation.Core
 {
     public class EiBehaviour : MonoBehaviour
     {

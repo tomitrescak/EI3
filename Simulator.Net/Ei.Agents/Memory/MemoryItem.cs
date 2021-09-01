@@ -1,11 +1,11 @@
-﻿using Ei.Ontology;
-using Ei.Ontology.Actions;
-using Ei.Runtime;
-using Ei.Runtime.Planning;
+﻿using Ei.Core.Ontology;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ei.Core.Ontology.Actions;
 
 namespace Ei.Planning.Memory
 {

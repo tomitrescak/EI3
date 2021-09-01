@@ -1,11 +1,11 @@
-﻿using Ei.Agents.Core;
-using Ei.Agents.Core.Behaviours;
-using Ei.Simulator.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Ei.Simulation.Core;
+using Ei.Simulation.Physiology;
+using Ei.Simulation.Simulator;
 using UnityEngine;
 
 namespace Ei.Agents.Planning
@@ -90,6 +90,10 @@ namespace Ei.Agents.Planning
             this.agent.Properties.Add(agentProperty);
             // add in view
             this.properties.Add(agentProperty);
+            this.OnPropertyChanged("AgentProperties");
+        }
+
+        public void PropertyValueChanged() {
             this.OnPropertyChanged("AgentProperties");
         }
 

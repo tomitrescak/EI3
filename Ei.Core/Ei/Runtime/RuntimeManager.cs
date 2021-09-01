@@ -1,4 +1,4 @@
-﻿namespace Ei.Runtime
+﻿namespace Ei.Core.Runtime
 {
 
     public class RuntimeManager : IRuntimeManager

@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Net;
-using Ei.Runtime;
+using Ei.Core.Runtime;
 
-namespace Ei.Ontology{
+namespace Ei.Core.Ontology{
 
     /**
      * This class pairs Organisation with a role

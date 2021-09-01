@@ -1,12 +1,10 @@
-﻿using Ei.Agents.Core.Behaviours;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-namespace Ei.Agents.Sims
+namespace Ei.Simulation.Sims
 {
     [Serializable]
-    public class ModifierAdvertisement : MonoBehaviour
+    public class ModifierAdvertisement
     {
         public ModifierType Type { get; set; }
         public float Delta { get; set; }

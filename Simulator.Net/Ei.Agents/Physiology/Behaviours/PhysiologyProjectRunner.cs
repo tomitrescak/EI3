@@ -1,47 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Ei.Runtime.Planning.Environment;
-using Ei.Simulator.Core;
-using UnityEngine;
-using Project = Ei.Simulator.Core.Project;
-using Ei.Agents.Sims;
-using Ei.Agents.Core.Behaviours;
 using System.Threading;
-using Ei.Agents.Core;
-using System.IO;
+using Ei.Agents.Planning;
+using Ei.Core.Ontology;
+using Ei.Core.Runtime.Planning.Environment;
+using Ei.Simulation.Core;
+using Ei.Simulation.Sims.Behaviours;
+using Ei.Simulation.Simulator;
+using UnityEngine;
+using Project = Ei.Simulation.Simulator.Project;
 
-namespace Ei.Agents.Planning
+namespace Ei.Simulation.Physiology.Behaviours
 {
-    public class EiProject : EiBehaviour
+    public class PhysiologyProjectRunner : EiBehaviour
     {
         private Dictionary<EnvironmentData, GameObject> objectMappings;
         private Dictionary<PhysiologyBasedAgent, GameObject> agentMappings;
 
-        public string ProjectPath { get; set; }
         public int AgentsPerSecond { get; set; }
         public int AgentsLaunched { get; private set; }
+        
+        public Project project { get; private set; }
+        public Institution ei { get; private set; }
+//        public void Init() {
+//            if (!string.IsNullOrEmpty(this.ProjectPath)) {
+//                var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
+//                this.project = Project.Open(path);
+//
+//                this.InitProject(this.project);
+//            }    
+//        }
 
-        private Project project { get; set; }
-
-        public void Init() {
-            if (this.project != null) {
+        public void InitProject(Project project, Institution ei) {
+            if (this.AgentsPerSecond == 0) {
+                throw new Exception("You need to launch at least one agent per second!");
+            }
+            this.project = project;
+            this.ei = ei;
+            
+            if (this.project != null && this.project.Manager != null) {
                 this.project.Manager.Stop();
             }
+
             this.objectMappings = new Dictionary<EnvironmentData, GameObject>();
             this.agentMappings = new Dictionary<PhysiologyBasedAgent, GameObject>();
 
-            var path = Path.Combine(Environment.CurrentDirectory, this.ProjectPath);
-
-            this.project = Project.Open(path);
             // register listeners
             this.project.AgentLaunched += ProjectOnAgentLaunched;
 
             // load environment
             this.project.Environment.ObjectAdded += AddObjectToCanvas;
             this.project.Environment.ObjectRemoved += RemoveObjectFromCanvas;
-           
         }
 
         public void Start() {
@@ -49,11 +58,11 @@ namespace Ei.Agents.Planning
             this.project.Environment.OpenEnvironment();
 
             // start this project
-            var thread = new Thread(() => this.project.LazyStart(this.AgentsPerSecond));
+            var thread = new Thread(() => this.project.Start(this.ei, this.AgentsPerSecond));
             //thread.IsBackground = true;
             //thread.Priority = ThreadPriority.Lowest;
             thread.Start();
-            
+
         }
 
         private void RemoveObjectFromCanvas(AgentEnvironment environment, EnvironmentData obj) {
@@ -76,17 +85,18 @@ namespace Ei.Agents.Planning
             this.CreateInstance(agent, true, 2);
         }
 
-        private void ProjectOnAgentLaunched(PhysiologyBasedAgent agent) {
+        private void ProjectOnAgentLaunched(SimulationAgent agent) {
             // instantiate new simobject
             var newObj = new GameObject(agent.Name);
+            var a = agent as PhysiologyBasedAgent;
             newObj.transform.position = new Vector3(agent.X, agent.Y, 0);
 
             var sim = newObj.AddComponent<LinearNavigation>();
-            this.agentMappings.Add(agent, newObj);
+            this.agentMappings.Add(a, newObj);
 
             var eiAgent = newObj.AddComponent<EiAgent>();
 
-            eiAgent.agent = agent;
+            eiAgent.agent = a;
             agent.View = eiAgent;
 
             var color = newObj.AddComponent<ColorProvider>();

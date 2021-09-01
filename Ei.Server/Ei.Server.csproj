@@ -10,6 +10,14 @@
     <Content Include="Files\AllComponents.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Remove="Files\Ei.json" />
+    <Content Include="Files\Ei.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="Files\PhysiologyProject.json" />
+    <Content Include="Files\PhysiologyProject.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.1" />
@@ -31,6 +39,8 @@
       <Project>{70A326AE-3EDB-44B1-88D6-24879ABE8A4C}</Project>
       <Name>Ei.Compilation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Simulator.Net\Ei.Agents\Ei.Simulation.csproj" />
+    <ProjectReference Include="..\Simulator.Net\Ei.Unity\Ei.Integration.Unity.csproj" />
     <ProjectReference Include="..\websocket-manager\src\WebSocketManager\WebSocketManager.csproj" />
     <ProjectReference Include="..\websocket-manager\src\WebSocketManager.Common\WebSocketManager.Common.csproj" />
   </ItemGroup>

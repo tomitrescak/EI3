@@ -10,7 +10,7 @@ import { PositionModel } from './position_model';
 import { Workflow } from './workflow_model';
 
 export interface StateDao extends EntityDao {
-  Open: boolean;
+  IsOpen: boolean;
   Timeout?: number;
   IsStart: boolean;
   IsEnd: boolean;
@@ -22,7 +22,7 @@ export interface StateDao extends EntityDao {
 export class State extends PositionModel {
   Icon = '⚪️';
 
-  @field Open: boolean;
+  @field IsOpen: boolean;
   @field(intPositiveValidator) Timeout: number;
   @field IsStart: boolean;
   @field IsEnd: boolean;
@@ -35,7 +35,7 @@ export class State extends PositionModel {
   constructor(state: StateDao, workflow: Workflow, ei: Ei) {
     super(state, workflow, ei);
 
-    this.Open = state.Open;
+    this.IsOpen = state.IsOpen;
     this.Timeout = state.Timeout;
     this.IsStart = state.IsStart;
     this.IsEnd = state.IsEnd;
@@ -92,7 +92,7 @@ export class State extends PositionModel {
   get json(): StateDao {
     return {
       ...super.json,
-      Open: this.Open,
+      IsOpen: this.IsOpen,
       Timeout: this.Timeout,
       IsStart: this.IsStart,
       IsEnd: this.IsEnd,

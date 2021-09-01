@@ -101,6 +101,8 @@ namespace Vittoria.Behaviours
             if (this.Type == AgentType.Sim) {
                 this.simulation.Statistics.ProcessStatistics(new SimsStatistics());
                 //this.simulation.Statistics.ProcessStatistics(new FpsStatistics());
+            } else {
+                this.simulation.Statistics.ProcessStatistics(new FpsStatistics());
             }
 
             for (int i = 0; i < this.MinAgentCount; i++) {

@@ -1,5 +1,5 @@
 ﻿    #region class Store
-    public new class Store : {{ParentClassName}}.Store
+    public new class Store : {{ParentClassName}}.Store{{ ImplementsInterface }}
     {
         // Fields
         private List<object> defaultValues = new List<object>() {
@@ -24,7 +24,7 @@
         // Methods
 
         public override SearchableState Clone(SearchableState cloneTo = null) {
-            var clone = new Store();
+            var clone = cloneTo == null ? new Store() : (Store) cloneTo;
             base.Clone(clone);
             
             {{#each Properties}}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ei.Runtime.Planning
+namespace Ei.Core.Runtime.Planning
 {
     using System;
     using System.Text;

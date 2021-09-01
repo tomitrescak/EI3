@@ -11,8 +11,8 @@ namespace Ei.Tests.Steps
     using Moq;
 
     using Logs;
-    using Ontology;
-    using Runtime;
+    using Core.Ontology;
+    using Core.Runtime;
     using Ei.Tests.Bdd.Institutions;
     using Xunit;
 

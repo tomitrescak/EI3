@@ -7,6 +7,20 @@ public class {{ClassName}} : Workflow {
         {{#each Properties}}
         public {{Type}} {{Name}} { get; set; }
         {{/each}} 
+
+        public override Workflow.Store Clone(Workflow.Store store = null) {
+            var current = new {{ClassName}}.Store();
+
+            // clone parent properties
+            base.Clone(current);
+
+            // add workflow properties
+            {{#each Properties}}
+            current.{{Name}} = this.{{Name}};
+            {{/each}}
+
+            return current;
+}
     }
     #endregion
 

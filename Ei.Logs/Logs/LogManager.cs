@@ -10,7 +10,9 @@ namespace Ei.Logs
         {
             Debug,
             Info,
-            Error
+            Warning,
+            Error,
+            Off
         }
 
         static Log()
@@ -47,10 +49,10 @@ namespace Ei.Logs
             LogMessage(1, message);
         }
 
-        public static void Info(string source, Enum code, params string[] parameters)
-        {
-            LogMessage(1, source, code.ToString(), parameters);
-        }
+//        public static void Info(string source, Enum code, params string[] parameters)
+//        {
+//            LogMessage(1, source, code.ToString(), parameters);
+//        }
 
         public static void Info(string source, string message)
         {
@@ -84,6 +86,7 @@ namespace Ei.Logs
 
         private static void LogMessage(int level, string message, string source = null)
         {
+            // return;
             if (level < (int) LogLevel) return; // ignore messages below specified log level
 
             foreach (var log in logs)
@@ -103,6 +106,7 @@ namespace Ei.Logs
 
         private static void LogMessage(int level, string source, string code, params string[] parameters)
         {
+            // return;
             if (level < (int)LogLevel) return; // ignore messages below specified log level
 
             foreach (var log in logs)

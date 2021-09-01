@@ -2,8 +2,6 @@
 
 namespace Ei.Persistence
 {
-    
-
     public class RoleDao : SearchableEntityDao
     {
         public override string ClassName => this.Name.ToId() + "Role";
@@ -13,7 +11,7 @@ namespace Ei.Persistence
                 ? InstitutionDao.Instance.Roles.Find(o => o.Id == this.Parent).ClassName
                 : "Role";
         
-        public string GenerateCode() {
+        public override string GenerateCode() {
              return CodeGenerator.Role(this);
         }
     }
