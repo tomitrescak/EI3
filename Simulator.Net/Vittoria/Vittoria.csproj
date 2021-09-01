@@ -67,7 +67,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Behaviours\EiProjectStarter.cs" />
     <Compile Include="Statistics\FpsStatistics.cs" />
     <Compile Include="Statistics\IStatistic.cs" />
     <Compile Include="Statistics\SimsStatistics.cs" />

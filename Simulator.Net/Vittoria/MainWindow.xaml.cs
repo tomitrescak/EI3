@@ -19,6 +19,7 @@ using System.Windows.Data;
 using Ei.Agents.Planning;
 using Ei.Simulation.Core;
 using Ei.Simulation.Physiology;
+using Ei.Simulation.Physiology.Behaviours;
 using Ei.Simulation.Sims.Behaviours;
 using Microsoft.Win32;
 using Spawn = Vittoria.Behaviours.Spawn;
@@ -294,7 +295,7 @@ namespace Vittoria
                     behaviour = this.SelectedAgent.AddComponent<Spawn>();
                     break;
                 case "EiProject":
-                    behaviour = this.SelectedAgent.AddComponent<PhysiologyProject>();
+                    behaviour = this.SelectedAgent.AddComponent<PhysiologyProjectRunner>();
                     break;
                 case "EiProjectStarter":
                     behaviour = this.SelectedAgent.AddComponent<EiProjectStarter>();

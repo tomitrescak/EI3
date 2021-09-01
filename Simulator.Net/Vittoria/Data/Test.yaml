@@ -1,5 +1,3 @@
-!Vittoria.Core.Project,%20Vittoria,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
-ProjectPath: Data/test.yaml
 Agents:
 - Components:
   - !transform {}
