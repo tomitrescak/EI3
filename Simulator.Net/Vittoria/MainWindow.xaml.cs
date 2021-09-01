@@ -11,6 +11,7 @@ using Vittoria.Core;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 using Ei.Logs;
 using System.Diagnostics;
+using System.IO;
 using Vittoria.Controls;
 using Vittoria.Behaviours;
 using UnityEngine;
@@ -19,6 +20,7 @@ using System.Windows.Data;
 using Ei.Agents.Sims;
 using Ei.Agents.Core.Behaviours;
 using Ei.Agents.Planning;
+using Microsoft.Win32;
 
 namespace Vittoria
 {
@@ -88,11 +90,17 @@ namespace Vittoria
 
         private void LoadProject(string path) {
             if (path.EndsWith(".yaml")) {
-                this.Project = Vittoria.Core.Project.OpenProject(System.IO.Path.Combine(Environment.CurrentDirectory, Settings.Default.LastProjectFile));
+                this.Project = Vittoria.Core.Project.OpenProject(path);
             } else {
                 MessageBox.Show("This project type is not implemented!");
             }
-            this.Project.ProjectPath = path;
+
+            if (this.Project != null)
+            {
+                this.Project.ProjectPath = path;
+                Settings.Default.LastProjectFile = path;
+            }
+            
 
             this.Reset();
         }
@@ -130,7 +138,11 @@ namespace Vittoria
             this.Simulation.Statistics = this.Statistics;
 
             this.GameObjects.Source = this.Simulation.Agents;
-            this.GameObjects.View.Refresh();
+
+            if (this.GameObjects.View != null)
+            {
+                this.GameObjects.View.Refresh();
+            }
 
             this.OnPropertyChanged("GameObjects");
         }
@@ -322,6 +334,15 @@ namespace Vittoria
 
             this.ShowAgentProperties();
 
+        }
+
+        private void Open(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                this.LoadProject(openFileDialog.FileName);
+            }
         }
     }
 }

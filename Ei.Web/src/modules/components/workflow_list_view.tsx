@@ -1,13 +1,13 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { observer } from 'mobx-react';
-import { Accordion, Button, Icon, Label } from 'semantic-ui-react';
-import { style } from 'typestyle';
+import { observer } from "mobx-react";
+import { Accordion, Button, Icon, Label } from "semantic-ui-react";
+import { style } from "typestyle";
 
-import { Ei } from '../ei/ei_model';
-import { Workflow } from '../ei/workflow_model';
-import { accordionButton } from './hierarchic_entity_view';
-import { WorkflowComponentList } from './workflow_component_view';
+import { Ei } from "../ei/ei_model";
+import { Workflow } from "../ei/workflow_model";
+import { accordionButton } from "./hierarchic_entity_view";
+import { WorkflowComponentList } from "./workflow_component_view";
 
 interface Props {
   active: boolean;
@@ -20,24 +20,30 @@ let workflowItem: Workflow;
 
 export const accordionContent = style({
   // background: '#efefef',
-  padding: '0px 0px 6px 25px!important'
+  padding: "0px 0px 6px 25px!important",
 });
 
 export const nestedAccordion = style({
-  margin: '0px!important'
+  margin: "0px!important",
 });
 
 @observer
 export class WorkflowList extends React.Component<Props> {
   render() {
     const { active, index, ei, handleClick } = this.props;
-    const handler = ei.store.createAccordionHandler('workflows');
+    const handler = ei.store.createAccordionHandler("workflows");
 
     return (
       <>
         <Accordion.Title active={active} index={index} onClick={handleClick}>
           <Icon name="dropdown" />
-          <Label size="tiny" color="blue" circular content={ei.Workflows.length} /> Workflows
+          <Label
+            size="tiny"
+            color="blue"
+            circular
+            content={ei.Workflows.length}
+          />{" "}
+          Workflows
           <Button
             floated="right"
             icon="plus"
@@ -49,7 +55,7 @@ export class WorkflowList extends React.Component<Props> {
         </Accordion.Title>
         <Accordion.Content active={active} className={accordionContent}>
           <Accordion className={nestedAccordion}>
-            <For each="workflowItem" of={ei.Workflows}>
+            {ei.Workflows.map((workflowItem) => (
               <WorkflowDetail
                 key={workflowItem.Id}
                 index={workflowItem.Id.hashCode()}
@@ -58,7 +64,7 @@ export class WorkflowList extends React.Component<Props> {
                 active={handler.isActive(workflowItem.Id.hashCode())}
                 ei={ei}
               />
-            </For>
+            ))}
           </Accordion>
         </Accordion.Content>
       </>
@@ -74,7 +80,13 @@ interface DetailProps {
   handleClick: any;
 }
 
-export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: DetailProps) => {
+export const WorkflowDetail = ({
+  ei,
+  workflow,
+  active,
+  index,
+  handleClick,
+}: DetailProps) => {
   const handler = ei.store.createAccordionHandler(workflow.Id);
   return (
     <>
@@ -89,7 +101,10 @@ export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: Det
           compact
           color="orange"
           className={accordionButton}
-          onClick={(e) => { e.stopPropagation(); ei.store.viewStore.showWorkflow(workflow.Id, workflow.Name) } }
+          onClick={(e) => {
+            e.stopPropagation();
+            ei.store.viewStore.showWorkflow(workflow.Id, workflow.Name);
+          }}
         />
       </Accordion.Title>
       <Accordion.Content active={active} className={accordionContent}>
@@ -143,7 +158,6 @@ export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: Det
             showId={true}
             createAction={workflow.addConnection}
           />
-
         </Accordion>
       </Accordion.Content>
     </>
@@ -151,6 +165,6 @@ export const WorkflowDetail = ({ ei, workflow, active, index, handleClick }: Det
 };
 
 {
-  /* 
+  /*
    */
 }

@@ -18,6 +18,7 @@
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Menu x:Name="menu" IsMainMenu="True" Grid.Row="0">
+            <MenuItem Header="_Open" Click="Open"></MenuItem>
             <MenuItem Header="_Save" Click="Save"></MenuItem>
             <MenuItem Header="_Start" Click="Start"></MenuItem>
             <MenuItem Header="_Save and Restart" Click="SaveAndRestart"></MenuItem>

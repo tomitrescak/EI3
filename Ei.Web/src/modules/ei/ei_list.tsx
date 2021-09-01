@@ -1,14 +1,14 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { IObservableArray, observable } from 'mobx';
-import { observer } from 'mobx-react';
-import { Button, Header, Icon, List, Segment } from 'semantic-ui-react';
-import { style } from 'typestyle';
-import { Link } from '../../config/router';
-import { Ei } from './ei_model';
+import { IObservableArray, observable } from "mobx";
+import { observer } from "mobx-react";
+import { Button, Header, Icon, List, Segment } from "semantic-ui-react";
+import { style } from "typestyle";
+import { Link } from "../../config/router";
+import { Ei } from "./ei_model";
 
 const homeStyle = style({
-  margin: '12px!important'
+  margin: "12px!important",
 });
 
 interface StoredEi {
@@ -22,11 +22,37 @@ interface Props {
 }
 
 export const EiListContainer = ({ context }: Props) => {
-  const eiString = localStorage.getItem('eis') || '[]';
-  const eis: IObservableArray<StoredEi> = observable.shallowArray(JSON.parse(eiString));
+  const eiString = localStorage.getItem("eis") || "[]";
+  const eis: IObservableArray<StoredEi> = observable.shallowArray(
+    JSON.parse(eiString)
+  );
 
   return <EiList context={context} eis={eis} />;
 };
+
+function openFile(callback: (content: string) => void) {
+  let readFile = function (e) {
+    var file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var contents = e.target.result;
+      callback(contents as string);
+      document.body.removeChild(fileInput);
+    };
+    reader.readAsText(file);
+  };
+  let fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.style.display = "none";
+  fileInput.onchange = readFile;
+  document.body.appendChild(fileInput);
+
+  fileInput.click();
+  // clickElem(fileInput)
+}
 
 export const EiList = observer(({ context, eis }: Props) => {
   return (
@@ -42,12 +68,19 @@ export const EiList = observer(({ context, eis }: Props) => {
                 icon="trash"
                 color="red"
                 onClick={async () => {
-                  if (await context.Ui.confirmDialogAsync(
-                    'Do you want to delete this institution? Action cannot be undone!'
-                  )) {
-                    localStorage.removeItem('ws.' + e.id);
-                    eis.remove(eis.find(ei => ei.id === ei.id));
-                    localStorage.setItem('eis', JSON.stringify(eis.map(ei => ({ id: ei.id, name: ei.name }))));
+                  if (
+                    await context.Ui.confirmDialogAsync(
+                      "Do you want to delete this institution? Action cannot be undone!"
+                    )
+                  ) {
+                    localStorage.removeItem("ws." + e.id);
+                    eis.remove(eis.find((ei) => ei.id === ei.id));
+                    localStorage.setItem(
+                      "eis",
+                      JSON.stringify(
+                        eis.map((ei) => ({ id: ei.id, name: ei.name }))
+                      )
+                    );
                   }
                 }}
               />
@@ -57,9 +90,11 @@ export const EiList = observer(({ context, eis }: Props) => {
                 icon="download"
                 color="blue"
                 onClick={() => {
-                  let a = window.document.createElement('a');
+                  let a = window.document.createElement("a");
                   a.href = window.URL.createObjectURL(
-                    new Blob([localStorage.getItem('ws.' + e.id)], { type: 'text/json' })
+                    new Blob([localStorage.getItem("ws." + e.id)], {
+                      type: "text/json",
+                    })
                   );
                   a.download = `${e.name}.json`;
 
@@ -75,7 +110,9 @@ export const EiList = observer(({ context, eis }: Props) => {
               <Icon name="home" />
               <Link
                 to={`/ei/${e.name.toUrlName()}/${e.id}`}
-                action={() => context.store.viewStore.showEi(e.id, e.name.toUrlName())}
+                action={() =>
+                  context.store.viewStore.showEi(e.id, e.name.toUrlName())
+                }
               >
                 {e.name}
               </Link>
@@ -85,23 +122,59 @@ export const EiList = observer(({ context, eis }: Props) => {
       </List>
 
       <Button
+        content="Load Institution"
+        icon="upload"
+        onClick={async () => {
+          openFile((content) => {
+            try {
+              const json = JSON.parse(content);
+              const id = json.Id;
+
+              if (eis.some((e) => e.id === id)) {
+                context.Ui.alertError("Institution with this id exists: " + id);
+                return;
+              }
+
+              localStorage.setItem("ws." + id, content);
+              eis.push({ id, name: json.Name });
+              localStorage.setItem(
+                "eis",
+                JSON.stringify(eis.map((e) => ({ id: e.id, name: e.name })))
+              );
+
+              context.Ui.alert("Institution Loaded: " + json.Name);
+            } catch (ex) {
+              context.Ui.alertError(
+                "Could not open the institution: " + ex.message
+              );
+            }
+          });
+        }}
+      />
+
+      <Button
         content="Create Institution"
         icon="plus"
         onClick={async () => {
-          let promptValue = await context.Ui.promptText('Name of the new institution?');
+          let promptValue = await context.Ui.promptText(
+            "Name of the new institution?"
+          );
 
           if (promptValue) {
             const name = promptValue.value;
             const id = name.toId();
 
-            if (eis.some(e => e.id === id)) {
-              context.Ui.alertError('Institution with this id exists: ' + id);
+            if (eis.some((e) => e.id === id)) {
+              context.Ui.alertError("Institution with this id exists: " + id);
             }
 
             const ei = Ei.create(id, name, context.store);
-            localStorage.setItem('ws.' + id, JSON.stringify(ei.json));
+            localStorage.setItem("ws." + id, JSON.stringify(ei.json));
             eis.push({ id, name });
-            localStorage.setItem('eis', JSON.stringify(eis.map(e => ({ id: e.id, name: e.name }))));
+            localStorage.setItem(
+              "eis",
+              JSON.stringify(eis.map((e) => ({ id: e.id, name: e.name })))
+            );
           }
         }}
       />

@@ -1,0 +1,182 @@
+﻿# Basic facts:
+# 
+# Agent speed: 1.47 m/s (5.32 km/h)
+# Grid size: 1px = 5m
+#
+# Everything depends on the time we want our day to last
+#
+# Day Length (DL): In seconds (e.g 60 sec = 24 hour day)
+#    Tick: 86400 / DL = 1440 (In one simulation second 1440 seconds happen = 24 minutes)
+#    Speed: 1440 * 1.47 = 2160 m/s
+
+Institution: Uruk
+Organisation: tribe
+
+DayLengthInSeconds: 120
+MetersPerPixel: 5
+
+AgentSpeed: 1.47 # m/s (5.4 km/h)
+SpeedDiversity: [1,1]
+PhysiologyDiversity: [1,1]
+
+HungerTreshold: 0.5
+FatigueTreshold: 5
+ThirstThreshold: 0.5
+
+KillThirstThreshold: 2
+KillHungerThreshold: 2
+
+RestSpeed: 1
+
+AgentCounts:
+    - Count: 25
+      Groups: 
+        - [Baker]
+      FreeTimeGoals:
+        - a.Pots=a.Pots+1
+        - a.Water=a.Water+1
+        #- a.Wheat=a.Wheat+1
+        - a.Bread=a.Bread+1
+      Color: [255,255,0]
+    - Count: 25
+      Groups: 
+        - [Potter]
+      FreeTimeGoals:
+        - a.Pots=a.Pots+1
+        - a.Water=a.Water+1
+        - a.Clay=a.Clay+1
+      Color: [0,255,255]
+    - Count: 25
+      Groups: 
+        - [Shepherd]
+      FreeTimeGoals:
+        - a.Pots=a.Pots+1
+        - a.Milk=a.Milk+1
+      Color: [255,0,255]
+    - Count: 25
+      Groups: 
+        - [Fisher]
+      FreeTimeGoals:
+        - a.Pots=a.Pots+1
+        - a.Fish=a.Fish+1
+        #- a.Wood=a.Wood+1
+        #- a.Spear=a.Spear+1
+      Color: [190,190,190]
+
+EnvironmentDefinition:
+    Width: 1000
+    Height: 800
+    ActionsWithNoLocation:
+        - Id: potterWorkflow
+          Duration: 0 # in seconds (0 hour)
+        - Id: bakerWorkflow
+          Duration: 0
+        - Id: startExchange
+          Duration: 1 
+        - Id: shepherdWorkflow
+          Duration: 0
+        - Id: fisherWorkflow
+          Duration: 0
+        - Id: makeSpear
+          Duration: 3600
+        - Id: drink
+          Duration: 60 
+        - Id: drinkMilk
+          Duration: 900
+        - Id: eatBread
+          Duration: 900
+        - Id: eatFish
+          Duration: 900
+        - Id: spillWater
+          Duration: 60
+    Elements:
+        - Id: Water
+          Image: Images/Water.png
+          Seed: 60
+          Range: [0,0]
+          Probability: 0
+          Max: 20
+          Actions:
+            - Id: findWater
+              DestroyAfter: 0
+              Duration: 60 # in seconds (2 minutes)
+        - Id: Wheat
+          Image: Images/Wheat.png
+          Seed: 50
+          Range: [30,30]
+          Probability: 2
+          Max: 100
+          Actions:
+            - Id: findWheat
+              DestroyAfter: 1
+              Duration: 1800 # in seconds (30 minutes)
+        - Id: Pot
+          Image: Images/Pot.png
+          Seed: 0
+          Range: [0,0]
+          Probability: 0
+          Max: 100
+          Actions:
+            - Id: exchangeWorkflow
+              DestroyAfter: 0
+              Duration: 1
+            - Id: exchangePot
+              DestroyAfter: 1
+              Duration: 5 # in seconds
+        - Id: Clay
+          Image: Images/Clay.png
+          Seed: 15
+          Range: [0,0]
+          Probability: 0
+          Max: 15
+          Actions:
+            - Id: findClay
+              DestroyAfter: 0
+              Duration: 1800 # in seconds
+        - Id: Cow
+          Image: Images/Cow.png
+          Seed: 15
+          Range: [0,0]
+          Probability: 0.01
+          Max: 15
+          Actions:
+            - Id: milkCow
+              DestroyAfter: 1
+              Duration: 1800 # in seconds
+        - Id: Tree
+          Image: Images/Tree.png
+          Seed: 30
+          Range: [15,15]
+          Probability: 0.05
+          Max: 60
+          Actions:
+            - Id: findWood
+              DestroyAfter: 0
+              Duration: 1800 # in seconds
+        - Id: Fish
+          Image: Images/Fish.png
+          Seed: 30
+          Range: [15,15]
+          Probability: 0.03
+          Max: 60
+          Actions:
+            - Id: catchFish
+              DestroyAfter: 1
+              Duration: 3600 # in seconds
+        - Id: Campfire
+          Image: Images/Campfire.png
+          Seed: 10
+          Range: [0,0]
+          Probability: 0
+          Max: 10
+          Actions:
+            - Id: makeBread
+              DestroyAfter: 0
+              Duration: 1800 # in seconds (1 hour)
+            - Id: cookFish
+              DestroyAfter: 0
+              Duration: 1800 # in seconds (1 hour)
+            - Id: makePot
+              DestroyAfter: 0
+              Duration: 1800 # in seconds (0.5 hour)
+        

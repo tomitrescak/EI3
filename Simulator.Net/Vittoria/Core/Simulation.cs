@@ -47,6 +47,11 @@ namespace Vittoria.Core
             this.project = project;
             this.canvas = canvas;
 
+            if (this.project == null)
+            {
+                return;
+            }
+
             this.Behaviours = new Dictionary<Type, List<MonoBehaviour>>();
             this.Agents = new ObservableCollection<GameObject>(project.Agents);
             this.writeableBmp = writeableBmp;

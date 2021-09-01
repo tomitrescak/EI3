@@ -1,28 +1,22 @@
-import * as React from 'react';
+import * as React from "react";
 
 // @ts-ignore
-import { Router } from 'director/build/director';
-import { inject, observer } from 'mobx-react';
-import DevTools from 'mobx-react-devtools';
+import { Router } from "director/build/director";
+import { inject, observer } from "mobx-react";
 
-import { Layout } from '../modules/core/layout';
+import { Layout } from "../modules/core/layout";
 
 type Props = {
   context?: App.Context;
 };
 
-export const App = inject('context')(
+export const App = inject("context")(
   observer(({ context }: Props) => {
-    return (
-      <Layout>
-        { context.store.viewStore.router.view }
-        <DevTools position={{right: '550px'}} />
-      </Layout>
-    );
+    return <Layout>{context.store.viewStore.router.view}</Layout>;
   })
 );
 
-App.displayName = 'App';
+App.displayName = "App";
 
 interface LinkParams {
   children?: any;
@@ -33,5 +27,23 @@ interface LinkParams {
 }
 
 // @ts-ignore
-export const Link = ({ children, className, to, action, onClick, ...rest }: LinkParams) => <a className={className} href={to} onClick={(e) => { e.preventDefault(); action(e); } } {...rest}>{children}</a>;
-
+export const Link = ({
+  children,
+  className,
+  to,
+  action,
+  onClick,
+  ...rest
+}: LinkParams) => (
+  <a
+    className={className}
+    href={to}
+    onClick={(e) => {
+      e.preventDefault();
+      action(e);
+    }}
+    {...rest}
+  >
+    {children}
+  </a>
+);

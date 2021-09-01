@@ -1,19 +1,18 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { IObservableArray } from 'mobx';
-import { observer } from 'mobx-react';
-import { Accordion, Button, Icon, Label, List } from 'semantic-ui-react';
-import { style } from 'typestyle';
+import { IObservableArray } from "mobx";
+import { observer } from "mobx-react";
+import { Accordion, Button, Icon, Label, List } from "semantic-ui-react";
+import { style } from "typestyle";
 
-import { Link } from '../../config/router';
-import { AccordionHandler } from '../../config/store';
-import { IconView } from '../core/entity_icon_view';
-import { Ei } from '../ei/ei_model';
-import { Entity, entitySort } from '../ei/entity_model';
-import { Workflow } from '../ei/workflow_model';
-import { accordionButton } from './hierarchic_entity_view';
-import { accordionContent } from './workflow_list_view';
-
+import { Link } from "../../config/router";
+import { AccordionHandler } from "../../config/store";
+import { IconView } from "../core/entity_icon_view";
+import { Ei } from "../ei/ei_model";
+import { Entity, entitySort } from "../ei/entity_model";
+import { Workflow } from "../ei/workflow_model";
+import { accordionButton } from "./hierarchic_entity_view";
+import { accordionContent } from "./workflow_list_view";
 
 interface WorkflowElementProps {
   workflow: Workflow;
@@ -29,7 +28,12 @@ interface WorkflowElementProps {
 }
 let entity: Entity;
 
-let idLabel = style({ color: 'grey', fontSize: '9px', float: 'right', marginRight: '12px'})
+let idLabel = style({
+  color: "grey",
+  fontSize: "9px",
+  float: "right",
+  marginRight: "12px",
+});
 
 export const WorkflowComponentList = observer(
   ({
@@ -45,9 +49,19 @@ export const WorkflowComponentList = observer(
     showId,
   }: WorkflowElementProps) => (
     <>
-      <Accordion.Title active={handler.isActive(index)} index={index} onClick={handler.handleClick}>
+      <Accordion.Title
+        active={handler.isActive(index)}
+        index={index}
+        onClick={handler.handleClick}
+      >
         <Icon name="dropdown" />
-        <Label size="tiny" color="blue" circular content={collection.length} /> {title}
+        <Label
+          size="tiny"
+          color="blue"
+          circular
+          content={collection.length}
+        />{" "}
+        {title}
         {createAction && (
           <Button
             floated="right"
@@ -59,15 +73,18 @@ export const WorkflowComponentList = observer(
           />
         )}
       </Accordion.Title>
-      <Accordion.Content active={handler.isActive(index)} className={accordionContent}>
-        <If condition={collection.length === 0}>
-          <span>Empty</span>
-        </If>
+      <Accordion.Content
+        active={handler.isActive(index)}
+        className={accordionContent}
+      >
+        {collection.length === 0 && <span>Empty</span>}
         <List>
-          <For each="entity" of={collection.sort(entitySort)}>
+          {collection.sort(entitySort).map((entity) => (
             <List.Item
               as={Link}
-              to={`/${ei.Name.toUrlName()}/${ei.id}/workflows/${workflow.Name.toUrlName()}/${
+              to={`/${ei.Name.toUrlName()}/${
+                ei.id
+              }/workflows/${workflow.Name.toUrlName()}/${
                 workflow.Id
               }/${route}/${entity.Id.toUrlName()}`}
               action={viewAction}
@@ -77,9 +94,10 @@ export const WorkflowComponentList = observer(
               data-id={entity.Id}
             >
               <IconView entity={entity} />
-              {entity.Name || entity.Id} { showId && <span className={idLabel}>[{entity.Id}]</span>}
+              {entity.Name || entity.Id}{" "}
+              {showId && <span className={idLabel}>[{entity.Id}]</span>}
             </List.Item>
-          </For>
+          ))}
         </List>
       </Accordion.Content>
     </>

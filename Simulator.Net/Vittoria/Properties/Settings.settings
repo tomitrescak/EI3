@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Vittoria.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="LastProjectFile" Type="System.String" Scope="Application">
+    <Setting Name="LastProjectFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">Data/test.yaml</Value>
     </Setting>
   </Settings>

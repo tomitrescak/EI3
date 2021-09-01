@@ -2,8 +2,8 @@
 ProjectPath: Data/test.yaml
 Agents:
 - Components:
-  - !UnityEngine.Transform,%20UnityEngine,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null {}
-  - !Vittoria.Behaviours.Spawn,%20Vittoria,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
+  - !transform {}
+  - !spawn
     MinAgentCount: 1
     MaxAgentCount: 1
     SpawnPeriodMs: 50
@@ -134,9 +134,9 @@ Agents:
   name: SimSpawn
   Selected: true
 - Components:
-  - !UnityEngine.Transform,%20UnityEngine,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null {}
-  - !Ei.Agents.Planning.EiProject,%20Ei.Agents.Planning,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
-    ProjectPath: c:\Projects\EI2\Vittoria\bin\Debug\Data\Uruk\Uruk.yaml
+  - !transform {}
+  - !eiproject
+    ProjectPath: c:\Users\tomi\Projects\Github\Ei\Simulator.Net\Vittoria\Data\Uruk.yaml
     AgentsPerSecond: 3
   Started: true
   name: EiProject

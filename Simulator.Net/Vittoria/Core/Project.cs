@@ -24,9 +24,12 @@ namespace Vittoria.Core
         }
 
         public static Project OpenProject(string path) {
-            var source = File.ReadAllText(path);
-            var project = Deserialise<Project>(source);
-            return project;
+            if (File.Exists(path)) {
+                var source = File.ReadAllText(path);
+                var project = Deserialise<Project>(source);
+                return project;
+            }
+            return null;
         }
 
         public string ResolvePath(string path) {

@@ -88,7 +88,7 @@ namespace UnityEngine
         public void InitComponent(MonoBehaviour component, ISimulation simulation) {
             this.Simulator = simulation;
             component.gameObject = this;
-            if (component.InitAction != null) {
+            if (component != null && component.InitAction != null) {
                 component.InitAction();
             }
         }

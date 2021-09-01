@@ -74,7 +74,10 @@ namespace Ei.Persistence
 
             // temporary solution
 
-            File.WriteAllText("/Users/tomi/Github/apps/Ei/Generated.cs", @"
+            var path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Generated.cs");
+            Console.WriteLine($"\nSaving to: {path}");
+
+            File.WriteAllText(path, @"
 using Ei;
 using Ei.Ontology;
 using Ei.Ontology.Actions;
