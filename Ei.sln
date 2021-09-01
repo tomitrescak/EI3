@@ -1,6 +1,7 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.0
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ei.Core", "Ei.Core\Ei.Core.csproj", "{B656DCF1-AA9D-4E49-9355-B426920A6607}"
 EndProject
@@ -22,9 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSocketManager", "websock
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSocketManager.Common", "websocket-manager\src\WebSocketManager.Common\WebSocketManager.Common.csproj", "{1B62397C-4C81-4FFB-8A97-419731F171B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ei.Integration.Unity", "Simulator.Net\Ei.Unity\Ei.Integration.Unity.csproj", "{C657746A-DDBE-47C5-B9EE-84F9B66B0D9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ei.Integration.Unity", "Simulator.Net\Ei.Unity\Ei.Integration.Unity.csproj", "{C657746A-DDBE-47C5-B9EE-84F9B66B0D9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ei.Simulation", "Simulator.Net\Ei.Agents\Ei.Simulation.csproj", "{8123E10C-FFAE-4E2C-A697-FB5422C22AD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ei.Simulation", "Simulator.Net\Ei.Agents\Ei.Simulation.csproj", "{8123E10C-FFAE-4E2C-A697-FB5422C22AD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

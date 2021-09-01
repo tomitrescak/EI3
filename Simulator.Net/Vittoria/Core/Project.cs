@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Ei.Simulation.Core;
 using Ei.Simulation.Physiology;
+using Ei.Simulation.Physiology.Behaviours;
 using UnityEngine;
 using Vittoria.Behaviours;
 using YamlDotNet.Serialization;
@@ -41,7 +42,7 @@ namespace Vittoria.Core
             deserializer.RegisterTagMapping("!linearNavigation", typeof(LinearNavigation));
             deserializer.RegisterTagMapping("!randomNavigation", typeof(RandomNavigation));
             deserializer.RegisterTagMapping("!renderer", typeof(WpfRenderer));
-            deserializer.RegisterTagMapping("!eiproject", typeof(PhysiologyProject));
+            deserializer.RegisterTagMapping("!eiproject", typeof(PhysiologyProjectRunner));
 
 
             return deserializer.Deserialize<T>(input);

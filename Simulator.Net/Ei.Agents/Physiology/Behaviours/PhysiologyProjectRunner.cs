@@ -17,6 +17,8 @@ namespace Ei.Simulation.Physiology.Behaviours
         private Dictionary<EnvironmentData, GameObject> objectMappings;
         private Dictionary<PhysiologyBasedAgent, GameObject> agentMappings;
 
+        public string ProjectPath { get; set; }
+
         public int AgentsPerSecond { get; set; }
         public int AgentsLaunched { get; private set; }
         

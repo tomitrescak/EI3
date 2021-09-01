@@ -1,9 +1,11 @@
+!Vittoria.Core.Project,%20Vittoria,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
+ProjectPath: C:\Users\tomi\Projects\Github\Ei\Simulator.Net\Vittoria\Data\Test.yaml
 Agents:
 - Components:
-  - !transform {}
-  - !spawn
-    MinAgentCount: 1
-    MaxAgentCount: 1
+  - !UnityEngine.Transform,%20Ei.Unity,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null {}
+  - !Vittoria.Behaviours.Spawn,%20Vittoria,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
+    MinAgentCount: 50
+    MaxAgentCount: 2000
     SpawnPeriodMs: 50
     MinSpeed: 40
     MaxSpeed: 100
@@ -20,7 +22,7 @@ Agents:
       SeedPeriodInMinutes: 60
       MinSeedCount: 25
       MaxSeedCount: 25
-      NextSeed: 20
+      NextSeed: 50
       Actions:
       - DurationInMinutes: 30
         Name: Eat
@@ -36,6 +38,7 @@ Agents:
       SeedPeriodInMinutes: 480
       MinSeedCount: 100
       MaxSeedCount: 100
+      NextSeed: 80
       Actions:
       - DurationInMinutes: 3
         Name: Drink
@@ -117,7 +120,7 @@ Agents:
       SeedPeriodInMinutes: 60
       MinSeedCount: 25
       MaxSeedCount: 25
-      NextSeed: 20
+      NextSeed: 50
       Actions:
       - DurationInMinutes: 15
         Name: Wheat
@@ -132,8 +135,8 @@ Agents:
   name: SimSpawn
   Selected: true
 - Components:
-  - !transform {}
-  - !eiproject
+  - !UnityEngine.Transform,%20Ei.Unity,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null {}
+  - !Ei.Simulation.Physiology.Behaviours.PhysiologyProjectRunner,%20Ei.Agents,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
     ProjectPath: c:\Users\tomi\Projects\Github\Ei\Simulator.Net\Vittoria\Data\Uruk.yaml
     AgentsPerSecond: 3
   Started: true

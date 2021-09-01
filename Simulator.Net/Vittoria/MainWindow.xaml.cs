@@ -101,6 +101,7 @@ namespace Vittoria
             {
                 this.Project.ProjectPath = path;
                 Settings.Default.LastProjectFile = path;
+                Settings.Default.Save();
             }
             
 
