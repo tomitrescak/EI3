@@ -57,6 +57,29 @@ export const render = () => {
                   )}
                 />
                 <Route
+                  path="/ei/:eiName/:eiId/roles/:roleName/:roleId"
+                  render={() => (
+                    <EiLayout
+                      Main={() => (
+                        <EntitiesView
+                          id={null}
+                          type="roles"
+                          entities={(ei) => ei.Roles}
+                        />
+                      )}
+                      Editor={() => (
+                        <HierarchicEntityEditor
+                          paramName="roleId"
+                          name={"role"}
+                          collection={(ei) => ei.Roles}
+                          minCount={1}
+                          parentView="roles"
+                        />
+                      )}
+                    />
+                  )}
+                />
+                <Route
                   exact
                   path="/ei/:eiName/:eiId/execution"
                   render={() => <EiLayout Main={ExecutionView} />}

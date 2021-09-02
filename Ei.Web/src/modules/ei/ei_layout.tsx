@@ -150,6 +150,7 @@ const BarePane = styled.div`
 const PropertyPane = styled.div`
   background: #efefef;
   height: 100%;
+  width: 100%;
   overflow: auto;
   padding: 6px;
   label: PropertyPane;
