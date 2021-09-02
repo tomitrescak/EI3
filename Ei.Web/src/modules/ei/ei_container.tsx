@@ -1,46 +1,27 @@
-import { inject } from 'mobx-react';
+import React from "react";
+import { useParams } from "react-router-dom";
+import { Message } from "semantic-ui-react";
+import { useAppContext } from "../../config/context";
 
-import { ls } from '../ws/ls_container';
-import { compose } from '../ws/utils';
-import { EiLayout } from './ei_layout';
-import { Ei } from './ei_model';
+import { Ei } from "./ei_model";
 
-let m: string = 1;
+export const EiContainer = ({ children }: React.PropsWithChildren<any>) => {
+  const { eiId } = useParams<{ eiId: string }>();
+  const context = useAppContext();
 
-type Data = {
-  LoadInstitution: string;
-}
-
-type Props = {
-  context?: App.Context;
-  params: {
-    eiId: string,
-    eiName: string;
-  },
-  views: { [index: string]: JSX.Element };
-}
-
-export const EiContainer = compose<Props>(
-  inject('context'),
-  ls<Data, Props>('LoadInstitution', {
-    variables: ({ params }) => [params.eiId],
-    cache: true,
-    props: ({ ownProps, data: { loading, LoadInstitution } }) => {      
-      if (!loading) {
-        if (!ownProps.context.store.ei) { // do not update if refreshed
-          let ei = new Ei(LoadInstitution as any, ownProps.context.store);
-          ownProps.context.store.ei = ei;
-          ownProps.context.Ui.history.startHistory(ei);
-        }
-      }
-      return {
-        loading,
-        load: JSON.stringify(LoadInstitution),
-        context: ownProps.context,
-        views: ownProps.views
-      };
+  if (context.store.ei == null) {
+    const storedName = "ws." + eiId;
+    const eiSource = localStorage.getItem(storedName);
+    if (eiSource == null) {
+      return <Message header="Institution not found" />;
     }
-  })
-)(EiLayout);
+    const parsedEi = JSON.parse(eiSource);
+    let ei = new Ei(parsedEi, context);
+    context.store.ei = ei;
+    context.Ui.history.startHistory(ei, context);
+  }
 
-EiContainer.displayName = 'EiContainer';
+  return <>{children}</>;
+};
+
+EiContainer.displayName = "EiContainer";

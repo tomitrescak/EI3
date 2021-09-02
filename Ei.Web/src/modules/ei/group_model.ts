@@ -1,4 +1,5 @@
-import { field, FormState } from 'semantic-ui-mobx';
+import { makeObservable } from "mobx";
+import { field, FormState } from "semantic-ui-mobx";
 
 export interface GroupDao {
   OrganisationId: string;
@@ -14,12 +15,14 @@ export class Group extends FormState {
 
     this.OrganisationId = group.OrganisationId;
     this.RoleId = group.RoleId;
+
+    makeObservable(this);
   }
 
   get json() {
     return {
       OrganisationId: this.OrganisationId,
-      RoleId: this.RoleId
-    }
+      RoleId: this.RoleId,
+    };
   }
 }

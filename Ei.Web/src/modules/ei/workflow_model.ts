@@ -1,11 +1,17 @@
-import { action, computed, IObservableArray, observable } from 'mobx';
-import { field } from 'semantic-ui-mobx';
-import { DiagramModel } from 'storm-react-diagrams';
+import {
+  action,
+  computed,
+  IObservableArray,
+  makeObservable,
+  observable,
+} from "mobx";
+import { field } from "semantic-ui-mobx";
+import { DiagramModel } from "storm-react-diagrams";
+import { AppContext } from "../../config/context";
 
-import { context } from '../../config/context';
-import { Ui } from '../../helpers/client_helpers';
-import { WorkflowLinkModel } from '../diagrams/model/workflow/workflow_link_model';
-import { AccessCondition, AccessConditionDao } from './access_model';
+import { Ui } from "../../helpers/client_helpers";
+import { WorkflowLinkModel } from "../diagrams/model/workflow/workflow_link_model";
+import { AccessCondition, AccessConditionDao } from "./access_model";
 import {
   Action,
   ActionDao,
@@ -13,20 +19,23 @@ import {
   ActionJoinWorkflowDao,
   ActionMessage,
   ActionMessageDao,
-  ActionTimeout
-} from './action_model';
-import { Connection, ConnectionDao } from './connection_model';
-import { Ei } from './ei_model';
-import { ParametricEntity, ParametricEntityDao } from './parametric_entity_model';
-import { PositionModel } from './position_model';
-import { State, StateDao } from './state_model';
+  ActionTimeout,
+} from "./action_model";
+import { Connection, ConnectionDao } from "./connection_model";
+import { Ei } from "./ei_model";
+import {
+  ParametricEntity,
+  ParametricEntityDao,
+} from "./parametric_entity_model";
+import { PositionModel } from "./position_model";
+import { State, StateDao } from "./state_model";
 import {
   Transition,
   TransitionDao,
   TransitionJoin,
   TransitionSplit,
-  TransitionSplitDao
-} from './transition_model';
+  TransitionSplitDao,
+} from "./transition_model";
 
 // tslint:disable-next-line:no-empty-interface
 export interface WorkflowDao extends ParametricEntityDao {
@@ -41,7 +50,10 @@ export interface WorkflowDao extends ParametricEntityDao {
 }
 
 export function optionSort(a: any, b: any): number {
-  return a.text.localeCompare(b.text, undefined, { numeric: true, sensitivity: 'base' });
+  return a.text.localeCompare(b.text, undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
 }
 
 export class Workflow extends ParametricEntity {
@@ -57,58 +69,65 @@ export class Workflow extends ParametricEntity {
   AllowCreate: IObservableArray<AccessCondition>;
   AllowJoin: IObservableArray<AccessCondition>;
 
-  constructor(workflow: WorkflowDao, ei: Ei) {
+  constructor(workflow: WorkflowDao, ei: Ei, private context: AppContext) {
     super(workflow);
 
     this.ei = ei;
-    
 
     this.Stateless = workflow.Stateless;
     this.Static = workflow.Static;
-    this.States = observable((workflow.States || []).map(s => new State(s, this, ei)));
-    this.AllowCreate = observable((workflow.AllowCreate || []).map(s => new AccessCondition(s)));
-    this.AllowJoin = observable((workflow.AllowJoin || []).map(s => new AccessCondition(s)));
+    this.States = observable(
+      (workflow.States || []).map((s) => new State(s, this, ei))
+    );
+    this.AllowCreate = observable(
+      (workflow.AllowCreate || []).map((s) => new AccessCondition(s))
+    );
+    this.AllowJoin = observable(
+      (workflow.AllowJoin || []).map((s) => new AccessCondition(s))
+    );
 
     this.Transitions = observable(
-      (workflow.Transitions || []).map(t => {
+      (workflow.Transitions || []).map((t) => {
         switch (t.$type) {
-          case 'TransitionSplitDao':
+          case "TransitionSplitDao":
             return new TransitionSplit(t as TransitionSplitDao, this, ei);
-          case 'TransitionJoinDao':
+          case "TransitionJoinDao":
             return new TransitionJoin(t as TransitionDao, this, ei);
           default:
-            throw new Error('Not implemented: ' + t.$type);
+            throw new Error("Not implemented: " + t.$type);
         }
       })
     );
 
     this.Actions = observable(
-      (workflow.Actions || []).map(a => {
+      (workflow.Actions || []).map((a) => {
         switch (a.$type) {
-          case 'ActionJoinWorkflowDao':
+          case "ActionJoinWorkflowDao":
             return new ActionJoinWorkflow(a as ActionJoinWorkflowDao);
-          case 'ActionMessageDao':
+          case "ActionMessageDao":
             return new ActionMessage(a as ActionMessageDao);
-          case 'ActionTimeoutDao':
+          case "ActionTimeoutDao":
             return new ActionTimeout(a);
           default:
-            throw new Error('Not implemented: ' + a.$type);
+            throw new Error("Not implemented: " + a.$type);
         }
       })
     );
 
     this.Connections = observable(
-      (workflow.Connections || []).map(s => new Connection(s, this, ei))
+      (workflow.Connections || []).map((s) => new Connection(s, this, ei))
     );
+
+    makeObservable(this);
   }
 
   findPosition(id: string): PositionModel {
     if (!id) {
       return null;
     }
-    let p: PositionModel = this.States.find(s => s.Id === id);
+    let p: PositionModel = this.States.find((s) => s.Id === id);
     if (!p) {
-      p = this.Transitions.find(t => t.Id === id);
+      p = this.Transitions.find((t) => t.Id === id);
     }
     return p;
   }
@@ -116,13 +135,13 @@ export class Workflow extends ParametricEntity {
   delete = async () => {
     if (
       await Ui.confirmDialogAsync(
-        'Do you want to delete this workflow? This can break some references!',
-        'Deleting workflow'
+        "Do you want to delete this workflow? This can break some references!",
+        "Deleting workflow"
       )
     ) {
       action(() => {
         this.ei.Workflows.remove(this);
-        this.ei.store.viewStore.showView('home');
+        this.ei.store.viewStore.showView("home");
       })();
     }
 
@@ -131,15 +150,15 @@ export class Workflow extends ParametricEntity {
 
   @computed
   get connectionOptions() {
-    return [{ value: '', text: 'None' }]
+    return [{ value: "", text: "None" }]
       .concat(
-        this.States.map(c => ({
+        this.States.map((c) => ({
           value: c.Id.toString(),
-          text: c.Name || c.Id
+          text: c.Name || c.Id,
         })).concat(
-          this.Transitions.map(c => ({
+          this.Transitions.map((c) => ({
             value: c.Id.toString(),
-            text: c.Name || c.Id
+            text: c.Name || c.Id,
           }))
         )
       )
@@ -148,10 +167,10 @@ export class Workflow extends ParametricEntity {
 
   @computed
   get actionOptions() {
-    return [{ value: '', text: 'None' }].concat(
-      this.Actions.map(c => ({
+    return [{ value: "", text: "None" }].concat(
+      this.Actions.map((c) => ({
         value: c.Id.toString(),
-        text: c.Name || c.Id
+        text: c.Name || c.Id,
       })).sort(optionSort)
     );
   }
@@ -159,9 +178,9 @@ export class Workflow extends ParametricEntity {
   createAction = async (e: any) => {
     e.stopPropagation();
 
-    const swal = require('sweetalert2');
+    const swal = require("sweetalert2");
     const { value: formValues } = await swal({
-      title: 'Creating a new action',
+      title: "Creating a new action",
       html: `
         <div>
           <label><b>Action Type: </b></label>
@@ -175,10 +194,10 @@ export class Workflow extends ParametricEntity {
       focusConfirm: false,
       preConfirm: () => {
         return [
-          (document.getElementById('swal-select1') as HTMLSelectElement).value,
-          (document.getElementById('swal-input2') as HTMLInputElement).value
+          (document.getElementById("swal-select1") as HTMLSelectElement).value,
+          (document.getElementById("swal-input2") as HTMLInputElement).value,
         ];
-      }
+      },
     });
 
     if (!formValues) {
@@ -190,25 +209,25 @@ export class Workflow extends ParametricEntity {
     const Id = actionName.toId();
 
     // check if action exists
-    let m = this.Actions.find(a => a.Id === Id);
+    let m = this.Actions.find((a) => a.Id === Id);
     if (m) {
-      context().Ui.alertDialog('Action with this Id already exists: ' + Id);
+      this.context.Ui.alertDialog("Action with this Id already exists: " + Id);
       return;
     }
 
     const construct = { Id, Name: actionName };
     switch (actionType) {
-      case 'message':
+      case "message":
         this.Actions.push(new ActionMessage(construct));
         break;
-      case 'join':
+      case "join":
         this.Actions.push(new ActionJoinWorkflow(construct));
         break;
-      case 'timeout':
+      case "timeout":
         this.Actions.push(new ActionTimeout(construct));
         break;
       default:
-        throw new Error('Not Implemented: ' + actionType);
+        throw new Error("Not Implemented: " + actionType);
     }
 
     this.ei.store.viewStore.showAction(this.Id, this.Name, Id);
@@ -219,10 +238,14 @@ export class Workflow extends ParametricEntity {
   createState = async (e: any) => {
     e.stopPropagation();
 
-    let name = await Ui.promptText('Name of the new state?');
+    let name = await Ui.promptText("Name of the new state?");
     if (name.value) {
       this.States.push(
-        new State({ Name: name.value, Id: name.value.toId() } as any, this, this.ei)
+        new State(
+          { Name: name.value, Id: name.value.toId() } as any,
+          this,
+          this.ei
+        )
       );
     }
 
@@ -232,9 +255,9 @@ export class Workflow extends ParametricEntity {
   createTransition = async (e: any) => {
     e.stopPropagation();
 
-    const swal = require('sweetalert2');
+    const swal = require("sweetalert2");
     const { value: formValues } = await swal({
-      title: 'Creating a new transition',
+      title: "Creating a new transition",
       html: `
         <div>
           <label><b>Transition Type: </b></label>
@@ -247,10 +270,10 @@ export class Workflow extends ParametricEntity {
       focusConfirm: false,
       preConfirm: () => {
         return [
-          (document.getElementById('swal-select1') as HTMLSelectElement).value,
-          (document.getElementById('swal-input2') as HTMLInputElement).value
+          (document.getElementById("swal-select1") as HTMLSelectElement).value,
+          (document.getElementById("swal-input2") as HTMLInputElement).value,
         ];
-      }
+      },
     });
 
     if (!formValues) {
@@ -262,22 +285,24 @@ export class Workflow extends ParametricEntity {
     const Id = transitionName.toId();
 
     // check if action exists
-    let m = this.Transitions.find(a => a.Id === Id);
+    let m = this.Transitions.find((a) => a.Id === Id);
     if (m) {
-      context().Ui.alertDialog('Transition with this Id already exists: ' + Id);
+      this.context.Ui.alertDialog(
+        "Transition with this Id already exists: " + Id
+      );
       return;
     }
 
     const construct = { Id, Name: transitionName };
     switch (transitionType) {
-      case 'split':
+      case "split":
         this.Transitions.push(new TransitionSplit(construct, this, this.ei));
         break;
-      case 'join':
+      case "join":
         this.Transitions.push(new TransitionJoin(construct, this, this.ei));
         break;
       default:
-        throw new Error('Not Implemented: ' + transitionType);
+        throw new Error("Not Implemented: " + transitionType);
     }
 
     this.ei.store.viewStore.showTransition(this.Id, this.Name, Id);
@@ -287,20 +312,19 @@ export class Workflow extends ParametricEntity {
 
   @action addConnection = (e: any) => {
     e.stopPropagation();
-    
+
     const connection = this.createConnection();
     connection.link = new WorkflowLinkModel(connection, this);
     connection.update();
 
     this.Connections.push(connection);
-  }
+  };
 
   createConnection = () => {
-
     let idx = 0;
-    let id = 'c' + idx;
-    while (this.Connections.some(c => c.Id === id)) {
-      id = 'c' + ++idx;
+    let id = "c" + idx;
+    while (this.Connections.some((c) => c.Id === id)) {
+      id = "c" + ++idx;
     }
     return new Connection({ Id: id, Join: [] }, this, this.ei, false);
   };
@@ -310,12 +334,12 @@ export class Workflow extends ParametricEntity {
       ...super.json,
       Stateless: this.Stateless,
       Static: this.Static,
-      States: this.States.map(s => s.json),
-      Actions: this.Actions.map(s => s.json),
-      Transitions: this.Transitions.map(s => s.json),
-      Connections: this.Connections.map(s => s.json),
-      AllowCreate: this.AllowCreate.map(s => s.json),
-      AllowJoin: this.AllowJoin.map(s => s.json)
+      States: this.States.map((s) => s.json),
+      Actions: this.Actions.map((s) => s.json),
+      Transitions: this.Transitions.map((s) => s.json),
+      Connections: this.Connections.map((s) => s.json),
+      AllowCreate: this.AllowCreate.map((s) => s.json),
+      AllowJoin: this.AllowJoin.map((s) => s.json),
     };
   }
 }

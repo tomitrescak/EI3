@@ -1,20 +1,20 @@
-import { action, IObservableArray, observable } from 'mobx';
-import { field, FormState } from 'semantic-ui-mobx';
+import { action, IObservableArray, makeObservable, observable } from "mobx";
+import { field, FormState } from "semantic-ui-mobx";
 
-import { Ui } from '../../helpers/client_helpers';
-import { WorkflowPortModel } from '../diagrams/model/workflow/workflow_port_model';
-import { Ei } from './ei_model';
-import { EntityDao } from './entity_model';
-import { PositionModel } from './position_model';
-import { Workflow } from './workflow_model';
+import { Ui } from "../../helpers/client_helpers";
+import { WorkflowPortModel } from "../diagrams/model/workflow/workflow_port_model";
+import { Ei } from "./ei_model";
+import { EntityDao } from "./entity_model";
+import { PositionModel } from "./position_model";
+import { Workflow } from "./workflow_model";
 
 export interface TransitionDao extends EntityDao {
   $type?: string;
   Horizontal: boolean;
 }
 
-export class Transition extends PositionModel { 
-  Icon = 'chevron right';
+export class Transition extends PositionModel {
+  Icon = "chevron right";
   $type: string;
   @field Horizontal: boolean;
 
@@ -23,20 +23,21 @@ export class Transition extends PositionModel {
     this.$type = transition.$type;
 
     this.Horizontal = transition.Horizontal;
+    makeObservable(this);
   }
 
   get json() {
     return {
       ...super.json,
-      Horizontal: this.Horizontal
-    }
+      Horizontal: this.Horizontal,
+    };
   }
 
   @action removeItem() {
     // adjust all children
     for (let connection of this.workflow.Connections) {
       if (connection.From === this.Id || connection.To === this.Id) {
-        this.workflow.Connections.remove(connection)
+        this.workflow.Connections.remove(connection);
       }
     }
     // remove from collection
@@ -46,8 +47,8 @@ export class Transition extends PositionModel {
   async remove(): Promise<void> {
     if (
       await Ui.confirmDialogAsync(
-        'Do you want to delete this transition? This will delete all its connections!',
-        'Deleting transition'
+        "Do you want to delete this transition? This will delete all its connections!",
+        "Deleting transition"
       )
     ) {
       this.removeItem();
@@ -55,7 +56,11 @@ export class Transition extends PositionModel {
   }
 
   select() {
-    this.ei.store.viewStore.showTransition(this.workflow.Id, this.workflow.Name, this.Id);
+    this.ei.store.viewStore.showTransition(
+      this.workflow.Id,
+      this.workflow.Name,
+      this.Id
+    );
   }
 }
 
@@ -66,7 +71,7 @@ export interface TransitionSplitDao extends TransitionDao {
 
 export class SplitInfo extends FormState {
   stateId: string;
-  @field name: string; 
+  @field name: string;
 
   constructor(stateId: string, name: string) {
     super();
@@ -79,54 +84,60 @@ export class SplitInfo extends FormState {
 let id = 0;
 
 export class TransitionSplit extends Transition {
-  Icon = '⑃';
+  Icon = "⑃";
 
   @field Shallow: boolean;
   Names: IObservableArray<SplitInfo>;
   uid = id++;
 
-  constructor(transition: Partial<TransitionSplitDao>, workflow: Workflow, ei: Ei) {
+  constructor(
+    transition: Partial<TransitionSplitDao>,
+    workflow: Workflow,
+    ei: Ei
+  ) {
     super(transition, workflow, ei);
 
-    this.Names = observable((transition.Names || []).map(n => new SplitInfo(n[0], n[1])));
+    this.Names = observable(
+      (transition.Names || []).map((n) => new SplitInfo(n[0], n[1]))
+    );
     this.Shallow = transition.Shallow;
 
-    this.addPort(new WorkflowPortModel(workflow, 'input'));
-    this.addPort(new WorkflowPortModel(workflow, 'split1'));
-    this.addPort(new WorkflowPortModel(workflow, 'split2'));
-    this.addPort(new WorkflowPortModel(workflow, 'split3'));
+    this.addPort(new WorkflowPortModel(workflow, "input"));
+    this.addPort(new WorkflowPortModel(workflow, "split1"));
+    this.addPort(new WorkflowPortModel(workflow, "split2"));
+    this.addPort(new WorkflowPortModel(workflow, "split3"));
 
-    this.$type = 'TransitionSplitDao';
+    this.$type = "TransitionSplitDao";
   }
 
   get json() {
     return {
-      $type: 'TransitionSplitDao',
+      $type: "TransitionSplitDao",
       ...super.json,
-      Names: this.Names.map(n => [ n.stateId, n.name ]),
-      Shallow: this.Shallow
-    }
+      Names: this.Names.map((n) => [n.stateId, n.name]),
+      Shallow: this.Shallow,
+    };
   }
 }
 
 export class TransitionJoin extends Transition {
-  Icon = '⑂';
+  Icon = "⑂";
 
   constructor(transition: Partial<TransitionDao>, workflow: Workflow, ei: Ei) {
     super(transition, workflow, ei);
 
-    this.addPort(new WorkflowPortModel(workflow, 'yield'));
-    this.addPort(new WorkflowPortModel(workflow, 'join1'));
-    this.addPort(new WorkflowPortModel(workflow, 'join2'));
-    this.addPort(new WorkflowPortModel(workflow, 'join3'));
+    this.addPort(new WorkflowPortModel(workflow, "yield"));
+    this.addPort(new WorkflowPortModel(workflow, "join1"));
+    this.addPort(new WorkflowPortModel(workflow, "join2"));
+    this.addPort(new WorkflowPortModel(workflow, "join3"));
 
-    this.$type = 'TransitionJoinDao';
+    this.$type = "TransitionJoinDao";
   }
 
   get json() {
     return {
-      $type: 'TransitionJoinDao',
+      $type: "TransitionJoinDao",
       ...super.json,
-    }
+    };
   }
 }

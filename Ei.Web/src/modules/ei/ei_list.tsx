@@ -4,8 +4,9 @@ import { IObservableArray, observable } from "mobx";
 import { observer } from "mobx-react";
 import { Button, Header, Icon, List, Segment } from "semantic-ui-react";
 import { style } from "typestyle";
-import { Link } from "../../config/router";
+import { Link } from "react-router-dom";
 import { Ei } from "./ei_model";
+import { useAppContext } from "../../config/context";
 
 const homeStyle = style({
   margin: "12px!important",
@@ -17,17 +18,16 @@ interface StoredEi {
 }
 
 interface Props {
-  context: App.Context;
   eis: IObservableArray<StoredEi>;
 }
 
-export const EiListContainer = ({ context }: Props) => {
+export const EiListContainer = () => {
   const eiString = localStorage.getItem("eis") || "[]";
-  const eis: IObservableArray<StoredEi> = observable.shallowArray(
+  const eis: IObservableArray<StoredEi> = observable.array(
     JSON.parse(eiString)
   );
 
-  return <EiList context={context} eis={eis} />;
+  return <EiList eis={eis} />;
 };
 
 function openFile(callback: (content: string) => void) {
@@ -54,7 +54,8 @@ function openFile(callback: (content: string) => void) {
   // clickElem(fileInput)
 }
 
-export const EiList = observer(({ context, eis }: Props) => {
+export const EiList = observer(({ eis }: Props) => {
+  const context = useAppContext();
   return (
     <Segment className={homeStyle}>
       <Header content="Your Institutions" dividing icon="home" />
@@ -108,14 +109,7 @@ export const EiList = observer(({ context, eis }: Props) => {
               />
 
               <Icon name="home" />
-              <Link
-                to={`/ei/${e.name.toUrlName()}/${e.id}`}
-                action={() =>
-                  context.store.viewStore.showEi(e.id, e.name.toUrlName())
-                }
-              >
-                {e.name}
-              </Link>
+              <Link to={`/ei/${e.name.toUrlName()}/${e.id}`}>{e.name}</Link>
             </List.Content>
           </List.Item>
         ))}
@@ -168,7 +162,7 @@ export const EiList = observer(({ context, eis }: Props) => {
               context.Ui.alertError("Institution with this id exists: " + id);
             }
 
-            const ei = Ei.create(id, name, context.store);
+            const ei = Ei.create(id, name, context);
             localStorage.setItem("ws." + id, JSON.stringify(ei.json));
             eis.push({ id, name });
             localStorage.setItem(

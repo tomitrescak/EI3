@@ -3,10 +3,10 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { Accordion, Button, Icon, Label, List } from "semantic-ui-react";
 
-import { Link } from "../../config/router";
+import { Link } from "react-router-dom";
 import {
-  accordionButton,
-  accordionContent,
+  AccordionButton,
+  AccordionContent,
 } from "../components/hierarchic_entity_view";
 import { nestedAccordion } from "../components/workflow_list_view";
 import { Authorisation } from "../ei/authorisation_model";
@@ -38,24 +38,22 @@ export class AuthorisationList extends React.Component<Props> {
             content={ei.Authorisation.length}
           />{" "}
           Authorisations
-          <Button
+          <AccordionButton
             floated="right"
             icon="plus"
             compact
             color="green"
-            className={accordionButton}
             onClick={ei.createAuthorisation}
           />
         </Accordion.Title>
-        <Accordion.Content active={active} className={accordionContent}>
+        <AccordionContent active={active}>
           <Accordion className={nestedAccordion}>
-            {ei.Authorisation.map((authorisation, autIndex) => (
+            {ei.Authorisation.map((authorisation, authIndex) => (
               <List.Item
                 as={Link}
-                to={`/${ei.Name.toUrlName()}/${ei.id}/authorisation/${index}`}
-                action={() =>
-                  ei.store.viewStore.showAuthorisation(autIndex.toString())
-                }
+                to={`/ei/${ei.Name.toUrlName()}/${
+                  ei.id
+                }/authorisation/${authIndex}`}
                 key={index}
               >
                 <Icon name={authorisation.Organisation ? "users" : "user"} />
@@ -67,7 +65,7 @@ export class AuthorisationList extends React.Component<Props> {
               </List.Item>
             ))}
           </Accordion>
-        </Accordion.Content>
+        </AccordionContent>
       </>
     );
   }

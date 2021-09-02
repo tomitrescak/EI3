@@ -1,5 +1,5 @@
-import { IObservableArray, observable } from 'mobx';
-import { field, FormState } from 'semantic-ui-mobx';
+import { IObservableArray, makeObservable, observable } from "mobx";
+import { field, FormState } from "semantic-ui-mobx";
 
 export interface PostconditionDao {
   Condition: string;
@@ -24,12 +24,14 @@ export class Postcondition extends FormState {
       this.Condition = postcondition.Condition;
       this.Action = postcondition.Action;
     }
+
+    makeObservable(this);
   }
 
   get json() {
     return {
       Condition: this.Condition,
-      Action: this.Action
+      Action: this.Action,
     };
   }
 }
@@ -47,7 +49,7 @@ export class AccessCondition extends FormState {
     this.Organisation = condition.Organisation;
     this.Precondition = condition.Precondition;
     this.Postconditions = observable(
-      (condition.Postconditions || []).map(c => new Postcondition(c))
+      (condition.Postconditions || []).map((c) => new Postcondition(c))
     );
   }
 
@@ -56,7 +58,7 @@ export class AccessCondition extends FormState {
       Role: this.Role,
       Organisation: this.Organisation,
       Precondition: this.Precondition,
-      Postconditions: this.Postconditions.map(c => c.json)
+      Postconditions: this.Postconditions.map((c) => c.json),
     };
   }
 }

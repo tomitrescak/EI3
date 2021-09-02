@@ -6,7 +6,7 @@ import { style } from "typestyle";
 
 import { Ei } from "../ei/ei_model";
 import { Workflow } from "../ei/workflow_model";
-import { accordionButton } from "./hierarchic_entity_view";
+import { AccordionButton } from "./hierarchic_entity_view";
 import { WorkflowComponentList } from "./workflow_component_view";
 
 interface Props {
@@ -44,12 +44,11 @@ export class WorkflowList extends React.Component<Props> {
             content={ei.Workflows.length}
           />{" "}
           Workflows
-          <Button
+          <AccordionButton
             floated="right"
             icon="plus"
             compact
             color="green"
-            className={accordionButton}
             onClick={ei.createWorkflow}
           />
         </Accordion.Title>
@@ -94,17 +93,12 @@ export const WorkflowDetail = ({
         <Icon name="dropdown" />
         {/* <Icon name="sitemap" /> */}
         {workflow.Name}
-        <Button
+        <AccordionButton
           to={`/workflows/${workflow.Name.toUrlName()}/${workflow.Id.toUrlName()}`}
           floated="right"
           icon="sitemap"
           compact
           color="orange"
-          className={accordionButton}
-          onClick={(e) => {
-            e.stopPropagation();
-            ei.store.viewStore.showWorkflow(workflow.Id, workflow.Name);
-          }}
         />
       </Accordion.Title>
       <Accordion.Content active={active} className={accordionContent}>
@@ -116,7 +110,7 @@ export const WorkflowDetail = ({
             title="Actions"
             collection={workflow.Actions}
             route="action"
-            viewAction={ei.store.viewStore.showActionClick}
+            viewAction={/*ei.store.viewStore.showActionClick*/ null}
             createAction={workflow.createAction}
             ei={ei}
           />
@@ -128,7 +122,7 @@ export const WorkflowDetail = ({
             title="States"
             collection={workflow.States}
             route="state"
-            viewAction={ei.store.viewStore.showStateClick}
+            viewAction={/*ei.store.viewStore.showStateClick*/ null}
             createAction={workflow.createState}
             ei={ei}
           />
@@ -140,7 +134,7 @@ export const WorkflowDetail = ({
             title="Transitions"
             collection={workflow.Transitions}
             route="transition"
-            viewAction={ei.store.viewStore.showTransitionClick}
+            viewAction={/*ei.store.viewStore.showTransitionClick*/ null}
             createAction={workflow.createTransition}
             ei={ei}
             showId={true}
@@ -153,7 +147,7 @@ export const WorkflowDetail = ({
             title="Connections"
             collection={workflow.Connections}
             route="connection"
-            viewAction={ei.store.viewStore.showConnectionClick}
+            viewAction={/*ei.store.viewStore.showConnectionClick*/ null}
             ei={ei}
             showId={true}
             createAction={workflow.addConnection}

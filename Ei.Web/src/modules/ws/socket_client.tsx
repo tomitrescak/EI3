@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { observable } from "mobx";
-import { context } from "../../config/context";
+import { AppContext } from "../../config/context";
 
 enum SocketState {
   Closed = "Closed",
@@ -96,7 +96,7 @@ export class SocketClient {
 
   constructor(
     url: string,
-    // messageHandler = new QueryHandler(),
+    private context: AppContext,
     errorHandler?: ErrorHandler
   ) {
     this.url = url;
@@ -172,7 +172,7 @@ export class SocketClient {
           if (this.errorHandler) {
             this.errorHandler(event);
           }
-          context().Ui.alertError("Server Connection Error");
+          this.context.Ui.alertError("Server Connection Error");
 
           reject(event);
         };
@@ -204,7 +204,7 @@ export class SocketClient {
           }
         };
       } catch (ex) {
-        context().Ui.alertError(ex.message);
+        this.context.Ui.alertError(ex.message);
       }
     });
   }

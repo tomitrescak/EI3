@@ -1,7 +1,15 @@
-import { autorun, computed, IObservableArray, observable } from "mobx";
+import {
+  autorun,
+  computed,
+  IObservableArray,
+  makeObservable,
+  observable,
+} from "mobx";
 import { field } from "semantic-ui-mobx";
 import { DropdownItemProps } from "semantic-ui-react";
 import { DefaultNodeFactory, DiagramEngine } from "storm-react-diagrams";
+import { AppContext } from "../../config/context";
+import { AppStore } from "../../config/store";
 
 import { Ui } from "../../helpers/client_helpers";
 import { EntityLinkFactory } from "../diagrams/model/entity/entity_link_factory";
@@ -38,6 +46,8 @@ export class Organisation extends HierarchicEntity {
     if (!this.Icon) {
       this.Icon = "🏠";
     }
+
+    makeObservable(this);
   }
 
   select() {
@@ -83,7 +93,7 @@ export interface EiDao extends ParametricEntityDao {
 const empty: string[] = [];
 
 export class Ei extends ParametricEntity {
-  static create(id: string, name: string, store: App.Store) {
+  static create(id: string, name: string, context: AppContext) {
     return new Ei(
       {
         Id: id,
@@ -114,12 +124,12 @@ export class Ei extends ParametricEntity {
         MainWorkflow: "main",
         Properties: [],
       },
-      store
+      context
     );
   }
 
   engine: DiagramEngine;
-  store: App.Store;
+  store: AppStore;
 
   @field MainWorkflow: string;
   Expressions: string;
@@ -131,10 +141,10 @@ export class Ei extends ParametricEntity {
   Authorisation: IObservableArray<Authorisation>;
   Experiments: IObservableArray<Experiment>;
 
-  constructor(model: EiDao, store: App.Store) {
+  constructor(model: EiDao, private context: AppContext) {
     super(model);
 
-    this.store = store;
+    this.store = context.store;
     this.engine = new DiagramEngine();
     this.engine.registerNodeFactory(new DefaultNodeFactory());
     this.engine.registerLinkFactory(new EntityLinkFactory("default"));
@@ -157,7 +167,9 @@ export class Ei extends ParametricEntity {
     this.Roles = this.initHierarchy(model.Roles, observable([]), Role);
     this.Types = this.initHierarchy(model.Types, observable([]), Type);
     this.Workflows = observable(
-      (model.Workflows || emptyWorkflows).map((r) => new Workflow(r, this))
+      (model.Workflows || emptyWorkflows).map(
+        (r) => new Workflow(r, this, this.context)
+      )
     );
     this.Authorisation = observable(
       (model.Authorisation || emptyAuthorisation).map(
@@ -166,6 +178,8 @@ export class Ei extends ParametricEntity {
     );
 
     this.addFormListener(() => Ui.history.step());
+
+    makeObservable(this);
   }
 
   @computed
@@ -325,7 +339,8 @@ export class Ei extends ParametricEntity {
           Static: false,
           Stateless: false,
         } as any,
-        this
+        this,
+        this.context
       );
       if (!this.checkExists(this.Workflows, "Workflow", workflow)) {
         this.Workflows.push(workflow);

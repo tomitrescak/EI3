@@ -1,52 +1,48 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { inject, observer } from 'mobx-react';
-import { Form, Select } from 'semantic-ui-mobx';
-import { Header, Message } from 'semantic-ui-react';
-import { style } from 'typestyle';
+import { inject, observer } from "mobx-react";
+import { Form, Select } from "semantic-ui-mobx";
+import { Header, Message } from "semantic-ui-react";
 
-import { EntityEditor } from '../core/entity_view';
-import { CodeEditor } from '../core/monaco_editor';
-import { PropertyView } from '../properties/property_view';
+import { EntityEditor } from "../core/entity_view";
+import { CodeEditor } from "../core/monaco_editor";
+import { PropertyView } from "../properties/property_view";
+import styled from "@emotion/styled";
+import { useAppContext } from "../../config/context";
 
-interface Props {
-  context?: App.Context;
-}
+const EditorForm = styled(Form)`
+  padding: 12px;
+`;
 
-const pane = style({
-  padding: '12px'
-});
-
-@inject('context')
-@observer
-export class EiEditor extends React.Component<Props> {
-  static displayName = 'EiEditor';
-
-  update = (value: any) => {
-    this.props.context.store.ei.Expressions = value
+export const EiEditor = observer(() => {
+  const context = useAppContext();
+  const update = (value: any) => {
+    context.store.ei.Expressions = value;
   };
 
-  value = () => this.props.context.store.ei.Expressions;
+  const value = () => context.store.ei.Expressions;
 
-  render() {
-    let ei = this.props.context.store.ei;
+  let ei = context.store.ei;
 
-    if (!ei) {
-      return <Message content="Deleted" />;
-    }
-
-    return (
-      <Form className={pane}>
-        <EntityEditor entity={ei} />
-
-        <Select label="Main Workflow" options={ei.workflowOptions} owner={ei.fields.MainWorkflow} />
-
-        <Header as="h5" content="Expressions" dividing icon="code" />
-
-        <CodeEditor update={this.update} value={this.value} i={ei.Properties} />
-
-        <PropertyView owner={ei} types={ei.types} />
-      </Form>
-    );
+  if (!ei) {
+    return <Message content="Deleted" />;
   }
-}
+
+  return (
+    <EditorForm>
+      <EntityEditor entity={ei} />
+
+      <Select
+        label="Main Workflow"
+        options={ei.workflowOptions}
+        owner={ei.fields.MainWorkflow}
+      />
+
+      <Header as="h5" content="Expressions" dividing icon="code" />
+
+      <CodeEditor update={update} value={value} i={ei.Properties} />
+
+      <PropertyView owner={ei} types={ei.types} />
+    </EditorForm>
+  );
+});

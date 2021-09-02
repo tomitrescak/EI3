@@ -1,8 +1,9 @@
-import { DiffPatcher } from 'jsondiffpatch';
-import { action, observable } from 'mobx';
+import { DiffPatcher } from "jsondiffpatch";
+import { action, observable } from "mobx";
+import { AppContext } from "../../config/context";
 
-import { store } from '../../config/store';
-import { Ei, EiDao } from '../ei/ei_model';
+import { store } from "../../config/store";
+import { Ei, EiDao } from "../ei/ei_model";
 
 const patcher = new DiffPatcher(); // { textDiff: 10000 }
 
@@ -25,10 +26,10 @@ class Step {
     return result;
   }
 
-  @action 
+  @action
   redo(ei: EiDao) {
     let result = ei;
-    this.deltas.forEach(delta => result = patcher.patch(result, delta));
+    this.deltas.forEach((delta) => (result = patcher.patch(result, delta)));
     return result;
   }
 }
@@ -36,13 +37,15 @@ class Step {
 export class WorkHistory {
   @observable version = 0;
   ei: Ei;
+  context: AppContext;
 
   currentEi: EiDao;
   currentStep: Step;
   deltas: any[] = [];
   timeout: any;
 
-  startHistory(ei: Ei) {
+  startHistory(ei: Ei, context: AppContext) {
+    this.context = context;
     this.ei = ei;
     // this.first = ei.json;
     this.currentEi = ei.json;
@@ -77,8 +80,8 @@ export class WorkHistory {
     this.currentEi = this.currentStep.undo(this.currentEi);
     this.currentStep = this.currentStep.previous;
 
-    let s = store();
-    this.ei = new Ei(this.currentEi, s);
+    let s = this.context.store;
+    this.ei = new Ei(this.currentEi, this.context);
     s.ei = this.ei;
     this.version++;
   };
@@ -90,8 +93,8 @@ export class WorkHistory {
     this.currentStep = this.currentStep.next;
     this.currentEi = this.currentStep.redo(this.currentEi);
 
-    let s = store();
-    this.ei = new Ei(this.currentEi, s);
+    let s = this.context.store;
+    this.ei = new Ei(this.currentEi, this.context);
     s.ei = this.ei;
     this.version++;
   };

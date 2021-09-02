@@ -1,11 +1,7 @@
-import { observable } from 'mobx';
-import { Ei } from '../modules/ei/ei_model';
-import { Entity } from '../modules/ei/entity_model';
-import { ViewStoreModel } from './view_store';
-
-declare global {
-  namespace App { type Store = StoreModel; }
-}
+import { makeObservable, observable } from "mobx";
+import { Ei } from "../modules/ei/ei_model";
+import { Entity } from "../modules/ei/entity_model";
+import { AppContext } from "./context";
 
 export interface AccordionHandler {
   handleClick(e: any, titleProps: any): void;
@@ -19,24 +15,24 @@ export interface CompilationError {
 }
 
 export class StoreModel {
-  @observable previewImage = '';
+  @observable previewImage = "";
   @observable saving = false;
-  @observable compiledCode = '';
+  @observable compiledCode = "";
   @observable compiling = false;
   messages = observable([] as string[]);
   errors = observable([] as CompilationError[]);
 
-  context: App.Context;
-  @observable.shallow ei: Ei;
-  viewStore: App.ViewStore;
+  context: AppContext;
+  @observable ei: Ei;
   storedHandlers: Object;
 
   handlers: { [index: string]: AccordionHandler } = {};
   selectedEntity: Entity;
 
-  constructor(context: App.Context) {
+  constructor(context: AppContext) {
     this.context = context;
-    this.viewStore = new ViewStoreModel(context);
+
+    makeObservable(this);
 
     // autorun(() => {
     //   debugger;
@@ -51,8 +47,13 @@ export class StoreModel {
     console.warn(message);
   }
 
-  selectWorkflowElement(wid: string, collection: string, id: string, subSelection: string = null) {
-    let workflow = this.ei.Workflows.find(w => w.Id === wid);
+  selectWorkflowElement(
+    wid: string,
+    collection: string,
+    id: string,
+    subSelection: string = null
+  ) {
+    let workflow = this.ei.Workflows.find((w) => w.Id === wid);
     if (!workflow) {
       return;
     }
@@ -76,8 +77,9 @@ export class StoreModel {
     // we store all in local storage
 
     if (this.storedHandlers == null) {
-      let storedString = localStorage.getItem('ei.accordions');
-      this.storedHandlers = storedString != null ? JSON.parse(storedString) : {};
+      let storedString = localStorage.getItem("ei.accordions");
+      this.storedHandlers =
+        storedString != null ? JSON.parse(storedString) : {};
     }
     if (this.storedHandlers[id] == null) {
       this.storedHandlers[id] = openedNodes;
@@ -99,11 +101,14 @@ export class StoreModel {
             storedIndices.push(index);
           }
 
-          localStorage.setItem('ei.accordions', JSON.stringify(this.storedHandlers));
+          localStorage.setItem(
+            "ei.accordions",
+            JSON.stringify(this.storedHandlers)
+          );
         },
         isActive(index: number) {
           return activeIndices.indexOf(index) >= 0;
-        }
+        },
       };
     }
 
@@ -111,9 +116,11 @@ export class StoreModel {
   }
 }
 
+export type AppStore = StoreModel;
+
 let current: StoreModel;
 
-export function store(cache = true, context?: App.Context) {
+export function store(cache = true, context?: AppContext) {
   if (!current || !cache) {
     current = new StoreModel(context);
     (global as any).__store = current;

@@ -1,7 +1,7 @@
-import { observable } from 'mobx';
-import { Ei } from './ei_model';
-import { Entity, EntityDao } from './entity_model';
-import { Workflow } from './workflow_model';
+import { makeObservable, observable } from "mobx";
+import { Ei } from "./ei_model";
+import { Entity, EntityDao } from "./entity_model";
+import { Workflow } from "./workflow_model";
 
 export abstract class PositionModel extends Entity {
   @observable selected: boolean;
@@ -17,10 +17,12 @@ export abstract class PositionModel extends Entity {
 
     // add listeners
     this.addListener({
-			selectionChanged: ({ isSelected }) => { 
-				isSelected ? this.select() : this.deselect();
-			}
-    })
+      selectionChanged: ({ isSelected }) => {
+        isSelected ? this.select() : this.deselect();
+      },
+    });
+
+    makeObservable(this);
   }
 
   abstract select(): void;

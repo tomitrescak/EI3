@@ -1,12 +1,12 @@
-import * as React from "react";
+import React from "react";
 
-import { inject, Observer, observer } from "mobx-react";
+import { Observer, observer } from "mobx-react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/styles/hljs";
 import { List, Menu } from "semantic-ui-react";
 import { style } from "typestyle";
 import { SocketClient } from "../ws/socket_client";
-import { autorun } from "mobx";
+import { useAppContext } from "../../config/context";
 
 const pane = {
   padding: "6px",
@@ -30,17 +30,16 @@ const pane = {
     },
   },
 } as any;
+
 const activePane = style(pane, { display: "block" });
 const hiddenPane = style(pane);
 
-interface Props {
-  context?: App.Context;
-  client?: SocketClient;
-}
+interface Props {}
 
-export const Messages = ({ context, client }: Props) => {
+export const Messages = () => {
+  const context = useAppContext();
   React.useEffect(() => {
-    const id = client.send({
+    const id = context.client.send({
       query: "MonitorInstitution",
       isSubscription: true,
       receiver: (data: any) => {
@@ -48,7 +47,7 @@ export const Messages = ({ context, client }: Props) => {
       },
     });
     return () => {
-      client.unsubscribe("MonitorInstitution", id);
+      context.client.unsubscribe("MonitorInstitution", id);
     };
   }, []);
   return (
@@ -70,7 +69,8 @@ export const Messages = ({ context, client }: Props) => {
 
 Messages.displayName = "MessagesView";
 
-export const Highlight = observer(({ context }: Props) => {
+export const Highlight = observer(() => {
+  const context = useAppContext();
   return (
     <SyntaxHighlighter language="cs" style={docco} showLineNumbers={true}>
       {(context.store.compiledCode || "").trim()}
@@ -80,61 +80,58 @@ export const Highlight = observer(({ context }: Props) => {
 
 Highlight.displayName = "HighlightView";
 
-export const Errors = observer(({ context }: Props) => (
-  <>
-    {context.store.errors.length ? (
-      <List>
-        {context.store.errors.map((m, i) => {
-          return (
-            <List.Item key={i}>
-              <List.Content>
-                <List.Header>
-                  Line {m.Line}: {m.Message}
-                </List.Header>
-                {m.Code && m.Code.length > 0 && (
-                  <List.Description>
-                    <SyntaxHighlighter
-                      language="cs"
-                      style={docco}
-                      showLineNumbers={true}
-                      startingLineNumber={m.Line - 5}
-                    >
-                      {m.Code.join("\n") || ""}
-                    </SyntaxHighlighter>
-                  </List.Description>
-                )}
-              </List.Content>
-            </List.Item>
-          );
-        })}
-      </List>
-    ) : (
-      <div>No compilation errors! G'day! 🤓</div>
-    )}
-  </>
-));
+export const Errors = observer(() => {
+  const context = useAppContext();
+  return (
+    <>
+      {context.store.errors.length ? (
+        <List>
+          {context.store.errors.map((m, i) => {
+            return (
+              <List.Item key={i}>
+                <List.Content>
+                  <List.Header>
+                    Line {m.Line}: {m.Message}
+                  </List.Header>
+                  {m.Code && m.Code.length > 0 && (
+                    <List.Description>
+                      <SyntaxHighlighter
+                        language="cs"
+                        style={docco}
+                        showLineNumbers={true}
+                        startingLineNumber={m.Line - 5}
+                      >
+                        {m.Code.join("\n") || ""}
+                      </SyntaxHighlighter>
+                    </List.Description>
+                  )}
+                </List.Content>
+              </List.Item>
+            );
+          })}
+        </List>
+      ) : (
+        <div>No compilation errors! G'day! 🤓</div>
+      )}
+    </>
+  );
+});
 
-Errors.displayName = "ErrorsView";
+export const MiddleView = observer((props: Props) => {
+  const [activeItem, setActiveItem] = React.useState("errors");
+  const context = useAppContext();
 
-@inject("context", "client")
-@observer
-export class MiddleView extends React.Component<Props> {
-  state = { activeItem: "messages" };
+  const handleItemClick = (_e: any, { name }: any) => setActiveItem(name);
 
-  handleItemClick = (_e: any, { name }: any) =>
-    this.setState({ activeItem: name });
+  const isActive = (name: string) => {
+    return name === activeItem;
+  };
 
-  isActive(name: string) {
-    return name === this.state.activeItem;
-  }
-
-  downloadCode = () => {
+  const downloadCode = () => {
     let myWindow = window.open("");
     myWindow.document.write(
       "<pre>" +
-        this.props.context.store.compiledCode
-          .replace(/>/g, "&gt;")
-          .replace(/</g, "&lt;") +
+        context.store.compiledCode.replace(/>/g, "&gt;").replace(/</g, "&lt;") +
         "</pre>" || "No code was compiled"
     );
     let range = myWindow.document.createRange();
@@ -143,57 +140,53 @@ export class MiddleView extends React.Component<Props> {
     (myWindow as any).select();
   };
 
-  render() {
-    const { activeItem } = this.state;
-    const { context, client } = this.props;
-    return (
-      <div>
-        <Menu pointing secondary compact fluid inverted color="grey">
-          <Menu.Item
-            name="messages"
-            content="Messages"
-            icon="mail"
-            active={activeItem === "messages"}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            name="errors"
-            content={`${context.store.errors.length} Error${
-              context.store.errors.length === 1 ? "" : "s"
-            }`}
-            icon="bug"
-            active={activeItem === "errors"}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            name="compiled"
-            content="Code"
-            icon="code"
-            active={activeItem === "compiled"}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Menu position="right">
-            <Menu.Item icon="download" onClick={this.downloadCode} />
-            <Menu.Item content="Clear" icon="remove" />
-          </Menu.Menu>
-        </Menu>
+  return (
+    <div>
+      <Menu pointing secondary compact fluid inverted color="grey">
+        <Menu.Item
+          name="messages"
+          content="Messages"
+          icon="mail"
+          active={activeItem === "messages"}
+          onClick={handleItemClick}
+        />
+        <Menu.Item
+          name="errors"
+          content={`${context.store.errors.length} Error${
+            context.store.errors.length === 1 ? "" : "s"
+          }`}
+          icon="bug"
+          active={activeItem === "errors"}
+          onClick={handleItemClick}
+        />
+        <Menu.Item
+          name="compiled"
+          content="Code"
+          icon="code"
+          active={activeItem === "compiled"}
+          onClick={handleItemClick}
+        />
+        <Menu.Menu position="right">
+          <Menu.Item icon="download" onClick={downloadCode} />
+          <Menu.Item content="Clear" icon="remove" />
+        </Menu.Menu>
+      </Menu>
 
-        {this.isActive("messages") && (
-          <div className={pane}>
-            <Messages context={context} client={client} />
-          </div>
-        )}
-        {this.isActive("errors") && (
-          <div className={pane}>
-            <Errors context={context} />
-          </div>
-        )}
-        {this.isActive("compiled") && (
-          <div className={pane + " complete"}>
-            <Highlight context={context} />
-          </div>
-        )}
-      </div>
-    );
-  }
-}
+      {isActive("messages") && (
+        <div className={pane}>
+          <Messages />
+        </div>
+      )}
+      {isActive("errors") && (
+        <div className={pane}>
+          <Errors />
+        </div>
+      )}
+      {isActive("compiled") && (
+        <div className={pane + " complete"}>
+          <Highlight />
+        </div>
+      )}
+    </div>
+  );
+});

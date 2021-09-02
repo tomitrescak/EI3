@@ -1,5 +1,6 @@
-import { field, requiredField } from 'semantic-ui-mobx';
-import { FormNodeStore } from '../diagrams/model/form_state_model';
+import { makeObservable } from "mobx";
+import { field, requiredField } from "semantic-ui-mobx";
+import { FormNodeStore } from "../diagrams/model/form_state_model";
 
 export interface EntityDao {
   Id: string;
@@ -11,11 +12,13 @@ export interface EntityDao {
 }
 
 export function entitySort(a: Entity, b: Entity): number {
-  return a.safeName.localeCompare(b.safeName, undefined, { numeric: true, sensitivity: 'base' });
+  return a.safeName.localeCompare(b.safeName, undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
 }
 
 export class Entity extends FormNodeStore {
-
   Id: string;
   @field Icon: string;
   @requiredField Name: string;
@@ -38,11 +41,13 @@ export class Entity extends FormNodeStore {
 
     this.x = model.x || this.randomPosition();
     this.y = model.y || this.randomPosition();
+
+    makeObservable(this);
   }
 
-  
-  
-  deselect() { /**/ }
+  deselect() {
+    /**/
+  }
 
   protected randomPosition() {
     return Math.floor(Math.random() * -100 + 1);
@@ -59,7 +64,7 @@ export class Entity extends FormNodeStore {
       Description: this.Description,
       Icon: this.allowEditIcon ? this.Icon : undefined,
       x: this.x,
-      y: this.y
+      y: this.y,
     };
   }
 }

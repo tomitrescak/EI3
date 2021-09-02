@@ -1,6 +1,6 @@
-import * as React from "react";
+import React from "react";
 
-import { inject, observer } from "mobx-react";
+import { observer } from "mobx-react";
 import { Form } from "semantic-ui-mobx";
 
 import { Message } from "semantic-ui-react";
@@ -11,11 +11,12 @@ import { EntityEditor } from "../core/entity_view";
 import { Ei } from "../ei/ei_model";
 import { HierarchicEntity } from "../ei/hierarchic_entity_model";
 import { PropertyView } from "../properties/property_view";
+import { useAppContext } from "../../config/context";
+import { useParams } from "react-router-dom";
 
 interface Props {
-  context?: App.Context;
   collection: (ei: Ei) => IObservableArray<HierarchicEntity>;
-  id: string;
+  paramName: string;
   name?: string;
   parentView: string;
   minCount: number;
@@ -26,11 +27,7 @@ interface Props {
 //   textAlign: 'center'
 // });
 
-@inject("context")
-@observer
-export class HierarchicEntityEditor extends React.Component<Props> {
-  static displayName = "EntityView";
-
+export const HierarchicEntityEditor = observer((props: Props) => {
   // deleteRecord = action(() => {
   //   let ei = this.props.context.store.ei;
   //   let collection = this.props.collection(ei);
@@ -63,39 +60,40 @@ export class HierarchicEntityEditor extends React.Component<Props> {
   //   }
   // };
 
-  render() {
-    let ei = this.props.context.store.ei;
-    let entity = this.props
-      .collection(ei)
-      .find((o) => o.Id.toLowerCase() === this.props.id.toLowerCase());
+  let context = useAppContext();
+  const params = useParams();
+  const id = params[props.paramName];
+  let ei = context.store.ei;
+  let entity = props
+    .collection(ei)
+    .find((o) => o.Id.toLowerCase() === id.toLowerCase());
 
-    if (!entity) {
-      return <Message content="Deleted" />;
-    }
+  if (!entity) {
+    return <Message content="Deleted" />;
+  }
 
-    // let organisations = [{ value: '', text: 'No Parent' }]
-    //   .concat(ei.Organisations.filter(o => o.Id !== organisation.Id).map(o => ({ value: o.Id, text: o.Name })));
+  // let organisations = [{ value: '', text: 'No Parent' }]
+  //   .concat(ei.Organisations.filter(o => o.Id !== organisation.Id).map(o => ({ value: o.Id, text: o.Name })));
 
-    let parent = entity.Parent;
-    if (parent) {
-      parent =
-        this.props.collection(ei).find((o) => o.Id === parent).Name || "";
-    }
+  let parent = entity.Parent;
+  if (parent) {
+    parent = props.collection(ei).find((o) => o.Id === parent).Name || "";
+  }
 
-    return (
-      <>
-        <Form>
-          <EntityEditor entity={entity} />
+  return (
+    <>
+      <Form>
+        <EntityEditor entity={entity} />
 
-          {/*<Select label="Parent" options={organisations} owner={getField(organisation, 'Parent')} placeholder="No Parent"  />*/}
-          {parent && (
-            <div>
-              <b>Parent: </b> {parent}
-            </div>
-          )}
-          <PropertyView owner={entity} types={ei.types} />
-        </Form>
-        {/*this.props.minCount < this.props.collection(ei).length && (
+        {/*<Select label="Parent" options={organisations} owner={getField(organisation, 'Parent')} placeholder="No Parent"  />*/}
+        {parent && (
+          <div>
+            <b>Parent: </b> {parent}
+          </div>
+        )}
+        <PropertyView owner={entity} types={ei.types} />
+      </Form>
+      {/*this.props.minCount < this.props.collection(ei).length && (
           <div className={deleteButton}>
             <Header as="h5" style={{ color: 'red' }} dividing />
             <Button
@@ -108,7 +106,6 @@ export class HierarchicEntityEditor extends React.Component<Props> {
             />
           </div>
         )*/}
-      </>
-    );
-  }
-}
+    </>
+  );
+});

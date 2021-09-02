@@ -1,29 +1,27 @@
 import React from "react";
 
-import { observer } from "mobx-react";
 import { Accordion, Button, Icon, Label, List } from "semantic-ui-react";
-import { style } from "typestyle";
 
-import { IObservableArray } from "mobx";
-import { Link } from "../../config/router";
 import { IconView } from "../core/entity_icon_view";
-import { Ei } from "../ei/ei_model";
 import { entitySort } from "../ei/entity_model";
+import { Link } from "react-router-dom";
+import styled from "@emotion/styled";
+import { IObservableArray } from "mobx";
 import { HierarchicEntity } from "../ei/hierarchic_entity_model";
+import { observer } from "mobx-react";
+import { Ei } from "../ei/ei_model";
 
-export const accordionButton = style({
-  marginTop: "-3px!important",
-  padding: "6px!important",
-  marginRight: "6px!important",
-  marginLeft: "0px !important",
-});
+export const AccordionButton = styled(Button)`
+  margin-top: -3px !important;
+  padding: 6px !important;
+  margin-right: 6px !important;
+  margin-left: 0px !important;
+`;
 
-export const accordionContent = style({
+export const AccordionContent = styled(Accordion.Content)`
   // background: '#dedede',
-  padding: "6px 6px 6px 25px!important",
-});
-
-let entity: HierarchicEntity;
+  padding: 6px 6px 6px 25px !important;
+`;
 
 interface Props {
   active: boolean;
@@ -33,10 +31,7 @@ interface Props {
   title: string;
   url: string;
   ei: Ei;
-
   createEntity: (e: any) => void;
-  showAll: (e: any) => void;
-  showSingle: (id: string, name: string) => void;
 }
 
 export const HierarchicEntityView = observer(
@@ -46,8 +41,6 @@ export const HierarchicEntityView = observer(
     createEntity,
     handleClick,
     index,
-    showAll,
-    showSingle,
     title,
     url,
     ei,
@@ -62,41 +55,41 @@ export const HierarchicEntityView = observer(
           content={collection.length}
         />{" "}
         {title}
-        <Button
+        <AccordionButton
           floated="right"
           icon="plus"
           compact
           color="green"
-          className={accordionButton}
           onClick={createEntity}
         />
-        <Button
+        <AccordionButton
+          as={Link}
+          to={`/ei/${ei.Name.toUrlName()}/${ei.id}/${url}`}
           floated="right"
           icon="sitemap"
           compact
           color="orange"
-          className={accordionButton}
-          to="/roles"
-          onClick={showAll}
         />
       </Accordion.Title>
-      <Accordion.Content active={active} className={accordionContent}>
+      <AccordionContent active={active}>
         <List>
-          {collection.sort(entitySort).map((entity) => (
-            <List.Item
-              as={Link}
-              to={`/${ei.Name.toUrlName()}/${
-                ei.id
-              }/${url}/${entity.Name.toUrlName()}/${entity.Id}`}
-              action={() => showSingle(entity.Id, entity.Name)}
-              key={entity.Id}
-            >
-              <IconView entity={entity} />
-              {entity.Name || entity.Id}
-            </List.Item>
-          ))}
+          {collection
+            .slice()
+            .sort(entitySort)
+            .map((entity) => (
+              <List.Item
+                as={Link}
+                to={`/ei/${ei.Name.toUrlName()}/${
+                  ei.id
+                }/${url}/${entity.Name.toUrlName()}/${entity.Id}`}
+                key={entity.Id}
+              >
+                <IconView entity={entity} />
+                {entity.Name || entity.Id}
+              </List.Item>
+            ))}
         </List>
-      </Accordion.Content>
+      </AccordionContent>
     </>
   )
 );
