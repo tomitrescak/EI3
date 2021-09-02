@@ -4,8 +4,8 @@ using System.Threading;
 using YamlDotNet.Serialization;
 using System.ComponentModel;
 using UnityEngine;
-using Ei.Agents.Planning;
 using Ei.Core.Runtime.Planning.Environment;
+using Ei.Simulation.Agents.Behaviours;
 using Ei.Simulation.Core;
 using Ei.Simulation.Physiology;
 using Ei.Simulation.Sims.Behaviours;
@@ -14,7 +14,7 @@ using Ei.Simulation.Statistics;
 
 namespace Vittoria.Behaviours
 {
-    public class EiProjectStarter : EiBehaviour
+    public class PhysiologyProjectStarter : EiBehaviour
     {
         [YamlIgnore]
         private PhysiologyProject project { get; set; }
@@ -91,7 +91,7 @@ namespace Vittoria.Behaviours
 
         // constructor
 
-        public EiProjectStarter()
+        public PhysiologyProjectStarter()
         {
             this.AgentCounts = new List<AgentCount>();
             this.ActionsWithNoLocation = new List<EnvironmentDataAction>();

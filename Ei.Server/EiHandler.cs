@@ -8,8 +8,8 @@ using Ei.Compilation;
 using Ei.Logs;
 using Ei.Core.Ontology;
 using Ei.Persistence.Json;
+using Ei.Simulation.Agents.Behaviours;
 using Ei.Simulation.Physiology;
-using Ei.Simulation.Physiology.Behaviours;
 using Newtonsoft.Json;
 using WebSocketManager;
 using WebSocketManager.Common;
@@ -19,10 +19,36 @@ using UnityEngine;
 
 namespace Ei.Server
 {
+
     public class EiHandler : WebSocketHandler
     {
+
+   
+        public class SocketLog : ILog
+        {
+            public long QueryId { get; set; } = -1;
+            private readonly EiHandler handler;
+
+
+            public SocketLog(EiHandler handler)
+            {
+                this.handler = handler;
+            }
+            public void Log(ILogMessage message)
+            {
+                if (this.QueryId != -1)
+                {
+                    this.handler.InvokeClientMethodToAllAsync("MonitorInstitution", this.QueryId, message);
+                }
+
+                //Console.WriteLine("[LOG " + Thread.CurrentThread.ManagedThreadId + "] " + message.Code + " " + string.Join(";", message.Parameters));
+                // Console.WriteLine((string.IsNullOrEmpty(message.Code) ? message.Message : (message.Code + message.Parameters)));
+            }
+        }
+
         static EiHandler() {
-            Ei.Logs.Log.Register(new ConsoleLog());    
+            Ei.Logs.Log.Register(new ConsoleLog());
+            
         }
         
         enum ResultType
@@ -41,9 +67,12 @@ namespace Ei.Server
         private Institution currentEi;
         private Project project;
         private Simulation.Simulator.Runner runner;
-        
+        private SocketLog socketLog;
+
         public EiHandler(WebSocketConnectionManager webSocketConnectionManager) : base(webSocketConnectionManager)
         {
+            this.socketLog = new SocketLog(this);
+            Ei.Logs.Log.Register(this.socketLog);
         }
 
         // state changes
@@ -84,7 +113,7 @@ namespace Ei.Server
             try
             {
                 var ei = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Files/AllComponents.json"));
-                await InvokeClientMethodToAllAsync("queryResult", queryId, ei);
+                await InvokeClientMethodToAllAsync("LoadInstitution", queryId, ei);
             }
             catch (Exception ex)
             {
@@ -104,13 +133,13 @@ namespace Ei.Server
             
             
             // physiology runner is a behaviour that launches a new project
-            var physiologyProjectRunner = new PhysiologyProjectRunner();
+            var physiologyProjectRunner = new EiProjectStarter();
             physiologyProjectRunner.AgentsPerSecond = 1;
             physiologyProjectRunner.InitProject(this.project, this.currentEi);
             
             
             // add new game object that will be added to the scene (Experiment)
-            var go = new GameObject("PhysiologyProjectRunner");
+            var go = new GameObject("EiProjectStarter");
             
             go.AddComponent(physiologyProjectRunner);
             go.Enabled = true;
@@ -142,7 +171,7 @@ namespace Ei.Server
                     Mesasage = ex.Message
                 };
                 var json = JsonConvert.SerializeObject(result);
-                await InvokeClientMethodToAllAsync("queryResult", queryId, json);
+                await InvokeClientMethodToAllAsync("RunInstitution", queryId, json);
             }
 
 //            try
@@ -158,8 +187,12 @@ namespace Ei.Server
         
         public async Task MonitorInstitution(long queryId)
         {
+            Console.Write("Monitoring Institution");
+
+            this.socketLog.QueryId = queryId;
+
             // send the state of all current objects
-            Console.Write("Initialising Project");
+            
 //            try
 //            {
 //                var ei = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Files/AllComponents.json"));
@@ -189,7 +222,7 @@ namespace Ei.Server
                 var result = this.Compile(source);
                 
                 var json = JsonConvert.SerializeObject(result);
-                await InvokeClientMethodToAllAsync("queryResult", queryId, json);
+                await InvokeClientMethodToAllAsync("CompileInstitution", queryId, json);
             }
             catch (Exception ex) {
                 if (ex.InnerException != null) {

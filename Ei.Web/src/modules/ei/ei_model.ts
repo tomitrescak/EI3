@@ -1,18 +1,24 @@
-import { autorun, computed, IObservableArray, observable } from 'mobx';
-import { field } from 'semantic-ui-mobx';
-import { DropdownItemProps } from 'semantic-ui-react';
-import { DefaultNodeFactory, DiagramEngine } from 'storm-react-diagrams';
+import { autorun, computed, IObservableArray, observable } from "mobx";
+import { field } from "semantic-ui-mobx";
+import { DropdownItemProps } from "semantic-ui-react";
+import { DefaultNodeFactory, DiagramEngine } from "storm-react-diagrams";
 
-import { Ui } from '../../helpers/client_helpers';
-import { EntityLinkFactory } from '../diagrams/model/entity/entity_link_factory';
-import { EntityNodeFactory } from '../diagrams/model/entity/entity_node_factory';
-import { Experiment } from '../experiments/experiment_model';
-import { SocketClient } from '../ws/socket_client';
-import { Authorisation, AuthorisationDao } from './authorisation_model';
-import { Entity } from './entity_model';
-import { HierarchicEntity, HierarchicEntityDao } from './hierarchic_entity_model';
-import { ParametricEntity, ParametricEntityDao } from './parametric_entity_model';
-import { Workflow, WorkflowDao } from './workflow_model';
+import { Ui } from "../../helpers/client_helpers";
+import { EntityLinkFactory } from "../diagrams/model/entity/entity_link_factory";
+import { EntityNodeFactory } from "../diagrams/model/entity/entity_node_factory";
+import { Experiment } from "../experiments/experiment_model";
+import { SocketClient } from "../ws/socket_client";
+import { Authorisation, AuthorisationDao } from "./authorisation_model";
+import { Entity } from "./entity_model";
+import {
+  HierarchicEntity,
+  HierarchicEntityDao,
+} from "./hierarchic_entity_model";
+import {
+  ParametricEntity,
+  ParametricEntityDao,
+} from "./parametric_entity_model";
+import { Workflow, WorkflowDao } from "./workflow_model";
 
 const emptyWorkflows: WorkflowDao[] = [];
 const emptyAuthorisation: AuthorisationDao[] = [];
@@ -20,13 +26,17 @@ const emptyAuthorisation: AuthorisationDao[] = [];
 export class Organisation extends HierarchicEntity {
   allowEditIcon = true;
 
-  constructor(model: HierarchicEntityDao, parents: IObservableArray<HierarchicEntity>, ei: Ei) {
+  constructor(
+    model: HierarchicEntityDao,
+    parents: IObservableArray<HierarchicEntity>,
+    ei: Ei
+  ) {
     super(model, parents, ei, true);
 
     this.allowEditIcon = true;
 
     if (!this.Icon) {
-      this.Icon = '🏠';
+      this.Icon = "🏠";
     }
   }
 
@@ -36,13 +46,17 @@ export class Organisation extends HierarchicEntity {
 }
 
 export class Role extends HierarchicEntity {
-  constructor(model: HierarchicEntityDao, parents: IObservableArray<HierarchicEntity>, ei: Ei) {
+  constructor(
+    model: HierarchicEntityDao,
+    parents: IObservableArray<HierarchicEntity>,
+    ei: Ei
+  ) {
     super(model, parents, ei, true);
 
     this.allowEditIcon = true;
 
     if (!this.Icon) {
-      this.Icon = '👮🏼‍';
+      this.Icon = "👮🏼‍";
     }
   }
 
@@ -74,23 +88,31 @@ export class Ei extends ParametricEntity {
       {
         Id: id,
         Name: name,
-        Description: '',
+        Description: "",
         Expressions: null,
-        Organisations: [{ Id: 'default', Name: 'Default' }],
-        Roles: [{ Id: 'default', Name: 'Citizen' }],
+        Organisations: [{ Id: "default", Name: "Default" }],
+        Roles: [{ Id: "default", Name: "Citizen" }],
         Types: [],
         Workflows: [
           {
-            Id: 'main',
-            Name: 'Main',
+            Id: "main",
+            Name: "Main",
             Static: true,
             Stateless: true,
-            States: [{ Id: 'start', Name: 'Start', IsStart: true, IsEnd: true, IsOpen: false }]
-          }
+            States: [
+              {
+                Id: "start",
+                Name: "Start",
+                IsStart: true,
+                IsEnd: true,
+                IsOpen: false,
+              },
+            ],
+          },
         ],
         Authorisation: [],
-        MainWorkflow: 'main',
-        Properties: []
+        MainWorkflow: "main",
+        Properties: [],
       },
       store
     );
@@ -115,8 +137,8 @@ export class Ei extends ParametricEntity {
     this.store = store;
     this.engine = new DiagramEngine();
     this.engine.registerNodeFactory(new DefaultNodeFactory());
-    this.engine.registerLinkFactory(new EntityLinkFactory('default'));
-    this.engine.registerLinkFactory(new EntityLinkFactory('link'));
+    this.engine.registerLinkFactory(new EntityLinkFactory("default"));
+    this.engine.registerLinkFactory(new EntityLinkFactory("link"));
     this.engine.registerNodeFactory(new EntityNodeFactory());
 
     // this.engine.registerNodeFactory(new WorkflowNodeFactory());
@@ -124,17 +146,23 @@ export class Ei extends ParametricEntity {
     this.engine.maxNumberPointsPerLink = 1;
 
     this.Experiments = observable([new Experiment()]);
-    
+
     this.Expressions = model.Expressions;
     this.MainWorkflow = model.MainWorkflow;
-    this.Organisations = this.initHierarchy(model.Organisations, observable([]), Organisation);
+    this.Organisations = this.initHierarchy(
+      model.Organisations,
+      observable([]),
+      Organisation
+    );
     this.Roles = this.initHierarchy(model.Roles, observable([]), Role);
     this.Types = this.initHierarchy(model.Types, observable([]), Type);
     this.Workflows = observable(
-      (model.Workflows || emptyWorkflows).map(r => new Workflow(r, this))
+      (model.Workflows || emptyWorkflows).map((r) => new Workflow(r, this))
     );
     this.Authorisation = observable(
-      (model.Authorisation || emptyAuthorisation).map(r => new Authorisation(r))
+      (model.Authorisation || emptyAuthorisation).map(
+        (r) => new Authorisation(r)
+      )
     );
 
     this.addFormListener(() => Ui.history.step());
@@ -142,71 +170,70 @@ export class Ei extends ParametricEntity {
 
   @computed
   get types(): DropdownItemProps[] {
-    return ['int', 'float', 'string', 'bool']
-      .concat(this.Types.map(t => t.Name))
-      .map(i => ({ text: i, value: i }));
+    return ["int", "float", "string", "bool"]
+      .concat(this.Types.map((t) => t.Name))
+      .map((i) => ({ text: i, value: i }));
   }
 
   @computed
   get workflowOptions(): DropdownItemProps[] {
-    return this.Workflows.map(w => ({ text: w.Name, value: w.Id }));
+    return this.Workflows.map((w) => ({ text: w.Name, value: w.Id }));
   }
 
   @computed
   get organisationsOptions(): DropdownItemProps[] {
-    return this.Organisations.map(w => ({ text: w.Name, value: w.Id }));
+    return this.Organisations.map((w) => ({ text: w.Name, value: w.Id }));
   }
 
   get removableOrganisationsOptions(): DropdownItemProps[] {
-    return [{ text: 'None', value: '' }].concat(this.organisationsOptions as any);
+    return [{ text: "None", value: "" }].concat(
+      this.organisationsOptions as any
+    );
   }
 
   @computed
   get roleOptions(): DropdownItemProps[] {
-    return this.Roles.map(w => ({ text: w.Name, value: w.Id }));
+    return this.Roles.map((w) => ({ text: w.Name, value: w.Id }));
   }
 
   editorHeight(value: string) {
-    let lines = (value || '').split('\n').length;
-    let height = (lines) * 18 + 5;
+    let lines = (value || "").split("\n").length;
+    let height = lines * 18 + 5;
     return height < 100 ? 100 : height;
   }
 
   roleName(id: string) {
-    let entity = this.Roles.find(r => r.Id === id);
-    return entity ? entity.Name : '<Role Deleted>';
+    let entity = this.Roles.find((r) => r.Id === id);
+    return entity ? entity.Name : "<Role Deleted>";
   }
 
   organisationName(id: string) {
-    let entity = this.Organisations.find(r => r.Id === id);
-    return entity ? entity.Name : '<Organisation Deleted>';
+    let entity = this.Organisations.find((r) => r.Id === id);
+    return entity ? entity.Name : "<Organisation Deleted>";
   }
 
   compile(client: SocketClient) {
-    const observer = client.send('CompileInstitution', [JSON.stringify(this.json)]);
-    this.store.compiling = true;
-    autorun(() => {
-      if (observer.loading) {
-        // console.log('Compiling ...');
-      } else {     
-        let result = observer.data.CompileInstitution;
-
+    client.send({
+      query: "CompileInstitution",
+      variables: [JSON.stringify(this.json)],
+      receiver: (resultString: string) => {
+        const result = JSON.parse(resultString);
         this.store.compiledCode = result.Code;
         this.store.errors.replace(result.Errors ? result.Errors : empty);
         this.store.compiling = false;
 
         if (result.Errors) {
-          Ui.alertError('Compilation Failed')
+          Ui.alertError("Compilation Failed");
         } else {
-          Ui.alert('Compilation Successful');
+          Ui.alert("Compilation Successful");
         }
-        // console.log(JSON.stringify(observer.data));
-      }
+      },
     });
+    this.store.compiling = true;
   }
 
   checkExists(array: Entity[], name: string, entity: Entity) {
-    let m = array.find(a => a.Id === entity.Id);
+    let m = array.find((a) => a.Id === entity.Id);
     if (m) {
       Ui.alertDialog(`${name} with this Id already exists: ${entity.Id}`);
       return true;
@@ -215,7 +242,7 @@ export class Ei extends ParametricEntity {
   }
 
   save = () => {
-    const key = 'ws.' + this.Id;
+    const key = "ws." + this.Id;
     const json = this.json;
     localStorage.setItem(key, JSON.stringify(json, null));
   };
@@ -223,22 +250,22 @@ export class Ei extends ParametricEntity {
   createAuthorisation = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     e.preventDefault();
-  
-    this.Authorisation.push(new Authorisation())
-  }
+
+    this.Authorisation.push(new Authorisation());
+  };
 
   createOrganisation = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     e.preventDefault();
 
-    Ui.promptText('Name of the new organisation?').then(name => {
+    Ui.promptText("Name of the new organisation?").then((name) => {
       if (name.value) {
         let org = new Organisation(
           { Name: name.value, Id: name.value.toId() } as any,
           this.Organisations,
           this
         );
-        if (!this.checkExists(this.Organisations, 'Organisation', org)) {
+        if (!this.checkExists(this.Organisations, "Organisation", org)) {
           this.Organisations.push(org);
           this.store.viewStore.showOrganisation(org.Id, org.Name);
 
@@ -249,19 +276,18 @@ export class Ei extends ParametricEntity {
 
     return false;
   };
-  
 
   createRole = async (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
 
-    let name = await Ui.promptText('Name of the new role?');
+    let name = await Ui.promptText("Name of the new role?");
     if (name.value) {
       let role = new Role(
         { Name: name.value, Id: name.value.toId() } as any,
         this.Roles,
         this
       );
-      if (!this.checkExists(this.Roles, 'Role', role)) {
+      if (!this.checkExists(this.Roles, "Role", role)) {
         this.Roles.push(role);
         this.store.viewStore.showRole(role.Id, role.Name);
 
@@ -273,14 +299,14 @@ export class Ei extends ParametricEntity {
   createType = async (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
 
-    let name = await Ui.promptText('Name of the new type?');
+    let name = await Ui.promptText("Name of the new type?");
     if (name.value) {
       const type = new Type(
         { Name: name.value, Id: name.value.toId() } as any,
         this.Types,
         this
       );
-      if (!this.checkExists(this.Types, 'Type', type)) {
+      if (!this.checkExists(this.Types, "Type", type)) {
         this.Types.push(type);
         this.store.viewStore.showType(type.Id, type.Name);
 
@@ -290,13 +316,18 @@ export class Ei extends ParametricEntity {
   };
 
   createWorkflow = async () => {
-    let name = await Ui.promptText('Name of the new workflow?');
+    let name = await Ui.promptText("Name of the new workflow?");
     if (name.value) {
       let workflow = new Workflow(
-        { Name: name.value, Id: name.value.toId(), Static: false, Stateless: false } as any,
+        {
+          Name: name.value,
+          Id: name.value.toId(),
+          Static: false,
+          Stateless: false,
+        } as any,
         this
       );
-      if (!this.checkExists(this.Workflows, 'Workflow', workflow)) {
+      if (!this.checkExists(this.Workflows, "Workflow", workflow)) {
         this.Workflows.push(workflow);
         this.store.viewStore.showWorkflow(workflow.Id, workflow.Name);
 
@@ -310,11 +341,11 @@ export class Ei extends ParametricEntity {
       ...super.json,
       MainWorkflow: this.MainWorkflow,
       Expressions: this.Expressions,
-      Organisations: this.Organisations.map(o => o.json),
-      Roles: this.Roles.map(o => o.json),
-      Types: this.Types.map(o => o.json),
-      Workflows: this.Workflows.map(o => o.json),
-      Authorisation: this.Authorisation.map(o => o.json)
+      Organisations: this.Organisations.map((o) => o.json),
+      Roles: this.Roles.map((o) => o.json),
+      Types: this.Types.map((o) => o.json),
+      Workflows: this.Workflows.map((o) => o.json),
+      Authorisation: this.Authorisation.map((o) => o.json),
     };
   }
 
@@ -329,7 +360,7 @@ export class Ei extends ParametricEntity {
     let items = [...entities];
     while (items.length > 0) {
       for (let item of items) {
-        if (item.Parent == null || target.find(t => t.Id === item.Parent)) {
+        if (item.Parent == null || target.find((t) => t.Id === item.Parent)) {
           target.push(new ClassType(item, target, this));
           items.splice(items.indexOf(item), 1);
         } else {

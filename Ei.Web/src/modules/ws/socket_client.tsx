@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { observable } from "mobx";
-import { Observer } from "./observer";
 import { context } from "../../config/context";
 
 enum SocketState {
@@ -27,42 +26,58 @@ interface SocketMessage {
 
 interface MethodInfo {
   methodName: string;
-  arguments: string[];
+  arguments: [number, ...any[]];
 }
 
 let queryUid = 0;
 
-export class QueryHandler {
-  private observers: Observer[] = [];
+// export class QueryHandler {
+//   private observers: Observer[] = [];
 
-  createObserver(
-    client: SocketClient,
-    query: string,
-    variables: any[] = [],
-    observer?: Observer
-  ) {
-    let id = queryUid++;
+//   createObserver(
+//     client: SocketClient,
+//     query: string,
+//     variables: any[] = [],
+//     observer?: Observer
+//   ) {
+//     let id = queryUid++;
 
-    // initialise observer
-    if (!observer) {
-      observer = new Observer(id, client, query, variables);
-    } else {
-      observer.id = id;
-    }
-    this.observers.push(observer);
-    return observer;
-  }
+//     // initialise observer
+//     if (!observer) {
+//       observer = new Observer(id, client, query, variables);
+//     } else {
+//       observer.id = id;
+//     }
+//     this.observers.push(observer);
+//     return observer;
+//   }
 
-  queryResult(observerIdString: string, data: string) {
-    let observerId = parseInt(observerIdString, 10);
-    let result = JSON.parse(data);
-    let observer = this.observers.find((o) => o.id === observerId);
-    observer.update(result);
+//   queryResult(observerIdString: string, data: string) {
+//     let observerId = parseInt(observerIdString, 10);
+//     let result = typeof data === "string" ? JSON.parse(data) : data;
+//     let observer = this.observers.find((o) => o.id === observerId);
+//     observer.update(result);
 
-    // remove this observer
-    this.observers.splice(this.observers.indexOf(observer), 1);
-  }
-}
+//     // remove this observer
+//     this.observers.splice(this.observers.indexOf(observer), 1);
+//   }
+
+//   subscribe(observerIdString: string, data: string) {
+//     let observerId = parseInt(observerIdString, 10);
+//     let result = typeof data === "string" ? JSON.parse(data) : data;
+//     let observer = this.observers.find((o) => o.id === observerId);
+//     observer.update(result);
+//   }
+// }
+
+type SendOptions<T = any> = {
+  query: string;
+  variables?: any[];
+  receiver?: T;
+  isSubscription?: boolean;
+};
+
+let uid: number = 0;
 
 export class SocketClient {
   static loadingComponent = () => <div>Loading ...</div>;
@@ -74,16 +89,18 @@ export class SocketClient {
   url: string;
   socket: WebSocket;
 
-  private messageHandler: QueryHandler;
+  handlers: Map<string, Map<number, SendOptions>> = new Map();
+
+  // private messageHandler: QueryHandler;
   private errorHandler: ErrorHandler;
 
   constructor(
     url: string,
-    messageHandler = new QueryHandler(),
+    // messageHandler = new QueryHandler(),
     errorHandler?: ErrorHandler
   ) {
     this.url = url;
-    this.messageHandler = messageHandler;
+    // this.messageHandler = messageHandler;
     this.errorHandler = errorHandler;
   }
 
@@ -94,15 +111,30 @@ export class SocketClient {
     this.socket.close(1000, "Closing from client");
   }
 
-  send(query: string, variables: any[] = [], observer?: Observer): Observer {
-    observer = this.messageHandler.createObserver(
-      this,
-      query,
-      variables,
-      observer
-    );
+  unsubscribe(query: string, id: number) {
+    this.handlers.get(query).delete(id);
+  }
 
-    variables = [observer.id, ...variables];
+  send(options: SendOptions): number {
+    // observer = this.messageHandler.createObserver(
+    //   this,
+    //   query,
+    //   variables,
+    //   observer
+    // );
+
+    const { query, receiver } = options;
+    let id = uid++;
+
+    if (receiver) {
+      // add handler
+      if (!this.handlers.has(query)) {
+        this.handlers.set(query, new Map());
+      }
+      this.handlers.get(query).set(id, options);
+    }
+
+    let variables = [id].concat(options.variables || []);
 
     this.connect().then(() => {
       this.socket.send(
@@ -110,7 +142,7 @@ export class SocketClient {
       );
     });
 
-    return observer;
+    return id;
   }
 
   async connect() {
@@ -151,7 +183,21 @@ export class SocketClient {
             this.connectionId = message.data;
           } else if (message.messageType === MessageType.MethodInvocation) {
             const methodInfo: MethodInfo = JSON.parse(message.data);
-            this.messageHandler[methodInfo.methodName](...methodInfo.arguments);
+
+            const handler = this.handlers
+              .get(methodInfo.methodName)
+              ?.get(methodInfo.arguments[0]);
+
+            if (handler?.receiver) {
+              handler.receiver(...methodInfo.arguments.slice(1));
+
+              // remove if this is not a subscription
+              if (!handler.isSubscription) {
+                this.handlers
+                  .get(methodInfo.methodName)
+                  .delete(methodInfo.arguments[0]);
+              }
+            }
           } else {
             // tslint:disable-next-line:no-console
             console.warn(event.data);

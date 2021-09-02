@@ -31,8 +31,8 @@ export const EiListContainer = ({ context }: Props) => {
 };
 
 function openFile(callback: (content: string) => void) {
-  let readFile = function (e) {
-    var file = e.target.files[0];
+  let readFile = function (e: React.MouseEvent<HTMLInputElement>) {
+    var file = e.currentTarget.files[0];
     if (!file) {
       return;
     }
@@ -47,7 +47,7 @@ function openFile(callback: (content: string) => void) {
   let fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.style.display = "none";
-  fileInput.onchange = readFile;
+  fileInput.onchange = readFile as any;
   document.body.appendChild(fileInput);
 
   fileInput.click();

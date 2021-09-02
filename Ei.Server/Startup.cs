@@ -62,6 +62,7 @@ namespace Ei.Server
 
             //});
             #endregion
+            
             app.UseFileServer();
         }
         #region Echo

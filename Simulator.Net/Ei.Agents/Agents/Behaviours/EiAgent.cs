@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using Ei.Simulation.Core;
 using Ei.Simulation.Physiology;
 using Ei.Simulation.Simulator;
 using UnityEngine;
 
-namespace Ei.Agents.Planning
+namespace Ei.Simulation.Agents.Behaviours
 {
     public class EiAgent : EiBehaviour, IAgentView, IUpdates
     {

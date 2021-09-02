@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Ei.Agents.Planning;
 using Ei.Core.Ontology;
 using Ei.Core.Runtime.Planning.Environment;
 using Ei.Simulation.Core;
+using Ei.Simulation.Physiology;
 using Ei.Simulation.Sims.Behaviours;
 using Ei.Simulation.Simulator;
 using UnityEngine;
 using Project = Ei.Simulation.Simulator.Project;
 
-namespace Ei.Simulation.Physiology.Behaviours
+namespace Ei.Simulation.Agents.Behaviours
 {
-    public class PhysiologyProjectRunner : EiBehaviour
+    public class EiProjectStarter : EiBehaviour
     {
         private Dictionary<EnvironmentData, GameObject> objectMappings;
         private Dictionary<PhysiologyBasedAgent, GameObject> agentMappings;

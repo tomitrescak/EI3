@@ -27,8 +27,6 @@ namespace Ei.Server
             handler.Compile(ei);
             handler.Run(project);
 
-            Console.ReadLine();
-
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseUrls(
@@ -40,6 +38,8 @@ namespace Ei.Server
                 .UseStartup<Startup>()
                 .Build();
             host.Run();
+
+            Console.ReadLine();
         }
 
         
