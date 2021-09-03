@@ -4,7 +4,7 @@ import { Accordion, Button, Icon, Label, List } from "semantic-ui-react";
 
 import { IconView } from "../core/entity_icon_view";
 import { entitySort } from "../ei/entity_model";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { IObservableArray } from "mobx";
 import { HierarchicEntity } from "../ei/hierarchic_entity_model";
@@ -21,6 +21,14 @@ export const AccordionButton = styled(Button)`
 export const AccordionContent = styled(Accordion.Content)`
   // background: '#dedede',
   padding: 6px 6px 6px 25px !important;
+
+  .item {
+    border-radius: 3px;
+    padding: 4px !important;
+  }
+  .active {
+    background: #cdcdcd;
+  }
 `;
 
 interface Props {
@@ -44,52 +52,54 @@ export const HierarchicEntityView = observer(
     title,
     url,
     ei,
-  }: Props) => (
-    <>
-      <Accordion.Title active={active} index={index} onClick={handleClick}>
-        <Icon name="dropdown" />
-        <Label
-          size="tiny"
-          color="blue"
-          circular
-          content={collection.length}
-        />{" "}
-        {title}
-        <AccordionButton
-          floated="right"
-          icon="plus"
-          compact
-          color="green"
-          onClick={createEntity}
-        />
-        <AccordionButton
-          as={Link}
-          to={`/ei/${ei.Name.toUrlName()}/${ei.id}/${url}`}
-          floated="right"
-          icon="sitemap"
-          compact
-          color="orange"
-        />
-      </Accordion.Title>
-      <AccordionContent active={active}>
-        <List>
-          {collection
-            .slice()
-            .sort(entitySort)
-            .map((entity) => (
-              <List.Item
-                as={Link}
-                to={`/ei/${ei.Name.toUrlName()}/${
-                  ei.id
-                }/${url}/${entity.Name.toUrlName()}/${entity.Id}`}
-                key={entity.Id}
-              >
-                <IconView entity={entity} />
-                {entity.Name || entity.Id}
-              </List.Item>
-            ))}
-        </List>
-      </AccordionContent>
-    </>
-  )
+  }: Props) => {
+    const history = useLocation();
+    return (
+      <>
+        <Accordion.Title active={active} index={index} onClick={handleClick}>
+          <Icon name="dropdown" />
+          <Label
+            size="tiny"
+            color="blue"
+            circular
+            content={collection.length}
+          />{" "}
+          {title}
+          <AccordionButton
+            floated="right"
+            icon="plus"
+            compact
+            color="green"
+            onClick={createEntity}
+          />
+          <AccordionButton
+            as={Link}
+            to={`/ei/${ei.Name.toUrlName()}/${ei.id}/${url}`}
+            floated="right"
+            icon="sitemap"
+            compact
+            color="orange"
+          />
+        </Accordion.Title>
+        <AccordionContent active={active}>
+          <List>
+            {collection
+              .slice()
+              .sort(entitySort)
+              .map((entity) => (
+                <List.Item
+                  as={Link}
+                  active={entity.url === history.pathname}
+                  to={entity.url}
+                  key={entity.Id}
+                >
+                  <IconView entity={entity} />
+                  {entity.Name || entity.Id}
+                </List.Item>
+              ))}
+          </List>
+        </AccordionContent>
+      </>
+    );
+  }
 );

@@ -1,12 +1,15 @@
-import { action, IObservableArray, observable } from 'mobx';
-import { field } from 'semantic-ui-mobx';
-import { PointModel } from 'storm-react-diagrams';
+import { action, IObservableArray, observable } from "mobx";
+import { field } from "semantic-ui-mobx";
+import { PointModel } from "storm-react-diagrams";
 
-import { Ui } from '../../helpers/client_helpers';
-import { EntityLinkModel } from '../diagrams/model/entity/entity_link_model';
-import { EntityPortModel } from '../diagrams/model/entity/entity_port_model';
-import { Ei } from './ei_model';
-import { ParametricEntity, ParametricEntityDao } from './parametric_entity_model';
+import { Ui } from "../../helpers/client_helpers";
+import { EntityLinkModel } from "../diagrams/model/entity/entity_link_model";
+import { EntityPortModel } from "../diagrams/model/entity/entity_port_model";
+import { Ei } from "./ei_model";
+import {
+  ParametricEntity,
+  ParametricEntityDao,
+} from "./parametric_entity_model";
 
 export interface PointDao {
   x: number;
@@ -27,28 +30,37 @@ export abstract class HierarchicEntity extends ParametricEntity {
   private parents: IObservableArray<HierarchicEntity>;
   private points: PointDao[];
 
+  route: string;
+
   constructor(
     model: HierarchicEntityDao,
+    route: string,
     parents: IObservableArray<HierarchicEntity>,
     ei: Ei,
     allowEditIcon = false
   ) {
     super(model, allowEditIcon);
 
+    this.route = route;
     this.ei = ei;
     this.parents = parents;
     this.points = model && model.LinkPoints;
 
     // add ports
-    this.addPort(new EntityPortModel('top'));
-    this.addPort(new EntityPortModel('bottom'));
+    this.addPort(new EntityPortModel("top"));
+    this.addPort(new EntityPortModel("bottom"));
 
     // add listeners
     this.addListener({
       selectionChanged: ({ isSelected }) => {
         isSelected ? this.select() : this.deselect();
-      }
+      },
     });
+
+    if (this.ei.context.Router.router.location.pathname == this.url) {
+      this.setSelected(true);
+      ei.context.selectedEntity = this;
+    }
 
     if (model) {
       this.setParent(model.Parent);
@@ -61,23 +73,25 @@ export abstract class HierarchicEntity extends ParametricEntity {
   update() {
     if (this.Parent) {
       // get the link
-      let topPort = this.getPort('top');
+      let topPort = this.getPort("top");
       let topPortKeys = Object.getOwnPropertyNames(topPort.links);
       if (topPortKeys.length === 1) {
         this.parentLink = topPort.links[topPortKeys[0]] as EntityLinkModel;
       } else if (topPortKeys.length > 1) {
-        throw new Error('Too many links');
+        throw new Error("Too many links");
       } else {
         this.parentLink = new EntityLinkModel();
 
         // create points
         if (this.points && this.points.length) {
-          this.parentLink.setPoints(this.points.map(p => new PointModel(this.parentLink, p)));
+          this.parentLink.setPoints(
+            this.points.map((p) => new PointModel(this.parentLink, p))
+          );
         }
 
         // add ports
-        const parent = this.parents.find(p => p.Id === this.Parent);
-        this.parentLink.setSourcePort(parent.getPort('bottom'));
+        const parent = this.parents.find((p) => p.Id === this.Parent);
+        this.parentLink.setSourcePort(parent.getPort("bottom"));
         this.parentLink.setTargetPort(topPort);
       }
     } else {
@@ -97,6 +111,12 @@ export abstract class HierarchicEntity extends ParametricEntity {
 
   get Parent() {
     return this._parent;
+  }
+
+  get url() {
+    return `/ei/${this.ei.Name.toUrlName()}/${this.ei.id}/${
+      this.route
+    }/${this.Name.toUrlName()}/${this.Id}`;
   }
 
   @action setParent(parent: string) {
@@ -124,15 +144,18 @@ export abstract class HierarchicEntity extends ParametricEntity {
   async remove(): Promise<void> {
     if (
       this.parents.length === 1 &&
-      (this.constructor.name === 'Role' || this.constructor.name === 'Organisation')
+      (this.constructor.name === "Role" ||
+        this.constructor.name === "Organisation")
     ) {
-      Ui.alertDialog('You cannot remove the last item. Institution needs to contain at least one.');
+      Ui.alertDialog(
+        "You cannot remove the last item. Institution needs to contain at least one."
+      );
       return;
     }
     if (
       await Ui.confirmDialogAsync(
-        'Do you want to delete this record? This can break your existing references!',
-        'Deleting record'
+        "Do you want to delete this record? This can break your existing references!",
+        "Deleting record"
       )
     ) {
       this.removeItem();
@@ -143,11 +166,18 @@ export abstract class HierarchicEntity extends ParametricEntity {
     return {
       ...super.json,
       Parent: this.Parent,
-      LinkPoints: this.parentLink ? this.parentLink.getPoints().map(p => ({ x: p.x, y: p.y })) : []
+      LinkPoints: this.parentLink
+        ? this.parentLink.getPoints().map((p) => ({ x: p.x, y: p.y }))
+        : [],
     };
   }
 
-  abstract select(): void;
+  select() {
+    if (this.url !== this.ei.context.Router.router.location.pathname) {
+      this.ei.context.Router.router.push(this.url);
+    }
+  }
+
   deselect() {
     /**/
   }

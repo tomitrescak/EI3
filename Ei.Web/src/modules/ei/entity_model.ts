@@ -45,11 +45,6 @@ export class Entity extends FormNodeStore {
     makeObservable(this);
   }
 
-  setSelected(value) {
-    debugger;
-    super.setSelected(value);
-  }
-
   deselect() {
     /**/
   }

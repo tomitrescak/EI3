@@ -7,6 +7,7 @@ import { Button, DropdownItemProps, Header } from "semantic-ui-react";
 import { Form, getField, Input, Label, Select } from "semantic-ui-mobx";
 import { Property } from "../ei/property_model";
 import { AppContext, useAppContext } from "../../config/context";
+import styled from "@emotion/styled";
 
 interface IPropertyOwner {
   Properties: IObservableArray<Property>;
@@ -18,6 +19,14 @@ interface PropertyItemProps {
   propertyItem: Property;
   types: DropdownItemProps[];
 }
+
+const Group = styled(Form.Group)`
+  .dropdown {
+    font-size: 0.78571429em !important;
+    line-height: 1.21428571em;
+    padding: 0.67857143em 1em;
+  }
+`;
 
 class PropertyItem extends React.Component<PropertyItemProps> {
   delete = async () => {
@@ -35,17 +44,28 @@ class PropertyItem extends React.Component<PropertyItemProps> {
   render() {
     const { propertyItem, types } = this.props;
     return (
-      <Form.Group>
-        <Input width={5} owner={getField(propertyItem, "Name")} />
+      <Group>
+        <Input size="mini" width={5} owner={getField(propertyItem, "Name")} />
         <Select
+          compact
           width={4}
           fluid
           options={types}
           owner={getField(propertyItem, "Type")}
         />
-        <Input width={6} owner={getField(propertyItem, "DefaultValue")} />
-        <Button width={1} icon="trash" color="red" onClick={this.delete} />
-      </Form.Group>
+        <Input
+          size="mini"
+          width={6}
+          owner={getField(propertyItem, "DefaultValue")}
+        />
+        <Button
+          size="mini"
+          width={1}
+          icon="trash"
+          color="red"
+          onClick={this.delete}
+        />
+      </Group>
     );
   }
 }

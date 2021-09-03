@@ -108,7 +108,7 @@ export class State extends PositionModel {
   }
 
   select() {
-    this.ei.store.viewStore.showState(
+    this.ei.context.viewStore.showState(
       this.workflow.Id,
       this.workflow.Name,
       this.Id

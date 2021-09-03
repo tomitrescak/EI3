@@ -18,7 +18,7 @@ import * as React from "react";
 
 //   constructor(context: App.Context) {
 //     this.context = context;
-//     this.store = context.store;
+//     this.store = context;
 //   }
 
 //   startRouter(routes: Route[]) {

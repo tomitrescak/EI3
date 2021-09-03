@@ -1,15 +1,8 @@
-import {
-  autorun,
-  computed,
-  IObservableArray,
-  makeObservable,
-  observable,
-} from "mobx";
+import { computed, IObservableArray, makeObservable, observable } from "mobx";
 import { field } from "semantic-ui-mobx";
 import { DropdownItemProps } from "semantic-ui-react";
 import { DefaultNodeFactory, DiagramEngine } from "storm-react-diagrams";
 import { AppContext } from "../../config/context";
-import { AppStore } from "../../config/store";
 
 import { Ui } from "../../helpers/client_helpers";
 import { EntityLinkFactory } from "../diagrams/model/entity/entity_link_factory";
@@ -36,10 +29,11 @@ export class Organisation extends HierarchicEntity {
 
   constructor(
     model: HierarchicEntityDao,
+    route: string,
     parents: IObservableArray<HierarchicEntity>,
     ei: Ei
   ) {
-    super(model, parents, ei, true);
+    super(model, route, parents, ei, true);
 
     this.allowEditIcon = true;
 
@@ -49,19 +43,18 @@ export class Organisation extends HierarchicEntity {
 
     makeObservable(this);
   }
-
-  select() {
-    this.ei.store.viewStore.showOrganisation(this.Id, this.Name);
-  }
 }
 
 export class Role extends HierarchicEntity {
+  route = "roles";
+
   constructor(
     model: HierarchicEntityDao,
+    route: string,
     parents: IObservableArray<HierarchicEntity>,
     ei: Ei
   ) {
-    super(model, parents, ei, true);
+    super(model, route, parents, ei, true);
 
     this.allowEditIcon = true;
 
@@ -69,15 +62,9 @@ export class Role extends HierarchicEntity {
       this.Icon = "👮🏼‍";
     }
   }
-
-  select() {
-    this.ei.store.viewStore.showRole(this.Id, this.Name);
-  }
 }
 export class Type extends HierarchicEntity {
-  select() {
-    this.ei.store.viewStore.showType(this.Id, this.Name);
-  }
+  route = "types";
 }
 
 export interface EiDao extends ParametricEntityDao {
@@ -129,7 +116,6 @@ export class Ei extends ParametricEntity {
   }
 
   engine: DiagramEngine;
-  store: AppStore;
 
   @field MainWorkflow: string;
   Expressions: string;
@@ -141,10 +127,10 @@ export class Ei extends ParametricEntity {
   Authorisation: IObservableArray<Authorisation>;
   Experiments: IObservableArray<Experiment>;
 
-  constructor(model: EiDao, private context: AppContext) {
+  constructor(model: EiDao, public context: AppContext) {
     super(model);
 
-    this.store = context.store;
+    this.context = context;
     this.engine = new DiagramEngine();
     this.engine.registerNodeFactory(new DefaultNodeFactory());
     this.engine.registerLinkFactory(new EntityLinkFactory("default"));
@@ -160,12 +146,13 @@ export class Ei extends ParametricEntity {
     this.Expressions = model.Expressions;
     this.MainWorkflow = model.MainWorkflow;
     this.Organisations = this.initHierarchy(
+      "organisations",
       model.Organisations,
       observable([]),
       Organisation
     );
-    this.Roles = this.initHierarchy(model.Roles, observable([]), Role);
-    this.Types = this.initHierarchy(model.Types, observable([]), Type);
+    this.Roles = this.initHierarchy("roles", model.Roles, observable([]), Role);
+    this.Types = this.initHierarchy("types", model.Types, observable([]), Type);
     this.Workflows = observable(
       (model.Workflows || emptyWorkflows).map(
         (r) => new Workflow(r, this, this.context)
@@ -210,6 +197,12 @@ export class Ei extends ParametricEntity {
     return this.Roles.map((w) => ({ text: w.Name, value: w.Id }));
   }
 
+  createUrl(route: string, entity: { Id: string; Name: string }) {
+    return `/ei/${this.Name.toUrlName()}/${
+      this.id
+    }/${route}/${entity.Name.toUrlName()}/${entity.Id}`;
+  }
+
   editorHeight(value: string) {
     let lines = (value || "").split("\n").length;
     let height = lines * 18 + 5;
@@ -232,9 +225,9 @@ export class Ei extends ParametricEntity {
       variables: [JSON.stringify(this.json)],
       receiver: (resultString: string) => {
         const result = JSON.parse(resultString);
-        this.store.compiledCode = result.Code;
-        this.store.errors.replace(result.Errors ? result.Errors : empty);
-        this.store.compiling = false;
+        this.context.compiledCode = result.Code;
+        this.context.errors.replace(result.Errors ? result.Errors : empty);
+        this.context.compiling = false;
 
         if (result.Errors) {
           Ui.alertError("Compilation Failed");
@@ -243,7 +236,7 @@ export class Ei extends ParametricEntity {
         }
       },
     });
-    this.store.compiling = true;
+    this.context.compiling = true;
   }
 
   checkExists(array: Entity[], name: string, entity: Entity) {
@@ -276,12 +269,13 @@ export class Ei extends ParametricEntity {
       if (name.value) {
         let org = new Organisation(
           { Name: name.value, Id: name.value.toId() } as any,
+          "organisations",
           this.Organisations,
           this
         );
         if (!this.checkExists(this.Organisations, "Organisation", org)) {
           this.Organisations.push(org);
-          this.store.viewStore.showOrganisation(org.Id, org.Name);
+          this.context.Router.push(org.url);
 
           Ui.history.step();
         }
@@ -298,12 +292,13 @@ export class Ei extends ParametricEntity {
     if (name.value) {
       let role = new Role(
         { Name: name.value, Id: name.value.toId() } as any,
+        "roles",
         this.Roles,
         this
       );
       if (!this.checkExists(this.Roles, "Role", role)) {
         this.Roles.push(role);
-        this.store.viewStore.showRole(role.Id, role.Name);
+        this.context.Router.push(role.url);
 
         Ui.history.step();
       }
@@ -317,12 +312,13 @@ export class Ei extends ParametricEntity {
     if (name.value) {
       const type = new Type(
         { Name: name.value, Id: name.value.toId() } as any,
+        "types",
         this.Types,
         this
       );
       if (!this.checkExists(this.Types, "Type", type)) {
         this.Types.push(type);
-        this.store.viewStore.showType(type.Id, type.Name);
+        this.context.Router.push(type.url);
 
         Ui.history.step();
       }
@@ -344,7 +340,7 @@ export class Ei extends ParametricEntity {
       );
       if (!this.checkExists(this.Workflows, "Workflow", workflow)) {
         this.Workflows.push(workflow);
-        this.store.viewStore.showWorkflow(workflow.Id, workflow.Name);
+        this.context.Router.push(this.createUrl("workflows", workflow));
 
         Ui.history.step();
       }
@@ -365,6 +361,7 @@ export class Ei extends ParametricEntity {
   }
 
   private initHierarchy(
+    route: string,
     entities: HierarchicEntityDao[],
     target: IObservableArray<HierarchicEntity>,
     ClassType: any
@@ -376,7 +373,7 @@ export class Ei extends ParametricEntity {
     while (items.length > 0) {
       for (let item of items) {
         if (item.Parent == null || target.find((t) => t.Id === item.Parent)) {
-          target.push(new ClassType(item, target, this));
+          target.push(new ClassType(item, route, target, this));
           items.splice(items.indexOf(item), 1);
         } else {
           continue;

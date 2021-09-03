@@ -71,7 +71,7 @@ export class ActionView extends React.Component<Props, {}, AppContext> {
         "Do you want to delete this action? This may break some references!"
       )
     ) {
-      const ei = this.context.store.ei;
+      const ei = this.context.ei;
       const workflow = ei.Workflows.find((w) => w.Id === this.props.workflowId);
       const action = workflow.Actions.find((a) => a.Id === this.props.id);
       workflow.Actions.remove(action);
@@ -80,7 +80,7 @@ export class ActionView extends React.Component<Props, {}, AppContext> {
   };
 
   render() {
-    const ei = this.props.context.store.ei;
+    const ei = this.props.context.ei;
     const workflow = ei.Workflows.find((w) => w.Id === this.props.workflowId);
     if (!workflow) {
       return <div>Workflow does not exist: {this.props.workflowId} </div>;

@@ -1,10 +1,10 @@
-import { LinkModel, PointModel } from 'storm-react-diagrams';
+import { LinkModel, PointModel } from "storm-react-diagrams";
 
-import { action, computed, IObservableArray, observable } from 'mobx';
+import { action, computed, IObservableArray, observable } from "mobx";
 
-import { Connection } from '../../../ei/connection_model';
-import { Workflow } from '../../../ei/workflow_model';
-import { WorkflowDiagramModel } from './workflow_diagram_model';
+import { Connection } from "../../../ei/connection_model";
+import { Workflow } from "../../../ei/workflow_model";
+import { WorkflowDiagramModel } from "./workflow_diagram_model";
 
 export class WorkflowLinkModel extends LinkModel {
   @observable selected = false;
@@ -23,15 +23,15 @@ export class WorkflowLinkModel extends LinkModel {
   }
 
   constructor(connection: Connection, workflow: Workflow) {
-    super('default', connection.Id);
+    super("default", connection.Id);
     this.connection = connection;
     this.workflow = workflow;
 
     this.addListener({
       selectionChanged: ({ isSelected }) => {
-				isSelected ? this.select() : false;
-			}
-    })
+        isSelected ? this.select() : false;
+      },
+    });
 
     this.points = observable(this.points);
   }
@@ -44,12 +44,18 @@ export class WorkflowLinkModel extends LinkModel {
   }
 
   select() {
-    this.workflow.ei.store.viewStore.showConnection(this.workflow.Id, this.workflow.Name, this.connection.Id);
+    this.workflow.ei.context.viewStore.showConnection(
+      this.workflow.Id,
+      this.workflow.Name,
+      this.connection.Id
+    );
   }
 
   @computed get action() {
     if (this.connection.ActionId) {
-      return this.workflow.Actions.find(a => a.Id === this.connection.ActionId);
+      return this.workflow.Actions.find(
+        (a) => a.Id === this.connection.ActionId
+      );
     }
     return null;
   }
@@ -68,8 +74,11 @@ export class WorkflowLinkModel extends LinkModel {
 
   @action safeRemoveLink() {
     this.workflow.Connections.remove(this.connection);
-    this.workflow.ei.store.viewStore.showWorkflow(this.workflow.Id, this.workflow.Name);
-    
+    this.workflow.ei.context.viewStore.showWorkflow(
+      this.workflow.Id,
+      this.workflow.Name
+    );
+
     // remove split info
     this.connection.checkSplit(true);
     // if (this.targetPort) {
@@ -83,7 +92,7 @@ export class WorkflowLinkModel extends LinkModel {
   validateCreate(model: WorkflowDiagramModel) {
     if (this.targetPort == null) {
       this.safeRemove(model);
-      model.version ++;
+      model.version++;
     }
   }
 }

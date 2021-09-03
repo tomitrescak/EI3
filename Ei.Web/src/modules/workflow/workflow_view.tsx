@@ -1,13 +1,13 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { inject, observer } from 'mobx-react';
-import { DefaultNodeFactory, DiagramEngine } from 'storm-react-diagrams';
+import { inject, observer } from "mobx-react";
+import { DefaultNodeFactory, DiagramEngine } from "storm-react-diagrams";
 
-import { DiagramView } from '../diagrams/diagram_view';
-import { WorkflowDiagramModel } from '../diagrams/model/workflow/workflow_diagram_model';
-import { WorkflowLinkFactory } from '../diagrams/model/workflow/workflow_link_factory';
-import { WorkflowNodeFactory } from '../diagrams/model/workflow/workflow_node_factory';
-import { Entity } from '../ei/entity_model';
+import { DiagramView } from "../diagrams/diagram_view";
+import { WorkflowDiagramModel } from "../diagrams/model/workflow/workflow_diagram_model";
+import { WorkflowLinkFactory } from "../diagrams/model/workflow/workflow_link_factory";
+import { WorkflowNodeFactory } from "../diagrams/model/workflow/workflow_node_factory";
+import { Entity } from "../ei/entity_model";
 
 interface Props {
   id: string;
@@ -18,19 +18,19 @@ interface Props {
   selectedConnection?: string;
 }
 
-@inject('context')
+@inject("context")
 @observer
 export class WorkflowView extends React.Component<Props> {
-  static displayName = 'WorkflowView';
+  static displayName = "WorkflowView";
 
   selectedNode: Entity;
 
   get ei() {
-    return this.props.context.store.ei;
+    return this.props.context.ei;
   }
 
   get workflow() {
-    return this.ei.Workflows.find(w => w.Id === this.props.id);
+    return this.ei.Workflows.find((w) => w.Id === this.props.id);
   }
 
   // componentWillMount() {
@@ -60,7 +60,7 @@ export class WorkflowView extends React.Component<Props> {
 
     let workflow = this.workflow;
     if (!workflow) {
-      return <div>Workflow Deleted!</div>
+      return <div>Workflow Deleted!</div>;
     }
 
     // add states
@@ -89,20 +89,38 @@ export class WorkflowView extends React.Component<Props> {
     // listen and store offsets
     model.addListener({
       offsetUpdated: ({ offsetX, offsetY }) => {
-        localStorage.setItem(`EntityDiagram.Workflow.${this.props.id}.offsetX`, offsetX.toString());
-        localStorage.setItem(`EntityDiagram.Workflow.${this.props.id}.offsetY`, offsetY.toString());
+        localStorage.setItem(
+          `EntityDiagram.Workflow.${this.props.id}.offsetX`,
+          offsetX.toString()
+        );
+        localStorage.setItem(
+          `EntityDiagram.Workflow.${this.props.id}.offsetY`,
+          offsetY.toString()
+        );
       },
-      zoomUpdated: zoom => {
-        localStorage.setItem(`EntityDiagram.Workflow.${this.props.id}.zoom`, zoom.zoom.toString());
-      }
+      zoomUpdated: (zoom) => {
+        localStorage.setItem(
+          `EntityDiagram.Workflow.${this.props.id}.zoom`,
+          zoom.zoom.toString()
+        );
+      },
     });
 
     // set offsets
-    const currentOffsetX = localStorage.getItem(`EntityDiagram.Workflow.${this.props.id}.offsetX`) || '200';
-    const currentOffsetY = localStorage.getItem(`EntityDiagram.Workflow.${this.props.id}.offsetY`) || '200';
-    const currentZoom = localStorage.getItem(`EntityDiagram.Workflow.${this.props.id}.zoom`);
+    const currentOffsetX =
+      localStorage.getItem(`EntityDiagram.Workflow.${this.props.id}.offsetX`) ||
+      "200";
+    const currentOffsetY =
+      localStorage.getItem(`EntityDiagram.Workflow.${this.props.id}.offsetY`) ||
+      "200";
+    const currentZoom = localStorage.getItem(
+      `EntityDiagram.Workflow.${this.props.id}.zoom`
+    );
     if (currentOffsetX) {
-      model.setOffset(parseInt(currentOffsetX, 10), parseInt(currentOffsetY, 10));
+      model.setOffset(
+        parseInt(currentOffsetX, 10),
+        parseInt(currentOffsetY, 10)
+      );
       model.setZoomLevel(parseInt(currentZoom, 10) || 100);
     }
 
@@ -110,7 +128,7 @@ export class WorkflowView extends React.Component<Props> {
     const engine = new DiagramEngine();
     engine.registerNodeFactory(new DefaultNodeFactory());
     engine.registerNodeFactory(new WorkflowNodeFactory());
-    engine.registerLinkFactory(new WorkflowLinkFactory('default'));
+    engine.registerLinkFactory(new WorkflowLinkFactory("default"));
 
     return (
       <>

@@ -17,12 +17,12 @@ const EditorForm = styled(Form)`
 export const EiEditor = observer(() => {
   const context = useAppContext();
   const update = (value: any) => {
-    context.store.ei.Expressions = value;
+    context.ei.Expressions = value;
   };
 
-  const value = () => context.store.ei.Expressions;
+  const value = () => context.ei.Expressions;
 
-  let ei = context.store.ei;
+  let ei = context.ei;
 
   if (!ei) {
     return <Message content="Deleted" />;

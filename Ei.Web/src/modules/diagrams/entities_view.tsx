@@ -15,20 +15,20 @@ interface Props {
 }
 
 export const EntitiesView = observer((props: Props) => {
+  function entities(customProps: Props = props) {
+    return customProps.entities(context.ei);
+  }
+
   const [selectedNode, setSelectedNode] = React.useState(() => {
     if (props.id) {
       const selectedNode = entities().find(
         (o) => o.Id.toLowerCase() === props.id.toLowerCase()
       ) as HierarchicEntity;
-      selectedNode.setSelected(true);
+      // selectedNode.setSelected(true);
       return selectedNode;
     }
   });
   const context = useAppContext();
-
-  function entities(customProps: Props = props) {
-    return customProps.entities(context.store.ei);
-  }
 
   React.useEffect(() => {
     if (props.id) {
@@ -85,5 +85,5 @@ export const EntitiesView = observer((props: Props) => {
     model.setOffset(parseInt(currentOffsetX, 10), parseInt(currentOffsetY, 10));
   }
 
-  return <DiagramView engine={context.store.ei.engine} diagram={model} />;
+  return <DiagramView engine={context.ei.engine} diagram={model} />;
 });

@@ -56,7 +56,7 @@ export class Transition extends PositionModel {
   }
 
   select() {
-    this.ei.store.viewStore.showTransition(
+    this.ei.context.viewStore.showTransition(
       this.workflow.Id,
       this.workflow.Name,
       this.Id

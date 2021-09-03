@@ -21,7 +21,7 @@ export const AuthorisationEditor = () => {
   const context = useAppContext();
   const { authorisationId } = useParams<{ authorisationId: string }>();
 
-  let ei = context.store.ei;
+  let ei = context.ei;
 
   if (!ei) {
     return <Message content="Deleted" />;

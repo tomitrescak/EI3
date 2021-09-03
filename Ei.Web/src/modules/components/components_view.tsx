@@ -22,16 +22,16 @@ const ComponentsType = styled.div`
 export const Components = observer(() => {
   const context = useAppContext();
   const handler = React.useMemo(
-    () => context.store.createAccordionHandler("root"),
+    () => context.createAccordionHandler("root"),
     []
   );
-  const ei = context.store.ei;
-  const store = context.store;
+  const ei = context.ei;
+  const store = context;
   const { eiId, eiName } =
     useParams<{ eiId: string; eiName: string; editor: string }>();
 
   const compile = () => {
-    context.store.ei.compile(context.client);
+    context.ei.compile(context.client);
   };
 
   return (

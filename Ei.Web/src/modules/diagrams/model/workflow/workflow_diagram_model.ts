@@ -1,9 +1,9 @@
-import { DiagramModel } from 'storm-react-diagrams';
+import { DiagramModel } from "storm-react-diagrams";
 
-import { observable } from 'mobx';
-import { Ui } from '../../../../helpers/client_helpers';
-import { WorkflowLinkModel } from './workflow_link_model';
-import { WorkflowPortModel } from './workflow_port_model';
+import { observable } from "mobx";
+import { Ui } from "../../../../helpers/client_helpers";
+import { WorkflowLinkModel } from "./workflow_link_model";
+import { WorkflowPortModel } from "./workflow_port_model";
 
 export class WorkflowDiagramModel extends DiagramModel {
   store: App.Store;
@@ -13,14 +13,14 @@ export class WorkflowDiagramModel extends DiagramModel {
     super();
 
     this.addListener({
-      nodesUpdated: _e => {
+      nodesUpdated: (_e) => {
         // node was deleted, remove it from the collection
         // let node = e.node as HierarchicEntity;
         // if (!e.isCreated) {
         //   node.remove();
         // }
       },
-      linksUpdated: e => {
+      linksUpdated: (e) => {
         const link = e.link as WorkflowLinkModel;
         // link deleted
         if (!e.isCreated) {
@@ -31,7 +31,11 @@ export class WorkflowDiagramModel extends DiagramModel {
           let checkConnection = () => {
             setTimeout(() => {
               // we may be modifying exiting connection
-              if (link.workflow.Connections.some(c => c.Id === link.connection.Id)) {
+              if (
+                link.workflow.Connections.some(
+                  (c) => c.Id === link.connection.Id
+                )
+              ) {
                 return;
               }
 
@@ -49,7 +53,7 @@ export class WorkflowDiagramModel extends DiagramModel {
               connection.update();
 
               link.workflow.Connections.push(link.connection);
-              link.workflow.ei.store.viewStore.showConnection(
+              link.workflow.ei.context.viewStore.showConnection(
                 link.workflow.Id,
                 link.workflow.Name,
                 link.connection.Id
@@ -57,9 +61,9 @@ export class WorkflowDiagramModel extends DiagramModel {
 
               Ui.history.step();
             }, 50);
-            document.removeEventListener('mouseup', checkConnection);
+            document.removeEventListener("mouseup", checkConnection);
           };
-          document.addEventListener('mouseup', checkConnection);
+          document.addEventListener("mouseup", checkConnection);
 
           e.link.addListener({
             targetPortChanged: () => {
@@ -104,10 +108,10 @@ export class WorkflowDiagramModel extends DiagramModel {
               // let childNode = toPort.getParent() as State;
               // let childNodeBottomPort = childNode.getPort('bottom') as WorkflowPortModel;
               // let parentLinks = parentNodeTopPort.linkArray;
-            }
+            },
           } as any);
         }
-      }
+      },
     });
   }
 }

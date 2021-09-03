@@ -141,7 +141,7 @@ export class Workflow extends ParametricEntity {
     ) {
       action(() => {
         this.ei.Workflows.remove(this);
-        this.ei.store.viewStore.showView("home");
+        this.ei.context.viewStore.showView("home");
       })();
     }
 
@@ -230,7 +230,7 @@ export class Workflow extends ParametricEntity {
         throw new Error("Not Implemented: " + actionType);
     }
 
-    this.ei.store.viewStore.showAction(this.Id, this.Name, Id);
+    this.ei.context.viewStore.showAction(this.Id, this.Name, Id);
 
     Ui.history.step();
   };
@@ -305,7 +305,7 @@ export class Workflow extends ParametricEntity {
         throw new Error("Not Implemented: " + transitionType);
     }
 
-    this.ei.store.viewStore.showTransition(this.Id, this.Name, Id);
+    this.ei.context.viewStore.showTransition(this.Id, this.Name, Id);
 
     Ui.history.step();
   };

@@ -9,7 +9,7 @@ import styled from "@emotion/styled";
 
 const HeaderContent = styled(Header.Content)`
   width: 100%;
-  display: flex;
+  display: flex !important;
   align-items: center;
 
   .header {

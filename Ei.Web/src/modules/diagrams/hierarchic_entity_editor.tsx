@@ -29,7 +29,7 @@ interface Props {
 
 export const HierarchicEntityEditor = observer((props: Props) => {
   // deleteRecord = action(() => {
-  //   let ei = this.props.context.store.ei;
+  //   let ei = this.props.context.ei;
   //   let collection = this.props.collection(ei);
   //   let entity = collection.find(o => o.Id === this.props.id);
 
@@ -63,10 +63,25 @@ export const HierarchicEntityEditor = observer((props: Props) => {
   let context = useAppContext();
   const params = useParams();
   const id = params[props.paramName];
-  let ei = context.store.ei;
+  let ei = context.ei;
   let entity = props
     .collection(ei)
     .find((o) => o.Id.toLowerCase() === id.toLowerCase());
+
+  React.useEffect(() => {
+    if (
+      entity &&
+      ei.context.selectedEntity &&
+      ei.context.selectedEntity.Id != entity.id &&
+      ei.context.selectedEntity.selected
+    ) {
+      ei.context.selectedEntity.setSelected(false);
+    }
+    if (entity && !entity.selected) {
+      entity.setSelected();
+      ei.context.selectedEntity = entity;
+    }
+  });
 
   if (!entity) {
     return <Message content="Deleted" />;

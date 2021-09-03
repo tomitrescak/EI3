@@ -1,8 +1,7 @@
 import { WorkHistory } from "../modules/history/history";
 import { toast, ToastOptions } from "react-semantic-toasts";
 import swal, { SweetAlertType } from "sweetalert2";
-
-let a: any;
+import type { History } from "history";
 
 export const Ui = {
   history: new WorkHistory(),
@@ -82,7 +81,7 @@ export const Ui = {
     validate = (val: string) => val !== ""
   ) {
     // let title = mf(prompt);
-    const swal = require("sweetalert2");
+
     return swal({
       title: prompt,
       input: "text",
@@ -90,7 +89,7 @@ export const Ui = {
       showCancelButton: false,
       allowEscapeKey: false,
       allowOutsideClick: false,
-      inputValidator: this.inputValidator(validate),
+      inputValidator: this.inputValidator(validate) as any,
     });
   },
   promptText(
@@ -98,13 +97,12 @@ export const Ui = {
     placeholder = "",
     validate = (val: string) => val !== ""
   ): Promise<{ value: string }> {
-    const swal = require("sweetalert2");
     return swal({
       title: prompt,
       input: "text",
       inputPlaceholder: placeholder,
       showCancelButton: true,
-      inputValidator: this.inputValidator(validate),
+      inputValidator: this.inputValidator(validate) as any,
     });
   },
   promptOptions(
@@ -113,22 +111,19 @@ export const Ui = {
     options: { [idx: string]: string },
     validate = (val: string) => val
   ) {
-    const swal = require("sweetalert2");
     return swal({
       title: prompt,
       input: "select",
       inputOptions: options,
       inputPlaceholder: placeholder,
       showCancelButton: true,
-      inputValidator: this.inputValidator(validate as any),
+      inputValidator: this.inputValidator(validate as any) as any,
     });
   },
 };
 
 export const Router = {
-  router: "",
-  go(_route: string) {
-    // RouterUtils.router.transitionTo(route);
-    // history.push(route);
-  },
+  router: null as History,
+  push(route: string) {},
+  replace(route: string) {},
 };

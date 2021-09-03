@@ -53,9 +53,9 @@ export const Messages = () => {
   return (
     <Observer>
       {() =>
-        context.store.messages.length ? (
+        context.messages.length ? (
           <List>
-            {context.store.messages.map((m, i) => (
+            {context.messages.map((m, i) => (
               <List.Item key={i}>{m}</List.Item>
             ))}
           </List>
@@ -73,7 +73,7 @@ export const Highlight = observer(() => {
   const context = useAppContext();
   return (
     <SyntaxHighlighter language="cs" style={docco} showLineNumbers={true}>
-      {(context.store.compiledCode || "").trim()}
+      {(context.compiledCode || "").trim()}
     </SyntaxHighlighter>
   );
 });
@@ -84,9 +84,9 @@ export const Errors = observer(() => {
   const context = useAppContext();
   return (
     <>
-      {context.store.errors.length ? (
+      {context.errors.length ? (
         <List>
-          {context.store.errors.map((m, i) => {
+          {context.errors.map((m, i) => {
             return (
               <List.Item key={i}>
                 <List.Content>
@@ -131,7 +131,7 @@ export const MiddleView = observer((props: Props) => {
     let myWindow = window.open("");
     myWindow.document.write(
       "<pre>" +
-        context.store.compiledCode.replace(/>/g, "&gt;").replace(/</g, "&lt;") +
+        context.compiledCode.replace(/>/g, "&gt;").replace(/</g, "&lt;") +
         "</pre>" || "No code was compiled"
     );
     let range = myWindow.document.createRange();
@@ -152,8 +152,8 @@ export const MiddleView = observer((props: Props) => {
         />
         <Menu.Item
           name="errors"
-          content={`${context.store.errors.length} Error${
-            context.store.errors.length === 1 ? "" : "s"
+          content={`${context.errors.length} Error${
+            context.errors.length === 1 ? "" : "s"
           }`}
           icon="bug"
           active={activeItem === "errors"}

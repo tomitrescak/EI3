@@ -160,7 +160,7 @@ export class ConnectionEditor extends React.Component<Props> {
   });
 
   componentWillMount() {
-    this.context.store.selectWorkflowElement(
+    this.context.selectWorkflowElement(
       this.props.workflowId,
       "Connections",
       this.props.id,
@@ -169,7 +169,7 @@ export class ConnectionEditor extends React.Component<Props> {
   }
 
   componentWillUpdate(props: Props) {
-    this.context.store.selectWorkflowElement(
+    this.context.selectWorkflowElement(
       props.workflowId,
       "Connections",
       props.id,
@@ -179,7 +179,7 @@ export class ConnectionEditor extends React.Component<Props> {
 
   render() {
     const { id } = this.props;
-    let ei = this.context.store.ei;
+    let ei = this.context.ei;
 
     let workflow = ei.Workflows.find((w) => w.Id === this.props.workflowId);
     if (!workflow) {
@@ -222,7 +222,7 @@ export class ConnectionEditor extends React.Component<Props> {
         break;
     }
 
-    let handler = this.context.store.createAccordionHandler(
+    let handler = this.context.createAccordionHandler(
       "Connection_" + this.props.id,
       [0]
     );

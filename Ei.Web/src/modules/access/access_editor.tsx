@@ -1,17 +1,17 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { observer } from 'mobx-react';
+import { observer } from "mobx-react";
 
-import { Checkbox, field, Form, FormState, Select } from 'semantic-ui-mobx';
-import { Accordion,Button, Icon, Popup, Segment } from 'semantic-ui-react';
-import { style } from 'typestyle';
+import { Checkbox, field, Form, FormState, Select } from "semantic-ui-mobx";
+import { Accordion, Button, Icon, Popup, Segment } from "semantic-ui-react";
+import { style } from "typestyle";
 
-import { AccordionHandler } from '../../config/store';
-import { CodeEditor } from '../core/monaco_editor';
-import { AccessCondition, Postcondition } from '../ei/access_model';
-import { Action } from '../ei/action_model';
-import { Ei, Organisation, Role } from '../ei/ei_model';
-import { Workflow } from '../ei/workflow_model';
+import { AccordionHandler } from "../../config/store";
+import { CodeEditor } from "../core/monaco_editor";
+import { AccessCondition, Postcondition } from "../ei/access_model";
+import { Action } from "../ei/action_model";
+import { Ei, Organisation, Role } from "../ei/ei_model";
+import { Workflow } from "../ei/workflow_model";
 
 interface AccessProps {
   access: AccessCondition[];
@@ -23,10 +23,10 @@ interface AccessProps {
   hideActionCondition?: boolean;
 }
 
-const addButton = style({ marginTop: '12px!important' });
-const fieldRow = style({ margin: '0px!important' });
-const editorHolder = style({ padding: '0px!important' });
-const headerHolder = style({ padding: '3px 12px!important' });
+const addButton = style({ marginTop: "12px!important" });
+const fieldRow = style({ margin: "0px!important" });
+const editorHolder = style({ padding: "0px!important" });
+const headerHolder = style({ padding: "3px 12px!important" });
 
 @observer
 export class AccessEditor extends React.Component<AccessProps> {
@@ -38,9 +38,9 @@ export class AccessEditor extends React.Component<AccessProps> {
       action,
       workflow,
       hideActionCondition,
-      hidePreconditions
+      hidePreconditions,
     } = this.props;
-    const handler = ei.store.createAccordionHandler(name);
+    const handler = ei.context.createAccordionHandler(name);
     return (
       <>
         <Accordion>
@@ -67,7 +67,10 @@ export class AccessEditor extends React.Component<AccessProps> {
           primary
           onClick={() =>
             access.push(
-              new AccessCondition({ Organisation: ei.Organisations[0].Id, Role: ei.Roles[0].Id })
+              new AccessCondition({
+                Organisation: ei.Organisations[0].Id,
+                Role: ei.Roles[0].Id,
+              })
             )
           }
           icon="plus"
@@ -109,7 +112,9 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
   }
 
   componentWillMount() {
-    this.accessState = new AccessConditionState(!!this.props.condition.Precondition);
+    this.accessState = new AccessConditionState(
+      !!this.props.condition.Precondition
+    );
   }
 
   actionUpdate = (value: any) => {
@@ -132,11 +137,12 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
       workflow,
       action,
       hideActionCondition,
-      hidePreconditions
+      hidePreconditions,
     } = this.props;
     const organisation =
-      ei.Organisations.find(o => o.Id === condition.Organisation) || ei.Organisations[0];
-    const role = ei.Roles.find(o => o.Id === condition.Role) || ei.Roles[0];
+      ei.Organisations.find((o) => o.Id === condition.Organisation) ||
+      ei.Organisations[0];
+    const role = ei.Roles.find((o) => o.Id === condition.Role) || ei.Roles[0];
     return (
       <>
         <Accordion.Title
@@ -160,7 +166,12 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                   label="Organisation"
                   options={ei.organisationsOptions}
                 />
-                <Select fluid owner={condition.fields.Role} label="Role" options={ei.roleOptions} />
+                <Select
+                  fluid
+                  owner={condition.fields.Role}
+                  label="Role"
+                  options={ei.roleOptions}
+                />
                 <Form.Button
                   label="&nbsp;"
                   type="button"
@@ -176,32 +187,40 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
               <Segment tertiary={true} attached as="h5" icon="legal">
                 <Icon name="legal" />
                 <Popup trigger={<span>Precondition</span>} content={<Info />} />
-                <div style={{ float: 'right' }}>
-                  <Checkbox owner={this.accessState.fields.showPrecondition} label="Show" />
+                <div style={{ float: "right" }}>
+                  <Checkbox
+                    owner={this.accessState.fields.showPrecondition}
+                    label="Show"
+                  />
                 </div>
               </Segment>
             )}
-            {!hidePreconditions &&
-              this.accessState.showPrecondition && (
-                <Segment secondary attached className={editorHolder}>
-                  <CodeEditor
-                    update={this.actionUpdate}
-                    value={this.actionValue}
-                    height={ei.editorHeight(this.actionValue())}
-                    i={ei.Properties}
-                    w={workflow && workflow.Properties}
-                    o={organisation.Properties}
-                    r={role.Properties}
-                    a={action && action.Properties}
-                  />
-                </Segment>
-              )}
+            {!hidePreconditions && this.accessState.showPrecondition && (
+              <Segment secondary attached className={editorHolder}>
+                <CodeEditor
+                  update={this.actionUpdate}
+                  value={this.actionValue}
+                  height={ei.editorHeight(this.actionValue())}
+                  i={ei.Properties}
+                  w={workflow && workflow.Properties}
+                  o={organisation.Properties}
+                  r={role.Properties}
+                  a={action && action.Properties}
+                />
+              </Segment>
+            )}
             {!hideActionCondition && (
               <Segment tertiary attached as="h5" icon="legal">
                 <Icon name="legal" />
-                <Popup trigger={<span>Postconditions</span>} content={<Info />} />
-                <div style={{ float: 'right' }}>
-                  <Checkbox owner={this.accessState.fields.showPostcondition} label="Show All" />
+                <Popup
+                  trigger={<span>Postconditions</span>}
+                  content={<Info />}
+                />
+                <div style={{ float: "right" }}>
+                  <Checkbox
+                    owner={this.accessState.fields.showPostcondition}
+                    label="Show All"
+                  />
                 </div>
               </Segment>
             )}
@@ -226,7 +245,9 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                 type="button"
                 primary
                 onClick={() =>
-                  condition.Postconditions.push(new Postcondition({ Action: '', Condition: '' }))
+                  condition.Postconditions.push(
+                    new Postcondition({ Action: "", Condition: "" })
+                  )
                 }
                 icon="plus"
                 content={`Add Postcondition`}
@@ -241,8 +262,8 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
 
 const Info = () => (
   <div>
-    <h5 style={{ borderBottom: 'solid 1px #cdcdcd'}}>Parameters</h5>
-    <ul style={{margin: '0px', paddingLeft: '20px'}}>
+    <h5 style={{ borderBottom: "solid 1px #cdcdcd" }}>Parameters</h5>
+    <ul style={{ margin: "0px", paddingLeft: "20px" }}>
       <li>i: Institution</li>
       <li>w: Workflow</li>
       <li>g: Governor</li>
@@ -290,7 +311,7 @@ export class PostconditionView extends React.Component<PostconditionProps> {
       role,
       organisation,
       action,
-      hideActionCondition
+      hideActionCondition,
     } = this.props;
 
     return (
@@ -315,7 +336,10 @@ export class PostconditionView extends React.Component<PostconditionProps> {
               </Segment>
             </>
           )}
-        {(!hideActionCondition || (showAll || p.Action || (!p.Condition && !p.Action))) && (
+        {(!hideActionCondition ||
+          showAll ||
+          p.Action ||
+          (!p.Condition && !p.Action)) && (
           <>
             <Segment secondary attached className={headerHolder}>
               Action

@@ -1,10 +1,10 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { observer } from 'mobx-react';
-import { DefaultLinkWidget, PointModel } from 'storm-react-diagrams';
-import { Ui } from '../../../../helpers/client_helpers';
-import { ActionDisplayType } from '../../../ei/connection_model';
-import { WorkflowLinkModel } from './workflow_link_model';
+import { observer } from "mobx-react";
+import { DefaultLinkWidget, PointModel } from "storm-react-diagrams";
+import { Ui } from "../../../../helpers/client_helpers";
+import { ActionDisplayType } from "../../../ei/connection_model";
+import { WorkflowLinkModel } from "./workflow_link_model";
 
 const maxLength = 200;
 
@@ -51,7 +51,7 @@ class Point {
         const vector = points[i].vector(points[i + 1]);
         return {
           mid: points[i].add(vector.multiply(proportional)),
-          vector
+          vector,
         };
       }
     }
@@ -85,26 +85,28 @@ export class WorkflowLink extends DefaultLinkWidget {
     let allowedRoles = [];
     for (let access of connection.Access) {
       if (access.Precondition) {
-        allowedRoles.push(link.workflow.ei.Roles.find(r => r.Id === access.Role).Icon);
+        allowedRoles.push(
+          link.workflow.ei.Roles.find((r) => r.Id === access.Role).Icon
+        );
       }
     }
     if (allowedRoles.length === 0) {
       return false;
     }
 
-    let points = link.points.map(p => new Point(p.x, p.y));
+    let points = link.points.map((p) => new Point(p.x, p.y));
     let vector = points[0].vector(points[1]);
-    let position = vector
-      .normalised()
-      .multiply(30)
-      .add(points[0]);
+    let position = vector.normalised().multiply(30).add(points[0]);
     let angle = 0;
     // if (connection.RotateLabel) {
     //   angle = Math.atan(vector.y / vector.x) * (180 / Math.PI);
     // }
 
     return (
-      <g id="Layer_3" transform={`rotate(${angle} ${position.x} ${position.y})`}>
+      <g
+        id="Layer_3"
+        transform={`rotate(${angle} ${position.x} ${position.y})`}
+      >
         {allowedRoles.map((r, i) => (
           <text
             key={i}
@@ -113,7 +115,7 @@ export class WorkflowLink extends DefaultLinkWidget {
             fill="white"
             textAnchor="middle"
             alignmentBaseline="central"
-            style={{ fontSize: '20px' }}
+            style={{ fontSize: "20px" }}
             onClick={() => {
               this.setState({ selected: true });
             }}
@@ -130,7 +132,8 @@ export class WorkflowLink extends DefaultLinkWidget {
     if (
       event.altKey &&
       !this.props.diagramEngine.isModelLocked(this.props.link) &&
-      this.props.link.points.length - 1 <= this.props.diagramEngine.getMaxNumberPointsPerLink()
+      this.props.link.points.length - 1 <=
+        this.props.diagramEngine.getMaxNumberPointsPerLink()
     ) {
       const point = new PointModel(
         this.props.link,
@@ -158,11 +161,11 @@ export class WorkflowLink extends DefaultLinkWidget {
     let allowedRoles = [];
     for (let access of connection.Access) {
       if (access.Postconditions.length) {
-        let role = link.workflow.ei.Roles.find(r => r.Id === access.Role);
+        let role = link.workflow.ei.Roles.find((r) => r.Id === access.Role);
         if (role) {
           allowedRoles.push(role.Icon);
         } else {
-          link.workflow.ei.store.warn(
+          link.workflow.ei.context.warn(
             `Role '${access.Role}' does not exist in precondition for link '${link.connection.Id}'`
           );
         }
@@ -172,7 +175,7 @@ export class WorkflowLink extends DefaultLinkWidget {
       return false;
     }
 
-    let points = link.points.map(p => new Point(p.x, p.y));
+    let points = link.points.map((p) => new Point(p.x, p.y));
     let vector = points[points.length - 1].vector(points[points.length - 2]);
     let position = vector
       .normalised()
@@ -184,7 +187,10 @@ export class WorkflowLink extends DefaultLinkWidget {
     // }
 
     return (
-      <g id="Layer_3" transform={`rotate(${angle} ${position.x} ${position.y})`}>
+      <g
+        id="Layer_3"
+        transform={`rotate(${angle} ${position.x} ${position.y})`}
+      >
         {allowedRoles.map((r, i) => (
           <text
             key={i}
@@ -193,7 +199,7 @@ export class WorkflowLink extends DefaultLinkWidget {
             fill="white"
             textAnchor="middle"
             alignmentBaseline="central"
-            style={{ fontSize: '20px' }}
+            style={{ fontSize: "20px" }}
             onClick={() => {
               this.setState({ selected: true });
             }}
@@ -208,7 +214,7 @@ export class WorkflowLink extends DefaultLinkWidget {
   select = () => (this.props.link as WorkflowLinkModel).select();
 
   renderArrow(link: WorkflowLinkModel) {
-    let points = link.points.map(p => new Point(p.x, p.y));
+    let points = link.points.map((p) => new Point(p.x, p.y));
     let pLast = link.getLastPoint();
     let pPrevious = link.points[link.points.length - 2];
 
@@ -218,10 +224,12 @@ export class WorkflowLink extends DefaultLinkWidget {
 
     let flip = pPrevious.x > pLast.x;
     let path = flip
-      ? `M ${pLast.x - 5} ${pLast.y} L ${pLast.x + 10} ${pLast.y + 5} L ${pLast.x + 10} ${pLast.y -
-          5} z`
-      : `M ${pLast.x - 10} ${pLast.y + 5} L ${pLast.x + 5} ${pLast.y} L ${pLast.x - 10} ${pLast.y -
-          5} z`;
+      ? `M ${pLast.x - 5} ${pLast.y} L ${pLast.x + 10} ${pLast.y + 5} L ${
+          pLast.x + 10
+        } ${pLast.y - 5} z`
+      : `M ${pLast.x - 10} ${pLast.y + 5} L ${pLast.x + 5} ${pLast.y} L ${
+          pLast.x - 10
+        } ${pLast.y - 5} z`;
     let angle = this.lastAngle(points);
 
     // TODO: Adjust for bezier
@@ -242,7 +250,7 @@ export class WorkflowLink extends DefaultLinkWidget {
     if (!action) {
       return false;
     }
-    let points = link.points.map(p => new Point(p.x, p.y));
+    let points = link.points.map((p) => new Point(p.x, p.y));
     const connection = link.connection;
 
     const result = points[0].midPoint(points);
@@ -251,7 +259,7 @@ export class WorkflowLink extends DefaultLinkWidget {
     const name =
       connection.ActionDisplay === ActionDisplayType.IconOnly
         ? action.Icon
-        : action.Icon + '\u00A0\u00A0\u00A0\u00A0' + (action.Name || action.Id);
+        : action.Icon + "\u00A0\u00A0\u00A0\u00A0" + (action.Name || action.Id);
     const labelSize = (name.length - 3) * 8 + 10;
 
     let angle = 0;
@@ -267,18 +275,22 @@ export class WorkflowLink extends DefaultLinkWidget {
       for (let access of connection.Access) {
         if (access.Precondition) {
           let preconditionTexts: string[] = [];
-          let role = connection.workflow.ei.Roles.find(r => r.Id === access.Role);
+          let role = connection.workflow.ei.Roles.find(
+            (r) => r.Id === access.Role
+          );
           if (role) {
-            let parts = access.Precondition.split('\n');
+            let parts = access.Precondition.split("\n");
             for (let i = 0; i < parts.length; i++) {
               preconditionTexts.push(
-                (i === 0 ? `❓ ${role.Icon} ` : '\u00A0\u00A0\u00A0\u00A0') +
+                (i === 0 ? `❓ ${role.Icon} ` : "\u00A0\u00A0\u00A0\u00A0") +
                   parts[i].substring(0, maxLength)
               );
             }
             // texts.push(`❓ ${role.Icon} ${access.Precondition.substring(0, maxLength)}`);
           } else {
-            connection.workflow.ei.store.warn(`Role in precondition does not exist: ` + role);
+            connection.workflow.ei.context.warn(
+              `Role in precondition does not exist: ` + role
+            );
           }
           texts.push(...preconditionTexts);
         }
@@ -287,30 +299,32 @@ export class WorkflowLink extends DefaultLinkWidget {
       // add postconditions
       for (let access of connection.Access) {
         if (access.Postconditions.length) {
-          let role = connection.workflow.ei.Roles.find(r => r.Id === access.Role);
+          let role = connection.workflow.ei.Roles.find(
+            (r) => r.Id === access.Role
+          );
           if (role) {
             for (let pc of access.Postconditions) {
               let pcText = [];
               if (pc.Condition) {
-                let parts = pc.Condition.split('\n');
+                let parts = pc.Condition.split("\n");
                 for (let i = 0; i < parts.length; i++) {
                   pcText.push(
                     (i === 0
                       ? `⚡️${role.Icon} ❓\u00A0`
-                      : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0') +
+                      : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0") +
                       parts[i].substring(0, maxLength)
                   );
                 }
               }
               if (pc.Action) {
-                let parts = pc.Action.split('\n');
+                let parts = pc.Action.split("\n");
                 for (let i = 0; i < parts.length; i++) {
                   pcText.push(
                     (i === 0
                       ? pcText.length === 0
                         ? `⚡️${role.Icon}❗️\u00A0`
-                        : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0❗️\u00A0'
-                      : '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0') +
+                        : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0❗️\u00A0"
+                      : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0") +
                       parts[i].substring(0, maxLength)
                   );
                 }
@@ -324,13 +338,20 @@ export class WorkflowLink extends DefaultLinkWidget {
               // );
             }
           } else {
-            connection.workflow.ei.store.warn(`Role in precondition does not exist: ` + role);
+            connection.workflow.ei.context.warn(
+              `Role in precondition does not exist: ` + role
+            );
           }
         }
       }
 
       let longest =
-        texts.reduce((prev, next) => (prev = prev < next.length ? next.length : prev), 0) * 6 + 10;
+        texts.reduce(
+          (prev, next) => (prev = prev < next.length ? next.length : prev),
+          0
+        ) *
+          6 +
+        10;
       let height = texts.length * 19 + 4;
 
       longest = longest < labelSize ? labelSize : longest;
@@ -357,9 +378,9 @@ export class WorkflowLink extends DefaultLinkWidget {
               y={position.y - height / 2}
               fill="white"
               style={{
-                fontFamily: 'Verdana',
-                fontSize: '12px',
-                textAlign: 'left'
+                fontFamily: "Verdana",
+                fontSize: "12px",
+                textAlign: "left",
               }}
               transform={`rotate(${angle} ${position.x} ${position.y})`}
               onClick={() => {
@@ -368,7 +389,7 @@ export class WorkflowLink extends DefaultLinkWidget {
             >
               {texts.map((r, i) => (
                 <tspan
-                  style={{ fontWeight: i === 0 ? 'bold' : 'normal' }}
+                  style={{ fontWeight: i === 0 ? "bold" : "normal" }}
                   key={i}
                   x={position.x - longest / 2 + 5}
                   dy="18px"
@@ -379,7 +400,12 @@ export class WorkflowLink extends DefaultLinkWidget {
             </text>
             {link.connection.AllowLoops && (
               <>
-                <circle cx={position.x - longest / 2} cy={position.y - 22} r="10" fill="silver" />
+                <circle
+                  cx={position.x - longest / 2}
+                  cy={position.y - 22}
+                  r="10"
+                  fill="silver"
+                />
                 <text x={position.x - longest / 2 - 4} y={position.y - 18}>
                   {link.connection.AllowLoops}
                 </text>
@@ -420,7 +446,12 @@ export class WorkflowLink extends DefaultLinkWidget {
           </text>
           {link.connection.AllowLoops && (
             <>
-              <circle cx={position.x - labelSize / 2} cy={position.y - 16} r="10" fill="silver" />
+              <circle
+                cx={position.x - labelSize / 2}
+                cy={position.y - 16}
+                r="10"
+                fill="silver"
+              />
               <text x={position.x - labelSize / 2 - 4} y={position.y - 12}>
                 {link.connection.AllowLoops}
               </text>
@@ -434,7 +465,7 @@ export class WorkflowLink extends DefaultLinkWidget {
   render() {
     const link = this.props.link as WorkflowLinkModel;
 
-    link.getLastPoint().id = 'last';
+    link.getLastPoint().id = "last";
 
     // subscribe
     link.selected;

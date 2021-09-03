@@ -9,7 +9,7 @@ export const EiContainer = ({ children }: React.PropsWithChildren<any>) => {
   const { eiId } = useParams<{ eiId: string }>();
   const context = useAppContext();
 
-  if (context.store.ei == null) {
+  if (context.ei == null) {
     const storedName = "ws." + eiId;
     const eiSource = localStorage.getItem(storedName);
     if (eiSource == null) {
@@ -17,7 +17,7 @@ export const EiContainer = ({ children }: React.PropsWithChildren<any>) => {
     }
     const parsedEi = JSON.parse(eiSource);
     let ei = new Ei(parsedEi, context);
-    context.store.ei = ei;
+    context.ei = ei;
     context.Ui.history.startHistory(ei, context);
   }
 

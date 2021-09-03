@@ -80,7 +80,7 @@ export class WorkHistory {
     this.currentEi = this.currentStep.undo(this.currentEi);
     this.currentStep = this.currentStep.previous;
 
-    let s = this.context.store;
+    let s = this.context;
     this.ei = new Ei(this.currentEi, this.context);
     s.ei = this.ei;
     this.version++;
@@ -93,7 +93,7 @@ export class WorkHistory {
     this.currentStep = this.currentStep.next;
     this.currentEi = this.currentStep.redo(this.currentEi);
 
-    let s = this.context.store;
+    let s = this.context;
     this.ei = new Ei(this.currentEi, this.context);
     s.ei = this.ei;
     this.version++;

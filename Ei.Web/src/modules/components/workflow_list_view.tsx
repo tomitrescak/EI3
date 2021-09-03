@@ -31,7 +31,7 @@ export const nestedAccordion = style({
 export class WorkflowList extends React.Component<Props> {
   render() {
     const { active, index, ei, handleClick } = this.props;
-    const handler = ei.store.createAccordionHandler("workflows");
+    const handler = ei.context.createAccordionHandler("workflows");
 
     return (
       <>
@@ -86,7 +86,7 @@ export const WorkflowDetail = ({
   index,
   handleClick,
 }: DetailProps) => {
-  const handler = ei.store.createAccordionHandler(workflow.Id);
+  const handler = ei.context.createAccordionHandler(workflow.Id);
   return (
     <>
       <Accordion.Title active={active} index={index} onClick={handleClick}>

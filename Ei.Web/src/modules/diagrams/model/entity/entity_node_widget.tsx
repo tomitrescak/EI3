@@ -22,13 +22,13 @@ export const EntityNodeWidget = observer(({ size = 150, node }: Props) => {
   // 	let parent = node.eiEntity.Parent;
   // 	let topPort = node.getPort('top');
   // 	let topLinks = Object.keys(topPort.links);
-  // 	let ei = context.store.ei;
+  // 	let ei = context.ei;
 
   // 	// remove link that are not in model
   // 	if (!parent && topLinks.length) {
   // 		(ei.engine.diagramModel as EntityModel).safeRemoveLink(topPort.getLinks()[topLinks[0]]);
 
-  // 		context.store.ei.engine.diagramModel.forceUpdate();
+  // 		context.ei.engine.diagramModel.forceUpdate();
   // 	}
   // 	if (parent && topLinks.length === 0) {
   // 		let parentNode = ei.OrganisationDiagram.nodes[parent];
@@ -37,7 +37,7 @@ export const EntityNodeWidget = observer(({ size = 150, node }: Props) => {
   // 		link.setTargetPort(parentNode.getPort('bottom'));
   // 		ei.engine.diagramModel.addLink(link);
 
-  // 		context.store.ei.engine.diagramModel.forceUpdate();
+  // 		context.ei.engine.diagramModel.forceUpdate();
   // 	}
   // }
 
