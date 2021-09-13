@@ -39,8 +39,8 @@ export class Entity extends FormNodeStore {
       }
     }
 
-    this.x = model.x || this.randomPosition();
-    this.y = model.y || this.randomPosition();
+    this.position.x = model.x || this.randomPosition();
+    this.position.y = model.y || this.randomPosition();
 
     makeObservable(this);
   }
@@ -63,8 +63,8 @@ export class Entity extends FormNodeStore {
       Name: this.Name,
       Description: this.Description,
       Icon: this.allowEditIcon ? this.Icon : undefined,
-      x: this.x,
-      y: this.y,
+      x: this.position.x,
+      y: this.position.y,
     };
   }
 }

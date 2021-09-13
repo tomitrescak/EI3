@@ -1,4 +1,4 @@
-import { LinkModel, PointModel } from "storm-react-diagrams";
+import { LinkModel, PointModel } from "@projectstorm/react-diagrams";
 
 import { action, computed, IObservableArray, observable } from "mobx";
 
@@ -27,7 +27,7 @@ export class WorkflowLinkModel extends LinkModel {
     this.connection = connection;
     this.workflow = workflow;
 
-    this.addListener({
+    this.registerListener({
       selectionChanged: ({ isSelected }) => {
         isSelected ? this.select() : false;
       },

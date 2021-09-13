@@ -1,6 +1,7 @@
 import { action, IObservableArray, makeObservable, observable } from "mobx";
 import { field } from "semantic-ui-mobx";
-import { NodeModel, PointModel } from "storm-react-diagrams";
+import { DefaultNodeModel, PointModel } from "@projectstorm/react-diagrams";
+import { Point } from "@projectstorm/geometry";
 
 import { WorkflowLinkModel } from "../diagrams/model/workflow/workflow_link_model";
 import { WorkflowPortModel } from "../diagrams/model/workflow/workflow_port_model";
@@ -27,11 +28,11 @@ export interface ConnectionDao extends EntityDao {
   ActionDisplay: ActionDisplayType;
 }
 
-export class FreeJoint extends NodeModel {
+export class FreeJoint extends DefaultNodeModel {
   constructor(workflow: Workflow) {
-    super("entity");
+    super();
 
-    this.addPort(new WorkflowPortModel(workflow, "left"));
+    this.addPort(new WorkflowPortModel(workflow, false, "left"));
   }
 }
 
@@ -101,7 +102,10 @@ export class Connection extends Entity {
     this.link = new WorkflowLinkModel(this, workflow);
     if (connection.LinkPoints && connection.LinkPoints.length) {
       this.link.setPoints(
-        connection.LinkPoints.map((p) => new PointModel(this.link, p))
+        connection.LinkPoints.map(
+          (p) =>
+            new PointModel({ link: this.link, position: new Point(p.x, p.y) })
+        )
       );
     }
 
@@ -114,11 +118,11 @@ export class Connection extends Entity {
     if (this.link == null) {
       return null;
     }
-    let port = this.link.sourcePort;
+    let port = this.link.getSourcePort();
     if (port == null) {
       return null;
     }
-    let node = port.parentNode;
+    let node = port.getParent();
     if (node == null) {
       return null;
     }
@@ -129,11 +133,11 @@ export class Connection extends Entity {
     if (this.link == null) {
       return null;
     }
-    let port = this.link.targetPort;
+    let port = this.link.getTargetPort();
     if (port == null) {
       return null;
     }
-    let node = port.parentNode;
+    let node = port.getParent();
     if (node == null) {
       return null;
     }
@@ -158,17 +162,19 @@ export class Connection extends Entity {
 
     // free joints are displayed as separate nodes
     if (fromPosition) {
-      if (this.link.sourcePort == null) {
+      if (this.link.getSourcePort() == null) {
         this.link.setSourcePort(
           fromPosition.getPort(connection.SourcePort || "east")
         );
       } else {
-        this.SourcePort = this.link.sourcePort.name;
+        this.SourcePort = this.link.getSourcePort().getName();
       }
       this.fromJoint = null;
     } else {
       this.fromJoint = new FreeJoint(workflow);
-      const to = toPosition ? { x: toPosition.x, y: toPosition.y } : random;
+      const to = toPosition
+        ? { x: toPosition.getX(), y: toPosition.getY() }
+        : random;
       x = connection.FreeFrom ? connection.FreeFrom.x : to.x - 60;
       y = connection.FreeFrom ? connection.FreeFrom.y : to.y;
 
@@ -176,28 +182,32 @@ export class Connection extends Entity {
       this.link.setSourcePort(this.fromJoint.getPort("left"));
     }
     if (toPosition) {
-      if (this.link.targetPort == null) {
+      if (this.link.getTargetPort() == null) {
         this.link.setTargetPort(
           toPosition.getPort(connection.TargetPort || "west")
         );
       } else {
-        this.TargetPort = this.link.targetPort.name;
+        this.TargetPort = this.link.getTargetPort().getName();
       }
       this.toJoint = null;
     } else {
       this.toJoint = new FreeJoint(workflow);
       const from = fromPosition
-        ? { x: fromPosition.x, y: fromPosition.y }
+        ? { x: fromPosition.getX(), y: fromPosition.getY() }
         : random;
       const point = this.link.points[1];
-      const hasPoint = point && (point.x !== 0 || point.y !== 0);
+      const hasPoint = point && (point.getX() !== 0 || point.getY() !== 0);
 
       x = connection.FreeTo
         ? connection.FreeTo.x
         : hasPoint
-        ? point.x
+        ? point.getX()
         : from.x + 60;
-      y = connection.FreeTo ? connection.FreeTo.y : hasPoint ? point.y : from.y;
+      y = connection.FreeTo
+        ? connection.FreeTo.y
+        : hasPoint
+        ? point.getY()
+        : from.y;
 
       // const { x, y } = connection.FreeTo
       //   ? connection.FreeTo
@@ -213,8 +223,14 @@ export class Connection extends Entity {
       const p1 = points[1];
       this.link.setPoints([
         p0,
-        new PointModel(this.link, { x: p1.x + 60, y: p0.y - 50 }),
-        new PointModel(this.link, { x: p0.x - 60, y: p0.y - 50 }),
+        new PointModel({
+          link: this.link,
+          position: new Point(p1.getX() + 60, p0.getY() - 50),
+        }),
+        new PointModel({
+          link: this.link,
+          position: new Point(p0.getX() - 60, p0.getY() - 50),
+        }),
         p1,
       ]);
     }
@@ -269,14 +285,16 @@ export class Connection extends Entity {
       ActionId: this.ActionId,
       AllowLoops: this.AllowLoops,
       FreeFrom: this.fromJoint
-        ? { x: this.fromJoint.x, y: this.fromJoint.y }
+        ? { x: this.fromJoint.getX(), y: this.fromJoint.getY() }
         : null,
-      FreeTo: this.toJoint ? { x: this.toJoint.x, y: this.toJoint.y } : null,
+      FreeTo: this.toJoint
+        ? { x: this.toJoint.getX(), y: this.toJoint.getY() }
+        : null,
       LinkPoints: this.link
-        ? this.link.getPoints().map((p) => ({ x: p.x, y: p.y }))
+        ? this.link.getPoints().map((p) => ({ x: p.getX(), y: p.getY() }))
         : [],
-      SourcePort: this.link.sourcePort.name,
-      TargetPort: this.link.targetPort.name,
+      SourcePort: this.link.getSourcePort().getName(),
+      TargetPort: this.link.getTargetPort().getName(),
       RotateLabel: this.RotateLabel,
       ActionDisplay: this.ActionDisplay,
     };

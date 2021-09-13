@@ -1,12 +1,12 @@
-import * as SRD from 'storm-react-diagrams';
+import * as SRD from "@projectstorm/react-diagrams";
 
 import {
   FieldCollection,
   FieldDefinition,
   FieldMap,
   FieldModel,
-  FormStateListener
-} from 'semantic-ui-mobx';
+  FormStateListener,
+} from "semantic-ui-mobx";
 
 export class FormNodeStore extends SRD.NodeModel {
   fields: FieldMap;
@@ -16,12 +16,19 @@ export class FormNodeStore extends SRD.NodeModel {
   __isChecked: boolean;
 
   constructor(id: string) {
-    super('entity', id);
+    super({
+      id,
+      type: "default",
+    });
 
     if (this.fieldDefinitions && this.fieldDefinitions.length) {
       this.fields = {};
       for (let field of this.fieldDefinitions) {
-        this.fields[field.key] = new FieldModel(this, field.key, field.validators);
+        this.fields[field.key] = new FieldModel(
+          this,
+          field.key,
+          field.validators
+        );
       }
     }
   }
@@ -53,9 +60,11 @@ export class FormNodeStore extends SRD.NodeModel {
 
     // notify all fields
     for (let fieldName of Object.getOwnPropertyNames(this)) {
-      let field = this.fields[fieldName] ? this.fields[fieldName] : this[fieldName];
+      let field = this.fields[fieldName]
+        ? this.fields[fieldName]
+        : this[fieldName];
 
-      if ((field != null && field.constructor.name === 'ObservableArray')) {
+      if (field != null && field.constructor.name === "ObservableArray") {
         if (field.___isChecked) {
           continue;
         }
@@ -86,7 +95,7 @@ export class FormNodeStore extends SRD.NodeModel {
 
   validate(): string {
     let fields = (this as any).fields as { [index: string]: FieldModel<any> };
-    this.validationMessage = '';
+    this.validationMessage = "";
     for (let key of Object.getOwnPropertyNames(fields)) {
       let field = fields[key];
       let message = field.validate();
@@ -98,6 +107,6 @@ export class FormNodeStore extends SRD.NodeModel {
   }
 
   isValid() {
-    return this.validate() === '';
+    return this.validate() === "";
   }
 }

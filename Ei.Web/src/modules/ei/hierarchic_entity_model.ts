@@ -1,7 +1,11 @@
 import { action, IObservableArray, observable } from "mobx";
 import { field } from "semantic-ui-mobx";
-import { PointModel } from "storm-react-diagrams";
-
+import {
+  NodeModelListener,
+  PointModel,
+  PortModelAlignment,
+} from "@projectstorm/react-diagrams";
+import { Point } from "@projectstorm/geometry";
 import { Ui } from "../../helpers/client_helpers";
 import { EntityLinkModel } from "../diagrams/model/entity/entity_link_model";
 import { EntityPortModel } from "../diagrams/model/entity/entity_port_model";
@@ -28,7 +32,7 @@ export abstract class HierarchicEntity extends ParametricEntity {
   @field private _parent: string;
   private _parentLink: EntityLinkModel;
   private parents: IObservableArray<HierarchicEntity>;
-  private points: PointDao[];
+  points: PointDao[];
 
   route: string;
 
@@ -47,15 +51,15 @@ export abstract class HierarchicEntity extends ParametricEntity {
     this.points = model && model.LinkPoints;
 
     // add ports
-    this.addPort(new EntityPortModel("top"));
-    this.addPort(new EntityPortModel("bottom"));
+    this.addPort(new EntityPortModel("top", PortModelAlignment.TOP));
+    this.addPort(new EntityPortModel("bottom", PortModelAlignment.BOTTOM));
 
     // add listeners
-    this.addListener({
+    this.registerListener({
       selectionChanged: ({ isSelected }) => {
         isSelected ? this.select() : this.deselect();
       },
-    });
+    } as NodeModelListener);
 
     if (this.ei.context.Router.router.location.pathname == this.url) {
       this.setSelected(true);
@@ -63,7 +67,7 @@ export abstract class HierarchicEntity extends ParametricEntity {
     }
 
     if (model) {
-      this.setParent(model.Parent);
+      this.setParentId(model.Parent);
 
       // if there is a panel, create a link
       // this.update();
@@ -71,7 +75,7 @@ export abstract class HierarchicEntity extends ParametricEntity {
   }
 
   update() {
-    if (this.Parent) {
+    if (this.ParentId) {
       // get the link
       let topPort = this.getPort("top");
       let topPortKeys = Object.getOwnPropertyNames(topPort.links);
@@ -81,16 +85,20 @@ export abstract class HierarchicEntity extends ParametricEntity {
         throw new Error("Too many links");
       } else {
         this.parentLink = new EntityLinkModel();
-
         // create points
         if (this.points && this.points.length) {
           this.parentLink.setPoints(
-            this.points.map((p) => new PointModel(this.parentLink, p))
+            this.points.map(
+              (p) =>
+                new PointModel({
+                  link: this.parentLink,
+                  position: new Point(p.x, p.y),
+                })
+            )
           );
         }
-
         // add ports
-        const parent = this.parents.find((p) => p.Id === this.Parent);
+        const parent = this.parents.find((p) => p.Id === this.ParentId);
         this.parentLink.setSourcePort(parent.getPort("bottom"));
         this.parentLink.setTargetPort(topPort);
       }
@@ -109,17 +117,17 @@ export abstract class HierarchicEntity extends ParametricEntity {
     this._parentLink = link;
   }
 
-  get Parent() {
+  get ParentId() {
     return this._parent;
   }
 
   get url() {
-    return `/ei/${this.ei.Name.toUrlName()}/${this.ei.id}/${
+    return `/ei/${this.ei.Name.toUrlName()}/${this.ei.Id}/${
       this.route
     }/${this.Name.toUrlName()}/${this.Id}`;
   }
 
-  @action setParent(parent: string) {
+  @action setParentId(parent: string) {
     this._parent = parent;
     this.update();
   }
@@ -127,13 +135,13 @@ export abstract class HierarchicEntity extends ParametricEntity {
   @action
   removeItem() {
     // remove from collection
-    this.setParent(null);
+    this.setParentId(null);
     this.parents.remove(this);
 
     // adjust all children
     for (let entity of this.parents) {
-      if (entity.Parent === this.Id) {
-        entity.setParent(null);
+      if (entity.ParentId === this.Id) {
+        entity.setParentId(null);
         entity.parentLink = null;
       }
     }
@@ -165,9 +173,9 @@ export abstract class HierarchicEntity extends ParametricEntity {
   get json(): HierarchicEntityDao {
     return {
       ...super.json,
-      Parent: this.Parent,
+      Parent: this.ParentId,
       LinkPoints: this.parentLink
-        ? this.parentLink.getPoints().map((p) => ({ x: p.x, y: p.y }))
+        ? this.parentLink.getPoints().map((p) => ({ x: p.getX(), y: p.getY() }))
         : [],
     };
   }

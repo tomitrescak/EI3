@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
 import { SemanticToastContainer } from "react-semantic-toasts";
@@ -16,9 +16,12 @@ import { EiEditor } from "./modules/ei/ei_editor";
 import { ExecutionView } from "./modules/execution/execution_view";
 import { AuthorisationEditor } from "./modules/authorisations/authorisation_editor";
 import { EntitiesView } from "./modules/diagrams/entities_view";
-
+import { supabase } from "./config/supabase";
 import { configure } from "mobx";
 import { HierarchicEntityEditor } from "./modules/diagrams/hierarchic_entity_editor";
+import Auth from "./auth/auth";
+import Account from "./auth/account";
+
 configure({ enforceActions: "never" });
 
 const App = () => {
@@ -27,11 +30,28 @@ const App = () => {
   const context = useAppContext();
   context.assignRouter(history);
 
+  const [session, setSession] = useState(null);
+  useEffect(() => {
+    setSession(supabase.auth.session());
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
+
+  // if (!session) {
+  //   return <Auth />;
+  // }
+
   return (
     <Switch>
       <Route exact path="/">
         <EiListContainer />
       </Route>
+      <Route
+        path="/profile"
+        render={() => <Account key={session.user.id} session={session} />}
+      />
       <Route path="/ei/:eiName/:eiId">
         <EiContainer>
           <Switch>

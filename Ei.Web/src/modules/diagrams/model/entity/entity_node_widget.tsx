@@ -1,9 +1,10 @@
 import React from "react";
 
 import { observer } from "mobx-react";
-import { PortWidget } from "storm-react-diagrams";
+import { PortModelAlignment, PortWidget } from "@projectstorm/react-diagrams";
 
 import { HierarchicEntity } from "../../../ei/hierarchic_entity_model";
+import styled from "@emotion/styled";
 
 export interface Props {
   node: HierarchicEntity;
@@ -13,6 +14,18 @@ export interface Props {
 // export interface EntityNodeWidgetState {}
 
 const height = 60;
+
+export const Port = styled.div`
+  width: 16px;
+  height: 16px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  cursor: pointer;
+  &:hover {
+    background: rgba(0, 0, 0, 1);
+  }
+`;
 
 export const EntityNodeWidget = observer(({ size = 150, node }: Props) => {
   // componentWillUpdate() {
@@ -74,26 +87,33 @@ export const EntityNodeWidget = observer(({ size = 150, node }: Props) => {
 				`,
         }}
       />
-      <div
+
+      <PortWidget
         style={{
           position: "absolute",
           zIndex: 10,
           left: size / 2 - 8,
           top: -8,
         }}
+        port={node.getPort(PortModelAlignment.TOP)}
+        engine={node.ei.engine}
       >
-        <PortWidget name="top" node={node} />
-      </div>
-      <div
+        <Port />
+      </PortWidget>
+
+      <PortWidget
         style={{
           position: "absolute",
           zIndex: 10,
+          background: "red",
           left: size / 2 - 8,
           top: height - 8,
         }}
+        port={node.getPort(PortModelAlignment.BOTTOM)}
+        engine={node.ei.engine}
       >
-        <PortWidget name="bottom" node={node} />
-      </div>
+        <Port />
+      </PortWidget>
     </div>
   );
 });

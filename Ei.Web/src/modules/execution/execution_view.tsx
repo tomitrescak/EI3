@@ -1,7 +1,6 @@
 import * as jsPDF from "jspdf";
 import * as PIXI from "pixi.js";
 import * as React from "react";
-import { Scrollbars } from "react-custom-scrollbars";
 
 import { observable } from "mobx";
 import { Line } from "react-chartjs-2";
@@ -307,7 +306,7 @@ export class ExecutionView extends React.Component {
   render() {
     return (
       <>
-        <Scrollbars style={{ height: "100vh" }}>
+        <>
           <div ref={(n) => (this.canvas = n)} id="pixiCanvas" />
           <hr />
           <LineChart model={model} id="LineChart" />
@@ -317,7 +316,7 @@ export class ExecutionView extends React.Component {
               Download PDF{" "}
             </button>
           </div>
-        </Scrollbars>
+        </>
       </>
     );
   }

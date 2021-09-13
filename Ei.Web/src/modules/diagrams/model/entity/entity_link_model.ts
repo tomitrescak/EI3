@@ -1,12 +1,11 @@
-import { LinkModel } from 'storm-react-diagrams';
+import { DefaultLinkModel } from "@projectstorm/react-diagrams";
 
-import { action } from 'mobx';
+import { action } from "mobx";
 
-import { HierarchicEntity } from '../../../ei/hierarchic_entity_model';
-import { EntityDiagramModel } from './entity_diagram_model';
+import { HierarchicEntity } from "../../../ei/hierarchic_entity_model";
+import { EntityDiagramModel } from "./entity_diagram_model";
 
-export class EntityLinkModel extends LinkModel {
-
+export class EntityLinkModel extends DefaultLinkModel {
   // constructor(child: HierarchicEntity, parent: string) {
   //   super('default', parent + '->' + child.Id);
   // }
@@ -20,16 +19,17 @@ export class EntityLinkModel extends LinkModel {
     if (this.targetPort) {
       this.targetPort.removeLink(this);
     }
-    if (model.links[this.id]) {
+    if (model.getLinks()[this.getID()]) {
       model.removeLink(this);
     }
   }
 
   @action safeRemoveParent() {
     if (this.targetPort) {
-      let port = this.targetPort.name === 'top' ? this.targetPort : this.sourcePort;
-      let node = port.parentNode as HierarchicEntity;
-      node.setParent(null);
+      let port =
+        this.targetPort.getName() === "top" ? this.targetPort : this.sourcePort;
+      let node = port.getParent() as HierarchicEntity;
+      node.setParentId(null);
       node.parentLink = null;
     }
   }
@@ -37,7 +37,7 @@ export class EntityLinkModel extends LinkModel {
   validateCreate(model: EntityDiagramModel) {
     if (this.targetPort == null) {
       this.safeRemove(model);
-      model.version ++;
+      model.version++;
     }
   }
 }

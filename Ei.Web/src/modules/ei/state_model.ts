@@ -51,15 +51,15 @@ export class State extends PositionModel {
 
     // add ports
 
-    this.addPort(new WorkflowPortModel(workflow, "east"));
-    this.addPort(new WorkflowPortModel(workflow, "west"));
-    this.addPort(new WorkflowPortModel(workflow, "north"));
-    this.addPort(new WorkflowPortModel(workflow, "south"));
+    this.addPort(new WorkflowPortModel(workflow, false, "east"));
+    this.addPort(new WorkflowPortModel(workflow, false, "west"));
+    this.addPort(new WorkflowPortModel(workflow, false, "north"));
+    this.addPort(new WorkflowPortModel(workflow, false, "south"));
 
-    this.addPort(new WorkflowPortModel(workflow, "northeast"));
-    this.addPort(new WorkflowPortModel(workflow, "southwest"));
-    this.addPort(new WorkflowPortModel(workflow, "northwest"));
-    this.addPort(new WorkflowPortModel(workflow, "southeast"));
+    this.addPort(new WorkflowPortModel(workflow, false, "northeast"));
+    this.addPort(new WorkflowPortModel(workflow, false, "southwest"));
+    this.addPort(new WorkflowPortModel(workflow, false, "northwest"));
+    this.addPort(new WorkflowPortModel(workflow, false, "southeast"));
 
     // this.addFormListener(() => Ui.history.step());
     makeObservable(this);

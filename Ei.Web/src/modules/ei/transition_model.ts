@@ -102,10 +102,10 @@ export class TransitionSplit extends Transition {
     );
     this.Shallow = transition.Shallow;
 
-    this.addPort(new WorkflowPortModel(workflow, "input"));
-    this.addPort(new WorkflowPortModel(workflow, "split1"));
-    this.addPort(new WorkflowPortModel(workflow, "split2"));
-    this.addPort(new WorkflowPortModel(workflow, "split3"));
+    this.addPort(new WorkflowPortModel(workflow, false, "input"));
+    this.addPort(new WorkflowPortModel(workflow, false, "split1"));
+    this.addPort(new WorkflowPortModel(workflow, false, "split2"));
+    this.addPort(new WorkflowPortModel(workflow, false, "split3"));
 
     this.$type = "TransitionSplitDao";
   }
@@ -126,10 +126,10 @@ export class TransitionJoin extends Transition {
   constructor(transition: Partial<TransitionDao>, workflow: Workflow, ei: Ei) {
     super(transition, workflow, ei);
 
-    this.addPort(new WorkflowPortModel(workflow, "yield"));
-    this.addPort(new WorkflowPortModel(workflow, "join1"));
-    this.addPort(new WorkflowPortModel(workflow, "join2"));
-    this.addPort(new WorkflowPortModel(workflow, "join3"));
+    this.addPort(new WorkflowPortModel(workflow, false, "yield"));
+    this.addPort(new WorkflowPortModel(workflow, false, "join1"));
+    this.addPort(new WorkflowPortModel(workflow, false, "join2"));
+    this.addPort(new WorkflowPortModel(workflow, false, "join3"));
 
     this.$type = "TransitionJoinDao";
   }

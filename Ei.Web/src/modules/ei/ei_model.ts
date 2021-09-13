@@ -1,7 +1,16 @@
 import { computed, IObservableArray, makeObservable, observable } from "mobx";
 import { field } from "semantic-ui-mobx";
 import { DropdownItemProps } from "semantic-ui-react";
-import { DefaultNodeFactory, DiagramEngine } from "storm-react-diagrams";
+import createEngine, {
+  DefaultLabelFactory,
+  DefaultLinkFactory,
+  DefaultNodeFactory,
+  DiagramEngine,
+  LinkLayerFactory,
+  NodeLayerFactory,
+} from "@projectstorm/react-diagrams";
+import { FactoryBank } from "@projectstorm/react-canvas-core";
+
 import { AppContext } from "../../config/context";
 
 import { Ui } from "../../helpers/client_helpers";
@@ -131,13 +140,27 @@ export class Ei extends ParametricEntity {
     super(model);
 
     this.context = context;
-    this.engine = new DiagramEngine();
-    this.engine.registerNodeFactory(new DefaultNodeFactory());
-    this.engine.registerLinkFactory(new EntityLinkFactory("default"));
-    this.engine.registerLinkFactory(new EntityLinkFactory("link"));
-    this.engine.registerNodeFactory(new EntityNodeFactory());
+    this.engine = createEngine();
 
-    // this.engine.registerNodeFactory(new WorkflowNodeFactory());
+    let nodeFactories = this.engine.getNodeFactories();
+    let linkFactories = this.engine.getLinkFactories();
+    let layerFactories = this.engine.getLayerFactories();
+    let labelFactories = this.engine.getLabelFactories();
+
+    // layerFactories.registerFactory(new LinkLayerFactory());
+    // layerFactories.registerFactory(new NodeLayerFactory());
+
+    // nodeFactories.registerFactory(new DefaultNodeFactory());
+    // linkFactories.registerFactory(new DefaultLinkFactory());
+    // labelFactories.registerFactory(new DefaultLabelFactory());
+
+    linkFactories.registerFactory(new EntityLinkFactory("default"));
+    linkFactories.registerFactory(new EntityLinkFactory("link"));
+    nodeFactories.registerFactory(new EntityNodeFactory());
+
+    // this.engine.registerFactoryBank(factoryBank);
+
+    //this.engine.registerNodeFactory(new WorkflowNodeFactory());
 
     this.engine.maxNumberPointsPerLink = 1;
 

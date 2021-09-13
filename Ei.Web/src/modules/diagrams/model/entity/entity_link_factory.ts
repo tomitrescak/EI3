@@ -1,21 +1,28 @@
-import * as React from 'react';
-import * as SRD from 'storm-react-diagrams';
+import * as React from "react";
+import * as SRD from "@projectstorm/react-diagrams-defaults";
 
-import { EntityLinkModel } from './entity_link_model';
+import { EntityLinkModel } from "./entity_link_model";
+import { DefaultLinkModel } from "@projectstorm/react-diagrams";
 
-export class EntityLinkFactory extends SRD.LinkFactory {
-	constructor(type: string) {
-		super(type);
-	}
+export class EntityLinkFactory extends SRD.DefaultLinkFactory {
+  constructor(type: string) {
+    super(type);
+  }
 
-	generateReactWidget(diagramEngine: SRD.DiagramEngine, link: SRD.LinkModel): JSX.Element {
-		return React.createElement(SRD.DefaultLinkWidget, {
-			link: link,
-			diagramEngine: diagramEngine
-		});
-	}
+  generateReactWidget({ model }: { model: DefaultLinkModel }): JSX.Element {
+    return React.createElement(SRD.DefaultLinkWidget, {
+      link: model,
+      diagramEngine: this.engine,
+    });
+  }
 
-	getNewInstance(_initialConfig?: any): SRD.LinkModel {
-		return new EntityLinkModel();
-	}
+  generateModel() {
+    debugger;
+    return new EntityLinkModel();
+  }
+
+  getNewInstance(_initialConfig?: any): SRD.DefaultLinkModel {
+    debugger;
+    return new EntityLinkModel();
+  }
 }

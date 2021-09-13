@@ -1,20 +1,20 @@
-import * as SRD from 'storm-react-diagrams';
+import * as SRD from "@projectstorm/react-diagrams-defaults";
 
-import { HierarchicEntity } from '../../../ei/hierarchic_entity_model';
-import { EntityNodeWidgetFactory } from './entity_node_widget';
+import { HierarchicEntity } from "../../../ei/hierarchic_entity_model";
+import { EntityNodeWidgetFactory } from "./entity_node_widget";
 
-export class EntityNodeFactory extends SRD.NodeFactory {
-	constructor() {
-		super('entity');
-	}
+export class EntityNodeFactory extends SRD.DefaultNodeFactory {
+  constructor() {
+    super();
+  }
 
-	generateReactWidget(_diagramEngine: SRD.DiagramEngine, node: SRD.NodeModel): JSX.Element {
-		if (node instanceof HierarchicEntity) {
-			return EntityNodeWidgetFactory({ node: node });
-		}
-	}
+  generateReactWidget({ model }: { model: HierarchicEntity }): JSX.Element {
+    if (model instanceof HierarchicEntity) {
+      return EntityNodeWidgetFactory({ node: model });
+    }
+  }
 
-	getNewInstance(): null {
-		return null;
-	}
+  getNewInstance(): null {
+    return null;
+  }
 }

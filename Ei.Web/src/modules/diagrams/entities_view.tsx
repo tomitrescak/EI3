@@ -7,6 +7,10 @@ import { EntityDiagramModel } from "../diagrams/model/entity/entity_diagram_mode
 import { Ei } from "../ei/ei_model";
 import { HierarchicEntity } from "../ei/hierarchic_entity_model";
 import { useAppContext } from "../../config/context";
+import { DiagramListener } from "@projectstorm/react-canvas-core";
+import { EntityLinkModel } from "./model/entity/entity_link_model";
+import { PointModel } from "@projectstorm/react-diagrams";
+import { Point } from "@projectstorm/geometry";
 
 interface Props {
   id: string;
@@ -30,9 +34,14 @@ export const EntitiesView = observer((props: Props) => {
   });
   const context = useAppContext();
 
+  var engine = context.ei.engine; // createEngine();
+
+  //2) setup the diagram model
+  var model = new EntityDiagramModel();
+
   React.useEffect(() => {
     if (props.id) {
-      if (selectedNode && props.id === selectedNode.id) {
+      if (selectedNode && props.id === selectedNode.Id) {
         return;
       }
 
@@ -49,19 +58,64 @@ export const EntitiesView = observer((props: Props) => {
     }
   });
 
-  let model = new EntityDiagramModel();
-  model.version;
+  // let model = new DiagramModel();
+  // model.version;
+
+  let ents = entities();
 
   for (let node of entities()) {
     model.addNode(node);
-    if (node.parentLink) {
-      model.addLink(node.parentLink);
+
+    if (node.ParentId) {
+      let parentLink = new EntityLinkModel();
+      // create points
+      if (node.points && node.points.length) {
+        parentLink.setPoints(
+          node.points.map(
+            (p) =>
+              new PointModel({
+                link: parentLink,
+                position: new Point(p.x, p.y),
+              })
+          )
+        );
+      }
+      // add ports
+      const parent = ents.find((p) => p.Id === node.ParentId);
+      parentLink.setSourcePort(parent.getPort("bottom"));
+      parentLink.setTargetPort(node.getPort("top"));
+
+      model.addLink(parentLink);
     }
-    node.Parent; // subscribe
+
+    // if (node.parentLink) {
+    //   // check
+    //   let from = node.parentLink.getSourcePort();
+    //   let to = node.parentLink.getTargetPort();
+
+    //   let hasSourcePort = ents.find((e) =>
+    //     Object.keys(e.getPorts()).some((key) => e.getPorts()[key] === from)
+    //   );
+    //   let hasTargetPort = ents.find((e) =>
+    //     Object.keys(e.getPorts()).some((key) => e.getPorts()[key] === to)
+    //   );
+
+    //   if (!hasSourcePort) {
+    //     console.log("Source Port Missing");
+    //     console.log(node.parentLink);
+    //   }
+    //   if (!hasTargetPort) {
+    //     console.log("Target Port Missing");
+    //     console.log(node.parentLink);
+    //   }
+
+    //   model.addLink(node.parentLink);
+    // }
+    node.ParentId; // subscribe
   }
 
   // listen and store offsets
-  model.addListener({
+  model.registerListener({
     offsetUpdated: ({ offsetX, offsetY }) => {
       localStorage.setItem(
         `EntityDiagram.${props.type}.offsetX`,
@@ -72,7 +126,7 @@ export const EntitiesView = observer((props: Props) => {
         offsetY.toString()
       );
     },
-  });
+  } as DiagramListener);
 
   // set offsets
   const currentOffsetX = localStorage.getItem(
@@ -85,5 +139,9 @@ export const EntitiesView = observer((props: Props) => {
     model.setOffset(parseInt(currentOffsetX, 10), parseInt(currentOffsetY, 10));
   }
 
-  return <DiagramView engine={context.ei.engine} diagram={model} />;
+  // //5) load model into engine
+  engine.setModel(model);
+  engine.repaintCanvas();
+
+  return <DiagramView engine={engine} />;
 });

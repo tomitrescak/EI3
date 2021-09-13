@@ -90,7 +90,7 @@ export const HierarchicEntityEditor = observer((props: Props) => {
   // let organisations = [{ value: '', text: 'No Parent' }]
   //   .concat(ei.Organisations.filter(o => o.Id !== organisation.Id).map(o => ({ value: o.Id, text: o.Name })));
 
-  let parent = entity.Parent;
+  let parent = entity.ParentId;
   if (parent) {
     parent = props.collection(ei).find((o) => o.Id === parent).Name || "";
   }
