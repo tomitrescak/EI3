@@ -1,4 +1,10 @@
-import { action, IObservableArray, observable } from "mobx";
+import {
+  action,
+  computed,
+  IObservableArray,
+  makeObservable,
+  observable,
+} from "mobx";
 import { field } from "semantic-ui-mobx";
 import {
   NodeModelListener,
@@ -72,51 +78,15 @@ export abstract class HierarchicEntity extends ParametricEntity {
       // if there is a panel, create a link
       // this.update();
     }
+
+    makeObservable(this);
   }
 
-  update() {
-    if (this.ParentId) {
-      // get the link
-      let topPort = this.getPort("top");
-      let topPortKeys = Object.getOwnPropertyNames(topPort.links);
-      if (topPortKeys.length === 1) {
-        this.parentLink = topPort.links[topPortKeys[0]] as EntityLinkModel;
-      } else if (topPortKeys.length > 1) {
-        throw new Error("Too many links");
-      } else {
-        this.parentLink = new EntityLinkModel();
-        // create points
-        if (this.points && this.points.length) {
-          this.parentLink.setPoints(
-            this.points.map(
-              (p) =>
-                new PointModel({
-                  link: this.parentLink,
-                  position: new Point(p.x, p.y),
-                })
-            )
-          );
-        }
-        // add ports
-        const parent = this.parents.find((p) => p.Id === this.ParentId);
-        this.parentLink.setSourcePort(parent.getPort("bottom"));
-        this.parentLink.setTargetPort(topPort);
-      }
-    } else {
-      this.parentLink = null;
-    }
+  set parentLink(value: EntityLinkModel) {
+    this._parentLink = value;
   }
 
-  // setters
-  get parentLink() {
-    return this._parentLink;
-  }
-
-  set parentLink(link: EntityLinkModel) {
-    // Ui.history.assignValue(this, 'parentLink', link);
-    this._parentLink = link;
-  }
-
+  @computed
   get ParentId() {
     return this._parent;
   }
@@ -129,7 +99,6 @@ export abstract class HierarchicEntity extends ParametricEntity {
 
   @action setParentId(parent: string) {
     this._parent = parent;
-    this.update();
   }
 
   @action
@@ -142,7 +111,6 @@ export abstract class HierarchicEntity extends ParametricEntity {
     for (let entity of this.parents) {
       if (entity.ParentId === this.Id) {
         entity.setParentId(null);
-        entity.parentLink = null;
       }
     }
 
@@ -174,8 +142,10 @@ export abstract class HierarchicEntity extends ParametricEntity {
     return {
       ...super.json,
       Parent: this.ParentId,
-      LinkPoints: this.parentLink
-        ? this.parentLink.getPoints().map((p) => ({ x: p.getX(), y: p.getY() }))
+      LinkPoints: this._parentLink
+        ? this._parentLink
+            .getPoints()
+            .map((p) => ({ x: p.getX(), y: p.getY() }))
         : [],
     };
   }

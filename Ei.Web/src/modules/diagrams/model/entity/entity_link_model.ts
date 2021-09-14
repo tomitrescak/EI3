@@ -11,17 +11,20 @@ export class EntityLinkModel extends DefaultLinkModel {
   // }
 
   @action safeRemove(model: EntityDiagramModel) {
-    this.safeRemoveParent();
-
     if (this.sourcePort) {
       this.sourcePort.removeLink(this);
     }
     if (this.targetPort) {
       this.targetPort.removeLink(this);
     }
-    if (model.getLinks()[this.getID()]) {
-      model.removeLink(this);
+
+    if (this.sourcePort.getName() !== this.targetPort.getName()) {
+      this.safeRemoveParent();
     }
+
+    //if (model.getLinks()[this.getID()]) {
+    model.removeLink(this);
+    // }
   }
 
   @action safeRemoveParent() {
@@ -30,7 +33,6 @@ export class EntityLinkModel extends DefaultLinkModel {
         this.targetPort.getName() === "top" ? this.targetPort : this.sourcePort;
       let node = port.getParent() as HierarchicEntity;
       node.setParentId(null);
-      node.parentLink = null;
     }
   }
 

@@ -11,6 +11,7 @@ import { DiagramListener } from "@projectstorm/react-canvas-core";
 import { EntityLinkModel } from "./model/entity/entity_link_model";
 import { PointModel } from "@projectstorm/react-diagrams";
 import { Point } from "@projectstorm/geometry";
+import { useParams } from "react-router";
 
 interface Props {
   id: string;
@@ -23,48 +24,60 @@ export const EntitiesView = observer((props: Props) => {
     return customProps.entities(context.ei);
   }
 
-  const [selectedNode, setSelectedNode] = React.useState(() => {
-    if (props.id) {
-      const selectedNode = entities().find(
-        (o) => o.Id.toLowerCase() === props.id.toLowerCase()
-      ) as HierarchicEntity;
-      // selectedNode.setSelected(true);
-      return selectedNode;
-    }
-  });
+  const params = useParams<any>();
   const context = useAppContext();
+  var engine = context.ei.engine;
 
-  var engine = context.ei.engine; // createEngine();
+  // const [selectedNode, setSelectedNode] = React.useState(() => {
+  //   if (props.id) {
+  //     const selectedNode = entities().find(
+  //       (o) => o.Id.toLowerCase() === props.id.toLowerCase()
+  //     ) as HierarchicEntity;
+  //     // selectedNode.setSelected(true);
+  //     return selectedNode;
+  //   }
+  // });
 
-  //2) setup the diagram model
   var model = new EntityDiagramModel();
 
-  React.useEffect(() => {
-    if (props.id) {
-      if (selectedNode && props.id === selectedNode.Id) {
-        return;
-      }
+  // React.useEffect(() => {
+  //   const id = params.roleId || params.organisationId;
 
-      const nextNode = entities(props).find(
-        (o) => o.Id === props.id
-      ) as HierarchicEntity;
-      if (selectedNode) {
-        selectedNode.setSelected(false);
-      }
-      if (nextNode) {
-        nextNode.setSelected(true);
-      }
-      setSelectedNode(nextNode);
-    }
-  });
+  //   if (id) {
+  //     // const selectedNode = entities().find(
+  //     //   (o) => o.Id.toLowerCase() === id.toLowerCase()
+  //     // ) as HierarchicEntity;
+
+  //     // if (selectedNode && id === selectedNode.Id) {
+  //     //   return;
+  //     // }
+
+  //     const nextNode = entities(props).find(
+  //       (o) => o.Id === id
+  //     ) as HierarchicEntity;
+  //     // if (selectedNode) {
+  //     //   selectedNode.setSelected(false);
+  //     // }
+  //     if (nextNode) {
+  //       nextNode.setSelected(true);
+  //     }
+  //   }
+  // });
 
   // let model = new DiagramModel();
   // model.version;
 
   let ents = entities();
+  const id = params.roleId || params.organisationId;
 
   for (let node of entities()) {
     model.addNode(node);
+
+    if (id && node.Id.toLowerCase() === id.toLowerCase()) {
+      node.setSelected(true);
+    } else {
+      node.setSelected(false);
+    }
 
     if (node.ParentId) {
       let parentLink = new EntityLinkModel();
@@ -87,30 +100,6 @@ export const EntitiesView = observer((props: Props) => {
 
       model.addLink(parentLink);
     }
-
-    // if (node.parentLink) {
-    //   // check
-    //   let from = node.parentLink.getSourcePort();
-    //   let to = node.parentLink.getTargetPort();
-
-    //   let hasSourcePort = ents.find((e) =>
-    //     Object.keys(e.getPorts()).some((key) => e.getPorts()[key] === from)
-    //   );
-    //   let hasTargetPort = ents.find((e) =>
-    //     Object.keys(e.getPorts()).some((key) => e.getPorts()[key] === to)
-    //   );
-
-    //   if (!hasSourcePort) {
-    //     console.log("Source Port Missing");
-    //     console.log(node.parentLink);
-    //   }
-    //   if (!hasTargetPort) {
-    //     console.log("Target Port Missing");
-    //     console.log(node.parentLink);
-    //   }
-
-    //   model.addLink(node.parentLink);
-    // }
     node.ParentId; // subscribe
   }
 
@@ -141,7 +130,7 @@ export const EntitiesView = observer((props: Props) => {
 
   // //5) load model into engine
   engine.setModel(model);
-  engine.repaintCanvas();
+  // engine.repaintCanvas();
 
   return <DiagramView engine={engine} />;
 });

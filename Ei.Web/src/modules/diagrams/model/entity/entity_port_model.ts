@@ -4,31 +4,16 @@ import { EntityLinkModel } from "./entity_link_model";
 import { PortModelAlignment } from "@projectstorm/react-diagrams";
 
 export class EntityPortModel extends SRD.PortModel {
-  // position: string | "top" | "bottom" | "left" | "right";
-
   constructor(name: string, alignment: PortModelAlignment) {
     super({
       type: "entity",
       name,
       alignment,
-    }); // isIn, pos, label
-  }
-
-  serialize() {
-    return _.merge(super.serialize(), {
-      position: this.position,
     });
   }
 
-  deSerialize(data: any) {
-    super.deserialize(data);
-    this.position = data.position;
-  }
-
   createLinkModel() {
-    let linkModel = new EntityLinkModel();
-    linkModel.setSourcePort(this);
-    return linkModel;
+    return new EntityLinkModel();
   }
 
   get linkArray() {

@@ -25,6 +25,7 @@ export class EntityDiagramModel extends DiagramModel {
         const link = e.link as EntityLinkModel;
         // link deleted
         if (!e.isCreated) {
+          // this.removeLink(link);
           link.safeRemove(this);
         }
         if (e.isCreated) {
@@ -40,44 +41,34 @@ export class EntityDiagramModel extends DiagramModel {
             targetPortChanged: () => {
               /////////////////////////////////////////////
               // links can only be created parent to child
-              if (e.link.getSourcePort().getName() === "top") {
-                let sourcePort = e.link.getSourcePort();
-                e.link.setSourcePort(e.link.getTargetPort());
-                e.link.setTargetPort(sourcePort);
-              }
-              const fromPort = e.link.getSourcePort() as EntityPortModel;
-              const toPort = e.link.getTargetPort() as EntityPortModel;
-              ////////////////////////////////////
-              // we do not allow multiple inheritance
-              if (toPort.linkArray.length > 1) {
-                link.safeRemove(this);
-                return;
-              }
-              /////////////////////////////////////
-              // we cannot join top or bottoms
-              if (fromPort.getPosition() === toPort.getPosition()) {
-                link.safeRemove(this);
-                return;
-              }
-              ///////////////////////////////////
-              // we cannot create loops
-              let parentNode = fromPort.getParent() as HierarchicEntity;
-              let parentNodeTopPort = parentNode.getPort(
-                "top"
+
+              const fromPort = (
+                e.link.getSourcePort().getName() === "bottom"
+                  ? e.link.getSourcePort()
+                  : e.link.getTargetPort()
               ) as EntityPortModel;
-              let childNode = toPort.getParent() as HierarchicEntity;
-              let childNodeBottomPort = childNode.getPort(
-                "bottom"
+              const toPort = (
+                e.link.getSourcePort().getName() === "top"
+                  ? e.link.getSourcePort()
+                  : e.link.getTargetPort()
               ) as EntityPortModel;
-              let parentLinks = parentNodeTopPort.linkArray;
-              if (
-                parentLinks.length &&
-                parentLinks[0].getSourcePort() === childNodeBottomPort
-              ) {
-                link.safeRemove(this);
+
+              if (fromPort.getName() === toPort.getName()) {
+                this.removeLink(e.link);
                 return;
               }
-              childNode.setParentId(parentNode.Id);
+
+              // links cannot creat loops
+              let child = toPort.getParent() as HierarchicEntity;
+              let parent = fromPort.getParent() as HierarchicEntity;
+              while (parent != null) {
+                if (parent.Id === child.Id) {
+                  link.safeRemove(this);
+                  return;
+                }
+                parent = this.getNode(parent.ParentId) as HierarchicEntity;
+              }
+              child.setParentId((fromPort.getParent() as HierarchicEntity).Id);
               // childNode.parentLink = link;
             },
           } as any);

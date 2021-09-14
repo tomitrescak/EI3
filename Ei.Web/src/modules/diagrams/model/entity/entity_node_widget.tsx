@@ -68,19 +68,20 @@ export const EntityNodeWidget = observer(({ size = 150, node }: Props) => {
       <svg
         width={size}
         height={size}
+        viewBox={`0 0 ${size} ${size}`}
         dangerouslySetInnerHTML={{
           __html: `
 					<g id="Layer_1">
 					</g>
 					<g id="Layer_2">
-						<rect fill="${node.selected ? "salmon" : "orange"}" stroke="${
-            node.selected ? "white" : "black"
-          }" stroke-width="3" stroke-miterlimit="10" width="${size}" height="${height}" rx="10" ry="10" />
+						<rect fill="${
+              node.isSelected() ? "salmon" : "orange"
+            }" stroke-width="0" width="${size}" height="${height}" rx="10" ry="10" />
 						<text x="${size / 2}" y="${
             height / 2
           }" style="font-family: Verdana; font-size: 14px; fill: white; text-align: center; width: 200px; font-weight: ${
             node.selected ? "bold" : "normal"
-          }" text-anchor="middle" alignment-baseline="central">
+          }" text-anchor="middle" dominant-baseline="middle">
 							${node.Name}
 						</text>
 					</g>
