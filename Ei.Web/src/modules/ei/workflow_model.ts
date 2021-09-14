@@ -8,6 +8,7 @@ import {
 import { field } from "semantic-ui-mobx";
 import { DiagramModel } from "@projectstorm/react-diagrams";
 import { AppContext } from "../../config/context";
+import swal from "sweetalert2";
 
 import { Ui } from "../../helpers/client_helpers";
 import { WorkflowLinkModel } from "../diagrams/model/workflow/workflow_link_model";
@@ -182,7 +183,6 @@ export class Workflow extends ParametricEntity {
   createAction = async (e: any) => {
     e.stopPropagation();
 
-    const swal = require("sweetalert2");
     const { value: formValues } = await swal({
       title: "Creating a new action",
       html: `

@@ -224,7 +224,7 @@ export class Ei extends ParametricEntity {
   ) {
     let url = `/ei/${this.Name.toUrlName()}/${
       this.Id
-    }/workflow/${workflow.Name.toUrlName()}/${workflow.Id}`;
+    }/workflows/${workflow.Name.toUrlName()}/${workflow.Id}`;
 
     if (type) {
       url = url + `/${type}/${id}`;

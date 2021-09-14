@@ -54,7 +54,7 @@ export interface PortState {
 //   }
 // }
 
-const size = 10;
+const size = 20;
 
 export const FreeWidget = ({ node }: FreeWidgetProps) => {
   return (
@@ -72,10 +72,10 @@ export const FreeWidget = ({ node }: FreeWidgetProps) => {
           <ellipse
             fill="silver"
             style={{ opacity: 0.4 }}
-            rx={size}
-            ry={size}
-            cx={8}
-            cy={8}
+            rx={10}
+            ry={10}
+            cx={10}
+            cy={10}
             stroke="black"
             strokeWidth={3}
             strokeDasharray={"3 3"}

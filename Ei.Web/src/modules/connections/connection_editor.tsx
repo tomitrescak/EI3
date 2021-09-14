@@ -16,8 +16,9 @@ import { AccessEditor } from "../access/access_editor";
 import { IconView } from "../core/entity_icon_view";
 import { EntityEditor } from "../core/entity_view";
 import { ActionDisplayType, Connection } from "../ei/connection_model";
-import { AppContext, Context } from "../../config/context";
+import { AppContext, Context, useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
+import { useParams } from "react-router";
 
 interface Props {
   id: string;
@@ -71,325 +72,319 @@ const splitToOptions = [
   { text: "Disconnect", value: "" },
 ];
 
-@observer
-export class ConnectionEditor extends React.Component<Props> {
-  connection: Connection;
-  static contextType = Context;
-  context: AppContext;
+export const ConnectionEditor = observer(() => {
+  const context = useAppContext();
 
-  changeSourcePort = action((_e: any, { value }: any) => {
-    const workflow = this.connection.workflow;
-    const link = this.connection.link;
+  const changeSourcePort = action((_e: any, { value }: any) => {
+    const workflow = connection.workflow;
+    const link = connection.link;
 
-    this.connection.SourcePort = value;
+    connection.SourcePort = value;
 
-    const fromPosition = workflow.findPosition(this.connection.From);
+    const fromPosition = workflow.findPosition(connection.From);
     link.getSourcePort().removeLink(link);
     link.setSourcePort(fromPosition.getPort(value));
 
-    this.connection.workflow.Connections.remove(this.connection);
-    this.connection.workflow.Connections.push(this.connection);
+    connection.workflow.Connections.remove(connection);
+    connection.workflow.Connections.push(connection);
 
     Ui.history.step();
   });
 
-  changeSourcePosition = action((_e: any, { value }: any) => {
-    const workflow = this.connection.workflow;
-    const link = this.connection.link;
+  const changeSourcePosition = action((_e: any, { value }: any) => {
+    const workflow = connection.workflow;
+    const link = connection.link;
     link.getSourcePort().removeLink(link);
 
     const fromPosition = workflow.findPosition(value);
     if (fromPosition) {
       const port =
         fromPosition.getPorts()[Object.keys(fromPosition.getPorts())[0]];
-      this.connection.SourcePort = port.getName();
+      connection.SourcePort = port.getName();
       link.setSourcePort(port);
 
-      this.connection.From = value;
+      connection.From = value;
     } else {
-      this.connection.From = "";
-      this.connection.SourcePort = null;
+      connection.From = "";
+      connection.SourcePort = null;
     }
 
-    this.connection.update();
-    this.connection.workflow.Connections.remove(this.connection);
-    this.connection.workflow.Connections.push(this.connection);
+    connection.update();
+    connection.workflow.Connections.remove(connection);
+    connection.workflow.Connections.push(connection);
 
     Ui.history.step();
   });
 
-  changeTargetPort = action((_e: any, { value }: any) => {
-    const workflow = this.connection.workflow;
-    const link = this.connection.link;
+  const changeTargetPort = action((_e: any, { value }: any) => {
+    const workflow = connection.workflow;
+    const link = connection.link;
 
-    this.connection.TargetPort = value;
+    connection.TargetPort = value;
 
-    const toPosition = workflow.findPosition(this.connection.To);
+    const toPosition = workflow.findPosition(connection.To);
     link.getTargetPort().removeLink(link);
     link.setTargetPort(toPosition.getPort(value));
 
-    this.connection.workflow.Connections.remove(this.connection);
-    this.connection.workflow.Connections.push(this.connection);
+    connection.workflow.Connections.remove(connection);
+    connection.workflow.Connections.push(connection);
 
     Ui.history.step();
   });
 
-  changeTargetPosition = action((_e: any, { value }: any) => {
-    const workflow = this.connection.workflow;
-    const link = this.connection.link;
+  const changeTargetPosition = action((_e: any, { value }: any) => {
+    const workflow = connection.workflow;
+    const link = connection.link;
 
     link.getTargetPort().removeLink(link);
 
     const toPosition = workflow.findPosition(value);
     if (toPosition) {
       let port = toPosition.getPorts()[Object.keys(toPosition.getPorts())[0]];
-      this.connection.TargetPort = port.getName();
+      connection.TargetPort = port.getName();
       link.setTargetPort(port);
 
-      this.connection.To = value;
+      connection.To = value;
     } else {
-      this.connection.To = "";
-      this.connection.TargetPort = null;
+      connection.To = "";
+      connection.TargetPort = null;
     }
-    this.connection.update();
-    this.connection.workflow.Connections.remove(this.connection);
-    this.connection.workflow.Connections.push(this.connection);
+    connection.update();
+    connection.workflow.Connections.remove(connection);
+    connection.workflow.Connections.push(connection);
 
     Ui.history.step();
   });
 
-  componentWillMount() {
-    this.context.selectWorkflowElement(
-      this.props.workflowId,
-      "Connections",
-      this.props.id,
-      "link"
-    );
+  // componentWillMount() {
+  //   context.selectWorkflowElement(
+  //     props.workflowId,
+  //     "Connections",
+  //     props.id,
+  //     "link"
+  //   );
+  // }
+
+  // componentWillUpdate(props: Props) {
+  //   context.selectWorkflowElement(
+  //     props.workflowId,
+  //     "Connections",
+  //     props.id,
+  //     "link"
+  //   );
+  // }
+
+  const { workflowId, id } = useParams<{ workflowId: string; id: string }>();
+  let ei = context.ei;
+
+  let workflow = ei.Workflows.find(
+    (w) => w.Id.toLowerCase() === workflowId.toLowerCase()
+  );
+  if (!workflow) {
+    return <div>Workflow does not exist: {workflowId} </div>;
+  }
+  let connection = workflow.Connections.find((a) => a.Id === id);
+  if (!connection) {
+    return <div>Connection does not exist: {id} </div>;
   }
 
-  componentWillUpdate(props: Props) {
-    this.context.selectWorkflowElement(
-      props.workflowId,
-      "Connections",
-      props.id,
-      "link"
-    );
+  connection = connection;
+
+  const workflowAction = connection.workflow.Actions.find(
+    (a) => a.Id === connection.ActionId
+  );
+
+  let fromOptions = emptyOptions;
+  switch (connection.fromElementType) {
+    case "State":
+      fromOptions = statePositionOptions;
+      break;
+    case "TransitionJoin":
+      fromOptions = joinFromOptions;
+      break;
+    case "TransitionSplit":
+      fromOptions = splitFromOptions;
+      break;
   }
 
-  render() {
-    const { id } = this.props;
-    let ei = this.context.ei;
+  let toOptions = emptyOptions;
+  switch (connection.toElementType) {
+    case "State":
+      toOptions = statePositionOptions;
+      break;
+    case "TransitionJoin":
+      toOptions = joinToOptions;
+      break;
+    case "TransitionSplit":
+      toOptions = splitToOptions;
+      break;
+  }
 
-    let workflow = ei.Workflows.find((w) => w.Id === this.props.workflowId);
-    if (!workflow) {
-      return <div>Workflow does not exist: {this.props.workflowId} </div>;
-    }
-    let connection = workflow.Connections.find((a) => a.Id === id);
-    if (!connection) {
-      return <div>Connection does not exist: {id} </div>;
-    }
+  let handler = context.createAccordionHandler("Connection_" + id, [0]);
 
-    this.connection = connection;
-
-    const workflowAction = connection.workflow.Actions.find(
-      (a) => a.Id === connection.ActionId
-    );
-
-    let fromOptions = emptyOptions;
-    switch (connection.fromElementType) {
-      case "State":
-        fromOptions = statePositionOptions;
-        break;
-      case "TransitionJoin":
-        fromOptions = joinFromOptions;
-        break;
-      case "TransitionSplit":
-        fromOptions = splitFromOptions;
-        break;
-    }
-
-    let toOptions = emptyOptions;
-    switch (connection.toElementType) {
-      case "State":
-        toOptions = statePositionOptions;
-        break;
-      case "TransitionJoin":
-        toOptions = joinToOptions;
-        break;
-      case "TransitionSplit":
-        toOptions = splitToOptions;
-        break;
-    }
-
-    let handler = this.context.createAccordionHandler(
-      "Connection_" + this.props.id,
-      [0]
-    );
-
-    return (
-      <LimitedForm>
-        <Accordion>
-          <Accordion.Title
-            active={handler.isActive(0)}
-            index={0}
-            onClick={handler.handleClick}
-          >
-            <Header dividing as="h4">
-              <Header.Content>
-                <Icon name="dropdown" />
-                <IconView entity={connection} />
-                {connection.Name || connection.Id || "<Empty>"}
-              </Header.Content>
-              <FloatedLabel color="green" size="tiny">
-                Id: {connection.Id}
-              </FloatedLabel>
-            </Header>
-          </Accordion.Title>
-          <Accordion.Content active={handler.isActive(0)}>
-            <EntityEditor entity={connection} hideHeader={true} />
-            <Form.Group>
-              <Select
-                owner={connection.fields.From}
-                width={9}
-                fluid
-                label="From"
-                search
-                options={workflow.connectionOptions}
-                onChange={this.changeSourcePosition}
-              />
-              <Select
-                owner={connection.fields.SourcePort}
-                fluid
-                width={7}
-                label="Port"
-                search
-                options={fromOptions}
-                onChange={this.changeSourcePort}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Select
-                owner={connection.fields.To}
-                fluid
-                width={9}
-                label="To"
-                search
-                options={workflow.connectionOptions}
-                onChange={this.changeTargetPosition}
-              />
-              <Select
-                owner={connection.fields.TargetPort}
-                fluid
-                width={7}
-                label="Port"
-                search
-                options={toOptions}
-                onChange={this.changeTargetPort}
-              />
-            </Form.Group>
+  return (
+    <LimitedForm>
+      <Accordion>
+        <Accordion.Title
+          active={handler.isActive(0)}
+          index={0}
+          onClick={handler.handleClick}
+        >
+          <Header dividing as="h4">
+            <Header.Content>
+              <Icon name="dropdown" />
+              <IconView entity={connection} />
+              {connection.Name || connection.Id || "<Empty>"}
+            </Header.Content>
+            <FloatedLabel color="green" size="tiny">
+              Id: {connection.Id}
+            </FloatedLabel>
+          </Header>
+        </Accordion.Title>
+        <Accordion.Content active={handler.isActive(0)}>
+          <EntityEditor entity={connection} hideHeader={true} />
+          <Form.Group>
             <Select
-              owner={connection.fields.ActionId}
-              label="Action"
+              owner={connection.fields.From}
+              width={9}
+              fluid
+              label="From"
               search
-              options={workflow.actionOptions}
+              options={workflow.connectionOptions}
+              onChange={changeSourcePosition}
             />
-            <Input
-              owner={connection.fields.AllowLoops}
-              type="number"
-              label="Allowed Loops"
+            <Select
+              owner={connection.fields.SourcePort}
+              fluid
+              width={7}
+              label="Port"
+              search
+              options={fromOptions}
+              onChange={changeSourcePort}
             />
-          </Accordion.Content>
+          </Form.Group>
+          <Form.Group>
+            <Select
+              owner={connection.fields.To}
+              fluid
+              width={9}
+              label="To"
+              search
+              options={workflow.connectionOptions}
+              onChange={changeTargetPosition}
+            />
+            <Select
+              owner={connection.fields.TargetPort}
+              fluid
+              width={7}
+              label="Port"
+              search
+              options={toOptions}
+              onChange={changeTargetPort}
+            />
+          </Form.Group>
+          <Select
+            owner={connection.fields.ActionId}
+            label="Action"
+            search
+            options={workflow.actionOptions}
+          />
+          <Input
+            owner={connection.fields.AllowLoops}
+            type="number"
+            label="Allowed Loops"
+          />
+        </Accordion.Content>
 
-          <Accordion.Title
-            active={handler.isActive(1)}
-            index={1}
-            onClick={handler.handleClick}
-          >
-            <Header as="h4" dividing>
-              <Header.Content>
-                <Icon name="dropdown" />
-                <Icon name="unhide" />
-                Visual Properties
-              </Header.Content>
-            </Header>
-          </Accordion.Title>
-          <Accordion.Content active={handler.isActive(1)}>
-            <Label label="Display Type" />
-            <Form.Group>
-              <Radio
-                owner={connection.fields.ActionDisplay}
-                name="DisplayType"
-                label="Icon Only"
-                value={ActionDisplayType.IconOnly}
-              />
-              <Radio
-                owner={connection.fields.ActionDisplay}
-                name="DisplayType"
-                label="Icon and Text"
-                value={ActionDisplayType.IconAndText}
-              />
-              <Radio
-                owner={connection.fields.ActionDisplay}
-                name="DisplayType"
-                label="Full"
-                value={ActionDisplayType.Full}
-              />
-            </Form.Group>
-            <Checkbox
-              owner={connection.fields.RotateLabel}
-              label="Rotate Label"
+        <Accordion.Title
+          active={handler.isActive(1)}
+          index={1}
+          onClick={handler.handleClick}
+        >
+          <Header as="h4" dividing>
+            <Header.Content>
+              <Icon name="dropdown" />
+              <Icon name="unhide" />
+              Visual Properties
+            </Header.Content>
+          </Header>
+        </Accordion.Title>
+        <Accordion.Content active={handler.isActive(1)}>
+          <Label label="Display Type" />
+          <Form.Group>
+            <Radio
+              owner={connection.fields.ActionDisplay}
+              name="DisplayType"
+              label="Icon Only"
+              value={ActionDisplayType.IconOnly}
             />
-          </Accordion.Content>
+            <Radio
+              owner={connection.fields.ActionDisplay}
+              name="DisplayType"
+              label="Icon and Text"
+              value={ActionDisplayType.IconAndText}
+            />
+            <Radio
+              owner={connection.fields.ActionDisplay}
+              name="DisplayType"
+              label="Full"
+              value={ActionDisplayType.Full}
+            />
+          </Form.Group>
+          <Checkbox
+            owner={connection.fields.RotateLabel}
+            label="Rotate Label"
+          />
+        </Accordion.Content>
 
-          <Accordion.Title
-            active={handler.isActive(2)}
-            index={2}
-            onClick={handler.handleClick}
-          >
-            <Header as="h4" dividing>
-              <Header.Content>
-                <Icon name="dropdown" />
-                <Icon name="legal" />
-                Access Rules
-              </Header.Content>
-            </Header>
-          </Accordion.Title>
-          <Accordion.Content active={handler.isActive(2)}>
-            <AccessEditor
-              ei={ei}
-              access={connection.Access}
-              name={"state_entry_" + connection.Id}
-              workflow={connection.workflow}
-              action={workflowAction}
-            />
-          </Accordion.Content>
+        <Accordion.Title
+          active={handler.isActive(2)}
+          index={2}
+          onClick={handler.handleClick}
+        >
+          <Header as="h4" dividing>
+            <Header.Content>
+              <Icon name="dropdown" />
+              <Icon name="legal" />
+              Access Rules
+            </Header.Content>
+          </Header>
+        </Accordion.Title>
+        <Accordion.Content active={handler.isActive(2)}>
+          <AccessEditor
+            ei={ei}
+            access={connection.Access}
+            name={"state_entry_" + connection.Id}
+            workflow={connection.workflow}
+            action={workflowAction}
+          />
+        </Accordion.Content>
 
-          <Accordion.Title
-            active={handler.isActive(3)}
-            index={3}
-            onClick={handler.handleClick}
-          >
-            <Header as="h4" dividing>
-              <Header.Content>
-                <Icon name="dropdown" />
-                <Icon name="legal" />
-                Effects
-              </Header.Content>
-            </Header>
-          </Accordion.Title>
-          <Accordion.Content active={handler.isActive(3)}>
-            <AccessEditor
-              ei={ei}
-              access={connection.Effects}
-              name={"state_exit_" + connection.Id}
-              hideActionCondition={true}
-              hidePreconditions={true}
-              workflow={connection.workflow}
-              action={workflowAction}
-            />
-          </Accordion.Content>
-        </Accordion>
-      </LimitedForm>
-    );
-  }
-}
+        <Accordion.Title
+          active={handler.isActive(3)}
+          index={3}
+          onClick={handler.handleClick}
+        >
+          <Header as="h4" dividing>
+            <Header.Content>
+              <Icon name="dropdown" />
+              <Icon name="legal" />
+              Effects
+            </Header.Content>
+          </Header>
+        </Accordion.Title>
+        <Accordion.Content active={handler.isActive(3)}>
+          <AccessEditor
+            ei={ei}
+            access={connection.Effects}
+            name={"state_exit_" + connection.Id}
+            hideActionCondition={true}
+            hidePreconditions={true}
+            workflow={connection.workflow}
+            action={workflowAction}
+          />
+        </Accordion.Content>
+      </Accordion>
+    </LimitedForm>
+  );
+});
