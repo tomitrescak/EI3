@@ -49,7 +49,7 @@ export const Components = observer(() => {
           <Menu.Item
             icon="play"
             as={Link}
-            to={`/${ei.Name.toUrlName()}/${ei.id}/execution`}
+            to={`/${ei.Name.toUrlName()}/${ei.Id}/execution`}
           />
           <Menu.Item
             icon="reply"
@@ -134,7 +134,7 @@ export const Components = observer(() => {
               <List.Item
                 as={Link}
                 to={`/${ei.Name.toUrlName()}/${
-                  ei.id
+                  ei.Id
                 }/experiment/default/general/1`}
               >
                 General
@@ -142,7 +142,7 @@ export const Components = observer(() => {
               <List.Item
                 as={Link}
                 to={`/${ei.Name.toUrlName()}/${
-                  ei.id
+                  ei.Id
                 }/experiment/default/agents/1`}
               >
                 Agents
@@ -150,7 +150,7 @@ export const Components = observer(() => {
               <List.Item
                 as={Link}
                 to={`/${ei.Name.toUrlName()}/${
-                  ei.id
+                  ei.Id
                 }/experiment/default/environment/1`}
               >
                 Environment

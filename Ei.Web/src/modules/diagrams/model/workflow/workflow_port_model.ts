@@ -3,13 +3,17 @@ import * as SRD from "@projectstorm/react-diagrams";
 
 import { Workflow } from "../../../ei/workflow_model";
 import { WorkflowLinkModel } from "./workflow_link_model";
+import { PortModelAlignment } from "@projectstorm/react-diagrams";
 
-export class WorkflowPortModel extends SRD.DefaultPortModel {
+export class WorkflowPortModel extends SRD.PortModel {
   // position: string | 'left' | 'right';
   workflow: Workflow;
 
-  constructor(workflow: Workflow, isIn: boolean, pos: string) {
-    super(isIn, pos, pos);
+  constructor(workflow: Workflow, pos: string, alignment: PortModelAlignment) {
+    super({
+      name: pos,
+      alignment,
+    });
     this.workflow = workflow;
   }
 

@@ -29,8 +29,6 @@ interface MethodInfo {
   arguments: [number, ...any[]];
 }
 
-let queryUid = 0;
-
 // export class QueryHandler {
 //   private observers: Observer[] = [];
 
@@ -203,7 +201,7 @@ export class SocketClient {
             console.warn(event.data);
           }
         };
-      } catch (ex) {
+      } catch (ex: any) {
         this.context.Ui.alertError(ex.message);
       }
     });

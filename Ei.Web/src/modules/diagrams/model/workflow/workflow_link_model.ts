@@ -1,12 +1,17 @@
-import { LinkModel, PointModel } from "@projectstorm/react-diagrams";
+import {
+  DefaultLinkModel,
+  DefaultLinkModelListener,
+  PointModel,
+} from "@projectstorm/react-diagrams";
 
 import { action, computed, IObservableArray, observable } from "mobx";
+import { Router } from "../../../../helpers/client_helpers";
 
 import { Connection } from "../../../ei/connection_model";
 import { Workflow } from "../../../ei/workflow_model";
 import { WorkflowDiagramModel } from "./workflow_diagram_model";
 
-export class WorkflowLinkModel extends LinkModel {
+export class WorkflowLinkModel extends DefaultLinkModel {
   @observable selected = false;
   connection: Connection;
   workflow: Workflow;
@@ -14,16 +19,19 @@ export class WorkflowLinkModel extends LinkModel {
 
   _points: any;
 
-  get points(): IObservableArray<PointModel> {
+  get linkPoints(): IObservableArray<PointModel> {
     return this._points;
   }
 
-  set points(value) {
-    this._points = value;
+  set linkPoints(value) {
+    this._points = observable(value);
   }
 
   constructor(connection: Connection, workflow: Workflow) {
-    super("default", connection.Id);
+    super({
+      type: "default",
+      id: connection.Id,
+    });
     this.connection = connection;
     this.workflow = workflow;
 
@@ -31,23 +39,25 @@ export class WorkflowLinkModel extends LinkModel {
       selectionChanged: ({ isSelected }) => {
         isSelected ? this.select() : false;
       },
-    });
+    } as DefaultLinkModelListener);
 
-    this.points = observable(this.points);
+    this.linkPoints = observable(this.points);
   }
 
   setPoints(points: PointModel[]) {
-    if (!this.points) {
-      this.points = observable([]);
+    if (!this.linkPoints) {
+      this.linkPoints = observable([]);
     }
-    this.points.replace(points);
+    this.linkPoints.replace(points);
   }
 
   select() {
-    this.workflow.ei.context.viewStore.showConnection(
-      this.workflow.Id,
-      this.workflow.Name,
-      this.connection.Id
+    Router.push(
+      this.workflow.ei.createWorkflowUrl(
+        this.workflow,
+        "connection",
+        this.connection.Id
+      )
     );
   }
 
@@ -74,10 +84,8 @@ export class WorkflowLinkModel extends LinkModel {
 
   @action safeRemoveLink() {
     this.workflow.Connections.remove(this.connection);
-    this.workflow.ei.context.viewStore.showWorkflow(
-      this.workflow.Id,
-      this.workflow.Name
-    );
+
+    Router.push(this.workflow.ei.createWorkflowUrl(this.workflow));
 
     // remove split info
     this.connection.checkSplit(true);

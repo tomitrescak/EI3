@@ -1,13 +1,14 @@
-import * as React from "react";
+import React from "react";
 
 import { observer } from "mobx-react";
-import { Accordion, Button, Icon, Label } from "semantic-ui-react";
-import { style } from "typestyle";
+import { Accordion, Icon, Label } from "semantic-ui-react";
 
 import { Ei } from "../ei/ei_model";
 import { Workflow } from "../ei/workflow_model";
 import { AccordionButton } from "./hierarchic_entity_view";
 import { WorkflowComponentList } from "./workflow_component_view";
+import { Link } from "react-router-dom";
+import styled from "@emotion/styled";
 
 interface Props {
   active: boolean;
@@ -16,16 +17,14 @@ interface Props {
   handleClick: any;
 }
 
-let workflowItem: Workflow;
-
-export const accordionContent = style({
+export const AccordionContent = styled(Accordion.Content)`
   // background: '#efefef',
-  padding: "0px 0px 6px 25px!important",
-});
+  padding: 0px 0px 6px 25px !important;
+`;
 
-export const nestedAccordion = style({
-  margin: "0px!important",
-});
+export const NestedAccordion = styled(Accordion)`
+  margin: 0px !important;
+`;
 
 @observer
 export class WorkflowList extends React.Component<Props> {
@@ -52,8 +51,8 @@ export class WorkflowList extends React.Component<Props> {
             onClick={ei.createWorkflow}
           />
         </Accordion.Title>
-        <Accordion.Content active={active} className={accordionContent}>
-          <Accordion className={nestedAccordion}>
+        <AccordionContent active={active}>
+          <NestedAccordion>
             {ei.Workflows.map((workflowItem) => (
               <WorkflowDetail
                 key={workflowItem.Id}
@@ -64,8 +63,8 @@ export class WorkflowList extends React.Component<Props> {
                 ei={ei}
               />
             ))}
-          </Accordion>
-        </Accordion.Content>
+          </NestedAccordion>
+        </AccordionContent>
       </>
     );
   }
@@ -94,15 +93,17 @@ export const WorkflowDetail = ({
         {/* <Icon name="sitemap" /> */}
         {workflow.Name}
         <AccordionButton
-          to={`/workflows/${workflow.Name.toUrlName()}/${workflow.Id.toUrlName()}`}
+          as={Link}
+          to={`/ei/workflows/${workflow.Name.toUrlName()}/${workflow.Id.toUrlName()}`}
           floated="right"
           icon="sitemap"
           compact
           color="orange"
+          onClick={(e) => e.stopPropagation()}
         />
       </Accordion.Title>
-      <Accordion.Content active={active} className={accordionContent}>
-        <Accordion className={nestedAccordion}>
+      <AccordionContent active={active}>
+        <NestedAccordion>
           <WorkflowComponentList
             workflow={workflow}
             handler={handler}
@@ -152,8 +153,8 @@ export const WorkflowDetail = ({
             showId={true}
             createAction={workflow.addConnection}
           />
-        </Accordion>
-      </Accordion.Content>
+        </NestedAccordion>
+      </AccordionContent>
     </>
   );
 };

@@ -1,14 +1,14 @@
-import * as jsPDF from "jspdf";
+// import * as jsPDF from "jspdf";
 import * as PIXI from "pixi.js";
 import * as React from "react";
 
 import { observable } from "mobx";
 import { Line } from "react-chartjs-2";
 
-class EnvironmentObject {
-  name: string;
-  image: string;
-}
+// class EnvironmentObject {
+//   name: string;
+//   image: string;
+// }
 
 interface IServerObject {
   id: number;
@@ -98,10 +98,11 @@ class ServerModel {
 
   constructor() {
     // init pixi
-    let type = "WebGL";
-    if (!PIXI.utils.isWebGLSupported()) {
-      type = "canvas";
-    }
+
+    // let type = "WebGL";
+    // if (!PIXI.utils.isWebGLSupported()) {
+    //   type = "canvas";
+    // }
 
     // Create a Pixi Application
     let app = new PIXI.Application({
@@ -288,51 +289,51 @@ interface IdentifiableSprite extends PIXI.Sprite {
   id: number;
 }
 
-export class ExecutionView extends React.Component {
-  canvas: HTMLElement;
+export const ExecutionView = () => {
+  const canvas = React.useRef<HTMLDivElement>(null);
 
-  downloadPDF = () => {
-    let canvas = document.querySelector(".chartjs-render-monitor");
-    // creates image
-    let canvasImg = canvas.toDataURL("#ffffff", "image/jpeg", 1.0);
+  // downloadPDF = () => {
+  //   let canvas = document.querySelector(
+  //     ".chartjs-render-monitor"
+  //   ) as HTMLCanvasElement;
+  //   // creates image
+  //   let canvasImg = canvas.toDataURL("#ffffff", "image/jpeg");
 
-    // creates PDF from img
-    let pdf = new jsPDF("landscape");
-    pdf.addImage(canvasImg, "JPEG", 20, 20, 250, 175);
-    pdf.save("chart.pdf");
-  };
+  //   // creates PDF from img
+  //   let pdf = new jsPDF("landscape");
+  //   pdf.addImage(canvasImg, "JPEG", 20, 20, 250, 175);
+  //   pdf.save("chart.pdf");
+  // };
 
   // REACT METHODS
-  render() {
-    return (
+  React.useEffect(() => {
+    canvas.current.appendChild(model.app.view);
+  });
+  return (
+    <>
       <>
-        <>
-          <div ref={(n) => (this.canvas = n)} id="pixiCanvas" />
-          <hr />
-          <LineChart model={model} id="LineChart" />
-          <div>
+        <div ref={canvas} id="pixiCanvas" />
+        <hr />
+        <LineChart model={model} />
+        {/* <div>
             <button type="button" id="download-pdf" onClick={this.downloadPDF}>
               {" "}
               Download PDF{" "}
             </button>
-          </div>
-        </>
+          </div> */}
       </>
-    );
-  }
-  componentDidMount() {
-    this.canvas.appendChild(model.app.view);
-  }
+    </>
+  );
+};
 
-  // CLASS METHODS
-}
+// CLASS METHODS
 
 interface ChartProps {
   model: ServerModel;
 }
 
 export class LineChart extends React.Component<ChartProps> {
-  line: Line;
+  line: any;
 
   componentDidMount() {
     setInterval(() => {

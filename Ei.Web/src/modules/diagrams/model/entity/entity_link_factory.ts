@@ -22,7 +22,6 @@ export class EntityLinkFactory extends SRD.DefaultLinkFactory {
   }
 
   getNewInstance(_initialConfig?: any): SRD.DefaultLinkModel {
-    debugger;
     return new EntityLinkModel();
   }
 }

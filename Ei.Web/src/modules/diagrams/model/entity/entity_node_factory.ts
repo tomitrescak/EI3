@@ -1,4 +1,6 @@
 import * as SRD from "@projectstorm/react-diagrams-defaults";
+import { DefaultNodeWidget } from "@projectstorm/react-diagrams-defaults";
+import React from "react";
 
 import { HierarchicEntity } from "../../../ei/hierarchic_entity_model";
 import { EntityNodeWidgetFactory } from "./entity_node_widget";
@@ -8,9 +10,14 @@ export class EntityNodeFactory extends SRD.DefaultNodeFactory {
     super();
   }
 
-  generateReactWidget({ model }: { model: HierarchicEntity }): JSX.Element {
-    if (model instanceof HierarchicEntity) {
-      return EntityNodeWidgetFactory({ node: model });
+  generateReactWidget(e: { model: HierarchicEntity }): JSX.Element {
+    if (e.model instanceof HierarchicEntity) {
+      return EntityNodeWidgetFactory({ node: e.model });
+    } else {
+      return React.createElement(DefaultNodeWidget, {
+        node: e.model,
+        engine: this.engine,
+      });
     }
   }
 

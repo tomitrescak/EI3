@@ -6,7 +6,7 @@ import {
   observable,
 } from "mobx";
 import { field } from "semantic-ui-mobx";
-import { DiagramModel } from "storm-react-diagrams";
+import { DiagramModel } from "@projectstorm/react-diagrams";
 import { AppContext } from "../../config/context";
 
 import { Ui } from "../../helpers/client_helpers";
@@ -141,7 +141,11 @@ export class Workflow extends ParametricEntity {
     ) {
       action(() => {
         this.ei.Workflows.remove(this);
-        this.ei.context.viewStore.showView("home");
+
+        this.context.Router.push(
+          `/ei/${this.ei.Name.toUrlName()}/${this.ei.Id}`
+        );
+        // this.ei.context.viewStore.showView("home");
       })();
     }
 
@@ -230,7 +234,7 @@ export class Workflow extends ParametricEntity {
         throw new Error("Not Implemented: " + actionType);
     }
 
-    this.ei.context.viewStore.showAction(this.Id, this.Name, Id);
+    this.context.Router.push(this.ei.createWorkflowUrl(this, "action", Id));
 
     Ui.history.step();
   };
@@ -305,7 +309,7 @@ export class Workflow extends ParametricEntity {
         throw new Error("Not Implemented: " + transitionType);
     }
 
-    this.ei.context.viewStore.showTransition(this.Id, this.Name, Id);
+    this.context.Router.push(this.ei.createWorkflowUrl(this, "transition", Id));
 
     Ui.history.step();
   };

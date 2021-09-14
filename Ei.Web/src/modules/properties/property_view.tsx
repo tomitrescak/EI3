@@ -4,7 +4,7 @@ import { IObservableArray } from "mobx";
 import { observer } from "mobx-react";
 import { Button, DropdownItemProps, Header } from "semantic-ui-react";
 
-import { Form, getField, Input, Label, Select } from "semantic-ui-mobx";
+import { getField, Input, Label, Select } from "semantic-ui-mobx";
 import { Property } from "../ei/property_model";
 import { AppContext, useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
@@ -20,7 +20,56 @@ interface PropertyItemProps {
   types: DropdownItemProps[];
 }
 
-const Group = styled(Form.Group)`
+// const Group = styled(Form.Group)`
+//   .dropdown {
+//     font-size: 0.78571429em !important;
+//     line-height: 1.21428571em;
+//     padding: 0.67857143em 1em;
+//   }
+// `;
+
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+
+  > *:nth-child(1) {
+    flex: 3;
+
+    input {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+  }
+
+  > *:nth-child(2) {
+    flex: 2;
+
+    .dropdown {
+      border-radius: 0 !important;
+    }
+  }
+
+  > *:nth-child(3) {
+    flex: 3;
+
+    input {
+      border-radius: 0 !important;
+    }
+  }
+
+  > *:nth-child(4) {
+    flex: 0 0 30px;
+  }
+
+  button {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+
+  > * {
+    margin: 0 !important;
+  }
+
   .dropdown {
     font-size: 0.78571429em !important;
     line-height: 1.21428571em;
@@ -44,18 +93,18 @@ class PropertyItem extends React.Component<PropertyItemProps> {
   render() {
     const { propertyItem, types } = this.props;
     return (
-      <Group>
-        <Input size="mini" width={5} owner={getField(propertyItem, "Name")} />
+      <Row>
+        <Input size="mini" fluid owner={getField(propertyItem, "Name")} />
         <Select
           compact
-          width={4}
           fluid
+          size="mini"
           options={types}
           owner={getField(propertyItem, "Type")}
         />
         <Input
+          fluid
           size="mini"
-          width={6}
           owner={getField(propertyItem, "DefaultValue")}
         />
         <Button
@@ -65,7 +114,7 @@ class PropertyItem extends React.Component<PropertyItemProps> {
           color="red"
           onClick={this.delete}
         />
-      </Group>
+      </Row>
     );
   }
 }
@@ -99,11 +148,12 @@ export const PropertyView = observer((props: Props) => {
 
       {props.owner.Properties.length > 0 && (
         <>
-          <Form.Group>
+          <Row>
             <Label width={5} label="Name" />
             <Label width={4} label="Type" />
             <Label width={6} label="Default Value" />
-          </Form.Group>
+            <div />
+          </Row>
           {props.owner.Properties.map((property, index) => (
             <PropertyItem
               key={index}
@@ -115,23 +165,26 @@ export const PropertyView = observer((props: Props) => {
           ))}
         </>
       )}
-      <Button
-        type="button"
-        content="Add Property"
-        primary
-        icon="plus"
-        labelPosition="left"
-        onClick={() => addField(props, context)}
-      />
 
-      <Button
-        type="button"
-        floated="right"
-        title="Sort"
-        default
-        icon="sort"
-        onClick={() => sort(props)}
-      />
+      <div style={{ marginTop: 8 }}>
+        <Button
+          type="button"
+          content="Add Property"
+          primary
+          icon="plus"
+          labelPosition="left"
+          onClick={() => addField(props, context)}
+        />
+
+        <Button
+          type="button"
+          floated="right"
+          title="Sort"
+          default
+          icon="sort"
+          onClick={() => sort(props)}
+        />
+      </div>
     </>
   );
 });

@@ -9,7 +9,6 @@ import {
   Icon,
   Label as SUILabel,
 } from "semantic-ui-react";
-import { style } from "typestyle";
 
 import { action } from "mobx";
 import { Ui } from "../../helpers/client_helpers";
@@ -18,23 +17,22 @@ import { IconView } from "../core/entity_icon_view";
 import { EntityEditor } from "../core/entity_view";
 import { ActionDisplayType, Connection } from "../ei/connection_model";
 import { AppContext, Context } from "../../config/context";
+import styled from "@emotion/styled";
 
 interface Props {
   id: string;
   workflowId: string;
 }
 
-const floatRight = style({
-  float: "right",
-});
+const FloatedLabel = styled(SUILabel)`
+  float: right;
+`;
 
-const limited = style({
-  $nest: {
-    ".accordion.ui": {
-      margin: "0px!important",
-    },
-  },
-});
+const LimitedForm = styled(Form)`
+  .accordion.ui {
+    margin: 0px !important;
+  }
+`;
 
 const emptyOptions: DropdownItemProps[] = [];
 
@@ -86,7 +84,7 @@ export class ConnectionEditor extends React.Component<Props> {
     this.connection.SourcePort = value;
 
     const fromPosition = workflow.findPosition(this.connection.From);
-    link.sourcePort.removeLink(link);
+    link.getSourcePort().removeLink(link);
     link.setSourcePort(fromPosition.getPort(value));
 
     this.connection.workflow.Connections.remove(this.connection);
@@ -98,12 +96,13 @@ export class ConnectionEditor extends React.Component<Props> {
   changeSourcePosition = action((_e: any, { value }: any) => {
     const workflow = this.connection.workflow;
     const link = this.connection.link;
-    link.sourcePort.removeLink(link);
+    link.getSourcePort().removeLink(link);
 
     const fromPosition = workflow.findPosition(value);
     if (fromPosition) {
-      const port = fromPosition.ports[Object.keys(fromPosition.ports)[0]];
-      this.connection.SourcePort = port.name;
+      const port =
+        fromPosition.getPorts()[Object.keys(fromPosition.getPorts())[0]];
+      this.connection.SourcePort = port.getName();
       link.setSourcePort(port);
 
       this.connection.From = value;
@@ -126,7 +125,7 @@ export class ConnectionEditor extends React.Component<Props> {
     this.connection.TargetPort = value;
 
     const toPosition = workflow.findPosition(this.connection.To);
-    link.targetPort.removeLink(link);
+    link.getTargetPort().removeLink(link);
     link.setTargetPort(toPosition.getPort(value));
 
     this.connection.workflow.Connections.remove(this.connection);
@@ -139,12 +138,12 @@ export class ConnectionEditor extends React.Component<Props> {
     const workflow = this.connection.workflow;
     const link = this.connection.link;
 
-    link.targetPort.removeLink(link);
+    link.getTargetPort().removeLink(link);
 
     const toPosition = workflow.findPosition(value);
     if (toPosition) {
-      let port = toPosition.ports[Object.keys(toPosition.ports)[0]];
-      this.connection.TargetPort = port.name;
+      let port = toPosition.getPorts()[Object.keys(toPosition.getPorts())[0]];
+      this.connection.TargetPort = port.getName();
       link.setTargetPort(port);
 
       this.connection.To = value;
@@ -228,7 +227,7 @@ export class ConnectionEditor extends React.Component<Props> {
     );
 
     return (
-      <Form className={limited}>
+      <LimitedForm>
         <Accordion>
           <Accordion.Title
             active={handler.isActive(0)}
@@ -241,9 +240,9 @@ export class ConnectionEditor extends React.Component<Props> {
                 <IconView entity={connection} />
                 {connection.Name || connection.Id || "<Empty>"}
               </Header.Content>
-              <SUILabel color="green" size="tiny" className={floatRight}>
+              <FloatedLabel color="green" size="tiny">
                 Id: {connection.Id}
-              </SUILabel>
+              </FloatedLabel>
             </Header>
           </Accordion.Title>
           <Accordion.Content active={handler.isActive(0)}>
@@ -390,7 +389,7 @@ export class ConnectionEditor extends React.Component<Props> {
             />
           </Accordion.Content>
         </Accordion>
-      </Form>
+      </LimitedForm>
     );
   }
 }

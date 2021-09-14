@@ -1,17 +1,10 @@
 import * as React from "react";
 
-import { inject, observer } from "mobx-react";
 import { Header } from "semantic-ui-react";
 
-interface Props {
-  context?: App.Context;
-}
-
-@inject("context")
-@observer
-export class ExperimentAgents extends React.Component<Props> {
+export class ExperimentAgents extends React.Component {
   render() {
-    let experiment = this.props.context.ei.Experiments[0];
+    //let experiment = this.props.context.ei.Experiments[0];
 
     return (
       <div>

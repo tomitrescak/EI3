@@ -1,21 +1,16 @@
-import * as React from "react";
+import React from "react";
 
-import { observer } from "mobx-react";
 import { Form, Input, Select } from "semantic-ui-mobx";
 import { Header, Message } from "semantic-ui-react";
-import { style } from "typestyle";
 
 import { GroupsEditor } from "../core/group_editor";
 import { useAppContext } from "../../config/context";
 import { useParams } from "react-router-dom";
+import styled from "@emotion/styled";
 
-interface Props {
-  index: string;
-}
-
-const pane = style({
-  padding: "12px",
-});
+const Pane = styled(Form)`
+  padding: 12px;
+`;
 
 export const AuthorisationEditor = () => {
   const context = useAppContext();
@@ -34,7 +29,7 @@ export const AuthorisationEditor = () => {
   }
 
   return (
-    <Form className={pane}>
+    <Pane>
       <Input owner={authorisation.fields.User} label="User" />
       <Select
         owner={authorisation.fields.Organisation}
@@ -46,6 +41,6 @@ export const AuthorisationEditor = () => {
       <Header as="h4" content="Role Assignments" icon="users" dividing />
 
       <GroupsEditor groups={authorisation.Groups} ei={ei} />
-    </Form>
+    </Pane>
   );
 };

@@ -1,22 +1,23 @@
-import * as React from 'react';
-import * as SRD from 'storm-react-diagrams';
+import * as React from "react";
+import * as SRD from "@projectstorm/react-diagrams";
 
-import { WorkflowLink } from './widget_link';
+import { WorkflowLink } from "./widget_link";
+// import { WorkflowLinkModel } from "./workflow_link_model";
 
-export class WorkflowLinkFactory extends SRD.LinkFactory {
-	constructor(type: string) {
-		super(type);
-	}
+export class WorkflowLinkFactory extends SRD.DefaultLinkFactory {
+  constructor(type: string) {
+    super(type);
+  }
 
-	generateReactWidget(diagramEngine: SRD.DiagramEngine, link: SRD.LinkModel): JSX.Element {
-		return React.createElement(WorkflowLink, {
-			link: link,
-			diagramEngine: diagramEngine
-		});
-	}
+  generateReactWidget({ model }: { model: SRD.DefaultLinkModel }): JSX.Element {
+    return React.createElement(WorkflowLink, {
+      link: model,
+      diagramEngine: this.engine,
+    });
+  }
 
-	getNewInstance(_initialConfig?: any): SRD.LinkModel {
-		return null;
-		// return new WorkflowLinkModel();
-	}
+  getNewInstance(_initialConfig?: any): SRD.DefaultLinkModel {
+    return null;
+    // return new WorkflowLinkModel();
+  }
 }

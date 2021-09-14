@@ -1,6 +1,6 @@
-import * as React from "react";
+import React from "react";
 
-import { inject, observer } from "mobx-react";
+import { observer } from "mobx-react";
 import { Form, Select } from "semantic-ui-mobx";
 import { Header, Message } from "semantic-ui-react";
 

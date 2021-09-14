@@ -1,7 +1,8 @@
+import { PortModelAlignment } from "@projectstorm/react-diagrams-core";
 import { action, IObservableArray, makeObservable, observable } from "mobx";
 import { field, FormState } from "semantic-ui-mobx";
 
-import { Ui } from "../../helpers/client_helpers";
+import { Router, Ui } from "../../helpers/client_helpers";
 import { WorkflowPortModel } from "../diagrams/model/workflow/workflow_port_model";
 import { Ei } from "./ei_model";
 import { EntityDao } from "./entity_model";
@@ -56,10 +57,8 @@ export class Transition extends PositionModel {
   }
 
   select() {
-    this.ei.context.viewStore.showTransition(
-      this.workflow.Id,
-      this.workflow.Name,
-      this.Id
+    Router.push(
+      this.ei.createWorkflowUrl(this.workflow, "transition", this.Id)
     );
   }
 }
@@ -102,10 +101,18 @@ export class TransitionSplit extends Transition {
     );
     this.Shallow = transition.Shallow;
 
-    this.addPort(new WorkflowPortModel(workflow, false, "input"));
-    this.addPort(new WorkflowPortModel(workflow, false, "split1"));
-    this.addPort(new WorkflowPortModel(workflow, false, "split2"));
-    this.addPort(new WorkflowPortModel(workflow, false, "split3"));
+    this.addPort(
+      new WorkflowPortModel(workflow, "input", PortModelAlignment.TOP)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "split1", PortModelAlignment.BOTTOM)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "split2", PortModelAlignment.BOTTOM)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "split3", PortModelAlignment.BOTTOM)
+    );
 
     this.$type = "TransitionSplitDao";
   }
@@ -126,10 +133,18 @@ export class TransitionJoin extends Transition {
   constructor(transition: Partial<TransitionDao>, workflow: Workflow, ei: Ei) {
     super(transition, workflow, ei);
 
-    this.addPort(new WorkflowPortModel(workflow, false, "yield"));
-    this.addPort(new WorkflowPortModel(workflow, false, "join1"));
-    this.addPort(new WorkflowPortModel(workflow, false, "join2"));
-    this.addPort(new WorkflowPortModel(workflow, false, "join3"));
+    this.addPort(
+      new WorkflowPortModel(workflow, "yield", PortModelAlignment.BOTTOM)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "join1", PortModelAlignment.TOP)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "join2", PortModelAlignment.TOP)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "join3", PortModelAlignment.TOP)
+    );
 
     this.$type = "TransitionJoinDao";
   }

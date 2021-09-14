@@ -1,3 +1,4 @@
+import { NodeModelListener } from "@projectstorm/react-diagrams-core";
 import { makeObservable, observable } from "mobx";
 import { Ei } from "./ei_model";
 import { Entity, EntityDao } from "./entity_model";
@@ -20,7 +21,7 @@ export abstract class PositionModel extends Entity {
       selectionChanged: ({ isSelected }) => {
         isSelected ? this.select() : this.deselect();
       },
-    });
+    } as NodeModelListener);
 
     makeObservable(this);
   }

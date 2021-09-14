@@ -1,7 +1,5 @@
-import * as React from 'react';
-
 export const Layout = ({ children }: any) => {
-return children;
-}
+  return children;
+};
 
-Layout.displayName = 'Layout';
+Layout.displayName = "Layout";

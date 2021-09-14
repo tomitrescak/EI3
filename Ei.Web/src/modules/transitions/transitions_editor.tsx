@@ -1,43 +1,29 @@
 import * as React from "react";
 
-import { inject, observer } from "mobx-react";
+import { observer } from "mobx-react";
 import { Checkbox, Form, Input } from "semantic-ui-mobx";
-import { style } from "typestyle";
 
 import { Header } from "semantic-ui-react";
 import { EntityEditor } from "../core/entity_view";
 import { Transition, TransitionSplit } from "../ei/transition_model";
+import { useParams } from "react-router";
+import { useAppContext } from "../../config/context";
+import styled from "@emotion/styled";
 
-export const lightDisabled = style({
-  opacity: ".9!important" as any,
-});
+export const StateInput = styled(Form.Input)`
+  opacity: 0.9 !important;
+`;
 
-interface Props {
-  id: string;
-  workflowId: string;
-  context?: App.Context;
-}
+export const TransitionEditor = observer(() => {
+  // componentWillUpdate(props: Props) {
+  //   props.context.selectWorkflowElement(
+  //     props.workflowId,
+  //     "Transitions",
+  //     props.id
+  //   );
+  // }
 
-@inject("context")
-@observer
-export class TransitionEditor extends React.Component<Props> {
-  componentWillMount() {
-    this.props.context.selectWorkflowElement(
-      this.props.workflowId,
-      "Transitions",
-      this.props.id
-    );
-  }
-
-  componentWillUpdate(props: Props) {
-    props.context.selectWorkflowElement(
-      props.workflowId,
-      "Transitions",
-      props.id
-    );
-  }
-
-  renderTransition(transition: Transition) {
+  function renderTransition(transition: Transition) {
     if (transition.$type === "TransitionSplitDao") {
       const tr = transition as TransitionSplit;
       return (
@@ -45,13 +31,7 @@ export class TransitionEditor extends React.Component<Props> {
           <Header content="Splits" icon="fork" as="h4" dividing />
           {tr.Names.map((n, i) => (
             <Form.Group key={i}>
-              <Form.Input
-                width={8}
-                className={lightDisabled}
-                disabled
-                value={n.stateId}
-                label="State"
-              />
+              <StateInput width={8} disabled value={n.stateId} label="State" />
               <Input width={8} owner={n.fields.name} label="Agent Name" />
             </Form.Group>
           ))}
@@ -62,28 +42,26 @@ export class TransitionEditor extends React.Component<Props> {
     return false;
   }
 
-  render() {
-    const { id, context } = this.props;
-    let ei = context.ei;
+  const { id, workflowId } = useParams<{ id: string; workflowId: string }>();
+  let ei = useAppContext().ei;
 
-    let workflow = ei.Workflows.find((w) => w.Id === this.props.workflowId);
-    if (!workflow) {
-      return <div>Workflow does not exist: {this.props.workflowId} </div>;
-    }
-    let transition = workflow.Transitions.find((a) => a.Id === id);
-    if (!transition) {
-      return <div>Transition does not exist: {id} </div>;
-    }
-
-    return (
-      <Form>
-        <EntityEditor entity={transition} />
-
-        {this.renderTransition(transition)}
-
-        <Header as="h4" icon="unhide" content="Visual Properties" />
-        <Checkbox owner={transition.fields.Horizontal} label="Horizontal" />
-      </Form>
-    );
+  let workflow = ei.Workflows.find((w) => w.Id === workflowId);
+  if (!workflow) {
+    return <div>Workflow does not exist: {workflowId} </div>;
   }
-}
+  let transition = workflow.Transitions.find((a) => a.Id === id);
+  if (!transition) {
+    return <div>Transition does not exist: {id} </div>;
+  }
+
+  return (
+    <Form>
+      <EntityEditor entity={transition} />
+
+      {renderTransition(transition)}
+
+      <Header as="h4" icon="unhide" content="Visual Properties" />
+      <Checkbox owner={transition.fields.Horizontal} label="Horizontal" />
+    </Form>
+  );
+});

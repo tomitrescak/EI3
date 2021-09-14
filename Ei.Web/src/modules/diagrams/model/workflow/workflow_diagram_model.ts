@@ -1,25 +1,25 @@
-import { DiagramModel } from "storm-react-diagrams";
+import { DiagramListener, DiagramModel } from "@projectstorm/react-diagrams";
 
-import { observable } from "mobx";
+import { makeObservable, observable } from "mobx";
+import { AppContext } from "../../../../config/context";
 import { Ui } from "../../../../helpers/client_helpers";
 import { WorkflowLinkModel } from "./workflow_link_model";
 import { WorkflowPortModel } from "./workflow_port_model";
 
 export class WorkflowDiagramModel extends DiagramModel {
-  store: App.Store;
   @observable version = 0;
 
-  constructor() {
+  constructor(context: AppContext) {
     super();
 
-    this.addListener({
-      nodesUpdated: (_e) => {
-        // node was deleted, remove it from the collection
-        // let node = e.node as HierarchicEntity;
-        // if (!e.isCreated) {
-        //   node.remove();
-        // }
-      },
+    const listener = {
+      // nodesUpdated: (_e) => {
+      //   // node was deleted, remove it from the collection
+      //   // let node = e.node as HierarchicEntity;
+      //   // if (!e.isCreated) {
+      //   //   node.remove();
+      //   // }
+      // },
       linksUpdated: (e) => {
         const link = e.link as WorkflowLinkModel;
         // link deleted
@@ -39,24 +39,27 @@ export class WorkflowDiagramModel extends DiagramModel {
                 return;
               }
 
-              const fromPort = e.link.sourcePort as WorkflowPortModel;
-              const toPort = e.link.targetPort as WorkflowPortModel;
+              const fromPort = e.link.getSourcePort() as WorkflowPortModel;
+              const toPort = e.link.getTargetPort() as WorkflowPortModel;
 
               // add connection
               let connection = link.connection;
-              connection.From = fromPort.parentNode.id;
+              connection.From = fromPort.getNode().getID();
 
               if (toPort) {
-                connection.To = toPort.parentNode.id;
+                connection.To = toPort.getNode().getID();
               }
 
               connection.update();
 
               link.workflow.Connections.push(link.connection);
-              link.workflow.ei.context.viewStore.showConnection(
-                link.workflow.Id,
-                link.workflow.Name,
-                link.connection.Id
+
+              context.Router.push(
+                context.ei.createWorkflowUrl(
+                  link.workflow,
+                  "connection",
+                  link.connection.Id
+                )
               );
 
               Ui.history.step();
@@ -65,7 +68,7 @@ export class WorkflowDiagramModel extends DiagramModel {
           };
           document.addEventListener("mouseup", checkConnection);
 
-          e.link.addListener({
+          e.link.registerListener({
             targetPortChanged: () => {
               // // we may be modifying exiting connection
               // if (link.workflow.Connections.some(c => c.Id === link.connection.Id)) {
@@ -112,6 +115,10 @@ export class WorkflowDiagramModel extends DiagramModel {
           } as any);
         }
       },
-    });
+    } as DiagramListener;
+
+    this.registerListener(listener);
+
+    makeObservable(this);
   }
 }

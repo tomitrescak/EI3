@@ -1,15 +1,7 @@
 import { computed, IObservableArray, makeObservable, observable } from "mobx";
 import { field } from "semantic-ui-mobx";
 import { DropdownItemProps } from "semantic-ui-react";
-import createEngine, {
-  DefaultLabelFactory,
-  DefaultLinkFactory,
-  DefaultNodeFactory,
-  DiagramEngine,
-  LinkLayerFactory,
-  NodeLayerFactory,
-} from "@projectstorm/react-diagrams";
-import { FactoryBank } from "@projectstorm/react-canvas-core";
+import createEngine, { DiagramEngine } from "@projectstorm/react-diagrams";
 
 import { AppContext } from "../../config/context";
 
@@ -144,8 +136,6 @@ export class Ei extends ParametricEntity {
 
     let nodeFactories = this.engine.getNodeFactories();
     let linkFactories = this.engine.getLinkFactories();
-    let layerFactories = this.engine.getLayerFactories();
-    let labelFactories = this.engine.getLabelFactories();
 
     // layerFactories.registerFactory(new LinkLayerFactory());
     // layerFactories.registerFactory(new NodeLayerFactory());
@@ -156,6 +146,7 @@ export class Ei extends ParametricEntity {
 
     linkFactories.registerFactory(new EntityLinkFactory("default"));
     linkFactories.registerFactory(new EntityLinkFactory("link"));
+
     nodeFactories.registerFactory(new EntityNodeFactory());
 
     // this.engine.registerFactoryBank(factoryBank);
@@ -222,8 +213,23 @@ export class Ei extends ParametricEntity {
 
   createUrl(route: string, entity: { Id: string; Name: string }) {
     return `/ei/${this.Name.toUrlName()}/${
-      this.id
+      this.Id
     }/${route}/${entity.Name.toUrlName()}/${entity.Id}`;
+  }
+
+  createWorkflowUrl(
+    workflow: Workflow,
+    type?: "action" | "connection" | "transition" | "state",
+    id?: string
+  ) {
+    let url = `/ei/${this.Name.toUrlName()}/${
+      this.Id
+    }/workflow/${workflow.Name.toUrlName()}/${workflow.Id}`;
+
+    if (type) {
+      url = url + `/${type}/${id}`;
+    }
+    return url;
   }
 
   editorHeight(value: string) {

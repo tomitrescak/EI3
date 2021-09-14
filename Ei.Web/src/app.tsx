@@ -19,8 +19,12 @@ import { EntitiesView } from "./modules/diagrams/entities_view";
 import { supabase } from "./config/supabase";
 import { configure } from "mobx";
 import { HierarchicEntityEditor } from "./modules/diagrams/hierarchic_entity_editor";
-import Auth from "./auth/auth";
 import Account from "./auth/account";
+import { WorkflowView } from "./modules/workflow/workflow_view";
+import { ActionView } from "./modules/actions/action_view";
+import { StateEditor } from "./modules/states/state_editor";
+import { TransitionEditor } from "./modules/transitions/transitions_editor";
+import { ConnectionEditor } from "./modules/connections/connection_editor";
 
 configure({ enforceActions: "never" });
 
@@ -60,12 +64,11 @@ const App = () => {
               render={() => <EiLayout Main={AuthorisationEditor} />}
             />
             <Route
-              path="/ei/:eiName/:eiId/organisations/:organisationName/:organisationId"
+              path="/ei/:eiName/:eiId/organisations/:organisationName?/:organisationId?"
               render={() => (
                 <EiLayout
                   Main={() => (
                     <EntitiesView
-                      id={null}
                       type="organisations"
                       entities={(ei) => ei.Organisations}
                     />
@@ -73,10 +76,7 @@ const App = () => {
                   Editor={() => (
                     <HierarchicEntityEditor
                       paramName="organisationId"
-                      name={"organisation"}
                       collection={(ei) => ei.Organisations}
-                      minCount={1}
-                      parentView="organisations"
                     />
                   )}
                 />
@@ -84,39 +84,61 @@ const App = () => {
             />
 
             <Route
-              path="/ei/:eiName/:eiId/roles/:roleName/:roleId"
+              path="/ei/:eiName/:eiId/roles/:roleName?/:roleId?"
               render={() => (
                 <EiLayout
                   Main={() => (
-                    <EntitiesView
-                      id={null}
-                      type="roles"
-                      entities={(ei) => ei.Roles}
-                    />
+                    <EntitiesView type="roles" entities={(ei) => ei.Roles} />
                   )}
                   Editor={() => (
                     <HierarchicEntityEditor
                       paramName="roleId"
-                      name={"role"}
                       collection={(ei) => ei.Roles}
-                      minCount={1}
-                      parentView="roles"
                     />
                   )}
                 />
               )}
             />
             <Route
-              path="/ei/:eiName/:eiId/roles"
+              path="/ei/:eiName/:eiId/types/:typeName?/:typeId?"
               render={() => (
                 <EiLayout
                   Main={() => (
-                    <EntitiesView
-                      id={null}
-                      type="roles"
-                      entities={(ei) => ei.Roles}
+                    <EntitiesView type="types" entities={(ei) => ei.Types} />
+                  )}
+                  Editor={() => (
+                    <HierarchicEntityEditor
+                      paramName="typeId"
+                      collection={(ei) => ei.Types}
                     />
                   )}
+                />
+              )}
+            />
+            <Route
+              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/action/:actionId"
+              render={() => (
+                <EiLayout Main={WorkflowView} Editor={ActionView} />
+              )}
+            />
+            <Route
+              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/state/:id"
+              render={() => (
+                <EiLayout Main={WorkflowView} Editor={StateEditor} />
+              )}
+            />
+            <Route
+              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/transition/:id"
+              render={() => (
+                <EiLayout Main={WorkflowView} Editor={TransitionEditor} />
+              )}
+            />
+            <Route
+              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/connection/:id"
+              render={() => (
+                <EiLayout
+                  Main={WorkflowView}
+                  Editor={ConnectionEditor as any}
                 />
               )}
             />

@@ -4,14 +4,14 @@ import { observer } from "mobx-react";
 
 import { Checkbox, field, Form, FormState, Select } from "semantic-ui-mobx";
 import { Accordion, Button, Icon, Popup, Segment } from "semantic-ui-react";
-import { style } from "typestyle";
 
-import { AccordionHandler } from "../../config/store";
 import { CodeEditor } from "../core/monaco_editor";
 import { AccessCondition, Postcondition } from "../ei/access_model";
 import { Action } from "../ei/action_model";
 import { Ei, Organisation, Role } from "../ei/ei_model";
 import { Workflow } from "../ei/workflow_model";
+import { AccordionHandler } from "../../config/context";
+import styled from "@emotion/styled";
 
 interface AccessProps {
   access: AccessCondition[];
@@ -23,10 +23,18 @@ interface AccessProps {
   hideActionCondition?: boolean;
 }
 
-const addButton = style({ marginTop: "12px!important" });
-const fieldRow = style({ margin: "0px!important" });
-const editorHolder = style({ padding: "0px!important" });
-const headerHolder = style({ padding: "3px 12px!important" });
+const AddButton = styled(Button)`
+  margin-top: 12px !important;
+`;
+const FieldRow = styled(Form.Group)`
+  margin: 0px !important;
+`;
+const EditorHolder = styled(Segment)`
+  padding: 0px !important;
+`;
+const HeaderHolder = styled(Segment)`
+  padding: 3px 12px !important;
+`;
 
 @observer
 export class AccessEditor extends React.Component<AccessProps> {
@@ -60,8 +68,7 @@ export class AccessEditor extends React.Component<AccessProps> {
           ))}
         </Accordion>
 
-        <Button
-          className={addButton}
+        <AddButton
           type="button"
           name="addInput"
           primary
@@ -159,7 +166,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
         <Accordion.Content active={handler.isActive(index)}>
           <>
             <Segment attached="top">
-              <Form.Group className={fieldRow}>
+              <FieldRow>
                 <Select
                   fluid
                   owner={condition.fields.Organisation}
@@ -181,7 +188,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                   icon="trash"
                   content={`Rule`}
                 />
-              </Form.Group>
+              </FieldRow>
             </Segment>
             {!hidePreconditions && (
               <Segment tertiary={true} attached as="h5" icon="legal">
@@ -196,7 +203,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
               </Segment>
             )}
             {!hidePreconditions && this.accessState.showPrecondition && (
-              <Segment secondary attached className={editorHolder}>
+              <EditorHolder secondary attached>
                 <CodeEditor
                   update={this.actionUpdate}
                   value={this.actionValue}
@@ -207,7 +214,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                   r={role.Properties}
                   a={action && action.Properties}
                 />
-              </Segment>
+              </EditorHolder>
             )}
             {!hideActionCondition && (
               <Segment tertiary attached as="h5" icon="legal">
@@ -319,10 +326,10 @@ export class PostconditionView extends React.Component<PostconditionProps> {
         {!hideActionCondition &&
           (showAll || p.Condition || (!p.Condition && !p.Action)) && (
             <>
-              <Segment secondary attached className={headerHolder}>
+              <HeaderHolder secondary attached>
                 Condition
-              </Segment>
-              <Segment secondary attached className={editorHolder}>
+              </HeaderHolder>
+              <EditorHolder secondary attached>
                 <CodeEditor
                   update={this.conditionUpdate}
                   value={this.conditionValue}
@@ -333,7 +340,7 @@ export class PostconditionView extends React.Component<PostconditionProps> {
                   r={role.Properties}
                   a={action && action.Properties}
                 />
-              </Segment>
+              </EditorHolder>
             </>
           )}
         {(!hideActionCondition ||
@@ -341,10 +348,10 @@ export class PostconditionView extends React.Component<PostconditionProps> {
           p.Action ||
           (!p.Condition && !p.Action)) && (
           <>
-            <Segment secondary attached className={headerHolder}>
+            <HeaderHolder secondary attached>
               Action
-            </Segment>
-            <Segment secondary attached className={editorHolder}>
+            </HeaderHolder>
+            <EditorHolder secondary attached>
               <CodeEditor
                 update={this.actionUpdate}
                 value={this.actionValue}
@@ -355,10 +362,10 @@ export class PostconditionView extends React.Component<PostconditionProps> {
                 r={role.Properties}
                 a={action && action.Properties}
               />
-            </Segment>
+            </EditorHolder>
           </>
         )}
-        <Segment secondary attached className={headerHolder}>
+        <HeaderHolder secondary attached>
           <Button
             type="button"
             content="Remove Postcondition"
@@ -367,7 +374,7 @@ export class PostconditionView extends React.Component<PostconditionProps> {
             onClick={remove}
             icon="trash"
           />
-        </Segment>
+        </HeaderHolder>
       </>
     );
   }

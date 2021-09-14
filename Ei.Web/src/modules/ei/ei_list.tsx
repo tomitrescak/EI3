@@ -3,14 +3,14 @@ import * as React from "react";
 import { IObservableArray, observable } from "mobx";
 import { observer } from "mobx-react";
 import { Button, Header, Icon, List, Segment } from "semantic-ui-react";
-import { style } from "typestyle";
 import { Link } from "react-router-dom";
 import { Ei } from "./ei_model";
 import { useAppContext } from "../../config/context";
+import styled from "@emotion/styled";
 
-const homeStyle = style({
-  margin: "12px!important",
-});
+const Home = styled(Segment)`
+  margin: 12px !important;
+`;
 
 interface StoredEi {
   id: string;
@@ -57,7 +57,7 @@ function openFile(callback: (content: string) => void) {
 export const EiList = observer(({ eis }: Props) => {
   const context = useAppContext();
   return (
-    <Segment className={homeStyle}>
+    <Home>
       <Header content="Your Institutions" dividing icon="home" />
       {eis.length === 0 && <span>No Institutions</span>}
       <List>
@@ -137,7 +137,7 @@ export const EiList = observer(({ eis }: Props) => {
               );
 
               context.Ui.alert("Institution Loaded: " + json.Name);
-            } catch (ex) {
+            } catch (ex: any) {
               context.Ui.alertError(
                 "Could not open the institution: " + ex.message
               );
@@ -172,6 +172,6 @@ export const EiList = observer(({ eis }: Props) => {
           }
         }}
       />
-    </Segment>
+    </Home>
   );
 });

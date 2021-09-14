@@ -4,7 +4,7 @@ import { Accordion, Button, Icon, Label, List } from "semantic-ui-react";
 
 import { IconView } from "../core/entity_icon_view";
 import { entitySort } from "../ei/entity_model";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { IObservableArray } from "mobx";
 import { HierarchicEntity } from "../ei/hierarchic_entity_model";
@@ -74,11 +74,12 @@ export const HierarchicEntityView = observer(
           />
           <AccordionButton
             as={Link}
-            to={`/ei/${ei.Name.toUrlName()}/${ei.id}/${url}`}
+            to={`/ei/${ei.Name.toUrlName()}/${ei.Id}/${url}`}
             floated="right"
             icon="sitemap"
             compact
             color="orange"
+            onClick={(e) => e.stopPropagation()}
           />
         </Accordion.Title>
         <AccordionContent active={active}>

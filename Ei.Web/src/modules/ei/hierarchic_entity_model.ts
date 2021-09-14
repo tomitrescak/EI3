@@ -8,10 +8,8 @@ import {
 import { field } from "semantic-ui-mobx";
 import {
   NodeModelListener,
-  PointModel,
   PortModelAlignment,
 } from "@projectstorm/react-diagrams";
-import { Point } from "@projectstorm/geometry";
 import { Ui } from "../../helpers/client_helpers";
 import { EntityLinkModel } from "../diagrams/model/entity/entity_link_model";
 import { EntityPortModel } from "../diagrams/model/entity/entity_port_model";

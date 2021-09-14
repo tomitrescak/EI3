@@ -171,8 +171,8 @@ const LeftPane = styled.div`
 `;
 
 interface Props {
-  Editor?: React.FC;
-  Main: React.FC;
+  Editor?: React.FC<{}>;
+  Main: React.FC<{}>;
 }
 
 const MiddleLayout = ({ Main }: Props) => (

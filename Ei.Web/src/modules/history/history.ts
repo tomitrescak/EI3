@@ -2,7 +2,6 @@ import { DiffPatcher } from "jsondiffpatch";
 import { action, observable } from "mobx";
 import { AppContext } from "../../config/context";
 
-import { store } from "../../config/store";
 import { Ei, EiDao } from "../ei/ei_model";
 
 const patcher = new DiffPatcher(); // { textDiff: 10000 }

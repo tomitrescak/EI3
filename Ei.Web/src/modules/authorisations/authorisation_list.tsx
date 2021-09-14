@@ -1,15 +1,14 @@
-import * as React from "react";
+import React from "react";
 
 import { observer } from "mobx-react";
-import { Accordion, Button, Icon, Label, List } from "semantic-ui-react";
+import { Accordion, Icon, Label, List } from "semantic-ui-react";
 
 import { Link } from "react-router-dom";
 import {
   AccordionButton,
   AccordionContent,
 } from "../components/hierarchic_entity_view";
-import { nestedAccordion } from "../components/workflow_list_view";
-import { Authorisation } from "../ei/authorisation_model";
+import { NestedAccordion } from "../components/workflow_list_view";
 import { Ei } from "../ei/ei_model";
 
 interface Props {
@@ -18,9 +17,6 @@ interface Props {
   ei: Ei;
   handleClick: any;
 }
-
-let authorisation: Authorisation;
-let autIndex: number;
 
 @observer
 export class AuthorisationList extends React.Component<Props> {
@@ -47,12 +43,12 @@ export class AuthorisationList extends React.Component<Props> {
           />
         </Accordion.Title>
         <AccordionContent active={active}>
-          <Accordion className={nestedAccordion}>
+          <NestedAccordion>
             {ei.Authorisation.map((authorisation, authIndex) => (
               <List.Item
                 as={Link}
                 to={`/ei/${ei.Name.toUrlName()}/${
-                  ei.id
+                  ei.Id
                 }/authorisation/${authIndex}`}
                 key={index}
               >
@@ -64,7 +60,7 @@ export class AuthorisationList extends React.Component<Props> {
                   : "<empty>"}
               </List.Item>
             ))}
-          </Accordion>
+          </NestedAccordion>
         </AccordionContent>
       </>
     );

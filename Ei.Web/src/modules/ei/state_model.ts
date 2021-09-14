@@ -1,7 +1,8 @@
+import { PortModelAlignment } from "@projectstorm/react-diagrams-core";
 import { action, IObservableArray, makeObservable, observable } from "mobx";
 import { field, intPositiveValidator } from "semantic-ui-mobx";
 
-import { Ui } from "../../helpers/client_helpers";
+import { Router, Ui } from "../../helpers/client_helpers";
 import { WorkflowPortModel } from "../diagrams/model/workflow/workflow_port_model";
 import { AccessCondition, AccessConditionDao } from "./access_model";
 import { Ei } from "./ei_model";
@@ -51,15 +52,31 @@ export class State extends PositionModel {
 
     // add ports
 
-    this.addPort(new WorkflowPortModel(workflow, false, "east"));
-    this.addPort(new WorkflowPortModel(workflow, false, "west"));
-    this.addPort(new WorkflowPortModel(workflow, false, "north"));
-    this.addPort(new WorkflowPortModel(workflow, false, "south"));
+    this.addPort(
+      new WorkflowPortModel(workflow, "east", PortModelAlignment.RIGHT)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "west", PortModelAlignment.LEFT)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "north", PortModelAlignment.TOP)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "south", PortModelAlignment.BOTTOM)
+    );
 
-    this.addPort(new WorkflowPortModel(workflow, false, "northeast"));
-    this.addPort(new WorkflowPortModel(workflow, false, "southwest"));
-    this.addPort(new WorkflowPortModel(workflow, false, "northwest"));
-    this.addPort(new WorkflowPortModel(workflow, false, "southeast"));
+    this.addPort(
+      new WorkflowPortModel(workflow, "northeast", PortModelAlignment.RIGHT)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "southwest", PortModelAlignment.LEFT)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "northwest", PortModelAlignment.LEFT)
+    );
+    this.addPort(
+      new WorkflowPortModel(workflow, "southeast", PortModelAlignment.RIGHT)
+    );
 
     // this.addFormListener(() => Ui.history.step());
     makeObservable(this);
@@ -108,10 +125,6 @@ export class State extends PositionModel {
   }
 
   select() {
-    this.ei.context.viewStore.showState(
-      this.workflow.Id,
-      this.workflow.Name,
-      this.Id
-    );
+    Router.push(this.ei.createWorkflowUrl(this.workflow, "state", this.Id));
   }
 }

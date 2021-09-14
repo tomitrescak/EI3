@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { observer } from "mobx-react";
-import { DefaultLinkWidget, PointModel } from "storm-react-diagrams";
+import { DefaultLinkWidget, PointModel } from "@projectstorm/react-diagrams";
 import { Ui } from "../../../../helpers/client_helpers";
 import { ActionDisplayType } from "../../../ei/connection_model";
 import { WorkflowLinkModel } from "./workflow_link_model";
@@ -94,7 +94,7 @@ export class WorkflowLink extends DefaultLinkWidget {
       return false;
     }
 
-    let points = link.points.map((p) => new Point(p.x, p.y));
+    let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
     let vector = points[0].vector(points[1]);
     let position = vector.normalised().multiply(30).add(points[0]);
     let angle = 0;
@@ -128,17 +128,17 @@ export class WorkflowLink extends DefaultLinkWidget {
   }
 
   // override to add points with alt
-  addPointToLink = (event: MouseEvent, index: number): void => {
+  addPointToLink = (event: React.MouseEvent, index: number): void => {
     if (
       event.altKey &&
-      !this.props.diagramEngine.isModelLocked(this.props.link) &&
-      this.props.link.points.length - 1 <=
+      !this.props.link.isLocked() &&
+      this.props.link.getPoints().length - 1 <=
         this.props.diagramEngine.getMaxNumberPointsPerLink()
     ) {
-      const point = new PointModel(
-        this.props.link,
-        this.props.diagramEngine.getRelativeMousePoint(event)
-      );
+      const point = new PointModel({
+        link: this.props.link,
+        position: this.props.diagramEngine.getRelativeMousePoint(event),
+      });
       point.setSelected(true);
       this.forceUpdate();
       this.props.link.addPoint(point, index);
@@ -175,7 +175,7 @@ export class WorkflowLink extends DefaultLinkWidget {
       return false;
     }
 
-    let points = link.points.map((p) => new Point(p.x, p.y));
+    let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
     let vector = points[points.length - 1].vector(points[points.length - 2]);
     let position = vector
       .normalised()
@@ -214,29 +214,28 @@ export class WorkflowLink extends DefaultLinkWidget {
   select = () => (this.props.link as WorkflowLinkModel).select();
 
   renderArrow(link: WorkflowLinkModel) {
-    let points = link.points.map((p) => new Point(p.x, p.y));
+    let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
     let pLast = link.getLastPoint();
-    let pPrevious = link.points[link.points.length - 2];
+    let pPrevious = link.linkPoints[link.linkPoints.length - 2];
 
     if (pPrevious == null) {
       return false;
     }
 
-    let flip = pPrevious.x > pLast.x;
+    const x = pLast.getX();
+    const y = pLast.getY();
+
+    let flip = pPrevious.getX() > x;
     let path = flip
-      ? `M ${pLast.x - 5} ${pLast.y} L ${pLast.x + 10} ${pLast.y + 5} L ${
-          pLast.x + 10
-        } ${pLast.y - 5} z`
-      : `M ${pLast.x - 10} ${pLast.y + 5} L ${pLast.x + 5} ${pLast.y} L ${
-          pLast.x - 10
-        } ${pLast.y - 5} z`;
+      ? `M ${x - 5} ${y} L ${x + 10} ${y + 5} L ${x + 10} ${y - 5} z`
+      : `M ${x - 10} ${y + 5} L ${x + 5} ${y} L ${x - 10} ${y - 5} z`;
     let angle = this.lastAngle(points);
 
     // TODO: Adjust for bezier
 
     return (
       <path
-        transform={`rotate(${angle} ${pLast.x} ${pLast.y})`}
+        transform={`rotate(${angle} ${x} ${y})`}
         className="arrow"
         d={path}
         fill="black"
@@ -250,7 +249,7 @@ export class WorkflowLink extends DefaultLinkWidget {
     if (!action) {
       return false;
     }
-    let points = link.points.map((p) => new Point(p.x, p.y));
+    let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
     const connection = link.connection;
 
     const result = points[0].midPoint(points);
@@ -465,7 +464,7 @@ export class WorkflowLink extends DefaultLinkWidget {
   render() {
     const link = this.props.link as WorkflowLinkModel;
 
-    link.getLastPoint().id = "last";
+    // link.getLastPoint().id = "last";
 
     // subscribe
     link.selected;

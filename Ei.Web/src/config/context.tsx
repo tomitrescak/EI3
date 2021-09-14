@@ -40,7 +40,7 @@ export class AppContext {
   handlers: { [index: string]: AccordionHandler } = {};
   selectedEntity: Entity;
 
-  constructor(cache = true) {
+  constructor(_cache = true) {
     this.serverUrl = socketUrl;
     this.client = new SocketClient(this.serverUrl, this);
 
@@ -82,7 +82,7 @@ export class AppContext {
     if (this.selectedEntity) {
       this.selectedEntity.setSelected(false);
     }
-    if (!entity.selected) {
+    if (!entity.isSelected()) {
       entity.setSelected(true);
       this.selectedEntity = entity;
     }

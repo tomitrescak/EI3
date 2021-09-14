@@ -1,14 +1,18 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { observer } from 'mobx-react';
-import { style } from 'typestyle';
+import { observer } from "mobx-react";
 
-import { Entity } from '../ei/entity_model';
+import { Entity } from "../ei/entity_model";
+import styled from "@emotion/styled";
 
 interface Props {
   entity: Entity;
 }
 
-const icon = style({ paddingRight: '8px' });
+const Icon = styled.span`
+  padding-right: 8px;
+`;
 
-export const IconView = observer(({ entity }: Props) => (<span className={icon}>{entity.Icon}</span> ));
+export const IconView = observer(({ entity }: Props) => (
+  <Icon>{entity.Icon}</Icon>
+));

@@ -124,6 +124,6 @@ export const Ui = {
 
 export const Router = {
   router: null as History,
-  push(route: string) {},
-  replace(route: string) {},
+  push(_route: string) {},
+  replace(_route: string) {},
 };

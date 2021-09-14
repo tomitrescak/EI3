@@ -3,7 +3,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { supabase } from "../config/supabase";
 
-export default function Account({ session }) {
+export default function Account({ session }: any) {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState(null);
   const [website, setWebsite] = useState(null);
@@ -33,14 +33,14 @@ export default function Account({ session }) {
         setWebsite(data.website);
         setAvatarUrl(data.avatar_url);
       }
-    } catch (error) {
+    } catch (error: any) {
       alert(error.message);
     } finally {
       setLoading(false);
     }
   }
 
-  async function updateProfile({ username, website, avatar_url }) {
+  async function updateProfile({ username, website, avatar_url }: any) {
     try {
       setLoading(true);
       const user = supabase.auth.user();
@@ -60,7 +60,7 @@ export default function Account({ session }) {
       if (error) {
         throw error;
       }
-    } catch (error) {
+    } catch (error: any) {
       alert(error.message);
     } finally {
       setLoading(false);

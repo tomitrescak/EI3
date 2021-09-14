@@ -3,7 +3,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Form } from "semantic-ui-mobx";
 
-import { Message } from "semantic-ui-react";
+import { Button, Message } from "semantic-ui-react";
 
 import { IObservableArray } from "mobx";
 
@@ -17,9 +17,6 @@ import { useParams } from "react-router-dom";
 interface Props {
   collection: (ei: Ei) => IObservableArray<HierarchicEntity>;
   paramName: string;
-  name?: string;
-  parentView: string;
-  minCount: number;
 }
 
 // const deleteButton = style({
@@ -63,25 +60,30 @@ export const HierarchicEntityEditor = observer((props: Props) => {
   let context = useAppContext();
   const params = useParams();
   const id = params[props.paramName];
+
+  if (!id) {
+    return null;
+  }
+
   let ei = context.ei;
   let entity = props
     .collection(ei)
     .find((o) => o.Id.toLowerCase() === id.toLowerCase());
 
-  React.useEffect(() => {
-    if (
-      entity &&
-      ei.context.selectedEntity &&
-      ei.context.selectedEntity.Id != entity.id &&
-      ei.context.selectedEntity.selected
-    ) {
-      ei.context.selectedEntity.setSelected(false);
-    }
-    if (entity && !entity.selected) {
-      entity.setSelected();
-      ei.context.selectedEntity = entity;
-    }
-  });
+  // React.useEffect(() => {
+  //   if (
+  //     entity &&
+  //     ei.context.selectedEntity &&
+  //     ei.context.selectedEntity.Id != entity.Id &&
+  //     ei.context.selectedEntity.selected
+  //   ) {
+  //     ei.context.selectedEntity.setSelected(false);
+  //   }
+  //   if (entity && !entity.selected) {
+  //     entity.setSelected();
+  //     ei.context.selectedEntity = entity;
+  //   }
+  // });
 
   if (!entity) {
     return <Message content="Deleted" />;
@@ -108,19 +110,25 @@ export const HierarchicEntityEditor = observer((props: Props) => {
         )}
         <PropertyView owner={entity} types={ei.types} />
       </Form>
-      {/*this.props.minCount < this.props.collection(ei).length && (
-          <div className={deleteButton}>
-            <Header as="h5" style={{ color: 'red' }} dividing />
-            <Button
-              style={{ margin: 'auto' }}
-              icon="trash"
-              content="Delete"
-              labelPosition="left"
-              color="red"
-              onClick={this.delete}
-            />
-          </div>
-        )*/}
+
+      <Button
+        style={{ margin: "auto", marginTop: 8 }}
+        icon="trash"
+        content="Delete"
+        labelPosition="left"
+        color="red"
+        onClick={async () => {
+          if (
+            await context.Ui.confirmDialogAsync(
+              "Do you wish to delete this record?"
+            )
+          ) {
+            props
+              .collection(ei)
+              .splice(props.collection(ei).indexOf(entity), 1);
+          }
+        }}
+      />
     </>
   );
 });

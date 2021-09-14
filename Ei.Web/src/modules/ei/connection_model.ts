@@ -1,6 +1,10 @@
 import { action, IObservableArray, makeObservable, observable } from "mobx";
 import { field } from "semantic-ui-mobx";
-import { DefaultNodeModel, PointModel } from "@projectstorm/react-diagrams";
+import {
+  DefaultNodeModel,
+  PointModel,
+  PortModelAlignment,
+} from "@projectstorm/react-diagrams";
 import { Point } from "@projectstorm/geometry";
 
 import { WorkflowLinkModel } from "../diagrams/model/workflow/workflow_link_model";
@@ -29,10 +33,15 @@ export interface ConnectionDao extends EntityDao {
 }
 
 export class FreeJoint extends DefaultNodeModel {
+  ei: Ei;
+
   constructor(workflow: Workflow) {
     super();
 
-    this.addPort(new WorkflowPortModel(workflow, false, "left"));
+    this.ei = workflow.ei;
+    this.addPort(
+      new WorkflowPortModel(workflow, "left", PortModelAlignment.LEFT)
+    );
   }
 }
 
@@ -195,7 +204,7 @@ export class Connection extends Entity {
       const from = fromPosition
         ? { x: fromPosition.getX(), y: fromPosition.getY() }
         : random;
-      const point = this.link.points[1];
+      const point = this.link.linkPoints[1];
       const hasPoint = point && (point.getX() !== 0 || point.getY() !== 0);
 
       x = connection.FreeTo
@@ -217,8 +226,8 @@ export class Connection extends Entity {
     }
 
     // add extra points if this is self location
-    if (this.To && this.To === this.From && this.link.points.length === 2) {
-      const points = this.link.points;
+    if (this.To && this.To === this.From && this.link.linkPoints.length === 2) {
+      const points = this.link.linkPoints;
       const p0 = points[0];
       const p1 = points[1];
       this.link.setPoints([

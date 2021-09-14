@@ -3,14 +3,15 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { FieldCollection, Input } from "semantic-ui-mobx";
 import { Button } from "semantic-ui-react";
-import { style } from "typestyle/lib";
+import styled from "@emotion/styled";
 
 interface Props {
   collection: FieldCollection<any>;
 }
 
-const ioPuts = style({ marginBottom: "3px!important" });
-let index = 0;
+const IoPuts = styled(Input)`
+  margin-bottom: 3px !important;
+`;
 
 @observer
 export class FieldCollectionEditor extends React.Component<Props> {
@@ -26,9 +27,8 @@ export class FieldCollectionEditor extends React.Component<Props> {
   render() {
     return (
       <>
-        {this.props.collection.array.map((input, index) => (
-          <Input
-            className={ioPuts}
+        {this.props.collection.array.map((_input, index) => (
+          <IoPuts
             owner={this.props.collection.fields[index]}
             name="input"
             action={{

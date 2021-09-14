@@ -3,8 +3,8 @@ import * as React from "react";
 import { IObservableArray } from "mobx";
 import { observer } from "mobx-react";
 import Editor, { OnMount } from "@monaco-editor/react";
-import { style } from "typestyle";
 import { Property } from "../ei/property_model";
+import styled from "@emotion/styled";
 
 interface Props {
   update: (value: string) => void;
@@ -17,13 +17,11 @@ interface Props {
   a?: IObservableArray<Property>;
 }
 
-const editor = style({
-  $nest: {
-    textarea: {
-      opacity: 0,
-    },
-  },
-});
+const EditorContainer = styled.div`
+  textarea {
+    opacity: 0;
+  }
+`;
 
 @observer
 export class CodeEditor extends React.Component<Props> {
@@ -117,7 +115,7 @@ export class CodeEditor extends React.Component<Props> {
 
     const { value } = this.props;
     return (
-      <div className={editor} ref={(node) => (this.holder = node)}>
+      <EditorContainer ref={(node) => (this.holder = node)}>
         <Editor
           height={this.props.height || 200}
           language="csharp"
@@ -134,7 +132,7 @@ export class CodeEditor extends React.Component<Props> {
           // editorWillMount={}
           // editorDidMount={this.bindEditor}
         />
-      </div>
+      </EditorContainer>
     );
   }
 }

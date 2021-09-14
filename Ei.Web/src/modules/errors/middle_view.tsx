@@ -4,37 +4,34 @@ import { Observer, observer } from "mobx-react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/styles/hljs";
 import { List, Menu } from "semantic-ui-react";
-import { style } from "typestyle";
-import { SocketClient } from "../ws/socket_client";
+// import { SocketClient } from "../ws/socket_client";
 import { useAppContext } from "../../config/context";
+import styled from "@emotion/styled";
 
-const pane = {
-  padding: "6px",
-  display: "none",
-  position: "absolute",
-  overflow: "auto",
-  margin: "0px",
-  top: "42px",
-  right: "0px",
-  left: "0px",
-  bottom: "0px",
-  $nest: {
-    ".complete pre": {
-      position: "absolute",
-      overflow: "auto",
-      margin: "0px",
-      right: "0px",
-      left: "0px",
-      bottom: "0px",
-      overflowX: "none!important",
-    },
-  },
-} as any;
+const Pane = styled.div`
+  padding: 6px;
+  display: none;
+  position: absolute;
+  overflow: auto;
+  margin: 0px;
+  top: 42px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
 
-const activePane = style(pane, { display: "block" });
-const hiddenPane = style(pane);
+  &.complete pre {
+    position: absolute;
+    overflow: auto;
+    margin: 0px;
+    right: 0px;
+    left: 0px;
+    bottom: 0px;
+    overflow-x: none !important;
+  }
+`;
 
-interface Props {}
+// const ActivePane = style(pane, { display: "block" });
+// const HiddenPane = style(pane);
 
 export const Messages = () => {
   const context = useAppContext();
@@ -117,7 +114,7 @@ export const Errors = observer(() => {
   );
 });
 
-export const MiddleView = observer((props: Props) => {
+export const MiddleView = observer(() => {
   const [activeItem, setActiveItem] = React.useState("errors");
   const context = useAppContext();
 
@@ -173,19 +170,19 @@ export const MiddleView = observer((props: Props) => {
       </Menu>
 
       {isActive("messages") && (
-        <div className={pane}>
+        <Pane>
           <Messages />
-        </div>
+        </Pane>
       )}
       {isActive("errors") && (
-        <div className={pane}>
+        <Pane>
           <Errors />
-        </div>
+        </Pane>
       )}
       {isActive("compiled") && (
-        <div className={pane + " complete"}>
+        <Pane className={"complete"}>
           <Highlight />
-        </div>
+        </Pane>
       )}
     </div>
   );

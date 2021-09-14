@@ -2,17 +2,16 @@ import * as React from "react";
 
 import { IObservableArray } from "mobx";
 import { observer } from "mobx-react";
-import { Accordion, Button, Icon, Label, List } from "semantic-ui-react";
-import { style } from "typestyle";
+import { Accordion, Icon, Label, List } from "semantic-ui-react";
 
 import { Link } from "react-router-dom";
-import { AccordionHandler } from "../../config/store";
 import { IconView } from "../core/entity_icon_view";
 import { Ei } from "../ei/ei_model";
 import { Entity, entitySort } from "../ei/entity_model";
 import { Workflow } from "../ei/workflow_model";
-import { AccordionButton } from "./hierarchic_entity_view";
-import { accordionContent } from "./workflow_list_view";
+import { AccordionButton, AccordionContent } from "./hierarchic_entity_view";
+import { AccordionHandler } from "../../config/context";
+import styled from "@emotion/styled";
 
 interface WorkflowElementProps {
   workflow: Workflow;
@@ -26,14 +25,13 @@ interface WorkflowElementProps {
   ei: Ei;
   showId?: boolean;
 }
-let entity: Entity;
 
-let idLabel = style({
-  color: "grey",
-  fontSize: "9px",
-  float: "right",
-  marginRight: "12px",
-});
+let IdLabel = styled.span`
+  color: grey;
+  font-size: 9px;
+  float: right;
+  margin-right: 12px;
+`;
 
 export const WorkflowComponentList = observer(
   ({
@@ -72,10 +70,7 @@ export const WorkflowComponentList = observer(
           />
         )}
       </Accordion.Title>
-      <Accordion.Content
-        active={handler.isActive(index)}
-        className={accordionContent}
-      >
+      <AccordionContent active={handler.isActive(index)}>
         {collection.length === 0 && <span>Empty</span>}
         <List>
           {collection
@@ -84,8 +79,8 @@ export const WorkflowComponentList = observer(
             .map((entity) => (
               <List.Item
                 as={Link}
-                to={`/${ei.Name.toUrlName()}/${
-                  ei.id
+                to={`/ei/${ei.Name.toUrlName()}/${
+                  ei.Id
                 }/workflows/${workflow.Name.toUrlName()}/${
                   workflow.Id
                 }/${route}/${entity.Id.toUrlName()}`}
@@ -97,11 +92,11 @@ export const WorkflowComponentList = observer(
               >
                 <IconView entity={entity} />
                 {entity.Name || entity.Id}{" "}
-                {showId && <span className={idLabel}>[{entity.Id}]</span>}
+                {showId && <IdLabel>[{entity.Id}]</IdLabel>}
               </List.Item>
             ))}
         </List>
-      </Accordion.Content>
+      </AccordionContent>
     </>
   )
 );
