@@ -94,7 +94,7 @@ export const WorkflowDetail = ({
         {workflow.Name}
         <AccordionButton
           as={Link}
-          to={`/ei/workflows/${workflow.Name.toUrlName()}/${workflow.Id.toUrlName()}`}
+          to={ei.createWorkflowUrl(workflow)}
           floated="right"
           icon="sitemap"
           compact

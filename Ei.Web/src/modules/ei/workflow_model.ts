@@ -236,6 +236,11 @@ export class Workflow extends ParametricEntity {
 
     this.context.Router.push(this.ei.createWorkflowUrl(this, "action", Id));
 
+    this.context.engine
+      .getModel()
+      .addNode(this.Actions[this.Actions.length - 1]);
+    this.context.engine.repaintCanvas();
+
     Ui.history.step();
   };
 
@@ -252,6 +257,9 @@ export class Workflow extends ParametricEntity {
         )
       );
     }
+
+    this.context.engine.getModel().addNode(this.States[this.States.length - 1]);
+    this.context.engine.repaintCanvas();
 
     Ui.history.step();
   };
@@ -312,6 +320,11 @@ export class Workflow extends ParametricEntity {
     this.context.Router.push(this.ei.createWorkflowUrl(this, "transition", Id));
 
     Ui.history.step();
+
+    this.context.engine
+      .getModel()
+      .addNode(this.Transitions[this.Transitions.length - 1]);
+    this.context.engine.repaintCanvas();
   };
 
   @action addConnection = (e: any) => {
@@ -322,6 +335,18 @@ export class Workflow extends ParametricEntity {
     connection.update();
 
     this.Connections.push(connection);
+
+    const model = this.context.engine.getModel();
+    model.addLink(connection.link);
+
+    if (connection.fromJoint) {
+      model.addNode(connection.fromJoint);
+    }
+    if (connection.toJoint) {
+      model.addNode(connection.toJoint);
+    }
+
+    this.context.engine.repaintCanvas();
   };
 
   createConnection = () => {

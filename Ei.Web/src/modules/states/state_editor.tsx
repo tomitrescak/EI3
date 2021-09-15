@@ -14,11 +14,15 @@ export const StateEditor = observer(() => {
   const { id, workflowId } = useParams<{ id: string; workflowId: string }>();
   let ei = context.ei;
 
-  let workflow = ei.Workflows.find((w) => w.Id === workflowId);
+  let workflow = ei.Workflows.find(
+    (w) => w.Id.toLowerCase() === workflowId.toLowerCase()
+  );
   if (!workflow) {
     return <div>Workflow does not exist: {workflowId} </div>;
   }
-  let state = workflow.States.find((a) => a.Id === id);
+  let state = workflow.States.find(
+    (a) => a.Id.toLowerCase() === id.toLowerCase()
+  );
   if (!state) {
     return <div>State does not exist: {id} </div>;
   }

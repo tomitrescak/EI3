@@ -94,7 +94,7 @@ export class WorkflowLink extends DefaultLinkWidget {
       return false;
     }
 
-    let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
+    let points = link.points.map((p) => new Point(p.getX(), p.getY()));
     let vector = points[0].vector(points[1]);
     let position = vector.normalised().multiply(30).add(points[0]);
     let angle = 0;
@@ -175,7 +175,7 @@ export class WorkflowLink extends DefaultLinkWidget {
       return false;
     }
 
-    let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
+    let points = link.points.map((p) => new Point(p.getX(), p.getY()));
     let vector = points[points.length - 1].vector(points[points.length - 2]);
     let position = vector
       .normalised()
@@ -214,9 +214,9 @@ export class WorkflowLink extends DefaultLinkWidget {
   select = () => (this.props.link as WorkflowLinkModel).select();
 
   renderArrow(link: WorkflowLinkModel) {
-    let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
+    let points = link.points.map((p) => new Point(p.getX(), p.getY()));
     let pLast = link.getLastPoint();
-    let pPrevious = link.linkPoints[link.linkPoints.length - 2];
+    let pPrevious = link.points[link.points.length - 2];
 
     if (pPrevious == null) {
       return false;
@@ -249,7 +249,7 @@ export class WorkflowLink extends DefaultLinkWidget {
     if (!action) {
       return false;
     }
-    let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
+    let points = link.points.map((p) => new Point(p.getX(), p.getY()));
     const connection = link.connection;
 
     const result = points[0].midPoint(points);

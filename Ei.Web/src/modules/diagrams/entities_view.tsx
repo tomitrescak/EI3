@@ -64,8 +64,6 @@ export const EntitiesView = observer((props: Props) => {
   // let model = new DiagramModel();
   // model.version;
 
-  React.useEffect(() => {});
-
   let ents = entities();
 
   for (let node of entities()) {

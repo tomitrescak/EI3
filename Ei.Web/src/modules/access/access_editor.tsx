@@ -12,6 +12,7 @@ import { Ei, Organisation, Role } from "../ei/ei_model";
 import { Workflow } from "../ei/workflow_model";
 import { AccordionHandler } from "../../config/context";
 import styled from "@emotion/styled";
+import { makeObservable } from "mobx";
 
 interface AccessProps {
   access: AccessCondition[];
@@ -36,57 +37,54 @@ const HeaderHolder = styled(Segment)`
   padding: 3px 12px !important;
 `;
 
-@observer
-export class AccessEditor extends React.Component<AccessProps> {
-  render() {
-    const {
-      access,
-      name,
-      ei,
-      action,
-      workflow,
-      hideActionCondition,
-      hidePreconditions,
-    } = this.props;
-    const handler = ei.context.createAccordionHandler(name);
-    return (
-      <>
-        <Accordion>
-          {access.map((g, i) => (
-            <AccessConditionEditor
-              condition={g}
-              ei={ei}
-              key={i}
-              remove={() => access.splice(i, 1)}
-              handler={handler}
-              index={i}
-              action={action}
-              workflow={workflow}
-              hideActionCondition={hideActionCondition}
-              hidePreconditions={hidePreconditions}
-            />
-          ))}
-        </Accordion>
+export const AccessEditor = observer((props: AccessProps) => {
+  const {
+    access,
+    name,
+    ei,
+    action,
+    workflow,
+    hideActionCondition,
+    hidePreconditions,
+  } = props;
+  const handler = ei.context.createAccordionHandler(name);
+  return (
+    <>
+      <Accordion>
+        {access.map((g, i) => (
+          <AccessConditionEditor
+            condition={g}
+            ei={ei}
+            key={i}
+            remove={() => access.splice(i, 1)}
+            handler={handler}
+            index={i}
+            action={action}
+            workflow={workflow}
+            hideActionCondition={hideActionCondition}
+            hidePreconditions={hidePreconditions}
+          />
+        ))}
+      </Accordion>
 
-        <AddButton
-          type="button"
-          name="addInput"
-          primary
-          onClick={() =>
-            access.push(
-              new AccessCondition({
-                Organisation: ei.Organisations[0].Id,
-                Role: ei.Roles[0].Id,
-              })
-            )
-          }
-          icon="plus"
-          content={`Add Rule`}
-        />
-      </>
-    );
-  }
-}
+      <AddButton
+        type="button"
+        name="addInput"
+        primary
+        onClick={() =>
+          access.push(
+            new AccessCondition({
+              Organisation: ei.Organisations[0].Id,
+              Role: ei.Roles[0].Id,
+            })
+          )
+        }
+        icon="plus"
+        content={`Add Rule`}
+      />
+    </>
+  );
+});
 
 interface AccessConditionProps {
   condition: AccessCondition;
@@ -107,6 +105,8 @@ class AccessConditionState extends FormState {
   constructor(show: boolean) {
     super();
     this.showPrecondition = show;
+
+    makeObservable(this);
   }
 }
 

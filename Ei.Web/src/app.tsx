@@ -25,6 +25,8 @@ import { ActionView } from "./modules/actions/action_view";
 import { StateEditor } from "./modules/states/state_editor";
 import { TransitionEditor } from "./modules/transitions/transitions_editor";
 import { ConnectionEditor } from "./modules/connections/connection_editor";
+import { WorkflowEditor } from "./modules/workflow/workflow_editor";
+import { observer } from "mobx-react-lite";
 
 configure({ enforceActions: "never" });
 
@@ -115,6 +117,7 @@ const App = () => {
                 />
               )}
             />
+
             <Route
               path="/ei/:eiName/:eiId/workflows/:name/:workflowId/action/:actionId"
               render={() => (
@@ -152,6 +155,12 @@ const App = () => {
               path="/ei/:eiName/:eiId"
               render={() => <EiLayout Main={EiEditor} />}
             />
+            <Route
+              path="/ei/:eiName/:eiId/workflows/:name/:workflowId"
+              render={() => (
+                <EiLayout Main={WorkflowView} Editor={WorkflowEditor} />
+              )}
+            />
           </Switch>
         </EiContainer>
       </Route>
@@ -159,17 +168,26 @@ const App = () => {
   );
 };
 
-export const render = () => {
-  // render application
-  ReactDOM.render(
-    <Context.Provider value={new AppContext()}>
+const ReactiveContext = observer(() => {
+  const context = React.useMemo(() => new AppContext(), []);
+
+  // this subscribes to undo stack
+  console.log("Rendering Version: " + context.Ui.history.version);
+
+  // subscribe
+  return (
+    <Context.Provider value={context}>
       <Router>
         <SemanticToastContainer />
         <App />
       </Router>
-    </Context.Provider>,
-    document.querySelector("#root")
+    </Context.Provider>
   );
+});
+
+export const render = () => {
+  // render application
+  ReactDOM.render(<ReactiveContext />, document.querySelector("#root"));
 };
 
 // set stateful modules

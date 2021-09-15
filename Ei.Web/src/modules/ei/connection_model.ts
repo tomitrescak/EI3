@@ -2,6 +2,7 @@ import { action, IObservableArray, makeObservable, observable } from "mobx";
 import { field } from "semantic-ui-mobx";
 import {
   DefaultNodeModel,
+  DiagramModel,
   PointModel,
   PortModelAlignment,
 } from "@projectstorm/react-diagrams";
@@ -153,7 +154,7 @@ export class Connection extends Entity {
     return node.constructor.name;
   }
 
-  update() {
+  update(model: DiagramModel) {
     const workflow = this.workflow;
     const connection = this.dao;
     const fromPosition = workflow.findPosition(this.From);
@@ -165,6 +166,16 @@ export class Connection extends Entity {
         toPosition ? toPosition.Name : "[Open]"
       }`;
     }
+
+    // remove old nodes
+    // if (model) {
+    //   if (this.toJoint) {
+    //     model.removeNode(this.toJoint);
+    //   }
+    //   if (this.fromJoint) {
+    //     model.removeNode(this.fromJoint);
+    //   }
+    // }
 
     let x: number;
     let y: number;

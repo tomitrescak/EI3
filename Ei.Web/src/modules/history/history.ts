@@ -1,5 +1,5 @@
 import { DiffPatcher } from "jsondiffpatch";
-import { action, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import { AppContext } from "../../config/context";
 
 import { Ei, EiDao } from "../ei/ei_model";
@@ -43,6 +43,10 @@ export class WorkHistory {
   deltas: any[] = [];
   timeout: any;
 
+  constructor() {
+    makeObservable(this);
+  }
+
   startHistory(ei: Ei, context: AppContext) {
     this.context = context;
     this.ei = ei;
@@ -83,6 +87,10 @@ export class WorkHistory {
     this.ei = new Ei(this.currentEi, this.context);
     s.ei = this.ei;
     this.version++;
+
+    if (this.context.engine) {
+      this.context.engine.repaintCanvas();
+    }
   };
 
   redo = () => {
@@ -96,5 +104,9 @@ export class WorkHistory {
     this.ei = new Ei(this.currentEi, this.context);
     s.ei = this.ei;
     this.version++;
+
+    if (this.context.engine) {
+      this.context.engine.repaintCanvas();
+    }
   };
 }

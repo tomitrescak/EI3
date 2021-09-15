@@ -6,15 +6,14 @@ import { FreeJoint } from "../../../ei/connection_model";
 import styled from "@emotion/styled";
 
 export const Port = styled.div`
-  width: 16px;
-  height: 16px;
+  width: 1px;
+  height: 1px;
   z-index: 10;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 8px;
   cursor: pointer;
-  &:hover {
-    background: rgba(0, 0, 0, 1);
-  }
+
+  background: rgba(0, 0, 0, 1);
 `;
 
 export interface FreeWidgetProps {
@@ -71,7 +70,6 @@ export const FreeWidget = ({ node }: FreeWidgetProps) => {
         <g id="Layer_2">
           <ellipse
             fill="silver"
-            style={{ opacity: 0.4 }}
             rx={10}
             ry={10}
             cx={10}
@@ -86,13 +84,13 @@ export const FreeWidget = ({ node }: FreeWidgetProps) => {
         style={{
           position: "absolute",
           zIndex: 10,
-          left: 8,
-          top: 8,
+          left: 10,
+          top: 10,
         }}
         port={node.getPort("left")}
         engine={node.ei.engine}
       >
-        <Port />
+        {/* <Port /> */}
       </PortWidget>
     </div>
   );

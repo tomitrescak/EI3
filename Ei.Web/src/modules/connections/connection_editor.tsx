@@ -15,7 +15,11 @@ import { Ui } from "../../helpers/client_helpers";
 import { AccessEditor } from "../access/access_editor";
 import { IconView } from "../core/entity_icon_view";
 import { EntityEditor } from "../core/entity_view";
-import { ActionDisplayType, Connection } from "../ei/connection_model";
+import {
+  ActionDisplayType,
+  Connection,
+  FreeJoint,
+} from "../ei/connection_model";
 import { AppContext, Context, useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
 import { useParams } from "react-router";
@@ -50,26 +54,26 @@ const statePositionOptions = [
 
 const joinToOptions = [
   { text: "Join 1", value: "join1" },
-  { text: "Join 2", value: "join3" },
-  { text: "Join 3", value: "join4" },
-  { text: "Disconnect", value: "" },
+  { text: "Join 2", value: "join2" },
+  { text: "Join 3", value: "join3" },
+  // { text: "Disconnect", value: "" },
 ];
 
 const joinFromOptions = [
   { text: "Yield", value: "yield" },
-  { text: "Disconnect", value: "" },
+  // { text: "Disconnect", value: "" },
 ];
 
 const splitFromOptions = [
   { text: "Split 1", value: "split1" },
   { text: "Split 2", value: "split2" },
   { text: "Split 3", value: "split3" },
-  { text: "Disconnect", value: "" },
+  // { text: "Disconnect", value: "" },
 ];
 
 const splitToOptions = [
   { text: "Input", value: "input" },
-  { text: "Disconnect", value: "" },
+  // { text: "Disconnect", value: "" },
 ];
 
 export const ConnectionEditor = observer(() => {
@@ -85,8 +89,10 @@ export const ConnectionEditor = observer(() => {
     link.getSourcePort().removeLink(link);
     link.setSourcePort(fromPosition.getPort(value));
 
-    connection.workflow.Connections.remove(connection);
-    connection.workflow.Connections.push(connection);
+    // connection.workflow.Connections.remove(connection);
+    // connection.workflow.Connections.push(connection);
+
+    context.engine.repaintCanvas();
 
     Ui.history.step();
   });
@@ -94,6 +100,16 @@ export const ConnectionEditor = observer(() => {
   const changeSourcePosition = action((_e: any, { value }: any) => {
     const workflow = connection.workflow;
     const link = connection.link;
+
+    // remove old joints
+    const model = context.engine.getModel();
+    if (connection.toJoint) {
+      model.removeNode(connection.toJoint);
+    }
+    if (connection.fromJoint) {
+      model.removeNode(connection.fromJoint);
+    }
+
     link.getSourcePort().removeLink(link);
 
     const fromPosition = workflow.findPosition(value);
@@ -110,8 +126,19 @@ export const ConnectionEditor = observer(() => {
     }
 
     connection.update();
-    connection.workflow.Connections.remove(connection);
-    connection.workflow.Connections.push(connection);
+
+    // add joints if needed
+    if (connection.toJoint) {
+      model.addNode(connection.toJoint);
+    }
+    if (connection.fromJoint) {
+      model.addNode(connection.fromJoint);
+    }
+
+    // connection.workflow.Connections.remove(connection);
+    // connection.workflow.Connections.push(connection);
+
+    context.engine.repaintCanvas();
 
     Ui.history.step();
   });
@@ -126,8 +153,10 @@ export const ConnectionEditor = observer(() => {
     link.getTargetPort().removeLink(link);
     link.setTargetPort(toPosition.getPort(value));
 
-    connection.workflow.Connections.remove(connection);
-    connection.workflow.Connections.push(connection);
+    // connection.workflow.Connections.remove(connection);
+    // connection.workflow.Connections.push(connection);
+
+    context.engine.repaintCanvas();
 
     Ui.history.step();
   });
@@ -135,8 +164,25 @@ export const ConnectionEditor = observer(() => {
   const changeTargetPosition = action((_e: any, { value }: any) => {
     const workflow = connection.workflow;
     const link = connection.link;
+    const model = context.engine.getModel();
+
+    // remove old joints
+    if (connection.toJoint) {
+      model.removeNode(connection.toJoint);
+    }
+    if (connection.fromJoint) {
+      model.removeNode(connection.fromJoint);
+    }
 
     link.getTargetPort().removeLink(link);
+
+    const parent = link.getTargetPort().getParent();
+
+    // if it is a free widget remove it
+    if (value != "") {
+      let freeJoint = parent as FreeJoint;
+      context.engine.getModel().removeNode(freeJoint);
+    }
 
     const toPosition = workflow.findPosition(value);
     if (toPosition) {
@@ -150,9 +196,16 @@ export const ConnectionEditor = observer(() => {
       connection.TargetPort = null;
     }
     connection.update();
-    connection.workflow.Connections.remove(connection);
-    connection.workflow.Connections.push(connection);
+    // connection.workflow.Connections.remove(connection);
+    // connection.workflow.Connections.push(connection);
 
+    if (connection.toJoint) {
+      model.addNode(connection.toJoint);
+    }
+    if (connection.fromJoint) {
+      model.addNode(connection.fromJoint);
+    }
+    context.engine.repaintCanvas();
     Ui.history.step();
   });
 

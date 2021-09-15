@@ -11,6 +11,9 @@ interface Props {
 }
 
 export const Container = styled.div<{ color: string; background: string }>`
+  svg {
+    overflow: visible !important;
+  }
   width: 100%;
   height: 100%;
   background-color: ${(p) => p.background};

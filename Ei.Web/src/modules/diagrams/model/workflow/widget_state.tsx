@@ -146,21 +146,8 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
         style={{
           position: "absolute",
           zIndex: 10,
-          left: -13,
-          top: height / 2 - 8,
-        }}
-        port={node.getPort("west")}
-        engine={node.ei.engine}
-      >
-        <Port />
-      </PortWidget>
-
-      <PortWidget
-        style={{
-          position: "absolute",
-          zIndex: 10,
           left: 3 * (width / 4), // simplified equation
-          top: (3 * height) / 4,
+          top: (3 * height) / 4 - 8,
         }}
         port={node.getPort("southeast")}
         engine={node.ei.engine}
@@ -173,7 +160,7 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
           position: "absolute",
           zIndex: 10,
           left: 3 * (width / 4), // simplified equation
-          top: height / 4 - 13,
+          top: height / 4 - 8,
         }}
         port={node.getPort("northeast")}
         engine={node.ei.engine}
@@ -185,7 +172,7 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
         style={{
           position: "absolute",
           zIndex: 10,
-          left: width - 4,
+          left: width - 8,
           top: height / 2 - 8,
         }}
         port={node.getPort("east")}
@@ -198,8 +185,8 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
         style={{
           position: "absolute",
           zIndex: 10,
-          left: width / 2 - 7,
-          top: -8,
+          left: width / 2 - 8,
+          top: -4,
         }}
         port={node.getPort("north")}
         engine={node.ei.engine}
@@ -211,8 +198,8 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
         style={{
           position: "absolute",
           zIndex: 10,
-          left: (width + 12) / 4 - 15, // simplified equation
-          top: height / 4 - 13,
+          left: (width + 12) / 4 - 16, // simplified equation
+          top: height / 4 - 8,
         }}
         port={node.getPort("northwest")}
         engine={node.ei.engine}
@@ -237,10 +224,23 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
         style={{
           position: "absolute",
           zIndex: 10,
-          left: (width + 12) / 4 - 15, // simplified equation
-          top: (3 * height) / 4,
+          left: (width + 12) / 4 - 16, // simplified equation
+          top: (3 * height) / 4 - 8,
         }}
         port={node.getPort("southwest")}
+        engine={node.ei.engine}
+      >
+        <Port />
+      </PortWidget>
+
+      <PortWidget
+        style={{
+          position: "absolute",
+          zIndex: 10,
+          left: -8,
+          top: height / 2 - 8,
+        }}
+        port={node.getPort("west")}
         engine={node.ei.engine}
       >
         <Port />

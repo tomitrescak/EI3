@@ -51,6 +51,8 @@ export class AccessCondition extends FormState {
     this.Postconditions = observable(
       (condition.Postconditions || []).map((c) => new Postcondition(c))
     );
+
+    makeObservable(this);
   }
 
   get json() {

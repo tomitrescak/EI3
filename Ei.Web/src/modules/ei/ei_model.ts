@@ -369,7 +369,7 @@ export class Ei extends ParametricEntity {
       );
       if (!this.checkExists(this.Workflows, "Workflow", workflow)) {
         this.Workflows.push(workflow);
-        this.context.Router.push(this.createUrl("workflows", workflow));
+        this.context.Router.push(this.createWorkflowUrl(workflow));
 
         Ui.history.step();
       }
