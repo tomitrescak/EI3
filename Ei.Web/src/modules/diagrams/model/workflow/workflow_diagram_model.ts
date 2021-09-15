@@ -45,14 +45,16 @@ export class WorkflowDiagramModel extends DiagramModel {
               // add connection
               let connection = link.connection;
               connection.From = fromPort.getNode().getID();
+              connection.SourcePort = fromPort.getName();
 
               if (toPort) {
                 connection.To = toPort.getNode().getID();
+                connection.TargetPort = toPort.getName();
               }
-
-              connection.update();
-
               link.workflow.Connections.push(link.connection);
+
+              const model = context.engine.getModel();
+              connection.update(model);
 
               context.Router.push(
                 context.ei.createWorkflowUrl(
@@ -61,6 +63,8 @@ export class WorkflowDiagramModel extends DiagramModel {
                   link.connection.Id
                 )
               );
+
+              context.engine.repaintCanvas();
 
               Ui.history.step();
             }, 50);

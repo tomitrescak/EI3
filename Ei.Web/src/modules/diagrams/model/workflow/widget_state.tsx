@@ -14,13 +14,13 @@ export interface StateNodeWidgetProps {
 const size = 15;
 
 export const Port = styled.div`
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   z-index: 10;
 
   &:hover {
     background: rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
+    border-radius: 4px;
   }
   cursor: pointer;
 `;
@@ -55,7 +55,7 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
     rules.reduce(
       (prev, next) => (prev = prev < next.length ? next.length : prev),
       0
-    ) * 7;
+    ) * 9;
 
   return (
     <div
@@ -80,7 +80,8 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
               style={{ minHeight: "40px" }}
               rx={5}
               ry={5}
-            />
+            ></rect>
+
             <text
               x={0}
               y={-rules.length * 20 - 10}
@@ -91,7 +92,7 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
                 width: longest + "px",
               }}
               textAnchor="middle"
-              alignmentBaseline="central"
+              // alignmentBaseline="central"
             >
               {rules.map((r, i) => (
                 <tspan key={i} x="13" dy="16px">

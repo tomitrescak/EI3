@@ -102,13 +102,6 @@ export const ConnectionEditor = observer(() => {
     const link = connection.link;
 
     // remove old joints
-    const model = context.engine.getModel();
-    if (connection.toJoint) {
-      model.removeNode(connection.toJoint);
-    }
-    if (connection.fromJoint) {
-      model.removeNode(connection.fromJoint);
-    }
 
     link.getSourcePort().removeLink(link);
 
@@ -125,15 +118,8 @@ export const ConnectionEditor = observer(() => {
       connection.SourcePort = null;
     }
 
-    connection.update();
-
-    // add joints if needed
-    if (connection.toJoint) {
-      model.addNode(connection.toJoint);
-    }
-    if (connection.fromJoint) {
-      model.addNode(connection.fromJoint);
-    }
+    const model = context.engine.getModel();
+    connection.update(model);
 
     // connection.workflow.Connections.remove(connection);
     // connection.workflow.Connections.push(connection);
@@ -164,15 +150,6 @@ export const ConnectionEditor = observer(() => {
   const changeTargetPosition = action((_e: any, { value }: any) => {
     const workflow = connection.workflow;
     const link = connection.link;
-    const model = context.engine.getModel();
-
-    // remove old joints
-    if (connection.toJoint) {
-      model.removeNode(connection.toJoint);
-    }
-    if (connection.fromJoint) {
-      model.removeNode(connection.fromJoint);
-    }
 
     link.getTargetPort().removeLink(link);
 
@@ -195,16 +172,10 @@ export const ConnectionEditor = observer(() => {
       connection.To = "";
       connection.TargetPort = null;
     }
-    connection.update();
-    // connection.workflow.Connections.remove(connection);
-    // connection.workflow.Connections.push(connection);
 
-    if (connection.toJoint) {
-      model.addNode(connection.toJoint);
-    }
-    if (connection.fromJoint) {
-      model.addNode(connection.fromJoint);
-    }
+    const model = context.engine.getModel();
+    connection.update(model);
+
     context.engine.repaintCanvas();
     Ui.history.step();
   });
@@ -248,6 +219,7 @@ export const ConnectionEditor = observer(() => {
   );
 
   let fromOptions = emptyOptions;
+
   switch (connection.fromElementType) {
     case "State":
       fromOptions = statePositionOptions;
@@ -272,6 +244,9 @@ export const ConnectionEditor = observer(() => {
       toOptions = splitToOptions;
       break;
   }
+
+  connection.From;
+  connection.To;
 
   let handler = context.createAccordionHandler("Connection_" + id, [0]);
 

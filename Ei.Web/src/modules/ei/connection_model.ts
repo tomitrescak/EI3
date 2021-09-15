@@ -41,7 +41,7 @@ export class FreeJoint extends DefaultNodeModel {
 
     this.ei = workflow.ei;
     this.addPort(
-      new WorkflowPortModel(workflow, "left", PortModelAlignment.LEFT)
+      new WorkflowPortModel(workflow, "left", PortModelAlignment.LEFT) as any
     );
   }
 }
@@ -119,7 +119,7 @@ export class Connection extends Entity {
       );
     }
 
-    this.update();
+    this.update(null);
 
     makeObservable(this);
   }
@@ -154,7 +154,7 @@ export class Connection extends Entity {
     return node.constructor.name;
   }
 
-  update(model: DiagramModel) {
+  update(model: DiagramModel | null | undefined) {
     const workflow = this.workflow;
     const connection = this.dao;
     const fromPosition = workflow.findPosition(this.From);
@@ -168,14 +168,14 @@ export class Connection extends Entity {
     }
 
     // remove old nodes
-    // if (model) {
-    //   if (this.toJoint) {
-    //     model.removeNode(this.toJoint);
-    //   }
-    //   if (this.fromJoint) {
-    //     model.removeNode(this.fromJoint);
-    //   }
-    // }
+    if (model) {
+      if (this.toJoint) {
+        model.removeNode(this.toJoint);
+      }
+      if (this.fromJoint) {
+        model.removeNode(this.fromJoint);
+      }
+    }
 
     let x: number;
     let y: number;
@@ -188,7 +188,10 @@ export class Connection extends Entity {
         );
       } else {
         this.SourcePort = this.link.getSourcePort().getName();
+        this.link.setSourcePort(null);
+        this.link.setSourcePort(fromPosition.getPort(this.SourcePort));
       }
+
       this.fromJoint = null;
     } else {
       this.fromJoint = new FreeJoint(workflow);
@@ -208,6 +211,8 @@ export class Connection extends Entity {
         );
       } else {
         this.TargetPort = this.link.getTargetPort().getName();
+        this.link.setTargetPort(null);
+        this.link.setTargetPort(toPosition.getPort(this.TargetPort));
       }
       this.toJoint = null;
     } else {
@@ -253,6 +258,15 @@ export class Connection extends Entity {
         }),
         p1,
       ]);
+    }
+
+    if (model) {
+      if (this.toJoint) {
+        model.addNode(this.toJoint);
+      }
+      if (this.fromJoint) {
+        model.addNode(this.fromJoint);
+      }
     }
 
     // check split

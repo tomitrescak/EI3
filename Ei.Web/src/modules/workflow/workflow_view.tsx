@@ -52,16 +52,9 @@ export const WorkflowContent = observer(
       for (let node of workflow.Connections) {
         let link = new WorkflowLinkModel(node, workflow);
         node.link = link;
-        node.update();
+        node.update(model);
 
         model.addLink(node.link);
-
-        if (node.fromJoint) {
-          model.addNode(node.fromJoint);
-        }
-        if (node.toJoint) {
-          model.addNode(node.toJoint);
-        }
 
         // var connection = new DefaultLinkModel();
 

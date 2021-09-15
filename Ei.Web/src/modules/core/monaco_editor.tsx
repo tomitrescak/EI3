@@ -78,17 +78,17 @@ export class CodeEditor extends React.Component<Props> {
           endColumn: position.column,
         });
         if (textUntilPosition.match(/i\.$/)) {
-          return i;
+          return { suggestions: i };
         } else if (textUntilPosition.match(/w\.$/)) {
-          return w;
+          return { suggestions: w };
         } else if (textUntilPosition.match(/o\.$/)) {
-          return o;
+          return { suggestions: o };
         } else if (textUntilPosition.match(/r\.$/)) {
-          return r;
+          return { suggestions: r };
         } else if (textUntilPosition.match(/a\.$/)) {
-          return a;
+          return { suggestions: a };
         }
-        return [];
+        return { suggestions: [] };
       },
     });
   }
