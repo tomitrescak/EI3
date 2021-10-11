@@ -1,12 +1,7 @@
 import React from "react";
 
 import { observer } from "mobx-react";
-import createEngine, {
-  DefaultLinkModel,
-  DefaultNodeModel,
-  DefaultPortModel,
-  DiagramEngine,
-} from "@projectstorm/react-diagrams";
+import createEngine, { DiagramEngine } from "@projectstorm/react-diagrams";
 
 import { DiagramListener } from "@projectstorm/react-canvas-core";
 

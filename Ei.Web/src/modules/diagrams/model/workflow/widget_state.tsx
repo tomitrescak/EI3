@@ -136,7 +136,7 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
               fontWeight: node.selected ? "bold" : "normal",
             }}
             textAnchor="middle"
-            alignmentBaseline="central"
+            dominantBaseline="central"
           >
             {text}
           </text>

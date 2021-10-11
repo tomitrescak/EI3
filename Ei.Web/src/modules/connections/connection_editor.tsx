@@ -15,19 +15,10 @@ import { Ui } from "../../helpers/client_helpers";
 import { AccessEditor } from "../access/access_editor";
 import { IconView } from "../core/entity_icon_view";
 import { EntityEditor } from "../core/entity_view";
-import {
-  ActionDisplayType,
-  Connection,
-  FreeJoint,
-} from "../ei/connection_model";
-import { AppContext, Context, useAppContext } from "../../config/context";
+import { ActionDisplayType, FreeJoint } from "../ei/connection_model";
+import { useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
 import { useParams } from "react-router";
-
-interface Props {
-  id: string;
-  workflowId: string;
-}
 
 const FloatedLabel = styled(SUILabel)`
   float: right;

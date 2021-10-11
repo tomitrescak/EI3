@@ -4,7 +4,7 @@ import {
   LinkWidget,
   DefaultLinkFactory,
 } from "@projectstorm/react-diagrams";
-import { Observer, observer } from "mobx-react";
+import { Observer } from "mobx-react";
 import React from "react";
 import { ActionDisplayType } from "../../../ei/connection_model";
 import { WorkflowLinkModel } from "./workflow_link_model";
@@ -150,7 +150,7 @@ const PreConditionLabels = ({ link }: { link: WorkflowLinkModel }) => {
                 y={position.y + 12}
                 fill="white"
                 textAnchor="middle"
-                alignmentBaseline="central"
+                dominantBaseline="central"
                 style={{ fontSize: "20px" }}
               >
                 {r}
@@ -212,7 +212,7 @@ const PostConditionLabels = ({ link }: { link: WorkflowLinkModel }) => {
                 y={position.y + 12}
                 fill="white"
                 textAnchor="middle"
-                alignmentBaseline="central"
+                dominantBaseline="central"
                 style={{ fontSize: "20px" }}
               >
                 {r}
@@ -420,7 +420,7 @@ const ActionView = ({ link }: { link: WorkflowLinkModel }) => {
                 y={position.y - 5}
                 fill="white"
                 textAnchor="middle"
-                alignmentBaseline="central"
+                dominantBaseline="central"
                 transform={`rotate(${angle} ${position.x} ${position.y})`}
               >
                 {name}

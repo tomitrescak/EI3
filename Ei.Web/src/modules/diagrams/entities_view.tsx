@@ -9,7 +9,7 @@ import { HierarchicEntity } from "../ei/hierarchic_entity_model";
 import { useAppContext } from "../../config/context";
 import { DiagramListener } from "@projectstorm/react-canvas-core";
 import { EntityLinkModel } from "./model/entity/entity_link_model";
-import { DefaultNodeModel, PointModel } from "@projectstorm/react-diagrams";
+import { PointModel } from "@projectstorm/react-diagrams";
 import { Point } from "@projectstorm/geometry";
 
 interface Props {
@@ -107,9 +107,9 @@ export const EntitiesView = observer((props: Props) => {
     },
   } as DiagramListener);
 
-  var node1 = new DefaultNodeModel("Node 1", "rgb(0,192,255)");
-  // node1.setPosition(0, 0);
-  model.addNode(node1);
+  // var node1 = new DefaultNodeModel("Node 1", "rgb(0,192,255)");
+  // // node1.setPosition(0, 0);
+  // model.addNode(node1);
 
   // set offsets
   const currentOffsetX = localStorage.getItem(

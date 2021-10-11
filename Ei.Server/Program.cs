@@ -23,9 +23,9 @@ namespace Ei.Server
             var ei = File.ReadAllText("Files/Ei.json");
             var project = File.ReadAllText("Files/PhysiologyProject.json");
 
-            var handler = new EiHandler(null);
-            handler.Compile(ei);
-            handler.Run(project);
+            //var handler = new EiHandler(null);
+            //handler.Compile(ei);
+            //handler.Run(project);
 
             var host = new WebHostBuilder()
                 .UseKestrel()

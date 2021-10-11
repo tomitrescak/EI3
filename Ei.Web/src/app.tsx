@@ -161,6 +161,15 @@ const App = () => {
                 <EiLayout Main={WorkflowView} Editor={WorkflowEditor} />
               )}
             />
+            <Route
+              path="/ei/:eiName/:eiId/execution"
+              render={() => (
+                <EiLayout
+                  Main={() => <ExecutionView />}
+                  Editor={() => <div></div>}
+                />
+              )}
+            />
           </Switch>
         </EiContainer>
       </Route>

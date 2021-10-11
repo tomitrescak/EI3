@@ -68,7 +68,7 @@ export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
               fontWeight: node.selected ? "bold" : "normal",
             }}
             textAnchor="middle"
-            alignmentBaseline="central"
+            dominantBaseline="central"
           >
             {node.Name || node.Id}
           </text>

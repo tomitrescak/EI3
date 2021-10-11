@@ -49,7 +49,7 @@ export const Components = observer(() => {
           <Menu.Item
             icon="play"
             as={Link}
-            to={`/${ei.Name.toUrlName()}/${ei.Id}/execution`}
+            to={`/ei/${ei.Name.toUrlName()}/${ei.Id}/execution`}
           />
           <Menu.Item
             icon="reply"

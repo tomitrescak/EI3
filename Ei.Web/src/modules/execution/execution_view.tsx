@@ -115,8 +115,8 @@ class ServerModel {
     PIXI.loader
       .add("/images/explorer.png")
       .add("/images/dungeon.png")
-      .add("/images/blob.png");
-    //.load(this.setup);
+      .add("/images/blob.png")
+      .load(this.setup);
 
     this.app = app;
 
@@ -314,7 +314,7 @@ export const ExecutionView = () => {
       <>
         <div ref={canvas} id="pixiCanvas" />
         <hr />
-        <LineChart model={model} />
+        {/* <LineChart model={model} /> */}
         {/* <div>
             <button type="button" id="download-pdf" onClick={this.downloadPDF}>
               {" "}
