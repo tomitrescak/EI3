@@ -184,17 +184,19 @@ export class Workflow extends ParametricEntity {
     e.stopPropagation();
 
     const { value: formValues } = await swal({
-      title: "Creating a new action",
+      title: "Creating an Action",
       html: `
-        <div>
-          <label><b>Action Type: </b></label>
-          <select id="swal-select1" class="swal2-select">
+        <div style="text-align: left">
+          <label><b>Action Type</b></label><br />
+          <select id="swal-select1" class="swal2-select" style="margin: 4px 0px 8px 0px">
             <option value="message">Message</option>
             <option value="join">Join Workflow</option>
             <option value="timeout">Timeout</option>
-          </select>
-        </div>
-        <input id="swal-input2" class="swal2-input" placeholder="Action Name">`,
+          </select><br />
+        
+          <label><b>Transition Name</b></label><br />
+          <input id="swal-input2" class="swal2-input" placeholder="Action Name"  style="margin: 4px 0px 8px 0px">
+        </div>`,
       focusConfirm: false,
       preConfirm: () => {
         return [
@@ -267,18 +269,19 @@ export class Workflow extends ParametricEntity {
   createTransition = async (e: any) => {
     e.stopPropagation();
 
-    const swal = require("sweetalert2");
     const { value: formValues } = await swal({
-      title: "Creating a new transition",
+      title: "Create a Transition",
       html: `
-        <div>
-          <label><b>Transition Type: </b></label>
-          <select id="swal-select1" class="swal2-select">
+        <div style="text-align: left">
+          <label><b>Transition Type</b></label><br />
+          <select id="swal-select1" class="swal2-select" style="margin: 4px 0px 16px 0px">
             <option value="split">Split</option>
             <option value="join">Join</option>
-          </select>
-        </div>
-        <input id="swal-input2" class="swal2-input" placeholder="Transition Name">`,
+          </select><br />
+       
+          <label><b>Transition Name</b></label><br />
+          <input id="swal-input2" class="swal2-input" placeholder="Transition Name"  style="margin: 4px 0px 8px 0px">
+        </div>`,
       focusConfirm: false,
       preConfirm: () => {
         return [
@@ -327,10 +330,29 @@ export class Workflow extends ParametricEntity {
     this.context.engine.repaintCanvas();
   };
 
-  @action addConnection = (e: any) => {
+  @action addConnection = async (e: any) => {
     e.stopPropagation();
 
-    const connection = this.createConnection();
+    const { value: formValues } = await swal({
+      title: "Creating a Connection",
+      html: `
+        <div style="text-align: left">
+          <label><b>Connection Name</b></label><br />
+          <input id="swal-input2" class="swal2-input" placeholder="Action Name"  style="margin: 4px 0px 8px 0px">
+        </div>`,
+      focusConfirm: false,
+      preConfirm: () => {
+        return [
+          (document.getElementById("swal-input2") as HTMLInputElement).value,
+        ];
+      },
+    });
+
+    if (!formValues) {
+      return;
+    }
+
+    const connection = this.createConnection(formValues[0]);
     connection.link = new WorkflowLinkModel(connection, this);
     connection.update(this.context.engine.getModel());
 
@@ -342,13 +364,18 @@ export class Workflow extends ParametricEntity {
     this.context.engine.repaintCanvas();
   };
 
-  createConnection = () => {
+  createConnection = (name: string) => {
     let idx = 0;
     let id = "c" + idx;
     while (this.Connections.some((c) => c.Id === id)) {
       id = "c" + ++idx;
     }
-    return new Connection({ Id: id, Join: [] }, this, this.ei, false);
+    return new Connection(
+      { Id: id, Join: [], Name: name },
+      this,
+      this.ei,
+      false
+    );
   };
 
   get json(): WorkflowDao {

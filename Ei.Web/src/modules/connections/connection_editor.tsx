@@ -15,10 +15,11 @@ import { Ui } from "../../helpers/client_helpers";
 import { AccessEditor } from "../access/access_editor";
 import { IconView } from "../core/entity_icon_view";
 import { EntityEditor } from "../core/entity_view";
-import { ActionDisplayType, FreeJoint } from "../ei/connection_model";
+import { ActionDisplayType } from "../ei/connection_model";
 import { useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
 import { useParams } from "react-router";
+import { State } from "../ei/state_model";
 
 const FloatedLabel = styled(SUILabel)`
   float: right;
@@ -148,8 +149,10 @@ export const ConnectionEditor = observer(() => {
 
     // if it is a free widget remove it
     if (value != "") {
-      let freeJoint = parent as FreeJoint;
-      context.engine.getModel().removeNode(freeJoint);
+      let freeJoint = parent as State;
+      if (freeJoint.IsOpen) {
+        context.engine.getModel().removeNode(freeJoint);
+      }
     }
 
     const toPosition = workflow.findPosition(value);

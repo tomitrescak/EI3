@@ -57,6 +57,10 @@ export class Entity extends FormNodeStore {
     return (this.Name || this.Id).toLowerCase();
   }
 
+  get url() {
+    return "";
+  }
+
   get json(): EntityDao {
     return {
       Id: this.Id,

@@ -45,7 +45,7 @@ export const WorkflowContent = observer(
       }
       // add connections
       for (let node of workflow.Connections) {
-        let link = new WorkflowLinkModel(node, workflow);
+        let link = node.link || new WorkflowLinkModel(node, workflow);
         node.link = link;
         node.update(model);
 
@@ -157,8 +157,6 @@ export const WorkflowContent = observer(
 
       context.engine = engine;
       engine.setModel(model);
-
-      console.log("New engine ...");
       return engine;
     }, [workflowId]);
 

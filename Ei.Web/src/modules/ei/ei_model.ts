@@ -229,7 +229,7 @@ export class Ei extends ParametricEntity {
     if (type) {
       url = url + `/${type}/${id}`;
     }
-    return url;
+    return url.toLowerCase();
   }
 
   editorHeight(value: string) {

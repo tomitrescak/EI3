@@ -10,7 +10,6 @@ import styled from "@emotion/styled";
 
 const Pane = styled.div`
   padding: 6px;
-  display: none;
   position: absolute;
   overflow: auto;
   margin: 0px;

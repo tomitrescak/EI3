@@ -1,10 +1,9 @@
 import {
   DefaultLinkModel,
   DefaultLinkModelListener,
-  PointModel,
 } from "@projectstorm/react-diagrams";
 
-import { action, computed, IObservableArray, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 import { Router } from "../../../../helpers/client_helpers";
 
 import { Connection } from "../../../ei/connection_model";
@@ -16,16 +15,6 @@ export class WorkflowLinkModel extends DefaultLinkModel {
   connection: Connection;
   workflow: Workflow;
   model: WorkflowDiagramModel;
-
-  _points: any;
-
-  get linkPoints(): IObservableArray<PointModel> {
-    return this._points;
-  }
-
-  set linkPoints(value) {
-    this._points = observable(value);
-  }
 
   constructor(connection: Connection, workflow: Workflow) {
     super({
@@ -41,14 +30,13 @@ export class WorkflowLinkModel extends DefaultLinkModel {
       },
     } as DefaultLinkModelListener);
 
-    this.linkPoints = observable(this.points);
+    makeObservable(this);
   }
 
-  setPoints(points: PointModel[]) {
-    if (!this.linkPoints) {
-      this.linkPoints = observable([]);
-    }
-    this.linkPoints.replace(points);
+  get url() {
+    return this.workflow.ei
+      .createWorkflowUrl(this.workflow, "connection", this.connection.Id)
+      .toLowerCase();
   }
 
   select() {

@@ -78,6 +78,14 @@ export class State extends PositionModel {
       new WorkflowPortModel(workflow, "southeast", PortModelAlignment.RIGHT)
     );
 
+    if (
+      this.ei.context.Router.router.location.pathname.toLowerCase() ==
+      this.url.toLowerCase()
+    ) {
+      this.setSelected(true);
+      ei.context.selectedEntity = this;
+    }
+
     // this.addFormListener(() => Ui.history.step());
     makeObservable(this);
   }
@@ -111,6 +119,12 @@ export class State extends PositionModel {
     }
   }
 
+  get url() {
+    return this.ei
+      .createWorkflowUrl(this.workflow, "state", this.Id)
+      .toLowerCase();
+  }
+
   get json(): StateDao {
     return {
       ...super.json,
@@ -125,6 +139,6 @@ export class State extends PositionModel {
   }
 
   select() {
-    Router.push(this.ei.createWorkflowUrl(this.workflow, "state", this.Id));
+    Router.push(this.url);
   }
 }

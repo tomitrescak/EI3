@@ -4,8 +4,9 @@ import {
   LinkWidget,
   DefaultLinkFactory,
 } from "@projectstorm/react-diagrams";
-import { Observer } from "mobx-react";
+import { observer, Observer } from "mobx-react";
 import React from "react";
+import { useLocation } from "react-router";
 import { ActionDisplayType } from "../../../ei/connection_model";
 import { WorkflowLinkModel } from "./workflow_link_model";
 
@@ -41,6 +42,7 @@ class Point {
 
   midPoint(points: Point[]) {
     let mid = this.polyDistance(points) * 0.5;
+
     let totalDistance = 0;
     for (let i = 0; i < points.length - 1; i++) {
       const distance = points[i].vector(points[i + 1]).distance();
@@ -130,7 +132,7 @@ const PreConditionLabels = ({ link }: { link: WorkflowLinkModel }) => {
           return null;
         }
 
-        let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
+        let points = link.getPoints().map((p) => new Point(p.getX(), p.getY()));
         let vector = points[0].vector(points[1]);
         let position = vector.normalised().multiply(30).add(points[0]);
         let angle = 0;
@@ -188,7 +190,7 @@ const PostConditionLabels = ({ link }: { link: WorkflowLinkModel }) => {
           return null;
         }
 
-        let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
+        let points = link.getPoints().map((p) => new Point(p.getX(), p.getY()));
         let vector = points[points.length - 1].vector(
           points[points.length - 2]
         );
@@ -236,7 +238,7 @@ const ActionView = ({ link }: { link: WorkflowLinkModel }) => {
         if (!action) {
           return null;
         }
-        let points = link.linkPoints.map((p) => new Point(p.getX(), p.getY()));
+        let points = link.getPoints().map((p) => new Point(p.getX(), p.getY()));
         const connection = link.connection;
 
         const result = points[0].midPoint(points);
@@ -446,7 +448,15 @@ const ActionView = ({ link }: { link: WorkflowLinkModel }) => {
   );
 };
 
-export class AdvancedLinkWidget extends DefaultLinkWidget {
+export const AdvancedLinkWidget = (props: any) => {
+  const location = useLocation();
+  const link = props.link as WorkflowLinkModel;
+  const selected = link.url === location.pathname;
+
+  return <AdvancedLinkWidget1 {...props} selected={selected} />;
+};
+
+export class AdvancedLinkWidget1 extends DefaultLinkWidget {
   generateArrow(point: PointModel, previousPoint: PointModel): JSX.Element {
     return (
       <CustomLinkArrowWidget
@@ -460,6 +470,8 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
   }
 
   render() {
+    // const history = useLocation();
+
     const link = this.props.link as WorkflowLinkModel;
 
     //ensure id is present for all points on the path
@@ -501,7 +513,10 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
 
     return (
       <>
-        <g data-default-link-test={this.props.link.getOptions().testName}>
+        <g
+          data-default-link-test={this.props.link.getOptions().testName}
+          className={this.props.selected ? "linkSelected" : ""}
+        >
           {paths}
         </g>
 

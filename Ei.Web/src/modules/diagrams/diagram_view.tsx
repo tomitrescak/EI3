@@ -48,6 +48,16 @@ export const Container = styled.div<{ color: string; background: string }>`
       transparent 77%,
       transparent
     );
+
+  .linkSelected {
+    path {
+      stroke: salmon;
+    }
+  }
+
+  circle {
+    opacity: 0.4;
+  }
 `;
 
 export class DiagramView extends React.Component<Props> {

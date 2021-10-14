@@ -220,7 +220,7 @@ export class Connection extends Entity {
       const from = fromPosition
         ? { x: fromPosition.getX(), y: fromPosition.getY() }
         : random;
-      const point = this.link.linkPoints[1];
+      const point = this.link.getPoints()[1];
       const hasPoint = point && (point.getX() !== 0 || point.getY() !== 0);
 
       x = connection.FreeTo
@@ -242,8 +242,12 @@ export class Connection extends Entity {
     }
 
     // add extra points if this is self location
-    if (this.To && this.To === this.From && this.link.linkPoints.length === 2) {
-      const points = this.link.linkPoints;
+    if (
+      this.To &&
+      this.To === this.From &&
+      this.link.getPoints().length === 2
+    ) {
+      const points = this.link.getPoints();
       const p0 = points[0];
       const p1 = points[1];
       this.link.setPoints([

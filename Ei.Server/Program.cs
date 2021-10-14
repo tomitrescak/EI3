@@ -20,8 +20,8 @@ namespace Ei.Server
         static void Main(string[] args) {
             var tester = new Tester();
 
-            var ei = File.ReadAllText("Files/Ei.json");
-            var project = File.ReadAllText("Files/PhysiologyProject.json");
+            //var ei = File.ReadAllText("Files/Ei.json");
+            //var project = File.ReadAllText("Files/PhysiologyProject.json");
 
             //var handler = new EiHandler(null);
             //handler.Compile(ei);

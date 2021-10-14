@@ -30,7 +30,7 @@ export class WorkflowPortModel extends SRD.PortModel {
 
   createLinkModel() {
     // create a new connection
-    const connection = this.workflow.createConnection();
+    const connection = this.workflow.createConnection("NoName");
     let linkModel = new WorkflowLinkModel(connection, this.workflow);
 
     connection.link = linkModel;

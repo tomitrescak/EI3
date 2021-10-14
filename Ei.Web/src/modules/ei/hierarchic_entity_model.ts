@@ -30,7 +30,6 @@ export interface HierarchicEntityDao extends ParametricEntityDao {
 }
 
 export abstract class HierarchicEntity extends ParametricEntity {
-  @observable selected: boolean;
   ei: Ei;
 
   @field private _parent: string;
@@ -92,7 +91,7 @@ export abstract class HierarchicEntity extends ParametricEntity {
   get url() {
     return `/ei/${this.ei.Name.toUrlName()}/${this.ei.Id}/${
       this.route
-    }/${this.Name.toUrlName()}/${this.Id}`;
+    }/${this.Name.toUrlName()}/${this.Id}`.toLowerCase();
   }
 
   @action setParentId(parent: string) {

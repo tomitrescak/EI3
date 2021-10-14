@@ -5,6 +5,7 @@ import { PortModelAlignment, PortWidget } from "@projectstorm/react-diagrams";
 
 import { HierarchicEntity } from "../../../ei/hierarchic_entity_model";
 import styled from "@emotion/styled";
+import { useLocation } from "react-router-dom";
 
 export interface Props {
   node: HierarchicEntity;
@@ -56,6 +57,9 @@ export const EntityNodeWidget = observer(({ size = 150, node }: Props) => {
 
   size = node.Name.length * 8 + 30;
 
+  const history = useLocation();
+  const selected = node.url === history.pathname;
+
   return (
     <div
       className="Entity-node"
@@ -75,12 +79,12 @@ export const EntityNodeWidget = observer(({ size = 150, node }: Props) => {
 					</g>
 					<g id="Layer_2">
 						<rect fill="${
-              node.isSelected() ? "salmon" : "orange"
+              selected ? "blue" : "orange"
             }" stroke-width="0" width="${size}" height="${height}" rx="10" ry="10" />
 						<text x="${size / 2}" y="${
             height / 2
           }" style="font-family: Verdana; font-size: 14px; fill: white; text-align: center; width: 200px; font-weight: ${
-            node.selected ? "bold" : "normal"
+            selected ? "bold" : "normal"
           }" text-anchor="middle" dominant-baseline="middle">
 							${node.Name}
 						</text>

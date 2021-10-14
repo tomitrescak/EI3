@@ -5,8 +5,6 @@ import { Entity, EntityDao } from "./entity_model";
 import { Workflow } from "./workflow_model";
 
 export abstract class PositionModel extends Entity {
-  @observable selected: boolean;
-
   ei: Ei;
   workflow: Workflow;
 

@@ -325,3 +325,9 @@ ASALocalRun/
 # MSBuild Binary and Structured Log
 *.binlog
 /Ei.Server/log.txt
+templates.zip
+.gitignore
+.gitignore
+build.js
+output.json
+project.json

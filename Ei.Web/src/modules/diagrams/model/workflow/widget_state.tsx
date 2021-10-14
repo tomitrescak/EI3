@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import { PortWidget } from "@projectstorm/react-diagrams";
 import { State } from "../../../ei/state_model";
 import styled from "@emotion/styled";
+import { useLocation } from "react-router-dom";
 
 export interface StateNodeWidgetProps {
   node: State;
@@ -33,6 +34,9 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
   let width = labelSize < currentSize * 2 ? currentSize * 2 : labelSize;
   let height = size * 2;
   let labelX = labelSize < currentSize * 2 ? (width - labelSize) / 2 : 0;
+
+  const history = useLocation();
+  const selected = node.url === history.pathname;
 
   let rules = node.EntryRules.map((r) => {
     let role = node.workflow.ei.Roles.find((i) => i.Id === r.Role);
@@ -104,8 +108,8 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
         )}
         <g id="Layer_2">
           <ellipse
-            fill={node.IsStart ? "black" : node.selected ? "salmon" : "silver"}
-            stroke={node.selected ? "salmon" : "black"}
+            fill={node.IsStart ? "black" : selected ? "salmon" : "silver"}
+            stroke={selected ? "salmon" : "black"}
             strokeWidth={stroke}
             strokeDasharray={node.IsOpen ? "3 3" : null}
             strokeMiterlimit="10"
@@ -133,7 +137,7 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
               fill: node.IsStart ? "white" : "black",
               textAlign: "center",
               width: "200px",
-              fontWeight: node.selected ? "bold" : "normal",
+              fontWeight: node.isSelected() ? "bold" : "normal",
             }}
             textAnchor="middle"
             dominantBaseline="central"

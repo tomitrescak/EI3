@@ -156,7 +156,7 @@ export const EiList = observer(({ eis }: Props) => {
 
           if (promptValue) {
             const name = promptValue.value;
-            const id = name.toId();
+            const id = name.toId().toLowerCase();
 
             if (eis.some((e) => e.id === id)) {
               context.Ui.alertError("Institution with this id exists: " + id);

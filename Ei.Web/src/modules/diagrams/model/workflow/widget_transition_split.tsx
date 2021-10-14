@@ -36,7 +36,7 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
         <g id="Layer_1" />
         <g id="Layer_2">
           <rect
-            fill={node.selected ? "salmon" : "black"}
+            fill={node.isSelected() ? "salmon" : "black"}
             width={labelSize}
             height={height}
             y={0}
@@ -53,7 +53,7 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
               fill: "white",
               textAlign: "center",
               width: "200px",
-              fontWeight: node.selected ? "bold" : "normal",
+              fontWeight: node.isSelected() ? "bold" : "normal",
             }}
             textAnchor="middle"
             dominantBaseline="central"
