@@ -23,7 +23,7 @@ namespace Ei.Simulation.Statistics
         public float comfort { get; set; }
     }
 
-    public class SimsStatistics : IStatistic
+    public class SimsStatistics : MonoBehaviour, IStatistic
     {
         public Axis[] Axes { get; private set; }
         public List<StatisticTrait> Traits { get; private set; }
@@ -67,7 +67,7 @@ namespace Ei.Simulation.Statistics
         public void ProcessSamples() {
             // get samples
             var statistic = new SimsStatistic();
-            var allSims = GameObject.FindObjectsOfType<Sim>().ToArray();
+            var allSims = FindObjectsOfType<Sim>().ToArray();
             if (allSims == null || allSims.Length == 0) {
                 return;
             }

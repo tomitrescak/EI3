@@ -4,18 +4,20 @@ using Ei.Logs;
 using Ei.Core.Runtime;
 using Ei.Core.Runtime.Planning;
 using Ei.Simulation.Simulator;
+using UnityEngine;
 
-namespace Ei.Simulation.Physiology
+namespace Ei.Simulation.Behaviours.Physiology
 {
 
     public class PhysiologyBasedAgent : SimulationAgent
     {
         // constructor
         private static PhysiologyProject physiologyProject;
+        private PhysiologyProject project;
 
-        public PhysiologyBasedAgent(PhysiologyProject project, string role, string[] freeTimeGoals, string name = null) : base(project, role, freeTimeGoals, name) {
-            physiologyProject = project;
-            this.Callbacks = new PhysiologyAgentCallbacks(this);
+
+        public PhysiologyBasedAgent() {
+            this.Callbacks = new PhysiologCallbacks(this);
         }
 
         // properties
@@ -28,9 +30,15 @@ namespace Ei.Simulation.Physiology
 
         private IPhysiologyStore Store {
             get {
-                var ei = project.Ei;
                 return this.Governor.Resources.FindRole(typeof(IPhysiologyStore)) as IPhysiologyStore;
             }
+        }
+
+        public override void Start()
+        {
+            base.Start();
+
+            this.project = FindObjectOfType<PhysiologyProject>();
         }
 
 
@@ -44,7 +52,7 @@ namespace Ei.Simulation.Physiology
 
             var res = this.Governor.PerformAction("initAgent",
                 VariableInstance.Create(
-                    "Tick", (86400 / project.DayLengthInSeconds).ToString(CultureInfo.InvariantCulture),
+                    "Tick", (86400 / timer.DayLengthInSeconds).ToString(CultureInfo.InvariantCulture),
                     "HungerModifier", hungerModifier.ToString(CultureInfo.InvariantCulture),
                     "ThirstModifier", thirstModifier.ToString(CultureInfo.InvariantCulture),
                     "FatigueModifier", fatigueModifier.ToString(CultureInfo.InvariantCulture)));
@@ -72,15 +80,15 @@ namespace Ei.Simulation.Physiology
 
         protected override void Reason() {
             // wait in case we pause
-            if (project.Paused) {
-                this.View.RunAfter(this.Reason, 1);
+            if (this.timer.Paused) {
+                this.RunAfter(this.Reason, 1);
                 return;
             }
 
             Log.Debug(this.MainAgent.Name, "Reasoning ...");
 
             // check if it is time for sleeping
-            var time = project.SimulatedTime;
+            var time = timer.SimulatedTime;
             time = time % 86400;
 
             //if (time > 64800)
@@ -202,8 +210,8 @@ namespace Ei.Simulation.Physiology
 
             this.Dead = true;
 
-            this.Name += " [DEAD] " + type;
-            this.Color = KillColor;
+            this.gameObject.name += " [DEAD] " + type;
+            // this.Color = KillColor;
 
             this.PhysiologyAgent.Move("exit");
             this.PhysiologyAgent.Move("join");
@@ -227,10 +235,10 @@ namespace Ei.Simulation.Physiology
             // agent recuperates 1 fatigue points per 20 minutes (1200 sec)
             difference = difference * 1200;
 
-            var restingTime = difference / project.SimulatedSecond;
+            var restingTime = difference / timer.SimulatedSecond;
 
             // display on view
-            this.View.Rest(restingTime);
+            this.Rest(restingTime);
         }
 
         protected virtual void SatifyThirst() {
@@ -298,5 +306,24 @@ namespace Ei.Simulation.Physiology
                 //    this.PhysiologyAgent.PerformAction("stopped");
             }
         }
+
+        //        public void WakeUp() {
+        //            this.colorProvider.RestoreOriginal();
+        //        }
+
+        public void Rest(double restingTimeInSeconds)
+        {
+            // var sim = GetComponent<SimAgen>()
+            // this.colorProvider.MakeGreen();
+            this.RunAfter(() =>
+            {
+                // this.colorProvider.RestoreOriginal();
+                this.Rested();
+            }, (float) (Time.time + restingTimeInSeconds));
+        }
+
+        //        public void Sleep() {
+        //            this.colorProvider.MakeBlack();
+        //        }
     }
 }

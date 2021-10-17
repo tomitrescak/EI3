@@ -65,6 +65,7 @@ namespace Ei.Server
             
             app.UseFileServer();
         }
+
         #region Echo
         private async Task Echo(HttpContext context, WebSocket webSocket) {
             var buffer = new byte[1024 * 4];

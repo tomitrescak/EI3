@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Ei.Simulation.Agents.Behaviours;
+using Ei.Simulation.Behaviours;
 using Ei.Simulation.Sims.Behaviours;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ namespace Ei.Simulation.Statistics
     }
 
 
-    public class FpsStatistics : IStatistic
+    public class FpsStatistics : MonoBehaviour, IStatistic
     {
         private readonly StatisticTrait<FpsStatistic> fpsTrait;
 
@@ -58,8 +58,8 @@ namespace Ei.Simulation.Statistics
             // get samples
             var statistic = new FpsStatistic {
                 Fps = Time.Fps,
-                AgentCount = GameObject.FindObjectsOfType<Sim>().Count() +
-                             GameObject.FindObjectsOfType<EiAgent>().Count()
+                AgentCount = FindObjectsOfType<Sim>().Count() +
+                             FindObjectsOfType<SimulationAgent>().Count()
             };
 
             // process with all traits

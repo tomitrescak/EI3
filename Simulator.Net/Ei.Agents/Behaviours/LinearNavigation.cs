@@ -3,27 +3,38 @@
 using System;
 using System.ComponentModel;
 using Ei.Logs;
+using Ei.Simulation.Core;
 using UnityEngine;
 
-namespace Ei.Simulation.Core
+namespace Ei.Simulation.Behaviours
 {
     [DisplayName("Linear Navigation")]
-    public class LinearNavigation : EiBehaviour, IUpdates
+    public class LinearNavigation : NavigationBase //, IUpdates
     {
-        private float destinationX;
-        private float destinationY;
-
-        public bool Navigating { get; private set; }
-        public float SpeedPxPerSecond { get; set; }
-
         private Tweener tween;
         private DateTime startTime;
+        public float SpeedPxPerSecond;
 
-        public virtual void MoveToDestination(Vector3 position) {
-            this.MoveToDestination(position.x, position.y);
+        public void Start()
+        {
+            var env = FindObjectOfType<AgentEnvironment>();
+            var timer = FindObjectOfType<SimulationTimer>();  
+            var project = FindObjectOfType<SimulationProject>();
+
+            if (this.SpeedPxPerSecond == 0)
+            {
+                this.SpeedPxPerSecond = this.Speed * // base speed (e.g. 5 km/h = 1.47 m/s)
+                    (86440 / timer.DayLengthInSeconds);
+                this.SpeedPxPerSecond = this.SpeedPxPerSecond / env.Definition.MetersPerPixel;
+            }
+
+            if (this.SpeedPxPerSecond == 0)
+            {
+                Log.Error(this.gameObject.name, "Agent immobile as his speed is set to 0");
+            }
         }
 
-        public virtual void MoveToDestination(float x, float y) {
+        public override void MoveToDestination(float x, float y) {
             if (this.SpeedPxPerSecond == 0) {
                 return;
             }
@@ -46,11 +57,7 @@ namespace Ei.Simulation.Core
             // Debug.WriteLine($"Starting Navigation to {this.destinationX},{this.destinationY}  in {time} distance {distance}");
         }
 
-        public void Start() {
-            if (this.SpeedPxPerSecond == 0) {
-                Log.Error(this.gameObject.name, "Agent immobile as his speed is set to 0");
-            }
-        }
+ 
 
         public void Update() {
             if (!this.Navigating) {
@@ -64,6 +71,7 @@ namespace Ei.Simulation.Core
 
             if (xDelta < 0.001 && yDelta < 0.001) {
                 this.Navigating = false;
+                this.MovedToDestination();
 
                 // Debug.WriteLine($"Finished at '{(Timer.Now - this.startTime).TotalSeconds:0.00}' ${xDelta:0.0},{yDelta:0.0}");
             } else {

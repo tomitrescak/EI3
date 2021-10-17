@@ -8,14 +8,13 @@ using Ei.Compilation;
 using Ei.Logs;
 using Ei.Core.Ontology;
 using Ei.Persistence.Json;
-using Ei.Simulation.Agents.Behaviours;
-using Ei.Simulation.Physiology;
 using Newtonsoft.Json;
 using WebSocketManager;
 using WebSocketManager.Common;
 using Ei.Simulation.Simulator;
 using Ei.Simulation.Statistics;
 using UnityEngine;
+using Ei.Simulation.Behaviours;
 
 namespace Ei.Server
 {
@@ -65,8 +64,8 @@ namespace Ei.Server
         }
         
         private Institution currentEi;
-        private Project project;
-        private Simulation.Simulator.Runner runner;
+        // private SimulationProject project;
+        private GameEngine gameEngine;
         private SocketLog socketLog;
 
         public EiHandler(WebSocketConnectionManager webSocketConnectionManager) : base(webSocketConnectionManager)
@@ -127,41 +126,56 @@ namespace Ei.Server
             if (this.currentEi == null) {
                 throw new Exception("You need to compile the institution first!");
             }
-            
+
             // init the project that contains parameters of the simulation
-            this.project = JsonConvert.DeserializeObject(projectSource, typeof(PhysiologyProject)) as PhysiologyProject;
-            
-            
-            // physiology runner is a behaviour that launches a new project
-            var physiologyProjectRunner = new EiProjectStarter();
-            physiologyProjectRunner.AgentsPerSecond = 1;
-            physiologyProjectRunner.InitProject(this.project, this.currentEi);
-            
-            
-            // add new game object that will be added to the scene (Experiment)
-            var go = new GameObject("EiProjectStarter");
-            
-            go.AddComponent(physiologyProjectRunner);
-            go.Enabled = true;
-            
-            // add behaviour to the scene
-            var scene = new Scene(new List<GameObject> {
-                go
-            });
-            
+            //this.project = projectType == "Physiology" ? JsonConvert.DeserializeObject(projectSource, typeof(PhysiologyProject)) as PhysiologyProject;
+
+
+            //// physiology runner is a behaviour that launches a new project
+            //var physiologyProjectRunner = new EiProjectStarter();
+            //physiologyProjectRunner.AgentsPerSecond = 1;
+            //physiologyProjectRunner.InitProject(this.project, this.currentEi);
+
+
+            //// add new game object that will be added to the scene (Experiment)
+            //var go = new GameObject("EiProjectStarter");
+
+            //go.AddComponent(physiologyProjectRunner);
+            //go.Enabled = true;
+
+            //// add behaviour to the scene
+            //var scene = new Scene(new List<GameObject> {
+            //    go
+            //});
+
+            var scene = JsonConvert.DeserializeObject(projectSource, typeof(Scene)) as Scene;
+
             // initialise runner that launches current scene
-            this.runner = new Runner(scene);
-            this.runner.GameObjectAdded += (runner1, o) => Console.WriteLine("Added: " + o.name);
-            this.runner.StatisticTraitUpdated +=
+            this.gameEngine = new GameEngine(scene);
+
+            // find the project
+            var project = this.gameEngine.FindObjectOfType<SimulationProject>();
+            project.Ei = this.currentEi;
+
+            this.gameEngine.StatisticTraitUpdated +=
                 (trait, point) => Console.WriteLine("Stats for " + trait.Name + ": " + point);
-            this.runner.ProcessStatistics(new FpsStatistics());
+            
             
             // start the simulation
-            this.runner.Start();
+            this.gameEngine.Start();
         }
+
+        //var handler = new EiHandler(null);
+            //handler.Compile(ei);
+            //handler.Run(project);
         
         public async Task RunInstitution(long queryId, string projectSource)
         {
+            if (this.currentEi == null)
+            {
+                await InvokeClientMethodToAllAsync("RunInstitution", queryId, "Failed,InstitutionNotCompiled");
+                return;
+            }
             try {
                 this.Run(projectSource);
             }

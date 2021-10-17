@@ -2,9 +2,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Ei.Core\Ei.Core.csproj" />
     <ProjectReference Include="..\..\Ei.Logs\Ei.Logs.csproj" />
+    <ProjectReference Include="..\..\Ei.Persistence\Ei.Persistence.csproj" />
     <ProjectReference Include="..\Ei.Unity\Ei.Integration.Unity.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="YamlDotNet" Version="4.3.2-pre0479" />
   </ItemGroup>
   <PropertyGroup>

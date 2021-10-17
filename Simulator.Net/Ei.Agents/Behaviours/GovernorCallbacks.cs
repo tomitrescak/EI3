@@ -4,13 +4,13 @@ using Ei.Core.Runtime;
 using Ei.Logs;
 using Ei.Simulation.Simulator;
 
-namespace Ei.Simulation.Physiology
+namespace Ei.Simulation.Behaviours
 {
-    public class PhysiologyAgentCallbacks : IGovernorCallbacks
+    public class GovernorCallbacks : IGovernorCallbacks
     {
-        public PhysiologyBasedAgent owner;
+        public SimulationAgent owner;
 
-        public PhysiologyAgentCallbacks(PhysiologyBasedAgent agent)
+        public GovernorCallbacks(SimulationAgent agent)
         {
             this.owner = agent;
         }
@@ -52,23 +52,23 @@ namespace Ei.Simulation.Physiology
             // Debug.WriteLine("{0} = {1}", parameterName, value);
             Log.Info(name, string.Format("{0} = {1}", parameterName, value));
 
-            if (parameterName.StartsWith("a."))
-            {
-                parameterName = parameterName.Substring(2);
-            }
+            //if (parameterName.StartsWith("a."))
+            //{
+            //    parameterName = parameterName.Substring(2);
+            //}
 
-            var param = this.owner.Properties.FirstOrDefault(w => w.Label == parameterName);
-            if (param == null)
-            {
-                var property = new AgentProperty(parameterName, value.ToString());
-                this.owner.View.AddProperty(property);
-            }
-            else
-            {
-                param.Value = value.ToString();
-                this.owner.View.PropertyValueChanged();
+            //var param = this.owner.Properties.FirstOrDefault(w => w.Label == parameterName);
+            //if (param == null)
+            //{
+            //    var property = new AgentProperty(parameterName, value.ToString());
+            //    this.owner.AddProperty(property);
+            //}
+            //else
+            //{
+            //    param.Value = value.ToString();
+            //    this.owner.PropertyValueChanged();
                     
-            }
+            //}
         }
 
         public virtual void Blocked()
@@ -99,8 +99,6 @@ namespace Ei.Simulation.Physiology
 
         public virtual void Split(Governor[] splits, bool shallowClone)
         {
-            this.owner.MainAgent = splits.First(w => w.Name.EndsWith("Main"));
-            this.owner.PhysiologyAgent = splits.First(w => w.Name.EndsWith("Physiology"));
         }
 
         public virtual void Joined()

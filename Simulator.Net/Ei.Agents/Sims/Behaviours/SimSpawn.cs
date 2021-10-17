@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Ei.Simulation.Behaviours;
 using Ei.Simulation.Core;
 using Ei.Simulation.Simulator;
 using Ei.Simulation.Statistics;
@@ -10,7 +11,7 @@ using Vittoria.Behaviours;
 
 namespace Ei.Simulation.Sims.Behaviours
 {
-    public class Spawn : EiBehaviour, IUpdates
+    public class SimSpawn : MonoBehaviour //, IUpdates
     {
         public enum Renderer
         {
@@ -24,7 +25,7 @@ namespace Ei.Simulation.Sims.Behaviours
             Sim
         }
 
-        private Runner simulation;
+        private GameEngine simulation;
         private float minX;
         private float minY;
         private float maxX;
@@ -53,7 +54,7 @@ namespace Ei.Simulation.Sims.Behaviours
         [DisplayName("Sim Objects")]
         public List<SimObjectDAO> SimObjects { get; set; }
 
-        public Spawn() {
+        public SimSpawn() {
             this.SimObjects = new List<SimObjectDAO>();
             this.MinDecayRatePerSecond = 0.3f;
             this.MaxDecayRatePerSecond = 1f;
@@ -64,7 +65,7 @@ namespace Ei.Simulation.Sims.Behaviours
         }
 
         public void Init() {
-            this.simulation = this.gameObject.GetSimulator() as Runner;
+            this.simulation = this.gameObject.GameEngine as GameEngine;
         }
 
         public void Start() {
@@ -130,7 +131,7 @@ namespace Ei.Simulation.Sims.Behaviours
 
             // set transform
 
-            agent.Transform.position = new Vector3(
+            agent.transform.position = new Vector3(
                     UnityEngine.Random.Range(minX, maxX),
                     UnityEngine.Random.Range(minY, maxY),
                      0);
@@ -165,7 +166,7 @@ namespace Ei.Simulation.Sims.Behaviours
 //                agent.AddComponent<FastRenderer>();
 //            }
 
-            this.simulation.CreateInstance(agent, true);
+            this.Instantiate(agent);
             this.spawned++;
         }
 
@@ -181,7 +182,7 @@ namespace Ei.Simulation.Sims.Behaviours
             var agent = new GameObject();
 
             // add position
-            agent.Transform.position = new Vector3(
+            agent.transform.position = new Vector3(
                 UnityEngine.Random.Range(minX, maxX),
                 UnityEngine.Random.Range(minY, maxY),
                  0);
@@ -201,7 +202,7 @@ namespace Ei.Simulation.Sims.Behaviours
             // add renderer
             // agent.AddComponent<IconRenderer>();
 
-            this.simulation.CreateInstance(agent, true);
+            this.Instantiate(agent);
         }
 
         // different agents

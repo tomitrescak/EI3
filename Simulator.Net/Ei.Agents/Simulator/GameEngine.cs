@@ -10,14 +10,14 @@ using Ei.Simulation.Statistics;
 
 namespace Ei.Simulation.Simulator
 {
-    public class Runner : ISimulation
+    public class GameEngine : IGameEngine
     {
         // fields
 
-        public static Runner Instance;
+        public static GameEngine Instance;
 
         private Scene scene;
-        private GameObject[] _updatableAgents;
+        private GameObject[] updateableGameObject;
         private bool changedStructure;
         private List<Thread> processThreads;
 
@@ -25,33 +25,26 @@ namespace Ei.Simulation.Simulator
         
         // properties
         
-        public Collection<GameObject> Agents { get; private set; }
+        public Collection<GameObject> GameObjects { get; private set; }
         public Dictionary<Type, List<MonoBehaviour>> Behaviours { get; private set; }
         public List<StatisticTrait> StatisticData { get; private set; }
 
-        public Runner(Scene scene) {
-            Runner.Instance = this;
+        public GameEngine(Scene scene) {
+            GameEngine.Instance = this;
             GameObject.simulation = this;
             this.scene = scene;
 
             this.Behaviours = new Dictionary<Type, List<MonoBehaviour>>();
-            this.Agents = new ObservableCollection<GameObject>(scene.GameObjects);
+            this.GameObjects = new ObservableCollection<GameObject>(scene.GameObjects);
             this.StatisticData = new List<StatisticTrait>();
 
             this.changedStructure = true;
-
-            // init agents
-            foreach (var agent in this.Agents) {
-                agent.Init(this);
-            }
-            
             this.processThreads = new List<Thread>();
         }
         
         // events
 
-        public event Action<Runner, GameObject> GameObjectAdded;
-        public event Action<Runner, GameObject> GameObjectRemoved;
+
         public event Action<StatisticTrait, DataPoint> StatisticTraitUpdated;
         
         // methods
@@ -61,11 +54,17 @@ namespace Ei.Simulation.Simulator
             // init timer
             Time.Start();
 
+            // init agents
+            foreach (var agent in this.GameObjects)
+            {
+                agent.Init(this);
+            }
+
             // start all agents 
-            for (var i = 0; i < this.Agents.Count; i++) {
+            for (var i = 0; i < this.GameObjects.Count; i++) {
                 // add the visual renderer
-                if (this.Agents[i].Enabled) {
-                    this.CreateInstance(this.Agents[i], false);
+                if (this.GameObjects[i].Enabled) {
+                    this.Instantiate(this.GameObjects[i], false);
                 }
             }
             
@@ -81,27 +80,25 @@ namespace Ei.Simulation.Simulator
         }
 
         
-        public void ProcessFrame() {
+        private void ProcessFrame() {
             
             lock (locker) {
                 if (this.changedStructure) {
-                    this._updatableAgents = this.Agents.Where(a => a.Updates).OrderBy(a => a.layer).ToArray();
+                    this.updateableGameObject = this.GameObjects.Where(a => a.Updates).OrderBy(a => a.layer).ToArray();
                 }
             }
 
             // start all agents 
-            for (var i = 0; i < this._updatableAgents.Length; i++) {
-                var agent = this._updatableAgents[i];
+            for (var i = 0; i < this.updateableGameObject.Length; i++) {
+                var agent = this.updateableGameObject[i];
                 if (!agent.Enabled) {
                     continue;
                 }
-//                if (!agent.Started) {
-//                    agent.Start();
-//                }
 
-                if (agent.Started) {
-                    agent.Update();
-                }
+
+               
+                 agent.Update();
+                
             }
             
             // sleep for the rest if we are over 120 FPS
@@ -146,22 +143,20 @@ namespace Ei.Simulation.Simulator
         /// </summary>
         /// <param name="agent">Gameobject to be created</param>
         /// <param name="init">Should Init function be called?</param>
-        /// <param name="renderer">0 = Nothing, 1=Fast Renderer, 2=Icon Renderer, 3=Sim Renderer</param>
         /// <returns>Created GameObject</returns>
-        public GameObject CreateInstance(GameObject agent, bool init = false, int renderer = 0) {
+        public GameObject Instantiate(GameObject agent, bool init = true) {
             lock (locker) {
                 agent.Enabled = true;
 
-                if (init) {
+                if (init)
+                {
                     agent.Init(this);
                 }
-
                 agent.Start();
-                agent.Started = true;
 
                 // add it to the agents
-                if (this.Agents.IndexOf(agent) == -1) {
-                    this.AddAgent(agent);
+                if (this.GameObjects.IndexOf(agent) == -1) {
+                    this.AddGameObject(agent);
                 }
 
                 // filter 
@@ -183,26 +178,32 @@ namespace Ei.Simulation.Simulator
             this.processThreads.Add(thread);
         }
 
-        private void AddAgent(GameObject agent) {
-            this.Agents.Add(agent);
-            
-            // notify
-            this.OnGameObjectAdded(this, agent);
+        public IEnumerable<T> FindObjectsOfType<T>() where T : MonoBehaviour
+        {
+            // return GameObject.simulation.Behaviours[typeof(T)].Cast<T>().ToList();
+            if (this.Behaviours.ContainsKey(typeof(T)))
+            {
+                return this.Behaviours[typeof(T)].Cast<T>();
+            }
+            return null; // new T[0];
         }
 
-        public void RemoveAgent(GameObject agent) {
-            this.Agents.Remove(agent);
-            
-            // notify
-            this.OnGameObjectRemoved(this, agent);
+        public T FindObjectOfType<T>() where T : MonoBehaviour
+        {
+            // return GameObject.simulation.Behaviours[typeof(T)].Cast<T>().ToList();
+            if (this.Behaviours.ContainsKey(typeof(T)))
+            {
+                return this.Behaviours[typeof(T)].Cast<T>().First();
+            }
+            return null; // new T[0];
         }
 
-        protected virtual void OnGameObjectAdded(Runner sender, GameObject gameObject) {
-            GameObjectAdded?.Invoke(sender, gameObject);
+        private void AddGameObject(GameObject go) {
+            this.GameObjects.Add(go);
         }
 
-        protected virtual void OnGameObjectRemoved(Runner sender, GameObject gameObject) {
-            GameObjectRemoved?.Invoke(sender, gameObject);
+        public void Destroy(GameObject go) {
+            this.GameObjects.Remove(go);
         }
 
         protected virtual void OnStatisticTraitUpdated(StatisticTrait trait, DataPoint gameObject) {

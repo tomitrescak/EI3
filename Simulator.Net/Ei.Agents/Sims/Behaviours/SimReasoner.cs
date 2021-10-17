@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Ei.Simulation.Behaviours;
 using Ei.Simulation.Core;
 using UnityEngine;
 
 namespace Ei.Simulation.Sims.Behaviours
 {
-    public class SimReasoner: EiBehaviour, IUpdates
+    public class SimReasoner: MonoBehaviour //, IUpdates
     {
         private interface ISelectionStartegy
         {
@@ -14,12 +15,18 @@ namespace Ei.Simulation.Sims.Behaviours
         }
 
         private class Best : ISelectionStartegy {
+            protected SimReasoner reasoner;
+
+            public Best(SimReasoner reasoner){
+                this.reasoner = reasoner;   
+                }
+
             private SimAction[] uniqueActions;
             private SimAction[] UniqueActions {
                 get {
                     if (uniqueActions == null) {
                         var list = new List<SimAction>();
-                        var objects = GameObject.FindObjectsOfType<SimObject>();
+                        var objects = this.reasoner.FindObjectsOfType<SimObject>();
                         foreach (var obj in objects) {
                             for (var i = 0; i < obj.Actions.Length; i++) {
                                 if (list.All(w => w.Name != obj.Actions[i].Name)) {
@@ -34,7 +41,7 @@ namespace Ei.Simulation.Sims.Behaviours
             }
 
             public SimAction FindGoal(Sim sim) {
-                var simObjects = GameObject.FindObjectsOfType<SimObject>();
+                var simObjects = this.reasoner.FindObjectsOfType<SimObject>();
                 var happiness = 0f;
                 SimAction bestAction = null;
                 foreach (var a in this.UniqueActions) {
@@ -63,7 +70,7 @@ namespace Ei.Simulation.Sims.Behaviours
             }
 
             public virtual PlanItem FindObject(Sim sim, string action) {
-                var obj = GameObject.FindObjectsOfType<SimObject>().FirstOrDefault(o => o.Actions.Any(a => a.Name == action && a.Depleted == false));
+                var obj = this.reasoner.FindObjectsOfType<SimObject>().FirstOrDefault(o => o.Actions.Any(a => a.Name == action && a.Depleted == false));
                 if (obj == null) {
                     return null;
                 }
@@ -73,8 +80,12 @@ namespace Ei.Simulation.Sims.Behaviours
 
         private class BestClosest : Best
         {
+            public BestClosest(SimReasoner reasoner) : base(reasoner)
+            {
+            }
+
             public override PlanItem FindObject(Sim sim, string actionName) {
-                var simObjects = GameObject.FindObjectsOfType<SimObject>();
+                var simObjects = this.reasoner.FindObjectsOfType<SimObject>();
                 SimObject simObject = null;
                 if (simObjects != null) {
                     var withSameAction = simObjects.Where(o => o.Actions.Any(a => a.Name == actionName && a.Depleted == false));
@@ -129,7 +140,7 @@ namespace Ei.Simulation.Sims.Behaviours
             }
         }
 
-        private ISelectionStartegy strategy = new BestClosest();
+        private ISelectionStartegy strategy;
         private bool hasPlan;
         private bool executingPlan;
         private int successfullPlans;
@@ -171,6 +182,7 @@ namespace Ei.Simulation.Sims.Behaviours
         #endregion
 
         public void Init() {
+            this.strategy = new BestClosest(this);
             this.navigation = this.GetComponent<LinearNavigation>();
             this.sim = this.GetComponent<Sim>();
         }

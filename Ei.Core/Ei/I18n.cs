@@ -27,8 +27,6 @@ namespace Ei.Core
         {
             return Get(key.ToString(), list);
         }
-        
-        
     }
 
     public static class Logger

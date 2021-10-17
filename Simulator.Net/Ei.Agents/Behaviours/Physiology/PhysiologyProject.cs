@@ -1,8 +1,8 @@
 ﻿using Ei.Simulation.Simulator;
 
-namespace Ei.Simulation.Physiology
+namespace Ei.Simulation.Behaviours.Physiology
 {
-    public class PhysiologyProject : Project
+    public class PhysiologyProject : SimulationProject
     {
         public double HungerTreshold { get; set; }
         public double FatigueTreshold { get; set; }
@@ -12,9 +12,7 @@ namespace Ei.Simulation.Physiology
         public double KillHungerThreshold { get; set; }
 
         public double RestSpeed { get; set; }
-        
-        protected override SimulationAgent CreateAgent(string[][] groups, string[] goals) {
-            return new PhysiologyBasedAgent(this, groups[0][1], goals);
-        }
+
+        public float[] PhysiologyDiversity { get; set; }
     }
 }

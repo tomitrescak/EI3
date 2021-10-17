@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ei.Simulation.Sims.Behaviours
 {
-    public class Sim : EiBehaviour, IUpdates
+    public class Sim : MonoBehaviour
     {
 
         [Category("Information")]

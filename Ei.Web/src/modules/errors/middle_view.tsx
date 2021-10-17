@@ -19,8 +19,6 @@ const Pane = styled.div`
   bottom: 0px;
 
   &.complete pre {
-    position: absolute;
-    overflow: auto;
     margin: 0px;
     right: 0px;
     left: 0px;

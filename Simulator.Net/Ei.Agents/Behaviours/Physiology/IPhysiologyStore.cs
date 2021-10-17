@@ -1,4 +1,4 @@
-﻿namespace Ei.Simulation.Physiology
+﻿namespace Ei.Simulation.Behaviours.Physiology
 {
     public interface IPhysiologyStore
     {
