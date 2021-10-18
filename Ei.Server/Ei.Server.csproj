@@ -39,6 +39,7 @@
       <Project>{70A326AE-3EDB-44B1-88D6-24879ABE8A4C}</Project>
       <Name>Ei.Compilation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Ei.Projects.Physiology\Ei.Projects.Physiology.csproj" />
     <ProjectReference Include="..\Simulator.Net\Ei.Agents\Ei.Simulation.csproj" />
     <ProjectReference Include="..\Simulator.Net\Ei.Unity\Ei.Integration.Unity.csproj" />
     <ProjectReference Include="..\websocket-manager\src\WebSocketManager\WebSocketManager.csproj" />

@@ -5,15 +5,16 @@ using Ei.Core.Runtime;
 using Ei.Core.Runtime.Planning;
 using Ei.Simulation.Simulator;
 using UnityEngine;
+using Ei.Simulation.Behaviours;
+using Ei.Projects.Physiology.Behaviours;
 
-namespace Ei.Simulation.Behaviours.Physiology
+namespace Ei.Projects.Physiology
 {
 
     public class PhysiologyBasedAgent : SimulationAgent
     {
         // constructor
-        private static PhysiologyProject physiologyProject;
-        private PhysiologyProject project;
+        private PhysiologyProject physiologyProject;
 
 
         public PhysiologyBasedAgent() {
@@ -38,7 +39,7 @@ namespace Ei.Simulation.Behaviours.Physiology
         {
             base.Start();
 
-            this.project = FindObjectOfType<PhysiologyProject>();
+            this.physiologyProject = FindObjectOfType<PhysiologyProject>();
         }
 
 
@@ -46,9 +47,9 @@ namespace Ei.Simulation.Behaviours.Physiology
 
         protected override bool Connected() {
 
-            var hungerModifier = RandomInterval(project.PhysiologyDiversity[0], project.PhysiologyDiversity[1]);
-            var thirstModifier = RandomInterval(project.PhysiologyDiversity[0], project.PhysiologyDiversity[1]);
-            var fatigueModifier = RandomInterval(project.PhysiologyDiversity[0], project.PhysiologyDiversity[1]);
+            var hungerModifier = RandomInterval(physiologyProject.PhysiologyDiversity[0], physiologyProject.PhysiologyDiversity[1]);
+            var thirstModifier = RandomInterval(physiologyProject.PhysiologyDiversity[0], physiologyProject.PhysiologyDiversity[1]);
+            var fatigueModifier = RandomInterval(physiologyProject.PhysiologyDiversity[0], physiologyProject.PhysiologyDiversity[1]);
 
             var res = this.Governor.PerformAction("initAgent",
                 VariableInstance.Create(
@@ -62,7 +63,7 @@ namespace Ei.Simulation.Behaviours.Physiology
                 return false;
             }
 
-            this.MainAgent = this.Governor;
+            // this.MainAgent = this.Governor;
 
             this.Governor.Continue();
             return true;

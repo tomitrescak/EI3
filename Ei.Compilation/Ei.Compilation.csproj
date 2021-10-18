@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CustomCommands>
@@ -21,7 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Ei.Core\Ei.Core.csproj" />
     <ProjectReference Include="..\Ei.Persistence\Ei.Persistence.csproj" />
-    <ProjectReference Include="..\Simulator.Net\Ei.Agents\Ei.Simulation.csproj" />
+    <ProjectReference Include="..\Ei.Projects.Physiology.Stores\Ei.Projects.Physiology.Stores.csproj" />
     <ProjectReference Include="..\Simulator.Net\Ei.Unity\Ei.Integration.Unity.csproj" />
   </ItemGroup>
 </Project>

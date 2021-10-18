@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ei.Projects.Physiology.Stores\Ei.Projects.Physiology.Stores.csproj" />
+    <ProjectReference Include="..\Simulator.Net\Ei.Agents\Ei.Simulation.csproj" />
+  </ItemGroup>
+
+</Project>

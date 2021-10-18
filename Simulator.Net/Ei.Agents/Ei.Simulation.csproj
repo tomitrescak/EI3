@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <ProjectReference Include="..\..\Ei.Compilation\Ei.Compilation.csproj" />
     <ProjectReference Include="..\..\Ei.Core\Ei.Core.csproj" />
     <ProjectReference Include="..\..\Ei.Logs\Ei.Logs.csproj" />
     <ProjectReference Include="..\..\Ei.Persistence\Ei.Persistence.csproj" />
@@ -10,6 +11,6 @@
     <PackageReference Include="YamlDotNet" Version="4.3.2-pre0479" />
   </ItemGroup>
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 </Project>

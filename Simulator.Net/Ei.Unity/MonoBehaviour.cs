@@ -64,6 +64,12 @@ namespace UnityEngine
             {
                 return this.gameObject.GameEngine.Behaviours[typeof(T)].Cast<T>();
             }
+            // TODO: Return all subtypes
+            var inheritedKey = this.gameObject.GameEngine.Behaviours.Keys.FirstOrDefault(x => x.IsSubclassOf(typeof(T)));
+            if (inheritedKey != null)
+            {
+                return this.gameObject.GameEngine.Behaviours[inheritedKey].Cast<T>();
+            }
             return null; // new T[0];
         }
 
@@ -73,6 +79,11 @@ namespace UnityEngine
             if (this.gameObject.GameEngine.Behaviours.ContainsKey(typeof(T)))
             {
                 return this.gameObject.GameEngine.Behaviours[typeof(T)].Cast<T>().First();
+            }
+            var inheritedKey = this.gameObject.GameEngine.Behaviours.Keys.FirstOrDefault(x => x.IsSubclassOf(typeof (T)));
+            if (inheritedKey != null)
+            {
+                return this.gameObject.GameEngine.Behaviours[inheritedKey].Cast<T>().First();
             }
             return null; // new T[0];
         }

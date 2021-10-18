@@ -7,6 +7,7 @@ using System.Timers;
 using Ei.Core.Ontology.Actions;
 using Ei.Core.Runtime;
 using Ei.Simulation.Sims.Behaviours;
+using Newtonsoft.Json;
 using UnityEngine;
 using Action = Ei.Core.Ontology.Actions.ActionBase;
 
@@ -32,8 +33,10 @@ namespace Ei.Simulation.Behaviours
         #endregion
 
         #region Properties
+        [JsonIgnore]
         public Dictionary<string, Dictionary<string, double>> Distances { get { return distances; } }
 
+        [JsonIgnore]
         public Dictionary<string, List<EnvironmentData>> Actions
         {
             get
@@ -42,6 +45,7 @@ namespace Ei.Simulation.Behaviours
             }
         }
 
+        [JsonIgnore]
         public List<EnvironmentData> Objects
         {
             get
@@ -54,6 +58,7 @@ namespace Ei.Simulation.Behaviours
 
         // properties
 
+        [JsonIgnore]
         public int RandomX
         {
             get
@@ -62,6 +67,7 @@ namespace Ei.Simulation.Behaviours
             }
         }
 
+        [JsonIgnore]
         public int RandomY
         {
             get
@@ -75,8 +81,9 @@ namespace Ei.Simulation.Behaviours
 
         // constructors
 
-        private AgentEnvironment()
+        public AgentEnvironment()
         {
+            this.Definition = new AgentEnvironmentDefinition();
             this.distances = new Dictionary<string, Dictionary<string, double>>();
             this.actions = new Dictionary<string, List<EnvironmentData>>();
             this.objects = new List<EnvironmentData>();

@@ -5,7 +5,10 @@ namespace Ei.Simulation.Simulator
 {
     public class Scene
     {
-        public Scene() { }
+        public Scene() { 
+            this.GameObjects = new List<GameObject> (); 
+            this.Prefabs = new List<GameObject> (); 
+        }
         public Scene(List<GameObject> gameObjects) {
             GameObjects = gameObjects;
         }

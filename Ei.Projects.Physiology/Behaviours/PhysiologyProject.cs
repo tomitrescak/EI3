@@ -1,9 +1,13 @@
-﻿using Ei.Simulation.Simulator;
+﻿using Ei.Simulation.Behaviours;
+using Ei.Simulation.Simulator;
 
-namespace Ei.Simulation.Behaviours.Physiology
+namespace Ei.Projects.Physiology.Behaviours
 {
     public class PhysiologyProject : SimulationProject
     {
+        public float[] SpeedDiversity { get; set; }
+        public float[] PhysiologyDiversity { get; set; }
+
         public double HungerTreshold { get; set; }
         public double FatigueTreshold { get; set; }
         public double ThirstThreshold { get; set; }
@@ -13,6 +17,5 @@ namespace Ei.Simulation.Behaviours.Physiology
 
         public double RestSpeed { get; set; }
 
-        public float[] PhysiologyDiversity { get; set; }
     }
 }

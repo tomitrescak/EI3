@@ -13,6 +13,7 @@ using Ei.Core.Runtime.Planning;
 using Ei.Core.Runtime.Planning.Strategies;
 using Ei.Simulation.Planning;
 using UnityEngine;
+using Newtonsoft.Json;
 
 namespace Ei.Simulation.Behaviours
 {
@@ -42,8 +43,11 @@ namespace Ei.Simulation.Behaviours
 
         // static fields
 
+        [JsonIgnore]
         public static int TotalPlans;
+        [JsonIgnore]
         public static int FailedPlans;
+        [JsonIgnore]
         public static long ResponseTimes;
 
         protected static readonly System.Random random = new System.Random();
@@ -54,7 +58,7 @@ namespace Ei.Simulation.Behaviours
         // properties
 
         public string[][] Groups;
-        public string[] freeTimeGoalDefinition;
+        public string[] FreeTimeGoalDefinition;
 
         // fields
 
@@ -65,9 +69,10 @@ namespace Ei.Simulation.Behaviours
         private GoalState[][] freeTimeGoals;
         private List<ActionItem> actionQueue;
         private NavigationBase navigation;
-        protected SimulationTimer timer;
         private AgentEnvironment environment;
         private SimulationProject project;
+        protected SimulationTimer timer;
+        protected bool authorised;
 
         public static double RandomInterval(double from, double to) {
             return random.Next((int)(from * 1000), (int)(to * 1000)) / 1000d;
@@ -100,9 +105,51 @@ namespace Ei.Simulation.Behaviours
 
         // properties
 
+        [JsonIgnore]
         public string Name => this.gameObject.name;
-        
+
+        [JsonIgnore]
         public string CurrentGoalAction { get; set; }
+
+        // public List<AgentProperty> Properties { get; private set; }
+
+        [JsonIgnore]
+        public List<AStarNode> Plan {
+            get => this.plan;
+            protected set {
+                this.plan = value;
+                this.OnPropertyChanged("Plan");
+            }
+        }
+
+        [JsonIgnore]
+        public List<PlanHistory> PlanHistory { get; private set; }
+
+        [JsonIgnore]
+        public GoalState[][] FreeTimeGoals {
+            get {
+                if (this.freeTimeGoals == null && this.FreeTimeGoalDefinition != null) {
+                    this.freeTimeGoals = new GoalState[FreeTimeGoalDefinition.Length][];
+                    for (var i = 0; i < FreeTimeGoalDefinition.Length; i++) {
+                        this.FreeTimeGoals[i] = GoalState.ParseStringGoals(this.Governor, FreeTimeGoalDefinition[i]);
+                    }
+                }
+                return this.freeTimeGoals;
+            }
+        }
+
+        protected Governor Governor { get; set; }
+
+        protected IGovernorCallbacks Callbacks { get; set; }
+
+        [JsonIgnore]
+        public AgentState State {
+            get => this.state;
+            set {
+                this.state = value;
+                this.OnPropertyChanged("State");
+            }
+        }
 
         #region Behaviours
         public void RunAfter(Action action, float waitTimeInSeconds)
@@ -117,18 +164,17 @@ namespace Ei.Simulation.Behaviours
 
         public virtual void Start()
         {
-            this.project = GetComponent<SimulationProject>();
             this.navigation = GetComponent<NavigationBase>();
-            this.timer = GetComponent<SimulationTimer>();
+            
+            this.project = FindObjectOfType<SimulationProject>();
+            this.timer = FindObjectOfType<SimulationTimer>();
             this.environment = FindObjectOfType<AgentEnvironment>();
 
         }
 
-
-
         public void Update()
         {
-            if (this.navigation.Navigating)
+            if (!this.authorised || this.navigation.Navigating)
             {
                 return;
             }
@@ -147,42 +193,6 @@ namespace Ei.Simulation.Behaviours
         }
         #endregion
 
-        // public List<AgentProperty> Properties { get; private set; }
-
-        public List<AStarNode> Plan {
-            get => this.plan;
-            protected set {
-                this.plan = value;
-                this.OnPropertyChanged("Plan");
-            }
-        }
-
-        public List<PlanHistory> PlanHistory { get; private set; }
-
-        public GoalState[][] FreeTimeGoals {
-            get {
-                if (this.freeTimeGoals == null && this.freeTimeGoalDefinition != null) {
-                    this.freeTimeGoals = new GoalState[freeTimeGoalDefinition.Length][];
-                    for (var i = 0; i < freeTimeGoalDefinition.Length; i++) {
-                        this.FreeTimeGoals[i] = GoalState.ParseStringGoals(this.Governor, freeTimeGoalDefinition[i]);
-                    }
-                }
-                return this.freeTimeGoals;
-            }
-        }
-
-        protected Governor Governor { get; set; }
-
-        protected IGovernorCallbacks Callbacks { get; set; }
-
-        public AgentState State {
-            get => this.state;
-            set {
-                this.state = value;
-                this.OnPropertyChanged("State");
-            }
-        }
-
         // virtual methods
 
         protected virtual bool Connected() {
@@ -193,6 +203,7 @@ namespace Ei.Simulation.Behaviours
 
         public void Connect() {
 
+            this.authorised = false;
             InstitutionManager manager = this.project.Manager;
             string organisation = this.project.Organisation;
             string password = this.project.Password;
@@ -208,11 +219,14 @@ namespace Ei.Simulation.Behaviours
             this.Governor = governor;
 
             if (result != InstitutionCodes.Ok) {
-                Log.Error(this.gameObject.name, result.ToString());
+                Log.Error(this.gameObject.name, $"[ERROR] Could not connect to insitutiton:  {result.ToString()}");
+                this.gameObject.Enabled = false;
                 return;
             }
 
             // initialise agent
+
+            this.authorised = true;
 
             if (this.Connected()) {
 

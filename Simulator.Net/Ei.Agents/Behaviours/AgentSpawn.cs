@@ -22,8 +22,7 @@ namespace Ei.Simulation.Behaviours
         }
 
         public AgentProperties[] Agents;
-        public float LaunchPerSecond;
-
+        public float LaunchPerSecond = 1;
 
         private Queue<Action> launchQueue;
         private System.Timers.Timer launchTimer;

@@ -1,4 +1,5 @@
-﻿using Ei.Core.Ontology;
+﻿using Ei.Compilation;
+using Ei.Core.Ontology;
 using Ei.Persistence.Json;
 using Newtonsoft.Json;
 using System;
@@ -20,7 +21,7 @@ namespace Ei.Simulation.Behaviours
 
         public string ProjectDefinition;
 
-        public void Start()
+        public void Init()
         {
             var timer = FindObjectOfType<SimulationTimer>();
 
@@ -30,22 +31,27 @@ namespace Ei.Simulation.Behaviours
             }
 
             // compile institution
-            //if (this.InstitutionSource != null)
-            //{
-            //    var institution = JsonInstitutionLoader.Instance.Load(this.InstitutionSource, null);
-            //    var code = institution.GenerateAll();
-            //    var result = Compiler.Compile(code, "DefaultInstitution", out Institution TestEi);
+            if (this.InstitutionSource != null)
+            {
+                var institution = JsonInstitutionLoader.Instance.Load(this.InstitutionSource, null);
+                var code = institution.GenerateAll();
+                var result = Compiler.Compile(code, "DefaultInstitution", out Institution TestEi);
 
-            //    this.Ei = TestEi;
-            //}
+                this.Ei = TestEi;
+            }
 
             // init institution
             this.Ei.Resources.Tick = (float)(86400f / timer.DayLengthInSeconds);
 
+            
+        }
+
+        public void Start()
+        {
             // start institution
-            Manager = InstitutionManager.Launch(this.Ei);
-            Ei = Manager.Ei;
-            Ei.Start();
+            this.Manager = InstitutionManager.Launch(this.Ei);
+            this.Ei = Manager.Ei;
+            this.Ei.Start();
         }
     }
 

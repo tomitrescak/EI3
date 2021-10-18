@@ -41,7 +41,7 @@
       "Icon": "👨🏽",
       "x": 289,
       "y": 68,
-      "Interface": "Ei.Simulation.Behaviours.Physiology.IPhysiologyStore",
+      "Interface": "Ei.Projects.Physiology.IPhysiologyStore",
       "Properties": [
         {
           "Name": "Bread",

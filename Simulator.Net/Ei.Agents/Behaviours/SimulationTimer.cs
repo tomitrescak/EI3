@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using UnityEngine;
 
@@ -17,11 +18,14 @@ namespace Ei.Simulation.Behaviours
         Institution ei;
 
         [JsonIgnore]
+        public Stopwatch Time { get; protected set; }
+
+        [JsonIgnore]
         public string RealTime
         {
             get
             {
-                var realSeconds = this.ei.Time.ElapsedMilliseconds / 1000f;
+                var realSeconds = this.Time.ElapsedMilliseconds / 1000f;
 
                 TimeSpan t1 = TimeSpan.FromSeconds(realSeconds);
 
@@ -38,7 +42,7 @@ namespace Ei.Simulation.Behaviours
         {
             get
             {
-                var realSeconds = this.ei.Time.ElapsedMilliseconds / 1000f;
+                var realSeconds = this.Time.ElapsedMilliseconds / 1000f;
                 return realSeconds * (86400 / DayLengthInSeconds);
             }
         }
@@ -52,6 +56,9 @@ namespace Ei.Simulation.Behaviours
         public void Start()
         {
             var project = FindObjectOfType<SimulationProject>();
+            this.Time = new Stopwatch();
+            this.Time.Start();  
+
             this.ei = project.Ei;
         }
 

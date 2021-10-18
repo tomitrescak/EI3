@@ -13,6 +13,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Security.Permissions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Ei.Projects.Physiology;
 
 namespace Ei.Compilation
 {
@@ -77,7 +78,9 @@ using System.Collections.Generic;
 
             references.Add(MetadataReference.CreateFromFile(typeof(Organisation).GetTypeInfo().Assembly.Location));
             references.Add(MetadataReference.CreateFromFile(typeof(Log).GetTypeInfo().Assembly.Location));
-            references.Add(MetadataReference.CreateFromFile(typeof(Simulation.Simulator.GameEngine).GetTypeInfo().Assembly.Location));
+            
+            // project based references
+            references.Add(MetadataReference.CreateFromFile(typeof(IPhysiologyStore).GetTypeInfo().Assembly.Location));
 
             // Console.WriteLine(string.Join("\n", references.Select(s => s.Display).ToArray()));
 
