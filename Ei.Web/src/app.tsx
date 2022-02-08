@@ -50,130 +50,131 @@ const App = () => {
   // }
 
   return (
-    <Switch>
-      <Route exact path="/">
-        <EiListContainer />
-      </Route>
-      <Route
-        path="/profile"
-        render={() => <Account key={session.user.id} session={session} />}
-      />
-      <Route path="/ei/:eiName/:eiId">
-        <EiContainer>
-          <Switch>
-            <Route
-              path="/ei/:eiName/:eiId/authorisation/:authorisationId"
-              render={() => <EiLayout Main={AuthorisationEditor} />}
-            />
-            <Route
-              path="/ei/:eiName/:eiId/organisations/:organisationName?/:organisationId?"
-              render={() => (
-                <EiLayout
-                  Main={() => (
-                    <EntitiesView
-                      type="organisations"
-                      entities={(ei) => ei.Organisations}
-                    />
-                  )}
-                  Editor={() => (
-                    <HierarchicEntityEditor
-                      paramName="organisationId"
-                      collection={(ei) => ei.Organisations}
-                    />
-                  )}
-                />
-              )}
-            />
+    <div>123</div>
+    // <Switch>
+    //   <Route exact path="/">
+    //     <EiListContainer />
+    //   </Route>
+    //   <Route
+    //     path="/profile"
+    //     render={() => <Account key={session.user.id} session={session} />}
+    //   />
+    //   <Route path="/ei/:eiName/:eiId">
+    //     <EiContainer>
+    //       <Switch>
+    //         <Route
+    //           path="/ei/:eiName/:eiId/authorisation/:authorisationId"
+    //           render={() => <EiLayout Main={AuthorisationEditor} />}
+    //         />
+    //         <Route
+    //           path="/ei/:eiName/:eiId/organisations/:organisationName?/:organisationId?"
+    //           render={() => (
+    //             <EiLayout
+    //               Main={() => (
+    //                 <EntitiesView
+    //                   type="organisations"
+    //                   entities={(ei) => ei.Organisations}
+    //                 />
+    //               )}
+    //               Editor={() => (
+    //                 <HierarchicEntityEditor
+    //                   paramName="organisationId"
+    //                   collection={(ei) => ei.Organisations}
+    //                 />
+    //               )}
+    //             />
+    //           )}
+    //         />
 
-            <Route
-              path="/ei/:eiName/:eiId/roles/:roleName?/:roleId?"
-              render={() => (
-                <EiLayout
-                  Main={() => (
-                    <EntitiesView type="roles" entities={(ei) => ei.Roles} />
-                  )}
-                  Editor={() => (
-                    <HierarchicEntityEditor
-                      paramName="roleId"
-                      collection={(ei) => ei.Roles}
-                    />
-                  )}
-                />
-              )}
-            />
-            <Route
-              path="/ei/:eiName/:eiId/types/:typeName?/:typeId?"
-              render={() => (
-                <EiLayout
-                  Main={() => (
-                    <EntitiesView type="types" entities={(ei) => ei.Types} />
-                  )}
-                  Editor={() => (
-                    <HierarchicEntityEditor
-                      paramName="typeId"
-                      collection={(ei) => ei.Types}
-                    />
-                  )}
-                />
-              )}
-            />
+    //         <Route
+    //           path="/ei/:eiName/:eiId/roles/:roleName?/:roleId?"
+    //           render={() => (
+    //             <EiLayout
+    //               Main={() => (
+    //                 <EntitiesView type="roles" entities={(ei) => ei.Roles} />
+    //               )}
+    //               Editor={() => (
+    //                 <HierarchicEntityEditor
+    //                   paramName="roleId"
+    //                   collection={(ei) => ei.Roles}
+    //                 />
+    //               )}
+    //             />
+    //           )}
+    //         />
+    //         <Route
+    //           path="/ei/:eiName/:eiId/types/:typeName?/:typeId?"
+    //           render={() => (
+    //             <EiLayout
+    //               Main={() => (
+    //                 <EntitiesView type="types" entities={(ei) => ei.Types} />
+    //               )}
+    //               Editor={() => (
+    //                 <HierarchicEntityEditor
+    //                   paramName="typeId"
+    //                   collection={(ei) => ei.Types}
+    //                 />
+    //               )}
+    //             />
+    //           )}
+    //         />
 
-            <Route
-              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/action/:actionId"
-              render={() => (
-                <EiLayout Main={WorkflowView} Editor={ActionView} />
-              )}
-            />
-            <Route
-              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/state/:id"
-              render={() => (
-                <EiLayout Main={WorkflowView} Editor={StateEditor} />
-              )}
-            />
-            <Route
-              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/transition/:id"
-              render={() => (
-                <EiLayout Main={WorkflowView} Editor={TransitionEditor} />
-              )}
-            />
-            <Route
-              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/connection/:id"
-              render={() => (
-                <EiLayout
-                  Main={WorkflowView}
-                  Editor={ConnectionEditor as any}
-                />
-              )}
-            />
-            <Route
-              exact
-              path="/ei/:eiName/:eiId/execution"
-              render={() => <EiLayout Main={ExecutionView} />}
-            />
-            <Route
-              exact
-              path="/ei/:eiName/:eiId"
-              render={() => <EiLayout Main={EiEditor} />}
-            />
-            <Route
-              path="/ei/:eiName/:eiId/workflows/:name/:workflowId"
-              render={() => (
-                <EiLayout Main={WorkflowView} Editor={WorkflowEditor} />
-              )}
-            />
-            <Route
-              path="/ei/:eiName/:eiId/execution"
-              render={() => (
-                <EiLayout
-                  Main={() => <ExecutionView />}
-                  Editor={() => <div></div>}
-                />
-              )}
-            />
-          </Switch>
-        </EiContainer>
-      </Route>
-    </Switch>
+    //         <Route
+    //           path="/ei/:eiName/:eiId/workflows/:name/:workflowId/action/:actionId"
+    //           render={() => (
+    //             <EiLayout Main={WorkflowView} Editor={ActionView} />
+    //           )}
+    //         />
+    //         <Route
+    //           path="/ei/:eiName/:eiId/workflows/:name/:workflowId/state/:id"
+    //           render={() => (
+    //             <EiLayout Main={WorkflowView} Editor={StateEditor} />
+    //           )}
+    //         />
+    //         <Route
+    //           path="/ei/:eiName/:eiId/workflows/:name/:workflowId/transition/:id"
+    //           render={() => (
+    //             <EiLayout Main={WorkflowView} Editor={TransitionEditor} />
+    //           )}
+    //         />
+    //         <Route
+    //           path="/ei/:eiName/:eiId/workflows/:name/:workflowId/connection/:id"
+    //           render={() => (
+    //             <EiLayout
+    //               Main={WorkflowView}
+    //               Editor={ConnectionEditor as any}
+    //             />
+    //           )}
+    //         />
+    //         <Route
+    //           exact
+    //           path="/ei/:eiName/:eiId/execution"
+    //           render={() => <EiLayout Main={ExecutionView} />}
+    //         />
+    //         <Route
+    //           exact
+    //           path="/ei/:eiName/:eiId"
+    //           render={() => <EiLayout Main={EiEditor} />}
+    //         />
+    //         <Route
+    //           path="/ei/:eiName/:eiId/workflows/:name/:workflowId"
+    //           render={() => (
+    //             <EiLayout Main={WorkflowView} Editor={WorkflowEditor} />
+    //           )}
+    //         />
+    //         <Route
+    //           path="/ei/:eiName/:eiId/execution"
+    //           render={() => (
+    //             <EiLayout
+    //               Main={() => <ExecutionView />}
+    //               Editor={() => <div></div>}
+    //             />
+    //           )}
+    //         />
+    //       </Switch>
+    //     </EiContainer>
+    //   </Route>
+    // </Switch>
   );
 };
 

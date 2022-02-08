@@ -9,9 +9,10 @@ import { IconView } from "../core/entity_icon_view";
 import { Ei } from "../ei/ei_model";
 import { Entity, entitySort } from "../ei/entity_model";
 import { Workflow } from "../ei/workflow_model";
-import { AccordionButton, AccordionContent } from "./hierarchic_entity_view";
-import { AccordionHandler, useAppContext } from "../../config/context";
+import { AccordionButton } from "./hierarchic_entity_view";
+import { AccordionHandler } from "../../config/context";
 import styled from "@emotion/styled";
+import { AccordionContent } from "./accordion";
 
 interface WorkflowElementProps {
   workflow: Workflow;

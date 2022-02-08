@@ -1,34 +1,22 @@
 import React from "react";
 
-import { Accordion, Button, Icon, Label, List } from "semantic-ui-react";
+import { Button, Label, List } from "semantic-ui-react";
 
 import { IconView } from "../core/entity_icon_view";
 import { entitySort } from "../ei/entity_model";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { IObservableArray } from "mobx";
 import { HierarchicEntity } from "../ei/hierarchic_entity_model";
 import { observer } from "mobx-react";
 import { Ei } from "../ei/ei_model";
+import { AccordionTitle, AccordionContent } from "./accordion";
 
 export const AccordionButton = styled(Button)`
   margin-top: -3px !important;
   padding: 6px !important;
   margin-right: 6px !important;
   margin-left: 0px !important;
-`;
-
-export const AccordionContent = styled(Accordion.Content)`
-  // background: '#dedede',
-  padding: 6px 6px 6px 25px !important;
-
-  .item {
-    border-radius: 3px;
-    padding: 4px !important;
-  }
-  .active {
-    background: #cdcdcd;
-  }
 `;
 
 interface Props {
@@ -53,11 +41,18 @@ export const HierarchicEntityView = observer(
     url,
     ei,
   }: Props) => {
-    const history = useLocation();
+    const location = useLocation();
+    const history = useHistory();
     return (
       <>
-        <Accordion.Title active={active} index={index} onClick={handleClick}>
-          <Icon name="dropdown" />
+        <AccordionTitle
+          active={active}
+          index={index}
+          onClick={() => {
+            handleClick();
+            history.push(`/ei/${ei.Name.toUrlName()}/${ei.Id}/${url}`);
+          }}
+        >
           <Label
             size="tiny"
             color="blue"
@@ -72,17 +67,9 @@ export const HierarchicEntityView = observer(
             color="green"
             onClick={createEntity}
           />
-          <AccordionButton
-            as={Link}
-            to={`/ei/${ei.Name.toUrlName()}/${ei.Id}/${url}`}
-            floated="right"
-            icon="sitemap"
-            compact
-            color="orange"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </Accordion.Title>
+        </AccordionTitle>
         <AccordionContent active={active}>
+          {collection.length == 0 && <span>0 records</span>}
           <List>
             {collection
               .slice()
@@ -90,7 +77,7 @@ export const HierarchicEntityView = observer(
               .map((entity) => (
                 <List.Item
                   as={Link}
-                  active={entity.url === history.pathname}
+                  active={entity.url === location.pathname}
                   to={entity.url}
                   key={entity.Id}
                 >

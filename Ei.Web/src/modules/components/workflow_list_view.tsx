@@ -9,6 +9,7 @@ import { AccordionButton } from "./hierarchic_entity_view";
 import { WorkflowComponentList } from "./workflow_component_view";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
+import { AccordionContent, AccordionTitle } from "./accordion";
 
 interface Props {
   active: boolean;
@@ -16,11 +17,6 @@ interface Props {
   ei: Ei;
   handleClick: any;
 }
-
-export const AccordionContent = styled(Accordion.Content)`
-  // background: '#efefef',
-  padding: 0px 0px 6px 25px !important;
-`;
 
 export const NestedAccordion = styled(Accordion)`
   margin: 0px !important;
@@ -34,8 +30,7 @@ export class WorkflowList extends React.Component<Props> {
 
     return (
       <>
-        <Accordion.Title active={active} index={index} onClick={handleClick}>
-          <Icon name="dropdown" />
+        <AccordionTitle active={active} index={index} onClick={handleClick}>
           <Label
             size="tiny"
             color="blue"
@@ -50,7 +45,7 @@ export class WorkflowList extends React.Component<Props> {
             color="green"
             onClick={ei.createWorkflow}
           />
-        </Accordion.Title>
+        </AccordionTitle>
         <AccordionContent active={active}>
           <NestedAccordion>
             {ei.Workflows.map((workflowItem) => (

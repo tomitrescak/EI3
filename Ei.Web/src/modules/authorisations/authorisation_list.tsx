@@ -1,15 +1,13 @@
 import React from "react";
 
 import { observer } from "mobx-react";
-import { Accordion, Icon, Label, List } from "semantic-ui-react";
+import { Icon, Label, List } from "semantic-ui-react";
 
 import { Link } from "react-router-dom";
-import {
-  AccordionButton,
-  AccordionContent,
-} from "../components/hierarchic_entity_view";
+import { AccordionButton } from "../components/hierarchic_entity_view";
 import { NestedAccordion } from "../components/workflow_list_view";
 import { Ei } from "../ei/ei_model";
+import { AccordionContent, AccordionTitle } from "../components/accordion";
 
 interface Props {
   active: boolean;
@@ -25,8 +23,7 @@ export class AuthorisationList extends React.Component<Props> {
 
     return (
       <>
-        <Accordion.Title active={active} index={index} onClick={handleClick}>
-          <Icon name="dropdown" />
+        <AccordionTitle active={active} index={index} onClick={handleClick}>
           <Label
             size="tiny"
             color="blue"
@@ -41,7 +38,7 @@ export class AuthorisationList extends React.Component<Props> {
             color="green"
             onClick={ei.createAuthorisation}
           />
-        </Accordion.Title>
+        </AccordionTitle>
         <AccordionContent active={active}>
           <NestedAccordion>
             {ei.Authorisation.map((authorisation, authIndex) => (

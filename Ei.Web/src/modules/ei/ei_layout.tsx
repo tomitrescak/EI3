@@ -190,7 +190,7 @@ export const EiLayout = ({ Editor, Main }: Props) => {
   return (
     <ApplicationPanes
       split="vertical"
-      minSize={10}
+      minSize={[290, undefined, 10]}
       defaultSizes={[150, 400, Editor ? 150 : 0]}
     >
       <LeftPane>
