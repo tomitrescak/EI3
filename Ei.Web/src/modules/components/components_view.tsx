@@ -7,7 +7,7 @@ import styled from "@emotion/styled";
 import { AuthorisationList } from "../authorisations/authorisation_list";
 import { HierarchicEntityView } from "./hierarchic_entity_view";
 import { WorkflowList } from "./workflow_list_view";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { useAppContext } from "../../config/context";
 import { AccordionContent, AccordionTitle } from "./accordion";
 import { ExperimentList } from "../experiments/experiment_list";
@@ -19,12 +19,17 @@ const ComponentsType = styled.div`
 `;
 
 export const Components = observer(() => {
+  const history = useHistory();
   const context = useAppContext();
   // const handler = React.useMemo(
   //   () => context.createAccordionHandler("root"),
   //   []
   // );
-  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [activeIndex, setActiveIndex] = React.useState(
+    localStorage.getItem("list.top")
+      ? parseInt(localStorage.getItem("list.top"))
+      : 0
+  );
   const ei = context.ei;
   const store = context;
   const { eiId, eiName } =
@@ -39,6 +44,7 @@ export const Components = observer(() => {
       active: index === activeIndex,
       index,
       handleClick() {
+        localStorage.setItem("list.top", index.toString());
         setActiveIndex(index);
       },
     };
@@ -58,8 +64,11 @@ export const Components = observer(() => {
         <Menu.Menu position="right">
           <Menu.Item
             icon="play"
-            as={Link}
-            to={`/ei/${ei.Name.toUrlName()}/${ei.Id}/execution`}
+            title="Compile and Run the Institution"
+            onClick={() => {
+              context.ei.run(context.client);
+              history.push(`/ei/${ei.Name.toUrlName()}/${ei.Id}/execution`);
+            }}
           />
           <Menu.Item
             icon="reply"

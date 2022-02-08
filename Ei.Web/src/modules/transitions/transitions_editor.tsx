@@ -6,7 +6,7 @@ import { Checkbox, Form, Input } from "semantic-ui-mobx";
 import { Header } from "semantic-ui-react";
 import { EntityEditor } from "../core/entity_view";
 import { Transition, TransitionSplit } from "../ei/transition_model";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 import { useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
 

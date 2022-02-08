@@ -56,7 +56,6 @@ export const WorkflowComponentList = observer(
           index={index}
           onClick={handler.handleClick}
         >
-          <Icon name="dropdown" />
           <Label
             size="tiny"
             color="blue"
@@ -74,7 +73,7 @@ export const WorkflowComponentList = observer(
             />
           )}
         </Accordion.Title>
-        <AccordionContent active={handler.isActive(index)}>
+        <div style={{ paddingLeft: 16 }}>
           {collection.length === 0 && <span>Empty</span>}
           <List>
             {collection
@@ -113,7 +112,7 @@ export const WorkflowComponentList = observer(
                 );
               })}
           </List>
-        </AccordionContent>
+        </div>
       </>
     );
   }

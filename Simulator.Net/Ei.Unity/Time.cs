@@ -75,7 +75,7 @@ namespace UnityEngine
             // sw.WriteLine("Frame: {0}, Elapsed: {1}, Average: {2}, ExpectedFrame: {3}, Sleep: {4}", frames, fpsTimer.ElapsedMilliseconds, averageFrame, expectedFrame, expectedFrame - deltaTime);
             
             // only sleep if expected frame is bigger then last frame
-            if (expectedFrame > deltaTime) {
+            if ((int)(expectedFrame - deltaTime) > 0) {
                 Thread.Sleep((int) (expectedFrame - deltaTime));
             }
             
@@ -86,8 +86,7 @@ namespace UnityEngine
                 // sw.Flush();
                 Fps = frames;
                 frames = 0;
-                fpsTimer.Reset();
-                fpsTimer.Start();
+                fpsTimer.Restart();
             }
             
             

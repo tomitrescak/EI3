@@ -449,9 +449,9 @@ const ActionView = ({ link }: { link: WorkflowLinkModel }) => {
 };
 
 export const AdvancedLinkWidget = (props: any) => {
-  const location = useLocation();
+  // const location = useLocation();
   const link = props.link as WorkflowLinkModel;
-  const selected = link.url === location.pathname;
+  const selected = link.url === window.location.pathname;
 
   return <AdvancedLinkWidget1 {...props} selected={selected} />;
 };

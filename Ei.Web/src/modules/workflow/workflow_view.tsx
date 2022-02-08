@@ -10,7 +10,7 @@ import { WorkflowDiagramModel } from "../diagrams/model/workflow/workflow_diagra
 import { WorkflowNodeFactory } from "../diagrams/model/workflow/workflow_node_factory";
 
 import { useAppContext } from "../../config/context";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 import { WorkflowLinkModel } from "../diagrams/model/workflow/workflow_link_model";
 import { AdvancedLinkFactory } from "../diagrams/model/workflow/adavanced_link_factory";
 

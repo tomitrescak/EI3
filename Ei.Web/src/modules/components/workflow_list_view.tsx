@@ -7,9 +7,13 @@ import { Ei } from "../ei/ei_model";
 import { Workflow } from "../ei/workflow_model";
 import { AccordionButton } from "./hierarchic_entity_view";
 import { WorkflowComponentList } from "./workflow_component_view";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "@emotion/styled";
-import { AccordionContent, AccordionTitle } from "./accordion";
+import {
+  AccordionContent,
+  AccordionTitle,
+  SecondaryAccordionTitle,
+} from "./accordion";
 
 interface Props {
   active: boolean;
@@ -46,7 +50,7 @@ export class WorkflowList extends React.Component<Props> {
             onClick={ei.createWorkflow}
           />
         </AccordionTitle>
-        <AccordionContent active={active}>
+        <Accordion.Content active={active} style={{ padding: 0 }}>
           <NestedAccordion>
             {ei.Workflows.map((workflowItem) => (
               <WorkflowDetail
@@ -59,7 +63,7 @@ export class WorkflowList extends React.Component<Props> {
               />
             ))}
           </NestedAccordion>
-        </AccordionContent>
+        </Accordion.Content>
       </>
     );
   }
@@ -81,23 +85,21 @@ export const WorkflowDetail = ({
   handleClick,
 }: DetailProps) => {
   const handler = ei.context.createAccordionHandler(workflow.Id);
+  const history = useHistory();
   return (
     <>
-      <Accordion.Title active={active} index={index} onClick={handleClick}>
-        <Icon name="dropdown" />
-        {/* <Icon name="sitemap" /> */}
+      <SecondaryAccordionTitle
+        active={active}
+        index={index}
+        onClick={(e, p) => {
+          history.push(ei.createWorkflowUrl(workflow));
+          handleClick(e, p);
+        }}
+      >
+        <Icon name="sitemap" style={{ marginRight: 8 }} />
         {workflow.Name}
-        <AccordionButton
-          as={Link}
-          to={ei.createWorkflowUrl(workflow)}
-          floated="right"
-          icon="sitemap"
-          compact
-          color="orange"
-          onClick={(e) => e.stopPropagation()}
-        />
-      </Accordion.Title>
-      <AccordionContent active={active}>
+      </SecondaryAccordionTitle>
+      <AccordionContent active={active} className="secondary">
         <NestedAccordion>
           <WorkflowComponentList
             workflow={workflow}

@@ -11,7 +11,7 @@ import { Ei } from "../ei/ei_model";
 import { PropertyView } from "../properties/property_view";
 import { useAppContext } from "../../config/context";
 import { Ui } from "../../helpers/client_helpers";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 
 function renderAction(action: Action, ei: Ei) {
   switch (action.$type) {

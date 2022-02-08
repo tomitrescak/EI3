@@ -248,10 +248,10 @@ export class Ei extends ParametricEntity {
     return entity ? entity.Name : "<Organisation Deleted>";
   }
 
-  compile(client: SocketClient) {
+  compile(client: SocketClient, run: boolean = false) {
     client.send({
       query: "CompileInstitution",
-      variables: [JSON.stringify(this.json)],
+      variables: [JSON.stringify(this.json), run],
       receiver: (resultString: string) => {
         const result = JSON.parse(resultString);
         this.context.compiledCode = result.Code;
@@ -266,6 +266,24 @@ export class Ei extends ParametricEntity {
       },
     });
     this.context.compiling = true;
+  }
+
+  run(client: SocketClient) {
+    client.send({
+      query: "RunInstitution",
+      variables: ["source"],
+      receiver: (resultString: string) => {
+        const result = JSON.parse(resultString);
+
+        console.log(result);
+
+        if (result.ResultType === "Error") {
+          Ui.alertError(result.Message);
+        } else {
+          Ui.alert("Running ...");
+        }
+      },
+    });
   }
 
   checkExists(array: Entity[], name: string, entity: Entity) {

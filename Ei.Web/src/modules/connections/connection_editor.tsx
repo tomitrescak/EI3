@@ -18,7 +18,7 @@ import { EntityEditor } from "../core/entity_view";
 import { ActionDisplayType } from "../ei/connection_model";
 import { useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 import { State } from "../ei/state_model";
 
 const FloatedLabel = styled(SUILabel)`

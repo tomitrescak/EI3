@@ -152,7 +152,7 @@ const PropertyPane = styled.div`
   height: 100%;
   width: 100%;
   overflow: auto;
-  padding: 6px;
+  padding: 16px;
   label: PropertyPane;
 `;
 

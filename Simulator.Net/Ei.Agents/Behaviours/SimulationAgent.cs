@@ -505,6 +505,7 @@ namespace Ei.Simulation.Behaviours
                         }
                         return;
                     }
+     
 
                     if (!string.IsNullOrEmpty(itemId)) {
                         Log.Debug(agent.Name, "[WF] Find related ...");
@@ -584,6 +585,8 @@ namespace Ei.Simulation.Behaviours
         }
 
         protected void ContinuePlan(Governor agent, bool removeFirst) {
+            this.State = AgentState.ExecutingPlan;
+
             //Debug.WriteLine("[{0}] Executing {1} ({2}): {3}", agent.Name, this.plan.Count, this.plan.Count > 0 ? this.plan[0].Arc.ToString() : "FINISH", agent.Properties.GetParameterValue("a.Pots"));
 
             // remove all unnecessary nodes
@@ -639,7 +642,12 @@ namespace Ei.Simulation.Behaviours
             Log.Debug(agent.Name, "[CP] Plan finished ...");
 
             this.State = AgentState.Idle;
-            this.Reason();
+
+            // check if we have not finished. in that case workflow is null
+            if (this.Governor.Workflow != null)
+            {
+                this.Reason();
+            }
         }
 
         private void FailPlan(Governor agent, string reason) {

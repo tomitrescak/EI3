@@ -11,7 +11,6 @@ import { DiagramListener } from "@projectstorm/react-canvas-core";
 import { EntityLinkModel } from "./model/entity/entity_link_model";
 import { PointModel } from "@projectstorm/react-diagrams";
 import { Point } from "@projectstorm/geometry";
-import { useParams } from "react-router";
 
 interface Props {
   type: string;
@@ -23,7 +22,6 @@ export const EntitiesView = observer((props: Props) => {
     return customProps.entities(context.ei);
   }
 
-  const params = useParams();
   const context = useAppContext();
   var engine = context.ei.engine;
 

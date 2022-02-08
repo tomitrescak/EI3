@@ -19,7 +19,7 @@ namespace Ei.Simulation.Simulator
         private Scene scene;
         private GameObject[] updateableGameObject;
         private bool changedStructure;
-        private List<Thread> processThreads;
+        private List<CancellationTokenSource> processThreads;
 
         private object locker = new object();
         
@@ -39,7 +39,7 @@ namespace Ei.Simulation.Simulator
             this.StatisticData = new List<StatisticTrait>();
 
             this.changedStructure = true;
-            this.processThreads = new List<Thread>();
+            this.processThreads = new List<CancellationTokenSource>();
         }
         
         // events
@@ -74,7 +74,7 @@ namespace Ei.Simulation.Simulator
 
         public void Stop() {
             foreach (var thread in this.processThreads) {
-                thread.Abort();
+                thread.Cancel();
             }
             this.processThreads.Clear();
         }
@@ -94,10 +94,7 @@ namespace Ei.Simulation.Simulator
                 if (!agent.Enabled) {
                     continue;
                 }
-
-
-               
-                 agent.Update();
+                agent.Update();
                 
             }
             
@@ -124,10 +121,12 @@ namespace Ei.Simulation.Simulator
 
             // sort traits by name
             this.StatisticData.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
-            
+
             // init datacontext
+            var cancelSource = new CancellationTokenSource();
             var thread = new Thread(() => {
                 while (true) {
+                    cancelSource.Token.ThrowIfCancellationRequested();
                     statistic.ProcessSamples();
                     // this.PlotModel.InvalidatePlot(true);
                     Thread.Sleep(statistic.ProcessTimeInMilliseconds);
@@ -135,7 +134,7 @@ namespace Ei.Simulation.Simulator
             }) {IsBackground = true};
             thread.Start();
 
-            this.processThreads.Add(thread);
+            this.processThreads.Add(cancelSource);
         }
 
         /// <summary>
@@ -167,15 +166,19 @@ namespace Ei.Simulation.Simulator
         }
 
         private void RunUpdate() {
+            var cancelSource = new CancellationTokenSource();
             var thread = new Thread(() => {
                 while (true) {
+                    cancelSource.Token.ThrowIfCancellationRequested();
                     this.ProcessFrame();
                 }
             });
             thread.IsBackground = true;
             thread.Start();
 
-            this.processThreads.Add(thread);
+            
+
+            this.processThreads.Add(cancelSource);
         }
 
         public IEnumerable<T> FindObjectsOfType<T>() where T : MonoBehaviour

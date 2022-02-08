@@ -338,6 +338,8 @@ namespace Ei.Core.Runtime
         static VariableInstance[] emptyParameters = new VariableInstance[0];
 
         public IActionInfo PerformAction(string activityId, VariableInstance[] parameters = null) {
+            var workflow = this.Workflow;
+
             // find actions
             var action = this.Workflow.Actions.FirstOrDefault(w => w.Id == activityId);
             if (action == null) {
@@ -374,7 +376,7 @@ namespace Ei.Core.Runtime
                 this.NotifyActivityFailed(this.Workflow, this.Name, activityId, parsedParameters);
             }
             else {
-                this.NotifyActivity(this.Workflow, this.Name, activityId, parsedParameters);
+                this.NotifyActivity(workflow, this.Name, activityId, parsedParameters);
             }
             return result;
         }

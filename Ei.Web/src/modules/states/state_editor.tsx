@@ -7,7 +7,7 @@ import { Header } from "semantic-ui-react";
 import { AccessEditor } from "../access/access_editor";
 import { EntityEditor } from "../core/entity_view";
 import { useAppContext } from "../../config/context";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 
 export const StateEditor = observer(() => {
   const context = useAppContext();

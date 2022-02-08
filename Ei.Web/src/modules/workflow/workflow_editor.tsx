@@ -8,7 +8,7 @@ import { AccessEditor } from "../access/access_editor";
 import { EntityEditor } from "../core/entity_view";
 import { PropertyView } from "../properties/property_view";
 import { useAppContext } from "../../config/context";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 
 export const WorkflowEditor = observer(() => {
   const { workflowId } = useParams<{ workflowId: string }>();

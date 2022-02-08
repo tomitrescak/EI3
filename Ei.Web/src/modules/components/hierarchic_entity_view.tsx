@@ -15,7 +15,7 @@ import { AccordionTitle, AccordionContent } from "./accordion";
 export const AccordionButton = styled(Button)`
   margin-top: -3px !important;
   padding: 6px !important;
-  margin-right: 6px !important;
+  margin-right: 0px !important;
   margin-left: 0px !important;
 `;
 
