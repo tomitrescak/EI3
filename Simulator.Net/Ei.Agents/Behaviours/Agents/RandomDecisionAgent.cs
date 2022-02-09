@@ -49,7 +49,12 @@ namespace Ei.Simulation.Behaviours.Agents
                 throw new Exception("Agent always has to have at least one option to choose from!");
             }
 
-            this.Plan = new List<AStarNode> { new AStarNode(connections[UnityEngine.Random.Range(0, connections.Length)]) };
+            var planNode = new AStarNode(connections[UnityEngine.Random.Range(0, connections.Length)]);
+
+            // add environment action responsible for this
+            planNode.CostData = this.environment.NoLocationInfo(planNode.Arc.Action.Id).Id;
+
+            this.Plan = new List<AStarNode> { planNode };
 
             this.PlanHistory.Insert(0,
                 new PlanHistory

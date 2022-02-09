@@ -99,7 +99,7 @@ namespace Ei.Logs
             }
 
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine(message);
+            System.Diagnostics.Debug.WriteLine(source + " :" + message);
 #endif
 
         }

@@ -11,7 +11,7 @@ namespace Ei.Logs
         public void Log(ILogMessage message)
         {
             //Console.WriteLine("[LOG " + Thread.CurrentThread.ManagedThreadId + "] " + message.Code + " " + string.Join(";", message.Parameters));
-            Console.WriteLine((string.IsNullOrEmpty(message.Code) ? message.Message : (message.Code + message.Parameters)));
+            Console.WriteLine($"[{message.Source}] {message.Code} {message.Message} {message.Parameters}");
         }
     }
 }

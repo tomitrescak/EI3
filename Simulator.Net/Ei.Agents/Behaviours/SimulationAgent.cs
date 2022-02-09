@@ -69,9 +69,9 @@ namespace Ei.Simulation.Behaviours
         private GoalState[][] freeTimeGoals;
         private List<ActionItem> actionQueue;
         private NavigationBase navigation;
-        private AgentEnvironment environment;
         private SimulationProject project;
         protected SimulationTimer timer;
+        protected AgentEnvironment environment;
         protected bool authorised;
 
         public static double RandomInterval(double from, double to) {
@@ -164,8 +164,7 @@ namespace Ei.Simulation.Behaviours
 
         public virtual void Start()
         {
-            this.navigation = GetComponent<NavigationBase>();
-            
+            this.navigation = GetComponent<NavigationBase>();         
             this.project = FindObjectOfType<SimulationProject>();
             this.timer = FindObjectOfType<SimulationTimer>();
             this.environment = FindObjectOfType<AgentEnvironment>();
@@ -450,7 +449,7 @@ namespace Ei.Simulation.Behaviours
         static object locker = new object();
         protected void ExecuteNextPlanStep(Governor agent) {
             lock (locker) {
-                // rmove empty actions
+                // remove empty actions
 
                 while (this.Plan.Count > 0 && (this.Plan[0].Arc == null || this.Plan[0].Arc.Action == null)) {
                     //this.Plan.RemoveAt(0);
@@ -646,7 +645,7 @@ namespace Ei.Simulation.Behaviours
             // check if we have not finished. in that case workflow is null
             if (this.Governor.Workflow != null)
             {
-                this.Reason();
+                this.actionQueue.Add(new ActionItem(Time.time, this.Reason));
             }
         }
 
@@ -672,7 +671,7 @@ namespace Ei.Simulation.Behaviours
             this.Plan.Clear();
 
             this.State = AgentState.Idle;
-            this.RandomWalk();
+            this.actionQueue.Add(new ActionItem(0, this.RandomWalk));
         }
 
         protected void RandomWalk() {
@@ -695,10 +694,8 @@ namespace Ei.Simulation.Behaviours
         // callback methods
 
         public virtual void MovedToLocation() {
-            this.Reason();
+            this.actionQueue.Add(new ActionItem(Time.time, this.Reason));
         }
-
-
 
         // helpers
 

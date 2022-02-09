@@ -1,24 +1,28 @@
-﻿
+﻿    
     #region {{ParameterClassName}}
     public class {{ParameterClassName}}: {{ ParameterParentName }} {
-        
+
         // Properties
 
-        {{#each Properties}}
+{{#each Properties}}
         public {{Type}} {{Name}} { get; set; }
-        {{/each}}
+{{/each}}
 
         // Abstract implementation
+
+        public override string ToString() {
+            return $"({{#each Properties}}{{Name}},{{/each}})";
+        }
 
         public override string Validate() {
             var result = base.Validate();
             if (result != null) {
                 return result;
             }
-    
-            {{#each Validations }}
+
+{{#each Validations }}
             if (!({{{.}}})) return "Failed: {{{.}}}";
-            {{/each}}
+{{/each}}
             return null;
         }
 
@@ -26,25 +30,25 @@
             base.Parse(properties);
             foreach (var property in properties) {
                 switch (property.Name) {
-                    {{#each Properties}}
+{{#each Properties}}
                     case "{{Name}}":
                         this.{{Name}} = {{Type}}.Parse(property.Value);
                         break;
-                    {{/each}}
+{{/each}}
                     default:
                         throw new Exception("Parameter does not exist: " + property.Name);
                 }
             }
         }
 
-        {{#if WorkflowId}}
+{{#if WorkflowId}}
         public override void CopyTo(Workflow.Store workflowStore) {
             var store = ({{ targetWorkflowClassName WorkflowId }}.Store) workflowStore;
 
-            {{#each Properties}}
+{{#each Properties}}
             store.{{Name}} = this.{{Name}};
-            {{/each}}
+{{/each}}
         }
-        {{/if}}
+{{/if}}
     }
     #endregion
