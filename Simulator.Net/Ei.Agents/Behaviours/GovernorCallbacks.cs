@@ -17,37 +17,37 @@ namespace Ei.Simulation.Behaviours
 
         public virtual void EnteredInstitution(string id, string name)
         {
-            Log.Info(this.owner.Name, "Entered Institution: " + id);
+            //Log.Info(this.owner.Name, "Entered Institution: " + id);
         }
 
         public virtual void ExitedInstitution(string id, string name)
         {
-            Log.Info(this.owner.Name, "Exited institution: " + id);
+            //Log.Info(this.owner.Name, "Exited institution: " + id);
         }
 
         public virtual void EnteredWorkflow(string s, string id, string name)
         {
-            Log.Info(this.owner.Name, "Entered workflow: " + id);
+            //Log.Info(this.owner.Name, "Entered workflow: " + id);
         }
 
         public virtual void ExitedWorkflow(string oldWorkflowId, string oldWorkflowName, string newWorkflowId, string newWorkflowName)
         {
-            Log.Info(this.owner.Name, "Exited workflow: " + oldWorkflowId);
+            //Log.Info(this.owner.Name, "Exited workflow: " + oldWorkflowId);
         }
 
         public virtual void ChangedPosition(string name, string workflowId, int workflowInstanceId, string positionId)
         {
-            Log.Info(this.owner.Name, "Changed position: " + positionId);
+            //Log.Info(this.owner.Name, "Changed position: " + positionId);
         }
 
         public virtual void WaitingForDecision()
         {
-            Log.Info(this.owner.Name, "Waiting for decision");
+            //Log.Info(this.owner.Name, "Waiting for decision");
         }
 
         public virtual void NotifyWorkflowParameterChanged(string name, string workflowId, int workflowInstanceId, string parameterName, object value)
         {
-           Log.Info(this.owner.Name + " " + name + " " + parameterName + ": " + value);
+           //Log.Info(this.owner.Name, "Parameter Changed: '" + parameterName + "' to " + value);
         }
 
         public virtual void NotifyAgentParameterChanged(string name, string parameterName, object value)
@@ -82,7 +82,7 @@ namespace Ei.Simulation.Behaviours
         public virtual void NotifyActivity(string name, string workflowId, int workflowInstanceId, string agentName, string activityId,
             ParameterState parameters)
         {
-            Log.Info(this.owner.Name, $"Activity Started {name} {agentName}:{workflowId}:{workflowInstanceId} Activity {activityId} {parameters}");
+            // Log.Info(this.owner.Name, $"Activity Started {name} {agentName}:{workflowId}:{workflowInstanceId} Activity {activityId} {parameters}");
             // TODO: Separate callbacks for Potter
             //            if (activityId == "makePot")
             //            {
@@ -99,17 +99,17 @@ namespace Ei.Simulation.Behaviours
         public void NotifyActivityFailed(string name, string workflowId, int instanceId, string agentName, string activityId,
             ParameterState parameters)
         {
-            Log.Info(this.owner.Name, $"Activity Failes {name} {agentName}:{workflowId}:{instanceId} Activity {activityId} {parameters}");
+            // Log.Info(this.owner.Name, $"Activity Failes {name} {agentName}:{workflowId}:{instanceId} Activity {activityId} {parameters}");
         }
 
         public virtual void Split(Governor[] splits, bool shallowClone)
         {
-            Log.Info(this.owner.Name, $"Split to {splits.Length} instances, shallow: {shallowClone}");
+            // Log.Info(this.owner.Name, $"Split to {splits.Length} instances, shallow: {shallowClone}");
         }
 
         public virtual void Joined()
         {
-            Log.Info(this.owner.Name, "Joined");
+            // Log.Info(this.owner.Name, "Joined");
         }
     }
 }

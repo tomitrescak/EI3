@@ -307,7 +307,7 @@ namespace Ei.Tests.Steps
 
             callback.Setup(w => w.ChangedPosition(agentName, workflowId, It.IsAny<int>(), positionId)).Callback(() =>
             {
-                if (Log.IsDebug) Log.Debug("[AGENT ARRIVED] " + agent.Object.Name + " - " + agent.Object.Workflow.Id + "." + agent.Object.Position.Id);
+                if (Log.IsDebug) Log.Debug("Test", "[AGENT ARRIVED] " + agent.Object.Name + " - " + agent.Object.Workflow.Id + "." + agent.Object.Position.Id);
                 waiter.Set();
             }); 
 
@@ -315,11 +315,11 @@ namespace Ei.Tests.Steps
             {
                 // we may have actually called this before we setup so we check
                 callback.Verify(w => w.ChangedPosition(agentName, workflowId, It.IsAny<int>(), positionId));
-                if (Log.IsDebug) Log.Debug("[AGENT ALREADY THERE] " + agent.Object.Name + " - " + agent.Object.Workflow.Id + "." + agent.Object.Position.Id);
+                if (Log.IsDebug) Log.Debug("Test", "[AGENT ALREADY THERE] " + agent.Object.Name + " - " + agent.Object.Workflow.Id + "." + agent.Object.Position.Id);
                 waiter.Set();
             }
             catch {
-                if (Log.IsDebug) Log.Debug("[NO CALL]");
+                if (Log.IsDebug) Log.Debug("Test", "[NO CALL]");
             }
 
             //Console.WriteLine("[WAITING]"); 

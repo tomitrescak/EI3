@@ -10,38 +10,41 @@ namespace Ei.Simulation.Behaviours.Agents
 {
     public class RandomDecisionAgent : SimulationAgent
     {
+        PlanManager planManager;
 
         // methods
 
         protected override bool Connected()
         {
-            // automatically 
+            // we use plan manager to create plan actions
+            this.planManager = new PlanManager();
+            
+            // automatically start participation in the institution
             this.Governor.Continue();
+
+
             return true;
         }
 
         protected override void Reason()
         {
             // wait in case we pause
-            if (this.timer.Paused)
-            {
-                this.RunAfter(this.Reason, 1);
-                return;
-            }
+            //if (this.timer.Paused)
+            //{
+            //    this.RunAfter(this.Reason, 1);
+            //    return;
+            //}
 
             Log.Debug(this.Governor.Name, "Reasoning ...");
 
-
-            // we either continue executing a current plan
-            // or we generate a new goal
-
-            if (this.State == AgentState.ExecutingPlan)
+            // skip if we are working on some actions
+            if (this.Actuator.IsProcessing)
             {
-                this.ExecuteNextPlanStep(this.Governor);
                 return;
             }
 
-            // find a random arc to join
+            // we either continue executing a current plan
+            // or we generate a new goal
 
             var connections = this.Governor.Position.ViableConnections(this.Governor);
             if (connections.Length == 0)
@@ -52,20 +55,22 @@ namespace Ei.Simulation.Behaviours.Agents
             var planNode = new AStarNode(connections[UnityEngine.Random.Range(0, connections.Length)]);
 
             // add environment action responsible for this
-            planNode.CostData = this.environment.NoLocationInfo(planNode.Arc.Action.Id).Id;
+            // planNode.CostData = this.environment.NoLocationInfo(planNode.Arc.Action.Id).Id;
 
-            this.Plan = new List<AStarNode> { planNode };
+            //this.Plan = new List<AStarNode> { planNode };
 
-            this.PlanHistory.Insert(0,
-                new PlanHistory
-                {
-                    StartString = this.timer.SimulatedTimeString,
-                    Goals = "",
-                    Result = "Planning",
-                    GoalType = "Free"
-                });
+            //this.PlanHistory.Insert(0,
+            //    new PlanHistory
+            //    {
+            //        StartString = this.timer.SimulatedTimeString,
+            //        Goals = "",
+            //        Result = "Planning",
+            //        GoalType = "Free"
+            //    });
 
-            this.ContinuePlan(this.Governor, false);
+            //this.ContinuePlan(this.Governor, false);
+
+            this.Actuator.Enqueue(planNode, this, this.planManager);
 
 
         }

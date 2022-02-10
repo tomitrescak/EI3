@@ -34,20 +34,20 @@ namespace Ei.Logs
             logs.Add(log);
         }
 
-        public static void Debug(string message)
-        {
-            LogMessage(0, message);
-        }
+        //public static void Debug(string message)
+        //{
+        //    LogMessage(0, message);
+        //}
 
         public static void Debug(string source, string message)
         {
             LogMessage(0, message, source);
         }
 
-        public static void Info(string message)
-        {
-            LogMessage(1, message);
-        }
+        //public static void Info(string message)
+        //{
+        //    LogMessage(1, message);
+        //}
 
 //        public static void Info(string source, Enum code, params string[] parameters)
 //        {
@@ -64,20 +64,20 @@ namespace Ei.Logs
         //            LogMessage(1, code.ToString(), parameters);
         //        }
 
-        public static void Warning(string message)
-        {
-            LogMessage(2, message);
-        }
+        //public static void Warning(string message)
+        //{
+        //    LogMessage(2, message);
+        //}
 
         public static void Warning(string source, string message)
         {
             LogMessage(2, message, source);
         }
 
-        public static void Error(string message)
-        {
-            LogMessage(3, message);
-        }
+        //public static void Error(string message)
+        //{
+        //    LogMessage(3, message);
+        //}
 
         public static void Error(string source, string message)
         {
@@ -94,7 +94,8 @@ namespace Ei.Logs
                 log.Log(new LogMessage
                 {
                     Message = message,
-                    Source = source
+                    Source = source,
+                    Level = level
                 });
             }
 

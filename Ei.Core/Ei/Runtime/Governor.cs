@@ -353,7 +353,7 @@ namespace Ei.Core.Runtime
                 return ActionInfo.FailedPreconditions;
             }
 
-            if (Log.IsInfo) Log.Info(this.Name, "Performing " + activityId);
+            // if (Log.IsInfo) Log.Info(this.Name, "Performing " + activityId);
 
             // parse parameters
   
@@ -392,7 +392,7 @@ namespace Ei.Core.Runtime
                 return ActionInfo.FailedPreconditions;
             }
 
-            if (Log.IsInfo) Log.Info(this.Name, "Performing " + activityId);
+            // if (Log.IsInfo) Log.Info(this.Name, "Performing " + activityId);
 
             // perform this Action
             var result = connections[0].Pass(this, parameters);
@@ -781,7 +781,7 @@ namespace Ei.Core.Runtime
 
             this.Planner = planner;
 
-            if (Log.IsDebug) Log.Debug("========= PLANNING: " + string.Join(";", goals.Select(w => w.Name + ":" + w.Value.ToString()).ToArray()));
+            if (Log.IsDebug) Log.Debug("Governor " + this.Name, "========= PLANNING: " + string.Join(";", goals.Select(w => w.Name + ":" + w.Value.ToString()).ToArray()));
 
             switch (strategy) {
                 case PlanStrategy.ForwardSearch:

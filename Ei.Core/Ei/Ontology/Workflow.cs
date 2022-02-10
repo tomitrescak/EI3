@@ -269,7 +269,7 @@ namespace Ei.Core.Ontology
                     }
                 }
 
-                if (Log.IsDebug) Log.Debug(string.Join("\n", this.positions.Select(w => w.Value + ": " + w.Key).ToArray()));
+                if (Log.IsDebug) Log.Debug("Workflow " + this.Name, string.Join("\n", this.positions.Select(w => w.Value + ": " + w.Key).ToArray()));
 
                 // initialise distance matrix
 

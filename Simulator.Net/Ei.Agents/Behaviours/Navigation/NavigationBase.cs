@@ -25,7 +25,8 @@ namespace Ei.Simulation.Behaviours
 
         protected void MovedToDestination()
         {
-            GetComponent<SimulationAgent>().MovedToLocation();
+            throw new NotImplementedException();
+            // GetComponent<SimulationAgent>().MovedToLocation();
         }
     }
 }

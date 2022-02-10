@@ -10,8 +10,19 @@ namespace Ei.Logs
     {
         public void Log(ILogMessage message)
         {
+            var color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
+            Console.Write($"[{message.Source.PadLeft(22, ' ')}] ");
+
+            Console.ForegroundColor = color;
+
             //Console.WriteLine("[LOG " + Thread.CurrentThread.ManagedThreadId + "] " + message.Code + " " + string.Join(";", message.Parameters));
-            Console.WriteLine($"[{message.Source}] {message.Code} {message.Message} {message.Parameters}");
+            Console.Write($"{message.Code} {message.Message} {message.Parameters}");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.WriteLine();
         }
     }
 }

@@ -152,29 +152,12 @@ namespace Ei.Server
 
             // add spawn
 
-            var spawnGo = new GameObject();
-            spawnGo.name = "Spawn";
-            var spawn = spawnGo.AddComponent<AgentSpawn>();
+            //var spawnGo = new GameObject();
+            //spawnGo.name = "Spawn";
+            //var spawn = spawnGo.AddComponent<AgentSpawn>();
 
-            var agentGo = new GameObject();
-            agentGo.name = "Human";
-            var agent = agentGo.AddComponent<RandomDecisionAgent>();
-            agent.Groups = new string[][] { new[] { "Default", "Citizen" } };
-
-            scene.Prefabs.Add(agentGo);
-
-            var navigation = agentGo.AddComponent<LinearNavigation>();
-            navigation.Speed = 1.47f;
-
-            var agentProperties = new List<AgentProperties>();
-            agentProperties.Add(new AgentProperties
-            {
-                Count = 1,
-                agent = agentGo
-            });
-
-            spawn.Agents = agentProperties.ToArray();
-            scene.GameObjects.Add(spawnGo);
+            //spawn.Agents = agentProperties.ToArray();
+            //scene.GameObjects.Add(spawnGo);
 
             // Environment
 
@@ -211,6 +194,34 @@ namespace Ei.Server
             return scene;
         }
 
+        private Scene RandomDecisionAgentScene()
+        {
+            var scene = this.CreateTestScene();
+
+            var agentGo = new GameObject();
+            agentGo.name = "Human";
+            var agent = agentGo.AddComponent<RandomDecisionAgent>();
+            agent.Groups = new string[][] { new[] { "Default", "Citizen" } };
+            agentGo.AddComponent<Actuator>();
+
+            // dd the agent to the scene
+            scene.GameObjects.Add(agentGo);
+
+            // scene.Prefabs.Add(agentGo);
+
+            //var navigation = agentGo.AddComponent<LinearNavigation>();
+            //navigation.Speed = 1.47f;
+
+            //var agentProperties = new List<AgentProperties>();
+            //agentProperties.Add(new AgentProperties
+            //{
+            //    Count = 1,
+            //    agent = agentGo
+            //});
+
+            return scene;
+        }
+
         public void Run(string projectSource)
         {
             Console.WriteLine("Running Project");
@@ -242,7 +253,7 @@ namespace Ei.Server
             //});
 
             // var scene = JsonConvert.DeserializeObject(projectSource, typeof(Scene)) as Scene;
-            var scene = CreateTestScene();
+            var scene = RandomDecisionAgentScene();
 
             // initialise runner that launches current scene
             this.gameEngine = new GameEngine(scene);

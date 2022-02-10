@@ -57,7 +57,7 @@ namespace Ei.Core.Ontology
             {
                 this.conditions.ForEach(c => c.ApplyPostconditions(agent, workflowState, parameters, planningMode));
             }
-            Log.Debug(agent.Name, "[Access] Postconditions Applied: " + agent.ToString());
+            Log.Debug(agent.Name + " Access", "Postconditions Applied: " + agent.ToString());
         }
 
         public void ApplyPostconditions(Institution.InstitutionState institutionState, Workflow.Store workflowState) {

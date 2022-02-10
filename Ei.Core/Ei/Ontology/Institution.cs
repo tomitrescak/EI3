@@ -70,7 +70,7 @@ namespace Ei.Core.Ontology
         // constructor
 
         protected Institution(string id) : base(id) {
-            Log.Info("Institution instantiated ...");
+            Log.Info("Institution", "Successfully instantiated ...");
 
             this.AuthenticationPermissions = new Security(this);
 
