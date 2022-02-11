@@ -79,6 +79,40 @@ namespace Ei.Server
         {
             this.socketLog = new SocketLog(this);
             Ei.Logs.Log.Register(this.socketLog);
+
+            // Serialisation
+
+            //Console.WriteLine("Edit EI");
+            //var scene = RandomDecisionAgentWithEnvironmentScene();
+
+            //string output = JsonConvert.SerializeObject(scene, Formatting.Indented, new JsonSerializerSettings
+            //{
+            //    TypeNameHandling = TypeNameHandling.Auto
+            //});
+            //File.WriteAllText("./ei.json", output);
+
+            //var deserialised = JsonConvert.DeserializeObject<Scene>(output, new JsonSerializerSettings
+            //{
+            //    TypeNameHandling = TypeNameHandling.Auto
+            //});
+
+            /// Reflection
+
+            // Get all the types in your assembly. For testing purpose, I am using Aspose.3D, you can use any.
+            var allTypes = Assembly.GetAssembly(typeof(SimulationAgent)).GetTypes();
+
+            foreach (var myType in allTypes)
+            {
+                // Check if this type is subclass of your base class
+                bool isSubType = myType.IsSubclassOf(typeof(MonoBehaviour));
+
+                // If it is sub-type, then print its name in Debug window.
+                if (isSubType)
+                {
+                    System.Diagnostics.Debug.WriteLine(myType.Name);
+                }
+            }
+
         }
 
         // state changes
@@ -304,6 +338,9 @@ namespace Ei.Server
 
             // var scene = JsonConvert.DeserializeObject(projectSource, typeof(Scene)) as Scene;
             var scene = RandomDecisionAgentWithEnvironmentScene();
+
+            string output = JsonConvert.SerializeObject(scene);
+            File.WriteAllText("./ei.json", output);
 
             // initialise runner that launches current scene
             this.gameEngine = new GameEngine(scene);

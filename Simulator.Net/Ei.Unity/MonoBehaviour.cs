@@ -21,6 +21,7 @@ namespace UnityEngine
         [JsonIgnore]
         public Transform transform => this.gameObject.transform;
 
+        [JsonIgnore]
         public GameObject gameObject;
 
         public delegate void ActionDelegate();
