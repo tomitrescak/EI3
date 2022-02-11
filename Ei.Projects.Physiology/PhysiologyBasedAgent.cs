@@ -326,9 +326,6 @@ namespace Ei.Projects.Physiology
         ////        public void Sleep() {
         ////            this.colorProvider.MakeBlack();
         ////        }
-        protected override void Reason()
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

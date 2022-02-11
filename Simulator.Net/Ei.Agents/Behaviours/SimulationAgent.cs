@@ -15,6 +15,7 @@ using Ei.Simulation.Planning;
 using UnityEngine;
 using Newtonsoft.Json;
 using Ei.Simulation.Behaviours.Actuators;
+using Ei.Simulation.Behaviours.Reasoners;
 
 namespace Ei.Simulation.Behaviours
 {
@@ -38,7 +39,7 @@ namespace Ei.Simulation.Behaviours
         }
     }
 
-    public abstract class SimulationAgent : UnityEngine.MonoBehaviour, INotifyPropertyChanged
+    public class SimulationAgent : UnityEngine.MonoBehaviour, INotifyPropertyChanged
     {
        
 
@@ -72,7 +73,10 @@ namespace Ei.Simulation.Behaviours
         
         // private NavigationBase navigation;
         private SimulationProject project;
-        protected Actuator Actuator;
+        
+        private Actuator actuator;
+        private Reasoner reasoner;
+
         private float timeSinceLastReasoning;
         private float reasoningIntervalInSec;
 
@@ -86,7 +90,7 @@ namespace Ei.Simulation.Behaviours
 
         // constructor
 
-        protected SimulationAgent() {
+        public SimulationAgent() {
             
             // this.name = name ?? (groups[0][0] + "_" + index++);
             
@@ -174,7 +178,17 @@ namespace Ei.Simulation.Behaviours
         public virtual void Start()
         {
             this.project = FindObjectOfType<SimulationProject>();
-            this.Actuator = GetComponent<Actuator>();
+            this.actuator = GetComponent<Actuator>();
+            if (this.actuator == null)
+            {
+                throw new Exception("Agent needs an actuator");
+            }
+            this.reasoner = GetComponent<Reasoner>();
+            if (this.reasoner == null)
+            {
+                throw new Exception("Agent needs a reasoner");
+            }
+
             //this.navigation = GetComponent<NavigationBase>();         
             //this.timer = FindObjectOfType<SimulationTimer>();
             //this.environment = FindObjectOfType<AgentEnvironment>();
@@ -197,7 +211,7 @@ namespace Ei.Simulation.Behaviours
             if (this.timeSinceLastReasoning > this.reasoningIntervalInSec)
             {
                 this.timeSinceLastReasoning = 0;
-                this.Reason();
+                this.reasoner.Reason();
             }
 
         }
@@ -249,14 +263,14 @@ namespace Ei.Simulation.Behaviours
                         this.Callbacks.NotifyAgentParameterChanged(this.Governor.Name, param.Name, param.Value);
                     }
                 }
+
+                // automatically start participation in the institution
+                this.Governor.Continue();
             }
 
             
         }
 
-        // agent methods
-
-        protected abstract void Reason();
 
         //private static int tid;
         //protected void CreatePlan(Governor agent, GoalState[] goal, string goalType = null) {

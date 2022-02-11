@@ -20,6 +20,7 @@ using Ei.Simulation.Behaviours.Actuators;
 using Ei.Simulation.Behaviours.Environment;
 using Ei.Simulation.Behaviours.Sensors;
 using Ei.Simulation.Behaviours.Environment.Objects;
+using Ei.Simulation.Behaviours.Reasoners;
 
 namespace Ei.Server
 {
@@ -261,10 +262,13 @@ namespace Ei.Server
 
             var agentGo = new GameObject();
             agentGo.name = "Human" + id++; ;
-            var agent = agentGo.AddComponent<RandomDecisionAgent>();
+            var agent = agentGo.AddComponent<SimulationAgent>();
             agent.Groups = new string[][] { new[] { "Default", "Citizen" } };
             agentGo.AddComponent<Actuator>();
+            agentGo.AddComponent<RandomDecisionReasoner>();
             scene.GameObjects.Add(agentGo);
+
+
 
             // dd the agent to the scene
 
@@ -289,8 +293,9 @@ namespace Ei.Server
 
             var agentGo = new GameObject();
             agentGo.name = "Human_" + id++;
-            var agent = agentGo.AddComponent<RandomDecisionAgent>();
+            var agent = agentGo.AddComponent<SimulationAgent>();
             agent.Groups = new string[][] { new[] { "Default", "Citizen" } };
+            agentGo.AddComponent<RandomDecisionReasoner>();
             agentGo.AddComponent<EnvironmentalActuator>();
             agentGo.AddComponent<Sensor>();
             var navigation = agentGo.AddComponent<LinearNavigation>();
