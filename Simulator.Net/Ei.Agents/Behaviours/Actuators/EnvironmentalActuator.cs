@@ -97,9 +97,9 @@ namespace Ei.Simulation.Behaviours.Actuators
                 // check if the action provides parameters
                 if (action != null)
                 {
-                    Log.Debug(agent.Name + " Actuator", $"Started interaction with '{obj.Name}' lasting {action.Duration}ms");
-                    await obj.Use(actionId);
-                    Log.Debug(agent.Name + " Actuator", $"Finished interaction with '{obj.Name}' after {action.Duration}ms");
+                    Log.Debug(agent.Name + " Actuator", $"Started interaction with '{obj.Name}'");
+                    await obj.Use(agent, actionId);
+                    Log.Debug(agent.Name + " Actuator", $"Finished interaction with '{obj.Name}'");
                     
                     return base.PerformAction(agent, planItem, action.Parameters);
                 } else

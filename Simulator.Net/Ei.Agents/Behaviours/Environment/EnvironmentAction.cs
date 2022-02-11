@@ -11,7 +11,12 @@ namespace Ei.Simulation.Behaviours.Environment
     public class EnvironmentAction
     {
         public string Id { get; set; }
-        public float Duration { get; set; }
         public VariableInstance[] Parameters { get; set; }
+    }
+
+    [Serializable]
+    public class NoLocationAction : EnvironmentAction
+    {
+        public float Duration { get; set; }
     }
 }

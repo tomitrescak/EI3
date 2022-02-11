@@ -80,6 +80,11 @@ namespace UnityEngine
             return (T)this.Components.FirstOrDefault((c) => c is T);
         }
 
+        public T[] GetComponents<T>() where T : MonoBehaviour
+        {
+            return (T[]) this.Components.Where((c) => c is T).Cast<T>().ToArray();
+        }
+
         public T AddComponent<T>(T component) where T : MonoBehaviour
         {
             component.gameObject = this;

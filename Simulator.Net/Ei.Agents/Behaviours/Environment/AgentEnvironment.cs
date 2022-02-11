@@ -57,7 +57,7 @@ namespace Ei.Simulation.Behaviours
             }
         }
 
-        protected Dictionary<string, EnvironmentAction> ActionsWithNoLocation { get; private set; }
+        protected Dictionary<string, NoLocationAction> ActionsWithNoLocation { get; private set; }
 
         // properties
 
@@ -132,7 +132,7 @@ namespace Ei.Simulation.Behaviours
             // add actions with no location
             if (this.Definition.ActionsWithNoLocation != null)
             {
-                this.ActionsWithNoLocation = new Dictionary<string, EnvironmentAction>();
+                this.ActionsWithNoLocation = new Dictionary<string, NoLocationAction>();
                 foreach (var act in this.Definition.ActionsWithNoLocation)
                 {
                     this.ActionsWithNoLocation.Add(act.Id, act);
@@ -140,7 +140,7 @@ namespace Ei.Simulation.Behaviours
             }
         }
 
-        public EnvironmentAction NoLocationInfo(string actionId)
+        public NoLocationAction NoLocationInfo(string actionId)
         {
             return this.ActionsWithNoLocation != null ? this.ActionsWithNoLocation.FirstOrDefault(w => w.Key == actionId).Value : null;
         }

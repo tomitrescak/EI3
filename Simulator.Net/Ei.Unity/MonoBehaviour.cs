@@ -54,6 +54,11 @@ namespace UnityEngine
             return this.gameObject.GetComponent<T>();
         }
 
+        public T[] GetComponents<T>() where T : MonoBehaviour
+        {
+            return this.gameObject.GetComponents<T>();
+        }
+
         public T AddComponent<T>(T component) where T : MonoBehaviour {
             return this.gameObject.AddComponent(component);
         }

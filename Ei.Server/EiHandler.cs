@@ -207,13 +207,13 @@ namespace Ei.Server
             environment.Definition.MetersPerPixel = 1;
             environment.Definition.Width = 800;
             environment.Definition.Height = 800;
-            environment.Definition.ActionsWithNoLocation = new EnvironmentAction[]
+            environment.Definition.ActionsWithNoLocation = new NoLocationAction[]
             {
-            new EnvironmentAction
+            new NoLocationAction
             {
                 Id = "Die",
                 Duration = 0
-            }, new EnvironmentAction
+            }, new NoLocationAction
             {
                 Id = "Empty",
                 Duration = 0
@@ -223,7 +223,7 @@ namespace Ei.Server
             //    Id = "Feed",
             //    Duration = 2000
             //}, 
-            new EnvironmentAction
+            new NoLocationAction
             {
                 Id = "Poop",
                 Duration = 1000
@@ -233,25 +233,23 @@ namespace Ei.Server
 
             // add two gameobjects with feeding
 
-            var feedGo = new GameObject();
+            var feedGo = new GameObject("Feed_1");
             feedGo.transform.X = 100;
             feedGo.transform.Y = 100;
 
-            var obj = feedGo.AddComponent<EnvironmentObject>();;
-            obj.Name = "Feed_1";
-            obj.Actions = new[] { new EnvironmentAction { Duration = 3000, Id = "Feed" } };
+            var obj = feedGo.AddComponent<EnvironmentObject>();
+            obj.Actions = new[] { new EnvironmentAction { Id = "Feed" } };
+            feedGo.AddComponent<DelayAction>().DelayMs = 3000;
             scene.GameObjects.Add(feedGo);
 
-
-            feedGo = new GameObject();
+            feedGo = new GameObject("Feed_2");
             feedGo.transform.X = 200;
             feedGo.transform.Y = 300;
 
             obj = feedGo.AddComponent<EnvironmentObject>(); ;
-            obj.Name = "Feed_2";
-            obj.Actions = new[] { new EnvironmentAction { Duration = 3000, Id = "Feed" } };
+            obj.Actions = new[] { new EnvironmentAction { Id = "Feed" } };
+            feedGo.AddComponent<DelayAction>().DelayMs = 3000;
             scene.GameObjects.Add(feedGo);
-
 
             return scene;
         }
