@@ -84,6 +84,11 @@ namespace Ei.Logs
             LogMessage(3, message, source);
         }
 
+        public static void Success(string source, string message)
+        {
+            LogMessage(4, message, source);
+        }
+
         private static void LogMessage(int level, string message, string source = null)
         {
             // return;

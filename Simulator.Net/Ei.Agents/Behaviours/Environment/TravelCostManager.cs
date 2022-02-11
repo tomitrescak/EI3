@@ -7,6 +7,7 @@ using Ei.Core.Ontology.Actions;
 using Ei.Core.Runtime;
 using Ei.Core.Runtime.Planning;
 using Ei.Core.Runtime.Planning.Costs;
+using Ei.Simulation.Behaviours.Sensors;
 
 namespace Ei.Simulation.Behaviours
 {
@@ -18,12 +19,14 @@ namespace Ei.Simulation.Behaviours
         private readonly int agentX;
         private readonly int agentY;
         private readonly Governor agent;
+        private Sensor sensor;
 
-        public TravelCostManager(Governor agent, AgentEnvironment agentEnvironment, int agentX, int agentY) {
+        public TravelCostManager(Governor agent, AgentEnvironment agentEnvironment, Sensor sensor, int agentX, int agentY) {
             this.agentEnvironment = agentEnvironment;
             this.agentX = agentX;
             this.agentY = agentY;
             this.agent = agent;
+            this.sensor = sensor;
 
         }
 
@@ -96,18 +99,20 @@ namespace Ei.Simulation.Behaviours
                 }
             }
 
+            var sensedObjects = this.sensor.FindActionObjects(toAction);
+
             // find all objects that provide the required action
-            if (!this.agentEnvironment.Actions.ContainsKey(toAction)) {
+            if (sensedObjects == null) {
                 var data = this.agentEnvironment.NoLocationInfo(toAction);
 
                 if (data == null) {
-                    throw new ApplicationException("There is no object in the environment that does: " + toAction);
+                    throw new ApplicationException("There is no visible object in the environment that does: " + toAction);
                 }
                 return new CostData(data.Duration, data.Id);
 
             }
 
-            var objects = this.agentEnvironment.Actions[toAction];
+            var objects = sensedObjects;
             var minDistance = double.MaxValue;
             string minObject = null;
 
@@ -124,10 +129,10 @@ namespace Ei.Simulation.Behaviours
                         continue;
                     }
 
-                    var distance = this.agentEnvironment.Distance(this.agentX, this.agentY, obj.X, obj.Y);
+                    var distance = this.agentEnvironment.Distance(this.agentX, this.agentY, obj.transform.X, obj.transform.Y);
                     if (distance < minDistance) {
                         minDistance = distance;
-                        minObject = obj.Id;
+                        minObject = obj.Name;
                     }
                 }
             }
@@ -142,13 +147,13 @@ namespace Ei.Simulation.Behaviours
 
                     var obj = objects[index];
                     // distance is kept one way or another
-                    double distance = this.agentEnvironment.Distances[fromObjectId].ContainsKey(obj.Id)
-                        ? this.agentEnvironment.Distances[fromObjectId][obj.Id]
-                        : this.agentEnvironment.Distances[obj.Id][fromObjectId];
+                    double distance = this.agentEnvironment.Distances[fromObjectId].ContainsKey(obj.Name)
+                        ? this.agentEnvironment.Distances[fromObjectId][obj.Name]
+                        : this.agentEnvironment.Distances[obj.Name][fromObjectId];
 
                     if (distance < minDistance) {
                         minDistance = distance;
-                        minObject = obj.Id;
+                        minObject = obj.Name;
                     }
                 }
             }
@@ -187,10 +192,10 @@ namespace Ei.Simulation.Behaviours
                         continue;
                     }
 
-                    var distance = agentEnvironment.Distance(agentX, agentY, obj.X, obj.Y);
+                    var distance = agentEnvironment.Distance(agentX, agentY, obj.transform.X, obj.transform.Y);
                     if (distance < closest.distance) {
                         closest.distance = distance;
-                        closest.objectId = obj.Id;
+                        closest.objectId = obj.Name;
                     }
                 }
             }
@@ -205,13 +210,13 @@ namespace Ei.Simulation.Behaviours
 
                     var obj = objects[index];
                     // distance is kept one way or another
-                    double distance = agentEnvironment.Distances[fromObjectId].ContainsKey(obj.Id)
-                        ? agentEnvironment.Distances[fromObjectId][obj.Id]
-                        : agentEnvironment.Distances[obj.Id][fromObjectId];
+                    double distance = agentEnvironment.Distances[fromObjectId].ContainsKey(obj.Name)
+                        ? agentEnvironment.Distances[fromObjectId][obj.Name]
+                        : agentEnvironment.Distances[obj.Name][fromObjectId];
 
                     if (distance < closest.distance) {
                         closest.distance = distance;
-                        closest.objectId = obj.Id;
+                        closest.objectId = obj.Name;
                     }
                 }
             }

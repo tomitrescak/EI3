@@ -7,6 +7,7 @@ namespace UnityEngine
 {
     public interface IGameEngine
     {
+        bool IsRunning { get; }
         Collection<GameObject> GameObjects { get; }
         Dictionary<Type, List<MonoBehaviour>> Behaviours { get; }
         GameObject Instantiate(GameObject agent, bool init = true);

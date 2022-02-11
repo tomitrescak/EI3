@@ -14,6 +14,7 @@ using Ei.Core.Runtime.Planning.Strategies;
 using Ei.Simulation.Planning;
 using UnityEngine;
 using Newtonsoft.Json;
+using Ei.Simulation.Behaviours.Actuators;
 
 namespace Ei.Simulation.Behaviours
 {
@@ -93,7 +94,7 @@ namespace Ei.Simulation.Behaviours
             this.Callbacks = new SimulationCallbacks(this);
 
             this.reasoningIntervalInSec = this.ReasoningIntervalInMs / 1000f;
-            this.timeSinceLastReasoning = this.ReasoningIntervalInMs + 1;
+            this.timeSinceLastReasoning = this.reasoningIntervalInSec + 1;
             
 
             //            var timer = new Timer();
@@ -188,6 +189,8 @@ namespace Ei.Simulation.Behaviours
             {
                 return;
             }
+
+            // Console.WriteLine(Time.deltaTime + " " + this.timeSinceLastReasoning);
 
             // we reason only in specified intervals
             this.timeSinceLastReasoning += Time.deltaTime;

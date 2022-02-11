@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ei.Simulation.Behaviours
+namespace Ei.Simulation.Behaviours.Agents
 {
-    internal class Sensor
+    internal class PlanningAgent
     {
     }
 }

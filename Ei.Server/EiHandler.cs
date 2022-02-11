@@ -16,6 +16,10 @@ using Ei.Simulation.Statistics;
 using UnityEngine;
 using Ei.Simulation.Behaviours;
 using Ei.Simulation.Behaviours.Agents;
+using Ei.Simulation.Behaviours.Actuators;
+using Ei.Simulation.Behaviours.Environment;
+using Ei.Simulation.Behaviours.Sensors;
+using Ei.Simulation.Behaviours.Environment.Objects;
 
 namespace Ei.Server
 {
@@ -23,6 +27,7 @@ namespace Ei.Server
     public class EiHandler : WebSocketHandler
     {
 
+        static int id = 0;
 
         public class SocketLog : ILog
         {
@@ -133,7 +138,7 @@ namespace Ei.Server
             managerGo.Enabled = true;
 
             var timer = managerGo.AddComponent<SimulationTimer>();
-            timer.DayLengthInSeconds = 120;
+            timer.DayLengthInSeconds = 480;
             scene.GameObjects.Add(managerGo);
 
             // institution manager launches the institution
@@ -164,32 +169,54 @@ namespace Ei.Server
             var environmentGo = new GameObject();
             var environment = environmentGo.AddComponent<AgentEnvironment>();
 
-            environment.Definition.MetersPerPixel = 5;
+            environment.Definition.MetersPerPixel = 1;
             environment.Definition.Width = 800;
             environment.Definition.Height = 800;
-            environment.Definition.ActionsWithNoLocation = new EnvironmentDataAction[]
+            environment.Definition.ActionsWithNoLocation = new EnvironmentAction[]
             {
-            new EnvironmentDataAction
+            new EnvironmentAction
             {
                 Id = "Die",
                 Duration = 0
-            }, new EnvironmentDataAction
+            }, new EnvironmentAction
             {
                 Id = "Empty",
                 Duration = 0
-            },new EnvironmentDataAction
-            {
-                Id = "Feed",
-                Duration = 2000
-            },  new EnvironmentDataAction
+            }, 
+            //new EnvironmentAction
+            //{
+            //    Id = "Feed",
+            //    Duration = 2000
+            //}, 
+            new EnvironmentAction
             {
                 Id = "Poop",
                 Duration = 1000
             }
             };
-
-
             scene.GameObjects.Add(environmentGo);
+
+            // add two gameobjects with feeding
+
+            var feedGo = new GameObject();
+            feedGo.transform.X = 100;
+            feedGo.transform.Y = 100;
+
+            var obj = feedGo.AddComponent<EnvironmentObject>();;
+            obj.Name = "Feed_1";
+            obj.Actions = new[] { new EnvironmentAction { Duration = 3000, Id = "Feed" } };
+            scene.GameObjects.Add(feedGo);
+
+
+            feedGo = new GameObject();
+            feedGo.transform.X = 200;
+            feedGo.transform.Y = 300;
+
+            obj = feedGo.AddComponent<EnvironmentObject>(); ;
+            obj.Name = "Feed_2";
+            obj.Actions = new[] { new EnvironmentAction { Duration = 3000, Id = "Feed" } };
+            scene.GameObjects.Add(feedGo);
+
 
             return scene;
         }
@@ -199,13 +226,13 @@ namespace Ei.Server
             var scene = this.CreateTestScene();
 
             var agentGo = new GameObject();
-            agentGo.name = "Human";
+            agentGo.name = "Human" + id++; ;
             var agent = agentGo.AddComponent<RandomDecisionAgent>();
             agent.Groups = new string[][] { new[] { "Default", "Citizen" } };
             agentGo.AddComponent<Actuator>();
+            scene.GameObjects.Add(agentGo);
 
             // dd the agent to the scene
-            scene.GameObjects.Add(agentGo);
 
             // scene.Prefabs.Add(agentGo);
 
@@ -218,6 +245,23 @@ namespace Ei.Server
             //    Count = 1,
             //    agent = agentGo
             //});
+
+            return scene;
+        }
+
+        private Scene RandomDecisionAgentWithEnvironmentScene()
+        {
+            var scene = this.CreateTestScene();
+
+            var agentGo = new GameObject();
+            agentGo.name = "Human_" + id++;
+            var agent = agentGo.AddComponent<RandomDecisionAgent>();
+            agent.Groups = new string[][] { new[] { "Default", "Citizen" } };
+            agentGo.AddComponent<EnvironmentalActuator>();
+            agentGo.AddComponent<Sensor>();
+            var navigation = agentGo.AddComponent<LinearNavigation>();
+            navigation.SpeedKmH = 1;
+            scene.GameObjects.Add(agentGo);
 
             return scene;
         }
@@ -252,8 +296,14 @@ namespace Ei.Server
             //    go
             //});
 
+            if (this.gameEngine != null)
+            {
+                Log.Info("Game Engine", "Stopping previous instance of the game");
+                this.gameEngine.Stop();
+            }
+
             // var scene = JsonConvert.DeserializeObject(projectSource, typeof(Scene)) as Scene;
-            var scene = RandomDecisionAgentScene();
+            var scene = RandomDecisionAgentWithEnvironmentScene();
 
             // initialise runner that launches current scene
             this.gameEngine = new GameEngine(scene);

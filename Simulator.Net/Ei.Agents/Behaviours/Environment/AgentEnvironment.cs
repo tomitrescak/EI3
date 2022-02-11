@@ -6,6 +6,8 @@ using System.Threading;
 using System.Timers;
 using Ei.Core.Ontology.Actions;
 using Ei.Core.Runtime;
+using Ei.Simulation.Behaviours.Environment;
+using Ei.Simulation.Behaviours.Environment.Objects;
 using Ei.Simulation.Sims.Behaviours;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -20,14 +22,15 @@ namespace Ei.Simulation.Behaviours
         #region Fields
         private int width;
         private int height;
-        private int normalisationFactor;
-        private readonly System.Random rnd = new System.Random();
+        private int normalisationFactor = 10;
+        
         private readonly Dictionary<string, Dictionary<string, double>> distances;
-        private readonly Dictionary<string, List<EnvironmentData>> actions;
-        private readonly List<EnvironmentData> objects;
-        private readonly Queue<System.Action> actionQueue;
-        private readonly AutoResetEvent actionStop;
-        private readonly Dictionary<EnvironmentData, GameObject> objectMappings;
+        private readonly Dictionary<string, List<EnvironmentObject>> actions;
+        private readonly List<EnvironmentObject> objects;
+        
+        //private readonly Queue<System.Action> actionQueue;
+        //private readonly AutoResetEvent actionStop;
+        // private readonly Dictionary<EnvironmentObject, GameObject> objectMappings;
 
         public AgentEnvironmentDefinition Definition;
         #endregion
@@ -37,7 +40,7 @@ namespace Ei.Simulation.Behaviours
         public Dictionary<string, Dictionary<string, double>> Distances { get { return distances; } }
 
         [JsonIgnore]
-        public Dictionary<string, List<EnvironmentData>> Actions
+        public Dictionary<string, List<EnvironmentObject>> Actions
         {
             get
             {
@@ -46,7 +49,7 @@ namespace Ei.Simulation.Behaviours
         }
 
         [JsonIgnore]
-        public List<EnvironmentData> Objects
+        public List<EnvironmentObject> Objects
         {
             get
             {
@@ -54,27 +57,10 @@ namespace Ei.Simulation.Behaviours
             }
         }
 
-        protected Dictionary<string, EnvironmentDataAction> ActionsWithNoLocation { get; private set; }
+        protected Dictionary<string, EnvironmentAction> ActionsWithNoLocation { get; private set; }
 
         // properties
 
-        [JsonIgnore]
-        public int RandomX
-        {
-            get
-            {
-                return (int)(rnd.NextDouble() * (this.width - 50));
-            }
-        }
-
-        [JsonIgnore]
-        public int RandomY
-        {
-            get
-            {
-                return (int)(rnd.NextDouble() * (this.height - 50));
-            }
-        }
 
         #endregion
 
@@ -85,11 +71,11 @@ namespace Ei.Simulation.Behaviours
         {
             this.Definition = new AgentEnvironmentDefinition();
             this.distances = new Dictionary<string, Dictionary<string, double>>();
-            this.actions = new Dictionary<string, List<EnvironmentData>>();
-            this.objects = new List<EnvironmentData>();
-            this.objectMappings = new Dictionary<EnvironmentData, GameObject>(); 
-            this.actionQueue = new Queue<System.Action>(1000);
-            this.actionStop = new AutoResetEvent(false);
+            this.actions = new Dictionary<string, List<EnvironmentObject>>();
+            this.objects = new List<EnvironmentObject>();
+            //this.objectMappings = new Dictionary<EnvironmentObject, GameObject>(); 
+            //this.actionQueue = new Queue<System.Action>(1000);
+            //this.actionStop = new AutoResetEvent(false);
         }
 
         // methods
@@ -101,32 +87,29 @@ namespace Ei.Simulation.Behaviours
 
             this.OpenEnvironment();
 
-            var thread = new Thread(ProcessQueue);
-            thread.IsBackground = true;
-            thread.Start();
+            //var thread = new Thread(ProcessQueue);
+            //thread.IsBackground = true;
+            //thread.Start();
         }
 
-        private void ProcessQueue()
-        {
-            while (true)
-            {
-                while (this.actionQueue.Count > 0)
-                {
-                    // execute action
-                    this.actionQueue.Dequeue()();
-                }
+        //private void ProcessQueue()
+        //{
+        //    while (true)
+        //    {
+        //        while (this.actionQueue.Count > 0)
+        //        {
+        //            // execute action
+        //            this.actionQueue.Dequeue()();
+        //        }
 
-                // wait for next impulse
-                this.actionStop.WaitOne();
-            }
-        }
+        //        // wait for next impulse
+        //        this.actionStop.WaitOne();
+        //    }
+        //}
 
         public void Start()
         {
-            if (this.Definition == null)
-            {
-                throw new Exception("You need environment definition to evolve!");
-            }
+            
 
             //            if (this.definition.Elements != null && this.definition.Elements.Length > 0)
             //            {
@@ -138,71 +121,39 @@ namespace Ei.Simulation.Behaviours
         }
 
         private void OpenEnvironment()
+
         {
+
+            if (this.Definition == null)
+            {
+                throw new Exception("You need environment definition to evolve!");
+            }
+
             // add actions with no location
             if (this.Definition.ActionsWithNoLocation != null)
             {
-                this.ActionsWithNoLocation = new Dictionary<string, EnvironmentDataAction>();
+                this.ActionsWithNoLocation = new Dictionary<string, EnvironmentAction>();
                 foreach (var act in this.Definition.ActionsWithNoLocation)
                 {
                     this.ActionsWithNoLocation.Add(act.Id, act);
                 }
             }
-
-            // initialise seeds
-
-            var data = new List<EnvironmentData>();
-
-            if (this.Definition.Elements != null)
-            {
-                foreach (var def in this.Definition.Elements)
-                {
-                    // initialise actions
-
-                    foreach (var action in def.Actions)
-                    {
-                        if (!this.actions.ContainsKey(action.Id))
-                        {
-                            this.actions.Add(action.Id, new List<EnvironmentData>());
-                        }
-                    }
-
-                    // initialise objects
-
-
-                    for (var i = 0; i < def.Seed; i++)
-                    {
-                        // initiate element at a random position
-                        data.Add(new EnvironmentData(def, this.RandomX, this.RandomY));
-                    }
-                }
-            }
-
-            // browse all elements and build all the tables and add it to canvas
-            
-            this.normalisationFactor = 10;
-
-            foreach (var edx in data.ToArray())
-            {
-                this.AddObject(edx);
-            }
-
         }
 
-        public EnvironmentDataAction NoLocationInfo(string actionId)
+        public EnvironmentAction NoLocationInfo(string actionId)
         {
             return this.ActionsWithNoLocation != null ? this.ActionsWithNoLocation.FirstOrDefault(w => w.Key == actionId).Value : null;
         }
 
-        public void AddNoLocationAction(string id, int destroyAfter = 0, float duration = 0)
-        {
-            if (this.ActionsWithNoLocation == null)
-            {
-                this.ActionsWithNoLocation = new Dictionary<string, EnvironmentDataAction>();
-            }
+        //public void AddNoLocationAction(string id, int destroyAfter = 0, float duration = 0)
+        //{
+        //    if (this.ActionsWithNoLocation == null)
+        //    {
+        //        this.ActionsWithNoLocation = new Dictionary<string, EnvironmentDataAction>();
+        //    }
 
-            this.ActionsWithNoLocation.Add(id, new EnvironmentDataAction { Id = id, DestroyAfter = destroyAfter, Duration = duration });
-        }
+        //    this.ActionsWithNoLocation.Add(id, new EnvironmentDataAction { Id = id, DestroyAfter = destroyAfter, Duration = duration });
+        //}
 
 
         //        private void Evolve(object sender, ElapsedEventArgs elapsedEventArgs)
@@ -264,44 +215,36 @@ namespace Ei.Simulation.Behaviours
         //            this.AddObject();
         //        }
 
-        public void AddObject(string id)
-        {
-            this.AddObject(id, this.RandomX, this.RandomY);
-        }
+        //public void AddObject(string id)
+        //{
+        //    this.AddObject(id, this.RandomX, this.RandomY);
+        //}
 
-        public void AddObject(string id, int x, int y, Dictionary<string, VariableInstance[]> parameters = null, Governor owner = null)
-        {
-            var definition = this.Definition.Elements.First(w => w.Id == id);
-            var data = new EnvironmentData(definition, x, y, parameters, owner);
+        //public void AddObject(string id, int x, int y, Dictionary<string, VariableInstance[]> parameters = null, Governor owner = null)
+        //{
+        //    var definition = this.Definition.Elements.First(w => w.Id == id);
+        //    var data = new EnvironmentData(definition, x, y, parameters, owner);
 
-            // add object to canvas
+        //    // add object to canvas
 
-            this.AddObject(data);
-        }
+        //    this.AddObject(data);
+        //}
 
-        private void AddObject(EnvironmentData edx)
-        {
-            this.actionQueue.Enqueue(() => this.QueueAddObject(edx));
-            this.actionStop.Set();
-        }
-
-        public void QueueAction(System.Action action)
-        {
-            this.actionQueue.Enqueue(action);
-            this.actionStop.Set();
-        }
-
-        private void QueueAddObject(EnvironmentData edx)
+        public void AddObject(EnvironmentObject edx)
         {
             // rememebr all objects
+
+            if (this.Objects.Any(o => o.Name == edx.Name)) {
+                throw new Exception("You cannot have two environment objects with the same name: " + edx.Name);
+            }
 
             this.objects.Add(edx);
 
             // prepare distance record
 
-            if (!this.distances.ContainsKey(edx.Id))
+            if (!this.distances.ContainsKey(edx.Name))
             {
-                this.distances.Add(edx.Id, new Dictionary<string, double>());
+                this.distances.Add(edx.Name, new Dictionary<string, double>());
             }
 
             // create distances
@@ -309,23 +252,23 @@ namespace Ei.Simulation.Behaviours
             for (int index = 0; index < this.objects.Count; index++)
             {
                 var edy = this.objects[index];
-                if (edx.Id == edy.Id)
+                if (edx.Name == edy.Name)
                 {
-                    this.distances[edx.Id][edy.Id] = this.normalisationFactor / 2f;
+                    this.distances[edx.Name][edy.Name] = this.normalisationFactor / 2f;
                 }
                 else
                 {
-                    this.distances[edx.Id][edy.Id] = this.Distance(edx.X, edx.Y, edy.X, edy.Y);
+                    this.distances[edx.Name][edy.Name] = this.Distance(edx.transform.X, edx.transform.Y, edy.transform.X, edy.transform.Y);
                 }
             }
 
             // remember all actions
 
-            foreach (var action in edx.Definition.Actions)
+            foreach (var action in edx.Actions)
             {
                 if (!this.actions.ContainsKey(action.Id))
                 {
-                    this.actions.Add(action.Id, new List<EnvironmentData>());
+                    this.actions.Add(action.Id, new List<EnvironmentObject>());
                 }
                 this.actions[action.Id].Add(edx);
             }
@@ -335,19 +278,19 @@ namespace Ei.Simulation.Behaviours
 
 
             // instantiate new simobject
-            var agent = new GameObject(edx.Id);
-            agent.transform.position = new Vector3(edx.X, edx.Y, 0);
+            //var agent = new GameObject(edx.Id);
+            //agent.transform.position = new Vector3(edx.X, edx.Y, 0);
 
-            // add simobject
-            var sim = agent.AddComponent<SimObject>();
-            sim.Icon = edx.Definition.Image;
+            //// add simobject
+            //var sim = agent.AddComponent<SimObject>();
+            //sim.Icon = edx.Definition.Image;
 
-            this.objectMappings.Add(edx, agent);
+            //this.objectMappings.Add(edx, agent);
 
-            Instantiate(agent);
+            //Instantiate(agent);
         }
 
-        public double Distance(int x1, int y1, int x2, int y2)
+        public double Distance(float x1, float y1, float x2, float y2)
         {
             var xs = x1 - x2;
             var ys = y1 - y2;
@@ -355,42 +298,36 @@ namespace Ei.Simulation.Behaviours
             return (Math.Sqrt(xs * xs + ys * ys) / this.width) * normalisationFactor;
         }
 
-        public float UseObject(EnvironmentData obj, string actionId)
-        {
-            var remainingUsage = obj.Use(actionId);
+        //public float UseObject(EnvironmentObject obj, string actionId)
+        //{
+        //    var remainingUsage = obj.Use(actionId);
 
-            if (remainingUsage == 0)
-            {
-                this.RemoveObject(obj);
-            }
+        //    if (remainingUsage == 0)
+        //    {
+        //        this.RemoveObject(obj);
+        //    }
 
-            // return duration to use this object
+        //    // return duration to use this object
 
-            return obj.Definition.Actions.First(w => w.Id == actionId).Duration;
-        }
+        //    return obj.Definition.Actions.First(w => w.Id == actionId).Duration;
+        //}
 
-        public float UseObject(string itemId, string actionId)
-        {
-            var obj = this.objects.Find(w => w.Id == itemId);
-            return this.UseObject(obj, actionId);
-        }
+        //public float UseObject(string itemId, string actionId)
+        //{
+        //    var obj = this.objects.Find(w => w.Id == itemId);
+        //    return this.UseObject(obj, actionId);
+        //}
 
-        public void RemoveObject(string definitionId)
-        {
-            var obj = this.objects.FirstOrDefault(w => w.Definition.Id == definitionId);
-            if (!string.IsNullOrEmpty(obj.Id))
-            {
-                this.RemoveObject(obj);
-            }
-        }
+        //public void RemoveObject(string definitionId)
+        //{
+        //    var obj = this.objects.FirstOrDefault(w => w.Definition.Id == definitionId);
+        //    if (!string.IsNullOrEmpty(obj.Id))
+        //    {
+        //        this.RemoveObject(obj);
+        //    }
+        //}
 
-        private void RemoveObject(EnvironmentData obj)
-        {
-            this.actionQueue.Enqueue(() => this.QueueRemoveObject(obj));
-            this.actionStop.Set();
-        }
-
-        private void QueueRemoveObject(EnvironmentData obj)
+        public void RemoveObject(EnvironmentObject obj)
         {
             // remove from objects
 
@@ -402,22 +339,19 @@ namespace Ei.Simulation.Behaviours
             {
                 list.Remove(obj);
             }
-
-            // remove from simulation 
-            GameObject.Destroy(this.objectMappings[obj]);
         }
 
-        public bool TryGetValue(string itemId, out EnvironmentData environmentData)
+        public bool TryGetValue(string itemId, out EnvironmentObject environmentData)
         {
             try
             {
-                environmentData = this.objects.FirstOrDefault(w => w.Id == itemId);
+                environmentData = this.objects.FirstOrDefault(w => w.Name == itemId);
             }
             catch (Exception)
             {
-                environmentData = new EnvironmentData();
+                environmentData = null;
             }
-            return !string.IsNullOrEmpty(environmentData.Id);
+            return environmentData != null;
 
         }
     }

@@ -4,6 +4,7 @@ using Ei.Core.Runtime.Planning;
 using Ei.Core.Runtime.Planning.Costs;
 using Ei.Core.Runtime.Planning.Strategies;
 using Ei.Logs;
+using Ei.Simulation.Behaviours.Actuators;
 using Ei.Simulation.Planning;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace Ei.Simulation.Behaviours
         // we only plan for one agent at the time and this variable controls it
         private static bool planning = false;
         private static Queue<PlannerSession> sessions = new Queue<PlannerSession>();
+        private Actuator actuator;
 
         public event Action<PlanManager, PlannerSession> PlanningStarted;
         public event Action<PlanManager> PlanNotFound;
@@ -38,17 +40,9 @@ namespace Ei.Simulation.Behaviours
         public event Action<PlanManager, SimulationAgent, List<AStarNode>, int> PlanItemFinished;
         public event Action<PlanManager, SimulationAgent, List<AStarNode>> PlanExecutionFinished;
 
-
-        protected virtual ICostManager CreateCostManager(PlannerSession session)
+        public PlanManager(Actuator actuator)
         {
-            // return new TravelCostManager(agent, this.environment, (int)this.transform.X, (int)this.transform.Y)
-            return null;
-        }
-
-        protected virtual async Task<bool> ExecutePlanItem(SimulationAgent agent, AStarNode planItem)
-        {
-            return this.PerformAction(agent, planItem);
-
+            this.actuator = actuator;
         }
 
 
@@ -67,7 +61,7 @@ namespace Ei.Simulation.Behaviours
             {
                 plan = item.agent.Governor.PlanGoalState(item.goal,
                     PlanStrategy.ForwardSearch,
-                    this.CreateCostManager(item));
+                    this.actuator.CreateCostManager(item));
 
                 if (plan != null)
                 {
@@ -154,13 +148,7 @@ namespace Ei.Simulation.Behaviours
 
         private bool FailPlan(SimulationAgent agent, string logName, string message)
         {
-            Console.BackgroundColor = ConsoleColor.Red;
-            Console.ForegroundColor = ConsoleColor.White;
-
-            Log.Info(logName, "Plan Execution Failed: " + message);
-
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.White;
+            Log.Error(logName, "Plan Execution Failed: " + message);
 
             this.PlanExecutionFailed?.Invoke(this, agent, message);
 
@@ -169,17 +157,6 @@ namespace Ei.Simulation.Behaviours
 
         static object locker = new object();
        
-
-
-        protected bool PerformAction(SimulationAgent agent, AStarNode planItem, params VariableInstance[] parameters)
-        {
-            var result = agent.Governor.PerformAction(planItem.Arc.Action.Id, parameters);
-            if (result.IsOk)
-            {
-                return true;
-            }
-            return false;
-        }
 
         public async Task<bool> ExecutePlan(SimulationAgent agent, List<AStarNode> plan)
         {
@@ -196,16 +173,16 @@ namespace Ei.Simulation.Behaviours
 
                 for (var i=0; i<plan.Count; i++)
                 {
+                    // check if the engine stopped
+                    if (!agent.gameObject.GameEngine.IsRunning)
+                    {
+                        Log.Warning(logName, "Stopping the plan as game engine is not running");
+                        break;
+                    }
                     var planItem = plan[i];
 
-                    Console.BackgroundColor = ConsoleColor.Green;
-                    Console.ForegroundColor = ConsoleColor.Black;
-
                     this.PlanItemStarted?.Invoke(this, agent, plan, i);
-                    Log.Debug(logName, $"Starting Plan Item {i} -  {planItem.Arc.Action}");
-
-                    Console.BackgroundColor = ConsoleColor.Black;
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Log.Success(logName, $"Starting Plan Item {i} -  {planItem.Arc.Action}");
 
                     // skip plan items with no arcs
                     if (planItem.Arc == null) {
@@ -256,7 +233,7 @@ namespace Ei.Simulation.Behaviours
 
                         try
                         {
-                            var result = await this.ExecutePlanItem(agent, planItem); 
+                            var result = await this.actuator.ExecutePlanItem(agent, planItem); 
                             if (result == false)
                             {
                                 this.FailPlan(agent, logName, "Action Failed");

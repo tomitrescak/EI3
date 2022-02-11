@@ -2,6 +2,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Ei.Logs;
 using Ei.Simulation.Core;
 using UnityEngine;
@@ -13,7 +14,10 @@ namespace Ei.Simulation.Behaviours
     {
         private Tweener tween;
         private DateTime startTime;
+        private TaskCompletionSource<bool> tsc;
+
         public float SpeedPxPerSecond;
+        public bool Navigating { get; private set; }
 
         public void Start()
         {
@@ -23,7 +27,7 @@ namespace Ei.Simulation.Behaviours
 
             if (this.SpeedPxPerSecond == 0)
             {
-                this.SpeedPxPerSecond = this.Speed * // base speed (e.g. 5 km/h = 1.47 m/s)
+                this.SpeedPxPerSecond = this.SpeedKmH * // base speed (e.g. 5 km/h = 1.47 m/s)
                     (86440 / timer.DayLengthInSeconds);
                 this.SpeedPxPerSecond = this.SpeedPxPerSecond / env.Definition.MetersPerPixel;
             }
@@ -34,9 +38,14 @@ namespace Ei.Simulation.Behaviours
             }
         }
 
-        public override void MoveToDestination(float x, float y) {
+        public override Task<bool> MoveToDestination(float x, float y) {
+            
+            this.Navigating = true;
+            Log.Debug(this.gameObject.name + " Navigation", $"Moving to destination [{x}, {y}] at {this.SpeedKmH} km/h and {this.SpeedPxPerSecond} px/sec");
+
             if (this.SpeedPxPerSecond == 0) {
-                return;
+                Log.Warning(this.gameObject.name + " Navigation", "Agent cannot move as its speed is 0");
+                return Task.FromResult(false);
             }
 
             this.destinationX = x;
@@ -50,17 +59,13 @@ namespace Ei.Simulation.Behaviours
             var length = (float) time;
             this.tween = new Tweener(this.transform, this.destinationX, this.destinationY, length);
 
-            // this.tweener.Tween(this.Transform, new { X = x, Y = y }, time, 0);
-
-            this.Navigating = true;
-
-            // Debug.WriteLine($"Starting Navigation to {this.destinationX},{this.destinationY}  in {time} distance {distance}");
+            this.tsc = new TaskCompletionSource<bool>();
+            return tsc.Task;
         }
 
- 
 
         public void Update() {
-            if (!this.Navigating) {
+            if (this.tsc == null) {
                 return;
             }
 
@@ -70,12 +75,17 @@ namespace Ei.Simulation.Behaviours
             // Debug.WriteLine($"{xDelta} {yDelta}");
 
             if (xDelta < 0.001 && yDelta < 0.001) {
+                Log.Debug(this.gameObject.name + " Navigation", $"Moved to destination [{this.destinationX}, {this.destinationY}]");
+
+                this.tsc.TrySetResult(true);
+                this.tsc = null;
                 this.Navigating = false;
-                this.MovedToDestination();
 
                 // Debug.WriteLine($"Finished at '{(Timer.Now - this.startTime).TotalSeconds:0.00}' ${xDelta:0.0},{yDelta:0.0}");
             } else {
                 this.tween.Update(Time.deltaTime);
+
+                Log.Debug(this.gameObject.name + " Navigation", $"Moved to position [{this.transform.X}, {this.transform.Y}]");
             }
         }
     }

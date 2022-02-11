@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using Ei.Core.Ontology.Actions;
 
-namespace Ei.Simulation.Behaviours
+namespace Ei.Simulation.Behaviours.Environment
 {
     [Serializable]
-    public class EnvironmentDataDefinition
+    public class EnvironmentObjectSeed
     {
         private int maxId;
         private int count;
@@ -18,7 +18,7 @@ namespace Ei.Simulation.Behaviours
         public int[] Range { get; set; }
         public float Probability { get; set; }
         public int Max { get; set; }
-        public EnvironmentDataAction[] Actions { get; set; }
+        public EnvironmentAction[] Actions { get; set; }
 
         public string NewId()
         {
@@ -37,13 +37,7 @@ namespace Ei.Simulation.Behaviours
         }
     }
 
-    [Serializable]
-    public class EnvironmentDataAction
-    {
-        public string Id { get; set; }
-        public int DestroyAfter { get; set; }
-        public float Duration { get; set; }
-    }
+
 
     
 }

@@ -17,7 +17,7 @@ namespace Ei.Simulation.Behaviours.Agents
         protected override bool Connected()
         {
             // we use plan manager to create plan actions
-            this.planManager = new PlanManager();
+            this.planManager = new PlanManager(this.Actuator);
             
             // automatically start participation in the institution
             this.Governor.Continue();
@@ -35,13 +35,14 @@ namespace Ei.Simulation.Behaviours.Agents
             //    return;
             //}
 
-            Log.Debug(this.Governor.Name, "Reasoning ...");
 
             // skip if we are working on some actions
             if (this.Actuator.IsProcessing)
             {
                 return;
             }
+
+            Log.Debug(this.Governor.Name, "Reasoning ...");
 
             // we either continue executing a current plan
             // or we generate a new goal
@@ -53,6 +54,8 @@ namespace Ei.Simulation.Behaviours.Agents
             }
 
             var planNode = new AStarNode(connections[UnityEngine.Random.Range(0, connections.Length)]);
+
+            // planNode.CostData = env.NoLocationInfo(planNode.Arc.Action.Id).Id;
 
             // add environment action responsible for this
             // planNode.CostData = this.environment.NoLocationInfo(planNode.Arc.Action.Id).Id;

@@ -1,12 +1,16 @@
-﻿using Ei.Core.Runtime.Planning;
+﻿using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
+using Ei.Core.Runtime.Planning.Costs;
+using Ei.Logs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Ei.Simulation.Behaviours.PlanManager;
 
-namespace Ei.Simulation.Behaviours
+namespace Ei.Simulation.Behaviours.Actuators
 {
     #region struct ActionItem
     public class ActionItem
@@ -35,6 +39,35 @@ namespace Ei.Simulation.Behaviours
             this.processing = false;
         }
 
+        public virtual ICostManager CreateCostManager(PlannerSession session)
+        {
+            // return new TravelCostManager(agent, this.environment, (int)this.transform.X, (int)this.transform.Y)
+            return null;
+        }
+
+        public virtual async Task<bool> ExecutePlanItem(SimulationAgent agent, AStarNode planItem)
+        {
+            return this.PerformAction(agent, planItem);
+
+        }
+
+        protected bool PerformAction(SimulationAgent agent, AStarNode planItem, params VariableInstance[] parameters)
+        {
+            if (this.gameObject.GameEngine.IsRunning == false)
+            {
+                Log.Warning(agent.Name + " Actuator", "Game Engine Not Running: Ignoring Action");
+                return false;
+            }
+
+            var result = agent.Governor.PerformAction(planItem.Arc.Action.Id, parameters);
+            if (result.IsOk)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
         public void Enqueue(AStarNode planNode, SimulationAgent agent, PlanManager manager)
         {
             var plan = new List<AStarNode> { planNode };
@@ -59,6 +92,8 @@ namespace Ei.Simulation.Behaviours
             {
                 return;
             }
+
+            this.processing = true;
 
             // execute all actions in queue that can be executed at this time
             while (this.actionQueue.Count > 0)

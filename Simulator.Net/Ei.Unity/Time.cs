@@ -36,6 +36,7 @@ namespace UnityEngine
 
         public static void Start() {
             time = 0;
+            lastSeconds = 0;
             timerStart = DateTime.Now;
             globalTimer.Reset();
             globalTimer.Start();
@@ -52,7 +53,7 @@ namespace UnityEngine
         static float lastSeconds = 0;
  
         // calculation variables
-        const int DesiredFps = 121;
+        static int DesiredFps = 30;
         static float currentFrames;
         static float averageFrame;
         static float expectedFrame;
@@ -70,9 +71,9 @@ namespace UnityEngine
             // postpone if needed
             currentFrames += deltaTime;
             averageFrame = currentFrames / frames;
-            expectedFrame = DesiredFps == frames ? 1 : ((1000f - fpsTimer.ElapsedMilliseconds) / (DesiredFps - frames));
+            expectedFrame =  ((1000f - fpsTimer.ElapsedMilliseconds) / (DesiredFps == frames ? 1 : DesiredFps - frames));
             
-            // sw.WriteLine("Frame: {0}, Elapsed: {1}, Average: {2}, ExpectedFrame: {3}, Sleep: {4}", frames, fpsTimer.ElapsedMilliseconds, averageFrame, expectedFrame, expectedFrame - deltaTime);
+            // Console.WriteLine("Frame: {0}, Delta:{1}, Elapsed: {2}, Average: {3}, ExpectedFrame: {4}, Sleep: {5}", frames, deltaTime, fpsTimer.ElapsedMilliseconds, averageFrame, expectedFrame, expectedFrame - deltaTime);
             
             // only sleep if expected frame is bigger then last frame
             if ((int)(expectedFrame - deltaTime) > 0) {
@@ -88,14 +89,14 @@ namespace UnityEngine
                 frames = 0;
                 fpsTimer.Restart();
             }
-            
-            
+
             // do the final calculation
             time = (float) globalTimer.Elapsed.TotalSeconds;
             deltaTime = time - lastSeconds;
             total += deltaTime;
             lastSeconds = time;
 
+            // Console.WriteLine("Final Delta: " + deltaTime);
         }
     }
 }

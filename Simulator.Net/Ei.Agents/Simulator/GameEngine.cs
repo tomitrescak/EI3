@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using Ei.Simulation.Statistics;
+using Ei.Logs;
 
 namespace Ei.Simulation.Simulator
 {
@@ -22,6 +23,7 @@ namespace Ei.Simulation.Simulator
         private List<CancellationTokenSource> processThreads;
 
         private object locker = new object();
+        public bool IsRunning { get; private set; }
         
         // properties
         
@@ -29,10 +31,12 @@ namespace Ei.Simulation.Simulator
         public Dictionary<Type, List<MonoBehaviour>> Behaviours { get; private set; }
         public List<StatisticTrait> StatisticData { get; private set; }
 
+
         public GameEngine(Scene scene) {
             GameEngine.Instance = this;
             GameObject.simulation = this;
             this.scene = scene;
+            this.IsRunning = false;
 
             this.Behaviours = new Dictionary<Type, List<MonoBehaviour>>();
             this.GameObjects = new ObservableCollection<GameObject>(scene.GameObjects);
@@ -50,6 +54,8 @@ namespace Ei.Simulation.Simulator
         // methods
 
         public void Start() {
+
+            this.IsRunning = true;
 
             // init timer
             Time.Start();
@@ -77,6 +83,7 @@ namespace Ei.Simulation.Simulator
                 thread.Cancel();
             }
             this.processThreads.Clear();
+            this.IsRunning = false;
         }
 
         
@@ -169,14 +176,16 @@ namespace Ei.Simulation.Simulator
             var cancelSource = new CancellationTokenSource();
             var thread = new Thread(() => {
                 while (true) {
-                    cancelSource.Token.ThrowIfCancellationRequested();
+                    if (cancelSource.Token.IsCancellationRequested)
+                    {
+                        Log.Warning("Game Engine", "Stopping Game Engine ...");
+                        break;
+                    }
                     this.ProcessFrame();
                 }
             });
             thread.IsBackground = true;
             thread.Start();
-
-            
 
             this.processThreads.Add(cancelSource);
         }

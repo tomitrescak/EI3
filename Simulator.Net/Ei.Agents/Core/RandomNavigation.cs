@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Ei.Simulation.Behaviours
 {
     [DisplayName("Random Navigation")]
-    public class RandomNavigation : NavigationBase
+    public class RandomNavigation : MonoBehaviour
     {
         private LinearNavigation navigation;
  
@@ -13,9 +14,11 @@ namespace Ei.Simulation.Behaviours
         public float Width { get; set; }
         public float Height { get; set; }
 
-        public override void MoveToDestination(float x, float y)
+        public async Task MoveToRandomDestination()
         {
-            this.navigation.MoveToDestination(x,y);
+            var x = (float)(this.X + UnityEngine.Random.Range(0, this.Width));
+            var y = (float)(this.Y + UnityEngine.Random.Range(0, this.Height));
+            await this.navigation.MoveToDestination(x, y);
         }
 
         public void Start() {
@@ -24,10 +27,7 @@ namespace Ei.Simulation.Behaviours
 
         public void Update() {
             if (!this.navigation.Navigating) {
-                var x = (float) (this.X + UnityEngine.Random.Range(0, this.Width));
-                var y = (float) (this.Y + UnityEngine.Random.Range(0, this.Height));
-
-                this.navigation.MoveToDestination(x, y);
+                this.MoveToRandomDestination();
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Ei.Simulation.Core
 {
@@ -27,11 +28,14 @@ namespace Ei.Simulation.Core
             if (this.elapsed > this.time) {
                 this.elapsed = this.time;
             }
+            var fromX = this.transform.X;
+            var fromY = this.transform.Y;
             this.transform.position = new Vector3(
                 this.startX + (this.elapsed / this.time) * (this.endX - this.startX),
                 this.startY + (this.elapsed / this.time) * (this.endY - this.startY),
                 0
             );
+            // Console.WriteLine($"Delta: {deltaTime} Elapsed: {this.elapsed} Position [{fromX}, {fromY}] -> [{this.transform.X}, {this.transform.Y}]");
         }
     }
 }
