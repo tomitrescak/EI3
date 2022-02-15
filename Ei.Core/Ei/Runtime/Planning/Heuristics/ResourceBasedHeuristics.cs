@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Ei.Logs;
 using Ei.Core.Ontology;
+using System.Diagnostics;
 
 namespace Ei.Core.Runtime.Planning.Heuristics
 {
@@ -27,7 +28,7 @@ namespace Ei.Core.Runtime.Planning.Heuristics
                 if (difference > 0)
                 {
                     if (Log.IsDebug) {
-                        if (Log.IsDebug) Log.Debug("Planner", string.Format("Heuristic for '{0}': {1} [Now: {2} -> Goal: {3}]", goal.Name, difference * 10, goal.CurrentValue(from.Resources), goal.Value));
+                        Debug.WriteLine(string.Format("Heuristic for '{0}': {1} [Now: {2} -> Goal: {3}]", goal.Name, difference * 10, goal.CurrentValue(from.Resources), goal.Value));
                     }
                 }
 

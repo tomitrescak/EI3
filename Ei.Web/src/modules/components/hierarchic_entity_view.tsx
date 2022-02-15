@@ -50,7 +50,7 @@ export const HierarchicEntityView = observer(
           index={index}
           onClick={() => {
             handleClick();
-            history.push(`/ei/${ei.Name.toUrlName()}/${ei.Id}/${url}`);
+            history.push(`/ei/${ei.Name.toUrlName()}/${url}?ei=${ei.Id}`);
           }}
         >
           <Label

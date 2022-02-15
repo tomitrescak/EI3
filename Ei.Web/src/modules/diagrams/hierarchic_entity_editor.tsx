@@ -12,11 +12,10 @@ import { Ei } from "../ei/ei_model";
 import { HierarchicEntity } from "../ei/hierarchic_entity_model";
 import { PropertyView } from "../properties/property_view";
 import { useAppContext } from "../../config/context";
-import { useParams } from "react-router-dom";
+import { useQuery } from "../../helpers/client_helpers";
 
 interface Props {
   collection: (ei: Ei) => IObservableArray<HierarchicEntity>;
-  paramName: string;
 }
 
 // const deleteButton = style({
@@ -58,8 +57,9 @@ export const HierarchicEntityEditor = observer((props: Props) => {
   // };
 
   let context = useAppContext();
-  const params = useParams();
-  const id = params[props.paramName];
+  const { id } = useQuery();
+
+  console.log(id);
 
   if (!id) {
     return null;

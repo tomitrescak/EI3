@@ -89,9 +89,9 @@ export abstract class HierarchicEntity extends ParametricEntity {
   }
 
   get url() {
-    return `/ei/${this.ei.Name.toUrlName()}/${this.ei.Id}/${
+    return `/ei/${this.ei.Name.toUrlName()}/${
       this.route
-    }/${this.Name.toUrlName()}/${this.Id}`.toLowerCase();
+    }/${this.Name.toUrlName()}?ei=${this.ei.Id}&id=${this.Id}`.toLowerCase();
   }
 
   @action setParentId(parent: string) {

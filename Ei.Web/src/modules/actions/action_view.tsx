@@ -10,8 +10,7 @@ import { Action, ActionMessage } from "../ei/action_model";
 import { Ei } from "../ei/ei_model";
 import { PropertyView } from "../properties/property_view";
 import { useAppContext } from "../../config/context";
-import { Ui } from "../../helpers/client_helpers";
-import { useParams } from "react-router-dom";
+import { Ui, useQuery } from "../../helpers/client_helpers";
 
 function renderAction(action: Action, ei: Ei) {
   switch (action.$type) {
@@ -57,8 +56,7 @@ async function deleteAction(ei: Ei, workflowId: string, actionId: string) {
 
 export const ActionView = () => {
   const context = useAppContext();
-  const { workflowId, actionId } =
-    useParams<{ workflowId: string; actionId: string }>();
+  const { w, id } = useQuery<{ w: string; id: string }>();
 
   // const removeAgent = (e: React.MouseEvent<HTMLDivElement>) => {
   //   const idx = parseInt(e.currentTarget.getAttribute("data-index"), 10);
@@ -67,16 +65,16 @@ export const ActionView = () => {
 
   const ei = context.ei;
   const workflow = ei.Workflows.find(
-    (w) => w.Id.toLowerCase() === workflowId.toLowerCase()
+    (wf) => wf.Id.toLowerCase() === w.toLowerCase()
   );
   if (!workflow) {
-    return <div>Workflow does not exist: {workflowId} </div>;
+    return <div>Workflow does not exist: {w} </div>;
   }
   const action = workflow.Actions.find(
-    (a) => a.Id.toLowerCase() === actionId.toLowerCase()
+    (a) => a.Id.toLowerCase() === id.toLowerCase()
   );
   if (!action) {
-    return <div>Action does not exist: {actionId} </div>;
+    return <div>Action does not exist: {id} </div>;
   }
 
   return (
@@ -91,7 +89,7 @@ export const ActionView = () => {
         content="Delete"
         labelPosition="left"
         color="red"
-        onClick={() => deleteAction(ei, workflowId, actionId)}
+        onClick={() => deleteAction(ei, w, id)}
       />
     </Form>
   );

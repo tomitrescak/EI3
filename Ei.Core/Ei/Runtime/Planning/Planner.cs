@@ -221,7 +221,7 @@ namespace Ei.Core.Runtime.Planning
                     // TODO: Deal with workflow exit
                     //       Detect that arc leads to the state in which we can exit
                     //       Replicate the Context stack functionality as in governor "ExitWorkflow"
-
+                   
                     AStarNode newNode = this.CreateNode(connection, 
                         currentNode.Resources.Clone(),
                         currentNode, 

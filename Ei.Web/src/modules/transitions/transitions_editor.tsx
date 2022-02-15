@@ -6,9 +6,9 @@ import { Checkbox, Form, Input } from "semantic-ui-mobx";
 import { Header } from "semantic-ui-react";
 import { EntityEditor } from "../core/entity_view";
 import { Transition, TransitionSplit } from "../ei/transition_model";
-import { useParams } from "react-router-dom";
 import { useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
+import { useQuery } from "../../helpers/client_helpers";
 
 export const StateInput = styled(Form.Input)`
   opacity: 0.9 !important;
@@ -42,7 +42,7 @@ export const TransitionEditor = observer(() => {
     return false;
   }
 
-  const { id, workflowId } = useParams<{ id: string; workflowId: string }>();
+  const { id, w: workflowId } = useQuery<{ id: string; w: string }>();
   let ei = useAppContext().ei;
 
   let workflow = ei.Workflows.find((w) => w.Id === workflowId);

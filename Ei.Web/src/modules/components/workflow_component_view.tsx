@@ -80,11 +80,10 @@ export const WorkflowComponentList = observer(
               .slice()
               .sort(entitySort)
               .map((entity) => {
-                const url = `/ei/${ei.Name.toUrlName()}/${
-                  ei.Id
-                }/workflows/${workflow.Name.toUrlName()}/${
-                  workflow.Id
-                }/${route}/${entity.Id.toUrlName()}`.toLowerCase();
+                const url =
+                  `/ei/${ei.Name.toUrlName()}/workflows/${workflow.Name.toUrlName()}/${route}/${entity.Name.toUrlName()}?ei=${
+                    ei.Id
+                  }&id=${entity.Id.toUrlName()}&w=${workflow.Id}`.toLowerCase();
 
                 // if (url === history.pathname) {
                 // entity.setSelected(url === history.pathname);

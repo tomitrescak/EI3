@@ -44,9 +44,9 @@ export class AuthorisationList extends React.Component<Props> {
             {ei.Authorisation.map((authorisation, authIndex) => (
               <List.Item
                 as={Link}
-                to={`/ei/${ei.Name.toUrlName()}/${
+                to={`/ei/${ei.Name.toUrlName()}/authorisation/?id=${authIndex}&ei=${
                   ei.Id
-                }/authorisation/${authIndex}`}
+                }`}
                 key={index}
               >
                 <Icon name={authorisation.Organisation ? "users" : "user"} />

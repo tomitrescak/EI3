@@ -11,14 +11,13 @@ import {
 } from "semantic-ui-react";
 
 import { action } from "mobx";
-import { Ui } from "../../helpers/client_helpers";
+import { Ui, useQuery } from "../../helpers/client_helpers";
 import { AccessEditor } from "../access/access_editor";
 import { IconView } from "../core/entity_icon_view";
 import { EntityEditor } from "../core/entity_view";
 import { ActionDisplayType } from "../ei/connection_model";
 import { useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
-import { useParams } from "react-router-dom";
 import { State } from "../ei/state_model";
 
 const FloatedLabel = styled(SUILabel)`
@@ -192,7 +191,7 @@ export const ConnectionEditor = observer(() => {
   //   );
   // }
 
-  const { workflowId, id } = useParams<{ workflowId: string; id: string }>();
+  const { w: workflowId, id } = useQuery<{ w: string; id: string }>();
   let ei = context.ei;
 
   let workflow = ei.Workflows.find(

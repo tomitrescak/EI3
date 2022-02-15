@@ -10,16 +10,14 @@ import { WorkflowDiagramModel } from "../diagrams/model/workflow/workflow_diagra
 import { WorkflowNodeFactory } from "../diagrams/model/workflow/workflow_node_factory";
 
 import { useAppContext } from "../../config/context";
-import { useParams } from "react-router-dom";
 import { WorkflowLinkModel } from "../diagrams/model/workflow/workflow_link_model";
 import { AdvancedLinkFactory } from "../diagrams/model/workflow/adavanced_link_factory";
+import { useQuery } from "../../helpers/client_helpers";
 
 export const WorkflowView = () => {
   const context = useAppContext();
-  const { workflowId } = useParams<{ workflowId: string }>();
-  return (
-    <WorkflowContent key={context.Ui.history.version} workflowId={workflowId} />
-  );
+  const { w } = useQuery<{ w: string }>();
+  return <WorkflowContent key={context.Ui.history.version} workflowId={w} />;
 };
 
 export const WorkflowContent = observer(

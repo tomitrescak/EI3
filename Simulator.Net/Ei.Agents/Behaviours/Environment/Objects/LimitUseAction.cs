@@ -7,8 +7,6 @@ using UnityEngine;
 
 namespace Ei.Simulation.Behaviours.Environment.Objects
 {
-
-
     public class LimitUseAction: ObjectAction
     {
         public struct ActionUse
@@ -20,12 +18,12 @@ namespace Ei.Simulation.Behaviours.Environment.Objects
         private object locker = new object();
         private Dictionary<string, int> uses;
 
-        public List<ActionUse> actionLimits;
+        public ActionUse[] actionLimits;
 
         public void Start()
         {
             this.uses = new Dictionary<string, int>();
-            this.actionLimits = new List<ActionUse>();
+            // this.actionLimits = new List<ActionUse>();
 
             foreach (var action in this.actionLimits)
             {

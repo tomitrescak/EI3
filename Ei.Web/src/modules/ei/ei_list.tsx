@@ -109,7 +109,7 @@ export const EiList = observer(({ eis }: Props) => {
               />
 
               <Icon name="home" />
-              <Link to={`/ei/${e.name.toUrlName()}/${e.id}`}>{e.name}</Link>
+              <Link to={`/ei/${e.name.toUrlName()}?ei=${e.id}`}>{e.name}</Link>
             </List.Content>
           </List.Item>
         ))}

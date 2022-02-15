@@ -36,7 +36,7 @@ namespace Ei.Simulation.Behaviours.Reasoners
                 return;
             }
 
-            Log.Debug(this.agent.Governor.Name, "Reasoning ...");
+            // Log.Debug(this.agent.Governor.Name, "Reasoning ...");
 
             var connections = this.agent.Governor.Position.ViableConnections(this.agent.Governor);
             if (connections.Length == 0)

@@ -15,12 +15,13 @@ using Ei.Simulation.Simulator;
 using Ei.Simulation.Statistics;
 using UnityEngine;
 using Ei.Simulation.Behaviours;
-using Ei.Simulation.Behaviours.Agents;
 using Ei.Simulation.Behaviours.Actuators;
 using Ei.Simulation.Behaviours.Environment;
 using Ei.Simulation.Behaviours.Sensors;
 using Ei.Simulation.Behaviours.Environment.Objects;
 using Ei.Simulation.Behaviours.Reasoners;
+using System.Linq;
+using System.Diagnostics;
 
 namespace Ei.Server
 {
@@ -71,10 +72,46 @@ namespace Ei.Server
             public object Payload;
         }
 
+        struct TypeInfo
+        {
+            public string Name;
+            public Dictionary<string, TypeInfo> Fields;
+        }
+
         private Institution currentEi;
         // private SimulationProject project;
         private GameEngine gameEngine;
         private SocketLog socketLog;
+
+        //private void ListFields(FieldInfo[] fields, Dictionary<string, TypeInfo> recognised)
+        //{
+        //    foreach (var f in fields)
+        //    {
+        //        if (!Attribute.IsDefined(f, typeof(JsonIgnoreAttribute)))
+        //        {
+        //            Debug.WriteLine("---------------");
+        //            Debug.WriteLine($"Name: {f.Name}");
+        //            Debug.WriteLine($"Type: {f.FieldType.Name} {f.FieldType.AssemblyQualifiedName} {f.FieldType.Namespace} {f.FieldType.Assembly}");
+
+        //            if (!recognised.ContainsKey(f.FieldType.AssemblyQualifiedName)) {
+        //                var item = new TypeInfo
+        //                {
+        //                    Name = f.FieldType.Name,
+        //                    Fields = new Dictionary<string, TypeInfo>()
+        //                };
+        //                recognised.Add(f.FieldType.AssemblyQualifiedName, item);
+        //                item.Fields.Add()
+        //            }
+
+        //            Debug.WriteLine(" + Children");
+        //            ListFields(f.FieldType.GetFields().Where(f => f.IsPublic).ToArray());
+        //        }
+        //        else
+        //        {
+        //            // Debug.WriteLine(String.Format("Ignore Name: {0}", f.Name));
+        //        }
+        //    }
+        //}
 
         public EiHandler(WebSocketConnectionManager webSocketConnectionManager) : base(webSocketConnectionManager)
         {
@@ -100,20 +137,22 @@ namespace Ei.Server
             /// Reflection
 
             // Get all the types in your assembly. For testing purpose, I am using Aspose.3D, you can use any.
-            var allTypes = Assembly.GetAssembly(typeof(SimulationAgent)).GetTypes();
+            //var allTypes = Assembly.GetAssembly(typeof(SimulationAgent)).GetTypes();
 
-            foreach (var myType in allTypes)
-            {
-                // Check if this type is subclass of your base class
-                bool isSubType = myType.IsSubclassOf(typeof(MonoBehaviour));
+            //foreach (var myType in allTypes)
+            //{
+            //    // Check if this type is subclass of your base class
+            //    bool isSubType = myType.IsSubclassOf(typeof(MonoBehaviour));
 
-                // If it is sub-type, then print its name in Debug window.
-                if (isSubType)
-                {
-                    System.Diagnostics.Debug.WriteLine(myType.Name);
-                }
-            }
-
+            //    // If it is sub-type, then print its name in Debug window.
+            //    if (isSubType)
+            //    {
+            //        Debug.WriteLine("==============================================");
+            //        Debug.WriteLine(myType.Name);
+            //        // list all public fields
+            //        ListFields(myType.GetFields().Where(f => f.IsPublic).ToArray());
+            //    }
+            //}
         }
 
         // state changes
@@ -303,6 +342,26 @@ namespace Ei.Server
             return scene;
         }
 
+        private Scene PlanningAgent()
+        {
+            var scene = this.CreateTestScene();
+
+            var agentGo = new GameObject();
+            agentGo.name = "Human_" + id++;
+            var agent = agentGo.AddComponent<SimulationAgent>();
+            agent.Groups = new string[][] { new[] { "Default", "Citizen" } };
+            var planner = agentGo.AddComponent<PlanningReasoner>();
+            planner.GoalDefinition = new string[] { "Age=Min;Increment;1" };
+            planner.WaitForActuatorToFinish = true;
+            agentGo.AddComponent<EnvironmentalActuator>();
+            agentGo.AddComponent<Sensor>();
+            var navigation = agentGo.AddComponent<LinearNavigation>();
+            navigation.SpeedKmH = 1;
+            scene.GameObjects.Add(agentGo);
+
+            return scene;
+        }
+
         public void Run(string projectSource)
         {
             Console.WriteLine("Running Project");
@@ -340,10 +399,10 @@ namespace Ei.Server
             }
 
             // var scene = JsonConvert.DeserializeObject(projectSource, typeof(Scene)) as Scene;
-            var scene = RandomDecisionAgentWithEnvironmentScene();
+            var scene = PlanningAgent();
 
-            string output = JsonConvert.SerializeObject(scene);
-            File.WriteAllText("./ei.json", output);
+            //string output = JsonConvert.SerializeObject(scene);
+            //File.WriteAllText("./ei.json", output);
 
             // initialise runner that launches current scene
             this.gameEngine = new GameEngine(scene);

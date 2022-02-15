@@ -30,23 +30,11 @@ export const ExperimentList = observer((props: Props) => {
         <List>
           <List.Item
             as={Link}
-            to={`/${ei.Name.toUrlName()}/${ei.Id}/experiment/default/general/1`}
+            to={`/${ei.Name.toUrlName()}/experiment/default/general/1?ei=${
+              ei.Id
+            }`}
           >
             General
-          </List.Item>
-          <List.Item
-            as={Link}
-            to={`/${ei.Name.toUrlName()}/${ei.Id}/experiment/default/agents/1`}
-          >
-            Agents
-          </List.Item>
-          <List.Item
-            as={Link}
-            to={`/${ei.Name.toUrlName()}/${
-              ei.Id
-            }/experiment/default/environment/1`}
-          >
-            Environment
           </List.Item>
         </List>
       </AccordionContent>

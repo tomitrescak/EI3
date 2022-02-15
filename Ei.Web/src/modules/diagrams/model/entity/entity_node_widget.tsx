@@ -58,7 +58,7 @@ export const EntityNodeWidget = observer(({ size = 150, node }: Props) => {
   size = node.Name.length * 8 + 30;
 
   const history = useLocation();
-  const selected = node.url === history.pathname;
+  const selected = node.url === history.pathname + history.search;
 
   return (
     <div

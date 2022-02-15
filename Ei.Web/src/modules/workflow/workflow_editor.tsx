@@ -8,13 +8,13 @@ import { AccessEditor } from "../access/access_editor";
 import { EntityEditor } from "../core/entity_view";
 import { PropertyView } from "../properties/property_view";
 import { useAppContext } from "../../config/context";
-import { useParams } from "react-router-dom";
+import { useQuery } from "../../helpers/client_helpers";
 
 export const WorkflowEditor = observer(() => {
-  const { workflowId } = useParams<{ workflowId: string }>();
+  const { w } = useQuery<{ w: string }>();
   const context = useAppContext();
   let ei = context.ei;
-  let workflow = ei.Workflows.find((o) => o.Id === workflowId);
+  let workflow = ei.Workflows.find((o) => o.Id === w);
 
   if (!workflow) {
     return <Message content="Workflow Deleted" />;

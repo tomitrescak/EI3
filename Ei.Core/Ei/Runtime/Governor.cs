@@ -9,6 +9,7 @@ using Ei.Core.Runtime.Planning.Strategies;
 using Ei.Logs;
 using Ei.Core.Ontology.Actions;
 using ActionBase = Ei.Core.Ontology.Actions.ActionBase;
+using System.Diagnostics;
 
 namespace Ei.Core.Runtime
 {
@@ -781,7 +782,7 @@ namespace Ei.Core.Runtime
 
             this.Planner = planner;
 
-            if (Log.IsDebug) Log.Debug("Governor " + this.Name, "========= PLANNING: " + string.Join(";", goals.Select(w => w.Name + ":" + w.Value.ToString()).ToArray()));
+            if (Log.IsDebug) Debug.WriteLine("Governor " + this.Name + " PLANNING: " + string.Join(";", goals.Select(w => w.Name + ":" + w.Value.ToString()).ToArray()));
 
             switch (strategy) {
                 case PlanStrategy.ForwardSearch:

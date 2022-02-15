@@ -1,7 +1,22 @@
 import { WorkHistory } from "../modules/history/history";
 import { toast, ToastOptions } from "react-semantic-toasts";
-import swal, { SweetAlertType } from "sweetalert2";
+import swal from "sweetalert2/dist/sweetalert2";
+import type { SweetAlertIcon } from "sweetalert2";
 import type { History } from "history";
+import { useLocation } from "react-router-dom";
+import { useMemo } from "react";
+
+export function useQuery<T>(): T {
+  const { search } = useLocation();
+
+  return useMemo(() => {
+    var params = new URLSearchParams(search);
+    return Array.from(params.entries()).reduce((p, n) => {
+      p[n[0]] = n[1];
+      return p;
+    }, {}) as any;
+  }, [search]);
+}
 
 export const Ui = {
   history: new WorkHistory(),
@@ -30,8 +45,8 @@ export const Ui = {
       ...options,
     });
   },
-  alertDialog(name: string, text?: string, type: SweetAlertType = "error") {
-    swal(name, text, type);
+  alertDialog(name: string, text?: string, type: SweetAlertIcon = "error") {
+    swal.fire(name, text, type);
   },
   groupByArray<T>(xs: T[], key: string | Function): Array<Group<T>> {
     return xs.reduce(function (previous, current: Indexable<any>) {
@@ -52,12 +67,12 @@ export const Ui = {
     text = `Do you want to delete this record? This action cannot be undone.`,
     name = `Are you sure?`,
     confirmButtonText = `Delete`,
-    type: SweetAlertType = "warning"
+    type: SweetAlertIcon = "warning"
   ) {
-    const result = await swal({
+    const result = await swal.fire({
       title: name,
       text: text,
-      type: type,
+      icon: type,
       showCancelButton: true,
       cancelButtonColor: "grey",
       confirmButtonText: confirmButtonText,
@@ -82,7 +97,7 @@ export const Ui = {
   ) {
     // let title = mf(prompt);
 
-    return swal({
+    return swal.fire({
       title: prompt,
       input: "text",
       inputPlaceholder: placeholder,
@@ -96,8 +111,8 @@ export const Ui = {
     prompt: string,
     placeholder = "",
     validate = (val: string) => val !== ""
-  ): Promise<{ value: string }> {
-    return swal({
+  ) {
+    return swal.fire({
       title: prompt,
       input: "text",
       inputPlaceholder: placeholder,
@@ -111,7 +126,7 @@ export const Ui = {
     options: { [idx: string]: string },
     validate = (val: string) => val
   ) {
-    return swal({
+    return swal.fire({
       title: prompt,
       input: "select",
       inputOptions: options,

@@ -7,11 +7,11 @@ import { Header } from "semantic-ui-react";
 import { AccessEditor } from "../access/access_editor";
 import { EntityEditor } from "../core/entity_view";
 import { useAppContext } from "../../config/context";
-import { useParams } from "react-router-dom";
+import { useQuery } from "../../helpers/client_helpers";
 
 export const StateEditor = observer(() => {
   const context = useAppContext();
-  const { id, workflowId } = useParams<{ id: string; workflowId: string }>();
+  const { id, w: workflowId } = useQuery<{ id: string; w: string }>();
   let ei = context.ei;
 
   let workflow = ei.Workflows.find(

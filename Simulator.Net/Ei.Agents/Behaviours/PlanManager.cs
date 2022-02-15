@@ -40,6 +40,8 @@ namespace Ei.Simulation.Behaviours
         public event Action<PlanManager, SimulationAgent, List<AStarNode>, int> PlanItemFinished;
         public event Action<PlanManager, SimulationAgent, List<AStarNode>> PlanExecutionFinished;
 
+        public bool IsPlanning { get => planning; }
+
         public PlanManager(Actuator actuator)
         {
             this.actuator = actuator;
@@ -65,8 +67,9 @@ namespace Ei.Simulation.Behaviours
 
                 if (plan != null)
                 {
-                    Log.Info(logName, string.Format("Plan with length {0} generated in {1} seconds", plan == null ? 0 : plan.Count, (sw.ElapsedMilliseconds / 1000)));
-
+                    var planString = string.Join(" -> ", plan.Select(p => p.Arc != null ? p.Arc.Action != null ? $"({p.Arc.Id}) {p.Arc.Action.Id}" : p.Arc.Id : "[No Arc]").ToArray());
+                    Log.Info(logName, string.Format("Plan with length {0} generated in {1} seconds: {2} ", plan == null ? 0 : plan.Count, (sw.ElapsedMilliseconds / 1000), planString));
+                    
                     this.PlanFound?.Invoke(this, plan);
                     sw.Stop();
                     item.task.TrySetResult(plan);
@@ -97,6 +100,8 @@ namespace Ei.Simulation.Behaviours
             {
                 return;
             }
+
+            planning = true;
 
             while (sessions.Count > 0)
             {
@@ -135,9 +140,17 @@ namespace Ei.Simulation.Behaviours
             return tsc.Task;
         }
 
-        public async Task<ActionItem> CreateActionPlan(SimulationAgent agent, GoalState[] goal, string goalType)
+        public async Task<ActionItem> CreateActionPlan(SimulationAgent agent, GoalState[] goals, string goalType)
         {
-            var plan = await this.FindPlan(agent, goal, goalType);
+            // update the goal state
+            foreach (var goal in goals)
+            {
+                goal.Update(agent.Governor.Resources);
+            }
+
+            // find the plan
+
+            var plan = await this.FindPlan(agent, goals, goalType);
             if (plan == null)
             {
                 return null;
@@ -186,12 +199,11 @@ namespace Ei.Simulation.Behaviours
 
                     // skip plan items with no arcs
                     if (planItem.Arc == null) {
-                        this.PlanItemFinished?.Invoke(this, agent, plan, i);
-                        continue;
+                        // this.PlanItemFinished?.Invoke(this, agent, plan, i);
                     }
 
                     // move to new positions with arcs with no actions
-                    if (planItem.Arc.Action == null)
+                    else if (planItem.Arc.Action == null)
                     {
                         if (planItem.Arc.From != null && planItem.Arc.To != null && planItem.Arc.From.Id != planItem.Arc.To.Id)
                         {
@@ -201,13 +213,12 @@ namespace Ei.Simulation.Behaviours
                                 return this.FailPlan(agent, logName, "Could not move to the new state");
                             }
                         }
-                        this.PlanItemFinished?.Invoke(this, agent, plan, i);
-                        continue;
+                        // this.PlanItemFinished?.Invoke(this, agent, plan, i);
                     }
 
                     // main body of the plan execution
 
-                    if (planItem.Arc.Action is ActionExitWorkflow)
+                    else if (planItem.Arc.Action is ActionExitWorkflow)
                     {
                         try
                         {

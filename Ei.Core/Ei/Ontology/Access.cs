@@ -10,6 +10,7 @@ namespace Ei.Core.Ontology
     using Core.Runtime;
     using System;
     using Ei.Logs;
+    using System.Diagnostics;
 
     public class Access
     {
@@ -57,7 +58,10 @@ namespace Ei.Core.Ontology
             {
                 this.conditions.ForEach(c => c.ApplyPostconditions(agent, workflowState, parameters, planningMode));
             }
-            Log.Debug(agent.Name + " Access", "Postconditions Applied: " + agent.ToString());
+            if (Log.IsDebug)
+            {
+                Debug.WriteLine(agent.Name + " Access - Postconditions Applied: " + agent.ToString());
+            }
         }
 
         public void ApplyPostconditions(Institution.InstitutionState institutionState, Workflow.Store workflowState) {
@@ -67,7 +71,7 @@ namespace Ei.Core.Ontology
             }
             this.conditions.ForEach(c => c.ApplyPostconditions(institutionState, workflowState));
         }
-
+         
         public Access Add(AccessCondition condition) {
             this.conditions.Add(condition);
             return this;

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Accordion, Label, List, Loader, Menu } from "semantic-ui-react";
+import { Accordion, Loader, Menu } from "semantic-ui-react";
 
 import { observer } from "mobx-react";
 import styled from "@emotion/styled";
@@ -9,8 +9,8 @@ import { HierarchicEntityView } from "./hierarchic_entity_view";
 import { WorkflowList } from "./workflow_list_view";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { useAppContext } from "../../config/context";
-import { AccordionContent, AccordionTitle } from "./accordion";
 import { ExperimentList } from "../experiments/experiment_list";
+import { useQuery } from "../../helpers/client_helpers";
 
 const ComponentsType = styled.div`
   height: 100%;
@@ -32,8 +32,9 @@ export const Components = observer(() => {
   );
   const ei = context.ei;
   const store = context;
-  const { eiId, eiName } =
-    useParams<{ eiId: string; eiName: string; editor: string }>();
+
+  const { eiName } = useParams<{ eiName: string }>();
+  const { ei: eiId } = useQuery<{ ei: string }>();
 
   const compile = () => {
     context.ei.compile(context.client);
@@ -67,7 +68,7 @@ export const Components = observer(() => {
             title="Compile and Run the Institution"
             onClick={() => {
               context.ei.run(context.client);
-              history.push(`/ei/${ei.Name.toUrlName()}/${ei.Id}/execution`);
+              history.push(`/ei/${ei.Name.toUrlName()}/execution?ei=${ei.Id}`);
             }}
           />
           <Menu.Item

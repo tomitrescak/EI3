@@ -16,7 +16,7 @@ import { EiEditor } from "./modules/ei/ei_editor";
 import { ExecutionView } from "./modules/execution/execution_view";
 import { AuthorisationEditor } from "./modules/authorisations/authorisation_editor";
 import { EntitiesView } from "./modules/diagrams/entities_view";
-import { supabase } from "./config/supabase";
+// import { supabase } from "./config/supabase";
 import { configure } from "mobx";
 import { HierarchicEntityEditor } from "./modules/diagrams/hierarchic_entity_editor";
 import Account from "./auth/account";
@@ -36,14 +36,14 @@ const App = () => {
   const context = useAppContext();
   context.assignRouter(history);
 
-  const [session, setSession] = useState(null);
-  useEffect(() => {
-    setSession(supabase.auth.session());
+  // const [session, setSession] = useState(null);
+  // useEffect(() => {
+  //   setSession(supabase.auth.session());
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
+  //   supabase.auth.onAuthStateChange((_event, session) => {
+  //     setSession(session);
+  //   });
+  // }, []);
 
   // if (!session) {
   //   return <Auth />;
@@ -54,19 +54,19 @@ const App = () => {
       <Route exact path="/">
         <EiListContainer />
       </Route>
-      <Route
+      {/* <Route
         path="/profile"
         render={() => <Account key={session.user.id} session={session} />}
-      />
-      <Route path="/ei/:eiName/:eiId">
+      /> */}
+      <Route path="/ei/:eiName">
         <EiContainer>
           <Switch>
             <Route
-              path="/ei/:eiName/:eiId/authorisation/:authorisationId"
+              path="/ei/:eiName/authorisation"
               render={() => <EiLayout Main={AuthorisationEditor} />}
             />
             <Route
-              path="/ei/:eiName/:eiId/organisations/:organisationName?/:organisationId?"
+              path="/ei/:eiName/organisations/:organisationName?"
               render={() => (
                 <EiLayout
                   Main={() => (
@@ -77,7 +77,6 @@ const App = () => {
                   )}
                   Editor={() => (
                     <HierarchicEntityEditor
-                      paramName="organisationId"
                       collection={(ei) => ei.Organisations}
                     />
                   )}
@@ -86,58 +85,52 @@ const App = () => {
             />
 
             <Route
-              path="/ei/:eiName/:eiId/roles/:roleName?/:roleId?"
+              path="/ei/:eiName/roles/:roleName?"
               render={() => (
                 <EiLayout
                   Main={() => (
                     <EntitiesView type="roles" entities={(ei) => ei.Roles} />
                   )}
                   Editor={() => (
-                    <HierarchicEntityEditor
-                      paramName="roleId"
-                      collection={(ei) => ei.Roles}
-                    />
+                    <HierarchicEntityEditor collection={(ei) => ei.Roles} />
                   )}
                 />
               )}
             />
             <Route
-              path="/ei/:eiName/:eiId/types/:typeName?/:typeId?"
+              path="/ei/:eiName/types/:typeName?"
               render={() => (
                 <EiLayout
                   Main={() => (
                     <EntitiesView type="types" entities={(ei) => ei.Types} />
                   )}
                   Editor={() => (
-                    <HierarchicEntityEditor
-                      paramName="typeId"
-                      collection={(ei) => ei.Types}
-                    />
+                    <HierarchicEntityEditor collection={(ei) => ei.Types} />
                   )}
                 />
               )}
             />
 
             <Route
-              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/action/:actionId"
+              path="/ei/:eiName/workflows/:workflowName/action/:actionName?"
               render={() => (
                 <EiLayout Main={WorkflowView} Editor={ActionView} />
               )}
             />
             <Route
-              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/state/:id"
+              path="/ei/:eiName/workflows/:name/state/:stateName?"
               render={() => (
                 <EiLayout Main={WorkflowView} Editor={StateEditor} />
               )}
             />
             <Route
-              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/transition/:id"
+              path="/ei/:eiName/workflows/:name/transition/:transitionName?"
               render={() => (
                 <EiLayout Main={WorkflowView} Editor={TransitionEditor} />
               )}
             />
             <Route
-              path="/ei/:eiName/:eiId/workflows/:name/:workflowId/connection/:id"
+              path="/ei/:eiName/workflows/:name/connection/:connectionName?"
               render={() => (
                 <EiLayout
                   Main={WorkflowView}
@@ -146,24 +139,29 @@ const App = () => {
               )}
             />
             <Route
-              path="/ei/:eiName/:eiId/workflows/:name/:workflowId"
+              path="/ei/:eiName/workflows/:name"
               render={() => (
                 <EiLayout Main={WorkflowView} Editor={WorkflowEditor} />
               )}
             />
             <Route
               exact
-              path="/ei/:eiName/:eiId/execution"
+              path="/ei/:eiName/experiment/:experimentName?"
               render={() => <EiLayout Main={ExecutionView} />}
             />
             <Route
               exact
-              path="/ei/:eiName/:eiId"
+              path="/ei/:eiName/execution"
+              render={() => <EiLayout Main={ExecutionView} />}
+            />
+            <Route
+              exact
+              path="/ei/:eiName"
               render={() => <EiLayout Main={EiEditor} />}
             />
 
             <Route
-              path="/ei/:eiName/:eiId/execution"
+              path="/ei/:eiName/execution"
               render={() => (
                 <EiLayout
                   Main={() => <ExecutionView />}

@@ -49,11 +49,15 @@ namespace Ei.Core.Runtime.Planning
             var strexpression = desc[0];
             var updateValue = 0;
 
+            // e.g. Equal;1
             if (desc.Length > 1) {
                 strategy = (StateGoalStrategy)Enum.Parse(typeof(StateGoalStrategy), desc[0]);
                 strexpression = desc[1];
             }
 
+            // e.g. Min;Increment;1
+            // Value will always be 0
+            // UpdateValue is 1 (last elements)
             if (desc.Length > 2) {
                 updateStrategy = (GoalUpdateStrategy)Enum.Parse(typeof(GoalUpdateStrategy), desc[1]);
                 strexpression = "0";

@@ -5,8 +5,8 @@ import { Header, Message } from "semantic-ui-react";
 
 import { GroupsEditor } from "../core/group_editor";
 import { useAppContext } from "../../config/context";
-import { useParams } from "react-router-dom";
 import styled from "@emotion/styled";
+import { useQuery } from "../../helpers/client_helpers";
 
 const Pane = styled(Form)`
   padding: 12px;
@@ -14,7 +14,7 @@ const Pane = styled(Form)`
 
 export const AuthorisationEditor = () => {
   const context = useAppContext();
-  const { authorisationId } = useParams<{ authorisationId: string }>();
+  const { id } = useQuery<{ id: string }>();
 
   let ei = context.ei;
 
@@ -22,7 +22,7 @@ export const AuthorisationEditor = () => {
     return <Message content="Deleted" />;
   }
 
-  let authorisation = ei.Authorisation[parseInt(authorisationId, 10)];
+  let authorisation = ei.Authorisation[parseInt(id, 10)];
 
   if (!authorisation) {
     return <div>Authorisation deleted</div>;
