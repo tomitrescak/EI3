@@ -1,5 +1,4 @@
 import { IObservableArray, makeObservable, observable } from "mobx";
-import { field, FormState } from "semantic-ui-mobx";
 
 export interface PostconditionDao {
   Condition: string;
@@ -13,13 +12,11 @@ export interface AccessConditionDao {
   Postconditions: PostconditionDao[];
 }
 
-export class Postcondition extends FormState {
-  @field Condition: string;
-  @field Action: string;
+export class Postcondition {
+  @observable Condition: string;
+  @observable Action: string;
 
   constructor(postcondition: PostconditionDao) {
-    super();
-
     if (postcondition) {
       this.Condition = postcondition.Condition;
       this.Action = postcondition.Action;
@@ -36,15 +33,13 @@ export class Postcondition extends FormState {
   }
 }
 
-export class AccessCondition extends FormState {
-  @field Role: string;
-  @field Organisation: string;
-  @field Precondition: string;
+export class AccessCondition {
+  @observable Role: string;
+  @observable Organisation: string;
+  @observable Precondition: string;
   Postconditions: IObservableArray<Postcondition>;
 
   constructor(condition: Partial<AccessConditionDao>) {
-    super();
-
     this.Role = condition.Role;
     this.Organisation = condition.Organisation;
     this.Precondition = condition.Precondition;

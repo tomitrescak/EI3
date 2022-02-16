@@ -1,12 +1,13 @@
 import * as React from "react";
 
 import { observer } from "mobx-react";
-import { FieldCollection, Input } from "semantic-ui-mobx";
 import { Button } from "semantic-ui-react";
 import styled from "@emotion/styled";
+import { Input } from "../Form";
 
 interface Props {
-  collection: FieldCollection<any>;
+  collection: Array<any>;
+  collectionName: string;
 }
 
 const IoPuts = styled(Input)`
@@ -17,20 +18,19 @@ const IoPuts = styled(Input)`
 export class FieldCollectionEditor extends React.Component<Props> {
   remove = (e: React.MouseEvent<HTMLDivElement>) => {
     const idx = parseInt(e.currentTarget.getAttribute("data-index"), 10);
-    this.props.collection.removeAt(idx);
+    this.props.collection.splice(idx, 1);
   };
 
   add = () => {
-    this.props.collection.add("");
+    this.props.collection.push("");
   };
 
   render() {
     return (
       <>
-        {this.props.collection.array.map((_input, index) => (
+        {this.props.collection.map((_input, index) => (
           <IoPuts
-            owner={this.props.collection.fields[index]}
-            name="input"
+            name={`${this.props.collectionName}[${index}]`}
             action={{
               color: "red",
               icon: "trash",

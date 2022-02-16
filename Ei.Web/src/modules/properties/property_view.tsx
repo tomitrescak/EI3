@@ -2,12 +2,12 @@ import React from "react";
 
 import { IObservableArray } from "mobx";
 import { observer } from "mobx-react";
-import { Button, DropdownItemProps, Header } from "semantic-ui-react";
+import { Button, DropdownItemProps, Header, Label } from "semantic-ui-react";
 
-import { getField, Input, Label, Select } from "semantic-ui-mobx";
 import { Property } from "../ei/property_model";
 import { AppContext, useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
+import { Formix, Input, isRequired, Select } from "../Form";
 
 interface IPropertyOwner {
   Properties: IObservableArray<Property>;
@@ -93,28 +93,34 @@ class PropertyItem extends React.Component<PropertyItemProps> {
   render() {
     const { propertyItem, types } = this.props;
     return (
-      <Row>
-        <Input size="mini" fluid owner={getField(propertyItem, "Name")} />
-        <Select
-          compact
-          fluid
-          size="mini"
-          options={types}
-          owner={getField(propertyItem, "Type")}
-        />
-        <Input
-          fluid
-          size="mini"
-          owner={getField(propertyItem, "DefaultValue")}
-        />
-        <Button
-          size="mini"
-          width={1}
-          icon="trash"
-          color="red"
-          onClick={this.delete}
-        />
-      </Row>
+      <Formix
+        initialValues={propertyItem}
+        validationSchema={{
+          Name: [isRequired],
+          // DefaultValue: [isRequired],
+          Type: [isRequired],
+        }}
+      >
+        <Row>
+          <Input size="mini" fluid name={"Name"} />
+          <Select
+            compact
+            selection
+            fluid
+            size="mini"
+            options={types}
+            name={"Type"}
+          />
+          <Input fluid size="mini" name={"DefaultValue"} />
+          <Button
+            size="mini"
+            width={1}
+            icon="trash"
+            color="red"
+            onClick={this.delete}
+          />
+        </Row>
+      </Formix>
     );
   }
 }
@@ -149,9 +155,9 @@ export const PropertyView = observer((props: Props) => {
       {props.owner.Properties.length > 0 && (
         <>
           <Row>
-            <Label width={5} label="Name" />
-            <Label width={4} label="Type" />
-            <Label width={6} label="Default Value" />
+            <Label width={5} content="Name" />
+            <Label width={4} content="Type" />
+            <Label width={6} content="Default Value" />
             <div />
           </Row>
           {props.owner.Properties.map((property, index) => (

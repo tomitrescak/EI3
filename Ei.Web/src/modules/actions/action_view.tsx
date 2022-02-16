@@ -1,6 +1,5 @@
 import React from "react";
 
-import { Form, Select } from "semantic-ui-mobx";
 import { Button, Header } from "semantic-ui-react";
 
 import { EntityEditor } from "../core/entity_view";
@@ -11,6 +10,7 @@ import { Ei } from "../ei/ei_model";
 import { PropertyView } from "../properties/property_view";
 import { useAppContext } from "../../config/context";
 import { Ui, useQuery } from "../../helpers/client_helpers";
+import { Form, Formix, Select } from "../Form";
 
 function renderAction(action: Action, ei: Ei) {
   switch (action.$type) {
@@ -18,7 +18,7 @@ function renderAction(action: Action, ei: Ei) {
       return (
         <>
           <Select
-            owner={action.fields.WorkflowId}
+            name="WorkflowId"
             label="Workflow"
             options={ei.workflowOptions}
           />
@@ -78,19 +78,21 @@ export const ActionView = () => {
   }
 
   return (
-    <Form>
-      <EntityEditor entity={action} />
+    <Formix initialValues={action}>
+      <>
+        <EntityEditor entity={action} />
 
-      {renderAction(action, ei)}
+        {renderAction(action, ei)}
 
-      <Button
-        style={{ margin: "auto", marginTop: 8 }}
-        icon="trash"
-        content="Delete"
-        labelPosition="left"
-        color="red"
-        onClick={() => deleteAction(ei, w, id)}
-      />
-    </Form>
+        <Button
+          style={{ margin: "auto", marginTop: 8 }}
+          icon="trash"
+          content="Delete"
+          labelPosition="left"
+          color="red"
+          onClick={() => deleteAction(ei, w, id)}
+        />
+      </>
+    </Formix>
   );
 };

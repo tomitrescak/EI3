@@ -1,18 +1,15 @@
-import { makeObservable } from "mobx";
-import { field, FormState } from "semantic-ui-mobx";
+import { makeObservable, observable } from "mobx";
 
 export interface GroupDao {
   OrganisationId: string;
   RoleId: string;
 }
 
-export class Group extends FormState {
-  @field OrganisationId: string;
-  @field RoleId: string;
+export class Group {
+  @observable OrganisationId: string;
+  @observable RoleId: string;
 
   constructor(group: GroupDao) {
-    super();
-
     this.OrganisationId = group.OrganisationId;
     this.RoleId = group.RoleId;
 

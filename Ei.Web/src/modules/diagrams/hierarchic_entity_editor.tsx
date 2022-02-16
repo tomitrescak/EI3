@@ -1,7 +1,6 @@
 import React from "react";
 
 import { observer } from "mobx-react";
-import { Form } from "semantic-ui-mobx";
 
 import { Button, Message } from "semantic-ui-react";
 
@@ -99,17 +98,15 @@ export const HierarchicEntityEditor = observer((props: Props) => {
 
   return (
     <>
-      <Form>
-        <EntityEditor entity={entity} />
+      <EntityEditor entity={entity} />
 
-        {/*<Select label="Parent" options={organisations} owner={getField(organisation, 'Parent')} placeholder="No Parent"  />*/}
-        {parent && (
-          <div>
-            <b>Parent: </b> {parent}
-          </div>
-        )}
-        <PropertyView owner={entity} types={ei.types} />
-      </Form>
+      {/*<Select label="Parent" options={organisations} owner={getField(organisation, 'Parent')} placeholder="No Parent"  />*/}
+      {parent && (
+        <div>
+          <b>Parent: </b> {parent}
+        </div>
+      )}
+      <PropertyView owner={entity} types={ei.types} />
 
       <Button
         style={{ margin: "auto", marginTop: 8 }}

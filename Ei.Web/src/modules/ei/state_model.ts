@@ -1,6 +1,5 @@
 import { PortModelAlignment } from "@projectstorm/react-diagrams-core";
 import { action, IObservableArray, makeObservable, observable } from "mobx";
-import { field, intPositiveValidator } from "semantic-ui-mobx";
 
 import { Router, Ui } from "../../helpers/client_helpers";
 import { WorkflowPortModel } from "../diagrams/model/workflow/workflow_port_model";
@@ -23,11 +22,11 @@ export interface StateDao extends EntityDao {
 export class State extends PositionModel {
   Icon = "⚪️";
 
-  @field IsOpen: boolean;
-  @field(intPositiveValidator) Timeout: number;
-  @field IsStart: boolean;
-  @field IsEnd: boolean;
-  @field ShowRules: boolean;
+  @observable IsOpen: boolean;
+  @observable Timeout: number;
+  @observable IsStart: boolean;
+  @observable IsEnd: boolean;
+  @observable ShowRules: boolean;
   EntryRules: IObservableArray<AccessCondition>;
   ExitRules: IObservableArray<AccessCondition>;
 

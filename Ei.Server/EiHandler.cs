@@ -120,14 +120,14 @@ namespace Ei.Server
 
             // Serialisation
 
-            //Console.WriteLine("Edit EI");
-            //var scene = RandomDecisionAgentWithEnvironmentScene();
+            Console.WriteLine("Edit EI");
+            var scene = RandomDecisionAgentWithEnvironmentScene();
 
-            //string output = JsonConvert.SerializeObject(scene, Formatting.Indented, new JsonSerializerSettings
-            //{
-            //    TypeNameHandling = TypeNameHandling.Auto
-            //});
-            //File.WriteAllText("./ei.json", output);
+            string output = JsonConvert.SerializeObject(scene, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            });
+            File.WriteAllText("./ei.json", output);
 
             //var deserialised = JsonConvert.DeserializeObject<Scene>(output, new JsonSerializerSettings
             //{

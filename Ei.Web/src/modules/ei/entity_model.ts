@@ -1,5 +1,4 @@
-import { makeObservable } from "mobx";
-import { field, requiredField } from "semantic-ui-mobx";
+import { makeObservable, observable } from "mobx";
 import { FormNodeStore } from "../diagrams/model/form_state_model";
 
 export interface EntityDao {
@@ -20,9 +19,9 @@ export function entitySort(a: Entity, b: Entity): number {
 
 export class Entity extends FormNodeStore {
   Id: string;
-  @field Icon: string;
-  @requiredField Name: string;
-  @field Description: string;
+  @observable Icon: string;
+  @observable Name: string;
+  @observable Description: string;
 
   allowEditIcon = false;
 

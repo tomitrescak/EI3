@@ -1,16 +1,16 @@
 import * as React from "react";
 
 import { observer } from "mobx-react";
-import { Checkbox, Form, Input } from "semantic-ui-mobx";
+import styled from "@emotion/styled";
 
-import { Header } from "semantic-ui-react";
+import { FormGroup, Header } from "semantic-ui-react";
 import { EntityEditor } from "../core/entity_view";
 import { Transition, TransitionSplit } from "../ei/transition_model";
 import { useAppContext } from "../../config/context";
-import styled from "@emotion/styled";
 import { useQuery } from "../../helpers/client_helpers";
+import { Checkbox, Form, Formix, Input } from "../Form";
 
-export const StateInput = styled(Form.Input)`
+export const StateInput = styled(Input)`
   opacity: 0.9 !important;
 `;
 
@@ -30,12 +30,14 @@ export const TransitionEditor = observer(() => {
         <>
           <Header content="Splits" icon="fork" as="h4" dividing />
           {tr.Names.map((n, i) => (
-            <Form.Group key={i}>
-              <StateInput width={8} disabled value={n.stateId} label="State" />
-              <Input width={8} owner={n.fields.name} label="Agent Name" />
-            </Form.Group>
+            <Formix key={i} initialValues={n}>
+              <FormGroup>
+                <StateInput width={8} disabled name={"stateId"} label="State" />
+                <Input width={8} name={"name"} label="Agent Name" />
+              </FormGroup>
+            </Formix>
           ))}
-          <Checkbox owner={tr.fields.Shallow} label="Shallow" />
+          <Checkbox name="Shallow" label="Shallow" />
         </>
       );
     }
@@ -55,13 +57,15 @@ export const TransitionEditor = observer(() => {
   }
 
   return (
-    <Form>
-      <EntityEditor entity={transition} />
+    <Formix initialValues={transition}>
+      <>
+        <EntityEditor entity={transition} />
 
-      {renderTransition(transition)}
+        {renderTransition(transition)}
 
-      <Header as="h4" icon="unhide" content="Visual Properties" />
-      <Checkbox owner={transition.fields.Horizontal} label="Horizontal" />
-    </Form>
+        <Header as="h4" icon="unhide" content="Visual Properties" />
+        <Checkbox name="Horizontal" label="Horizontal" />
+      </>
+    </Formix>
   );
 });

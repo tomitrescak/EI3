@@ -15,12 +15,14 @@ specifiers:
   '@types/node': ^9.4.2
   '@types/pixi.js': ^4.7.2
   '@types/react': ^17.0.19
+  '@types/react-datepicker': ^4.3.4
   '@types/react-router-dom': ^5.1.8
   '@vitejs/plugin-react-refresh': ^1.3.6
   chart.js: ^3.5.1
   closest: ^0.0.1
   connect-history-api-fallback: ^1.5.0
   dagre: ^0.8.5
+  date-fns: ^2.28.0
   expect: ^27.2.5
   handlebars: ^4.7.7
   jsondiffpatch: ^0.2.5
@@ -37,6 +39,7 @@ specifiers:
   react: ^17.0.2
   react-alert-template-basic: ^1.0.2
   react-chartjs-2: ^3.0.4
+  react-datepicker: ^4.6.0
   react-dom: ^17.0.2
   react-multi-split-pane: ^0.3.2
   react-pixi-fiber: ^0.14.3
@@ -46,8 +49,8 @@ specifiers:
   react-syntax-highlighter: ^7.0.0
   react-transition-group: ^2.2.1
   resize-observer-polyfill: ^1.5.1
-  semantic-ui-mobx: ^1.3.0
   semantic-ui-react: ^2.0.3
+  semantic-ui-react-numberinput: ^1.5.0
   shortid: ^2.2.8
   sweetalert2: ^11.0.0
   tslib: ^2.3.1
@@ -72,6 +75,7 @@ dependencies:
   closest: 0.0.1
   connect-history-api-fallback: 1.6.0
   dagre: 0.8.5
+  date-fns: 2.28.0
   expect: 27.5.0
   handlebars: 4.7.7
   jsondiffpatch: 0.2.5
@@ -88,6 +92,7 @@ dependencies:
   react: 17.0.2
   react-alert-template-basic: 1.0.2_react@17.0.2
   react-chartjs-2: 3.3.0_chart.js@3.7.0+react@17.0.2
+  react-datepicker: 4.6.0_react-dom@17.0.2+react@17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-multi-split-pane: 0.3.3_react-dom@17.0.2+react@17.0.2
   react-pixi-fiber: 0.14.3_e28bd5fa2b9c812760cf6b2fca501f13
@@ -97,8 +102,8 @@ dependencies:
   react-syntax-highlighter: 7.0.4_react@17.0.2
   react-transition-group: 2.9.0_react-dom@17.0.2+react@17.0.2
   resize-observer-polyfill: 1.5.1
-  semantic-ui-mobx: 1.3.3_d0804d3726ad84366bcc42e494508e1e
   semantic-ui-react: 2.1.1_react-dom@17.0.2+react@17.0.2
+  semantic-ui-react-numberinput: 1.5.0_react@17.0.2
   shortid: 2.2.16
   sweetalert2: 11.4.0
   tslib: 2.3.1
@@ -110,6 +115,7 @@ devDependencies:
   '@types/node': 9.6.61
   '@types/pixi.js': 4.8.9
   '@types/react': 17.0.39
+  '@types/react-datepicker': 4.3.4_react@17.0.2
   typescript: 4.5.5
 
 packages:
@@ -495,18 +501,6 @@ packages:
       react-is: 16.13.1
     dev: false
 
-  /@hypnosphi/create-react-context/0.3.1_prop-types@15.8.1+react@17.0.2:
-    resolution: {integrity: sha512-V1klUed202XahrWJLLOT3EXNeCpFHCcJntdFGI15ntCwau+jfT386w7OFTMaCqOgXUH1fa0w/I1oZs+i/Rfr0A==}
-    peerDependencies:
-      prop-types: ^15.0.0
-      react: '>=0.14.0'
-    dependencies:
-      gud: 1.0.0
-      prop-types: 15.8.1
-      react: 17.0.2
-      warning: 4.0.3
-    dev: false
-
   /@jest/types/27.5.0:
     resolution: {integrity: sha512-oDHEp7gwSgA82RZ6pzUL3ugM2njP/lVB1MsxRZNOBk+CoNvh9SpH1lQixPFc/kDlV50v59csiW4HLixWmhmgPQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -559,7 +553,6 @@ packages:
 
   /@popperjs/core/2.11.2:
     resolution: {integrity: sha512-92FRmppjjqz29VMJ2dn+xdyXZBrMlE42AV6Kq6BwjWV7CNUW1hs2FtxSNLQE+gJhaZ6AAmYuO9y8dshhcBl7vA==}
-    dev: false
 
   /@projectstorm/geometry/6.7.0:
     resolution: {integrity: sha512-zNFe1gbAk5Vt0nDO0/pKVHp8ukIKWZb0JJ9UdhqPtt1AazoZ5SwbltHXgjpZ2jgyKlLjfB0ne1aRzRkW14qQVg==}
@@ -758,6 +751,17 @@ packages:
     dev: false
     optional: true
 
+  /@types/react-datepicker/4.3.4_react@17.0.2:
+    resolution: {integrity: sha512-5nTTz37KdTUgMZ1AAxztMWNtEnIMVRo8oCAEhIv0a6uUqDjvSKaMyPRpBV+8chi6f/A8wlTKJIpojpXca2dx3A==}
+    dependencies:
+      '@popperjs/core': 2.11.2
+      '@types/react': 17.0.39
+      date-fns: 2.28.0
+      react-popper: 2.2.5_4d48938cec404f33c7375aa6b453941c
+    transitivePeerDependencies:
+      - react
+    dev: true
+
   /@types/react-router-dom/5.3.3:
     resolution: {integrity: sha512-kpqnYK4wcdm5UaWI3fLcELopqLrHgLqNsdpHauzlQktfkHL3npOSwtj1Uz9oKBAzs7lFtVkV8j83voAz2D8fhw==}
     dependencies:
@@ -916,13 +920,6 @@ packages:
     requiresBuild: true
     dependencies:
       node-gyp-build: 4.3.0
-    dev: false
-
-  /call-bind/1.0.2:
-    resolution: {integrity: sha512-7O+FbCihrB5WGbFYesctwmTKae6rOiIzmz1icreWJ+0aA7LJfuqhEso2T9ncpcFtzMQtzXf2QGGueWJGTYsqrA==}
-    dependencies:
-      function-bind: 1.1.1
-      get-intrinsic: 1.1.1
     dev: false
 
   /callsites/3.1.0:
@@ -1115,6 +1112,10 @@ packages:
       lodash: 4.17.21
     dev: false
 
+  /date-fns/2.28.0:
+    resolution: {integrity: sha512-8d35hViGYx/QH0icHYCeLmsLmMUheMmTyV9Fcm6gvNwdw31yXXH+O85sOBJ+OLnLQMKZowvpKb6FgMIQjcpvQw==}
+    engines: {node: '>=0.11'}
+
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
     dependencies:
@@ -1131,24 +1132,6 @@ packages:
         optional: true
     dependencies:
       ms: 2.1.2
-    dev: false
-
-  /deep-equal/1.1.1:
-    resolution: {integrity: sha512-yd9c5AdiqVcR+JjcwUQb9DkhJc8ngNr0MahEBGvDiJw8puWab2yZlh+nkasOnZP+EGTAP6rRp2JzJhJZzvNF8g==}
-    dependencies:
-      is-arguments: 1.1.1
-      is-date-object: 1.0.5
-      is-regex: 1.1.4
-      object-is: 1.1.5
-      object-keys: 1.1.1
-      regexp.prototype.flags: 1.4.1
-    dev: false
-
-  /define-properties/1.1.3:
-    resolution: {integrity: sha512-3MqfYKj2lLzdMSf8ZIZE/V+Zuy+BgD6f164e8K2w7dgnpKArBDerGYpM46IYYcjnkdPNMjPk9A6VFB8+3SKlXQ==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      object-keys: 1.1.1
     dev: false
 
   /delegate/3.2.0:
@@ -1483,14 +1466,6 @@ packages:
     engines: {node: '>=6.9.0'}
     dev: false
 
-  /get-intrinsic/1.1.1:
-    resolution: {integrity: sha512-kWZrnVM42QCiEA2Ig1bG8zjoIMOgxWwYCEeNdwY6Tv/cOSeGpcoX4pXHfKUxNKVoArnrEr2e9srnAxxGIraS9Q==}
-    dependencies:
-      function-bind: 1.1.1
-      has: 1.0.3
-      has-symbols: 1.0.2
-    dev: false
-
   /globals/11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
     engines: {node: '>=4'}
@@ -1511,10 +1486,6 @@ packages:
     resolution: {integrity: sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==}
     dependencies:
       lodash: 4.17.21
-    dev: false
-
-  /gud/1.0.0:
-    resolution: {integrity: sha512-zGEOVKFM5sVPPrYs7J5/hYEw2Pof8KCyOwyhG8sAF26mCAeUFAcYPu1mwB7hhpIP29zOIBaDqwuHdLp0jvZXjw==}
     dev: false
 
   /handlebars/4.7.7:
@@ -1546,18 +1517,6 @@ packages:
   /has-flag/4.0.0:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
-    dev: false
-
-  /has-symbols/1.0.2:
-    resolution: {integrity: sha512-chXa79rL/UC2KlX17jo3vRGz0azaWEx5tGqZg5pO3NUyEJVB17dMruQlzCCOfUvElghKcm5194+BCRvi2Rv/Gw==}
-    engines: {node: '>= 0.4'}
-    dev: false
-
-  /has-tostringtag/1.0.0:
-    resolution: {integrity: sha512-kFjcSNhnlGV1kyoGk7OXKSawH5JOb/LzUc5w9B02hOTO0dfFRjbHQKvg1d6cf3HbeUmtU9VbbV3qzZ2Teh97WQ==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      has-symbols: 1.0.2
     dev: false
 
   /has/1.0.3:
@@ -1648,14 +1607,6 @@ packages:
       is-decimal: 1.0.4
     dev: false
 
-  /is-arguments/1.1.1:
-    resolution: {integrity: sha512-8Q7EARjzEnKpt/PCD7e1cgUS0a6X8u5tdSiMqXhojOdoV9TsMsiO+9VLC5vAmO8N7/GmXn7yjR8qnA6bVAEzfA==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      call-bind: 1.0.2
-      has-tostringtag: 1.0.0
-    dev: false
-
   /is-arrayish/0.2.1:
     resolution: {integrity: sha1-d8mYQFJ6qOyxqLppe4BkWnqSap0=}
     dev: false
@@ -1664,13 +1615,6 @@ packages:
     resolution: {integrity: sha512-SdNCUs284hr40hFTFP6l0IfZ/RSrMXF3qgoRHd3/79unUTvrFO/JoXwkGm+5J/Oe3E/b5GsnG330uUNgRpu1PA==}
     dependencies:
       has: 1.0.3
-    dev: false
-
-  /is-date-object/1.0.5:
-    resolution: {integrity: sha512-9YQaSxsAiSwcvS33MBk3wTCVnWK+HhF8VZR2jRxehM16QcVOdHqPn4VPHmRK4lSr38n9JriurInLcP90xsYNfQ==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      has-tostringtag: 1.0.0
     dev: false
 
   /is-decimal/1.0.4:
@@ -1684,14 +1628,6 @@ packages:
   /is-number/7.0.0:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
-    dev: false
-
-  /is-regex/1.1.4:
-    resolution: {integrity: sha512-kvRdxDsxZjhzUX07ZnLydzS1TU/TJlTUHHY4YLL87e37oUA49DfkLqgy+VjFocowy29cKvcSiu+kIv728jTTVg==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      call-bind: 1.0.2
-      has-tostringtag: 1.0.0
     dev: false
 
   /is-stream/1.1.0:
@@ -1760,7 +1696,6 @@ packages:
 
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
-    dev: false
 
   /jsesc/2.5.2:
     resolution: {integrity: sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA==}
@@ -1823,7 +1758,6 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
-    dev: false
 
   /lowlight/1.9.2:
     resolution: {integrity: sha512-Ek18ElVCf/wF/jEm1b92gTnigh94CtBNWiZ2ad+vTgW7cTmQxUY3I98BjHK68gZAJEWmybGBZgx9qv3QxLQB/Q==}
@@ -1971,19 +1905,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /object-is/1.1.5:
-    resolution: {integrity: sha512-3cyDsyHgtmi7I7DfSSI2LDp6SK2lwvtbg0p0R1e0RvTqF5ceGx+K2dfSjm1bKDMVCFEDAQvy+o8c6a7VujOddw==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      call-bind: 1.0.2
-      define-properties: 1.1.3
-    dev: false
-
-  /object-keys/1.1.1:
-    resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
-    engines: {node: '>= 0.4'}
-    dev: false
-
   /parent-module/1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
@@ -2073,11 +1994,6 @@ packages:
       resource-loader: 2.2.4
     dev: false
 
-  /popper.js/1.16.1:
-    resolution: {integrity: sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==}
-    deprecated: You can find the new Popper v2 at @popperjs/core, this package is dedicated to the legacy v1
-    dev: false
-
   /postcss/8.4.6:
     resolution: {integrity: sha512-OovjwIzs9Te46vlEx7+uXB0PLijpwjXGKXjVGGPIGubGpq7uh5Xgf6D6FiJ/SzJMBosHDp6a2hiXOS97iBXcaA==}
     engines: {node: ^10 || ^12 || >=14}
@@ -2152,20 +2068,20 @@ packages:
       react: 17.0.2
     dev: false
 
-  /react-datepicker/1.8.0_d0804d3726ad84366bcc42e494508e1e:
-    resolution: {integrity: sha512-N4LdVTtqJCsZyKXBQ/AqSEcH6FyhgsY1gD07zECNu60nGt5s4ngRlhYdHoE34VNFO+ZY+pvljZRLwSC8LS9RxQ==}
+  /react-datepicker/4.6.0_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-JGSQnQSQYUkS7zvSaZuyHv5lxp3wMrN7GXV0VA0E9Ax9fL3Bb6E1pSXjL6C3WoeuV8dt/mItQfRkPpRGCrl/OA==}
     peerDependencies:
-      moment: ^2.20.0
-      react: ^16.0.0
-      react-dom: ^16.0.0
+      react: ^16.9.0 || ^17
+      react-dom: ^16.9.0 || ^17
     dependencies:
+      '@popperjs/core': 2.11.2
       classnames: 2.3.1
-      moment: 2.29.1
+      date-fns: 2.28.0
       prop-types: 15.8.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-onclickoutside: 6.12.1_react-dom@17.0.2+react@17.0.2
-      react-popper: 1.3.11_react@17.0.2
+      react-popper: 2.2.5_4d48938cec404f33c7375aa6b453941c
     dev: false
 
   /react-dom/17.0.2_react@17.0.2:
@@ -2179,9 +2095,19 @@ packages:
       scheduler: 0.20.2
     dev: false
 
+  /react-event-injector/1.1.2_react@17.0.2:
+    resolution: {integrity: sha512-gSBsMinT3yeqGOqL6VoeekqdWYgMQ6O2rfYr5zPhNvE5qR3aL+xbn9Kjv4dLeL25gOSRJA/roDre9L5fHj89og==}
+    engines: {node: '>=8.5.0'}
+    peerDependencies:
+      react: ^16.3.0
+    dependencies:
+      prop-types: 15.8.1
+      react: 17.0.2
+      tiny-invariant: 1.2.0
+    dev: false
+
   /react-fast-compare/3.2.0:
     resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
-    dev: false
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -2232,21 +2158,6 @@ packages:
       scheduler: 0.19.1
     dev: false
 
-  /react-popper/1.3.11_react@17.0.2:
-    resolution: {integrity: sha512-VSA/bS+pSndSF2fiasHK/PTEEAyOpX60+H5EPAjoArr8JGm+oihu4UbrqcEBpQibJxBVCpYyjAX7abJ+7DoYVg==}
-    peerDependencies:
-      react: 0.14.x || ^15.0.0 || ^16.0.0 || ^17.0.0
-    dependencies:
-      '@babel/runtime': 7.17.0
-      '@hypnosphi/create-react-context': 0.3.1_prop-types@15.8.1+react@17.0.2
-      deep-equal: 1.1.1
-      popper.js: 1.16.1
-      prop-types: 15.8.1
-      react: 17.0.2
-      typed-styles: 0.0.7
-      warning: 4.0.3
-    dev: false
-
   /react-popper/2.2.5_4d48938cec404f33c7375aa6b453941c:
     resolution: {integrity: sha512-kxGkS80eQGtLl18+uig1UIf9MKixFSyPxglsgLBxlYnyDf65BiY9B3nZSc6C9XUNDgStROB0fMQlTEz1KxGddw==}
     peerDependencies:
@@ -2257,7 +2168,6 @@ packages:
       react: 17.0.2
       react-fast-compare: 3.2.0
       warning: 4.0.3
-    dev: false
 
   /react-reconciler/0.25.1_react@17.0.2:
     resolution: {integrity: sha512-R5UwsIvRcSs3w8n9k3tBoTtUHdVhu9u84EG7E5M0Jk9F5i6DA1pQzPfUZd6opYWGy56MJOtV3VADzy6DRwYDjw==}
@@ -2381,14 +2291,6 @@ packages:
     resolution: {integrity: sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==}
     dev: false
 
-  /regexp.prototype.flags/1.4.1:
-    resolution: {integrity: sha512-pMR7hBVUUGI7PMA37m2ofIdQCsomVnas+Jn5UPGAHQ+/LlwKm/aTLJHdasmHRzlfeZwHiAOaRSo2rbBDm3nNUQ==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      call-bind: 1.0.2
-      define-properties: 1.1.3
-    dev: false
-
   /remove-array-items/1.1.1:
     resolution: {integrity: sha512-MXW/jtHyl5F1PZI7NbpS8SOtympdLuF20aoWJT5lELR1p/HJDd5nqW8Eu9uLh/hCRY3FgvrIT5AwDCgBODklcA==}
     dev: false
@@ -2463,16 +2365,14 @@ packages:
     dev: false
     optional: true
 
-  /semantic-ui-mobx/1.3.3_d0804d3726ad84366bcc42e494508e1e:
-    resolution: {integrity: sha512-kd+Fdb0cToLJufga7HoyMk0S47ysMd/RCO0Xj/Wcsf3iqCgEAwbktS3IZdEpZrNfMglnMCTGFAm6LhwUEFgfgw==}
-    peerDependencies:
-      moment: ^2.20.1
+  /semantic-ui-react-numberinput/1.5.0_react@17.0.2:
+    resolution: {integrity: sha512-pZoXVR7IjcOyCCD/GepJQAoiG2WH8t0OtJ6hHEhlIhX0sptmtZPrL1YBJtBDEfJdsFNRUH8FjaCUezzZr77UmA==}
     dependencies:
-      moment: 2.29.1
-      react-datepicker: 1.8.0_d0804d3726ad84366bcc42e494508e1e
+      lodash: 4.17.21
+      prop-types: 15.8.1
+      react-event-injector: 1.1.2_react@17.0.2
     transitivePeerDependencies:
       - react
-      - react-dom
     dev: false
 
   /semantic-ui-react/2.1.1_react-dom@17.0.2+react@17.0.2:
@@ -2653,10 +2553,6 @@ packages:
     resolution: {integrity: sha512-eiDBDOmkih5pMbo9OqsqPRGMljLodLcwd5XD5JbtNB0o89xZAwynY9EdCDsJU7LtcVCClu9DvM7/0Ep1hYX3EQ==}
     dev: false
 
-  /typed-styles/0.0.7:
-    resolution: {integrity: sha512-pzP0PWoZUhsECYjABgCGQlRGL1n7tOHsgwYv3oIiEpJwGhFTuty/YNeduxQYzXXa3Ge5BdT6sHYIQYpl4uJ+5Q==}
-    dev: false
-
   /typedarray-to-buffer/3.1.5:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
     dependencies:
@@ -2734,7 +2630,6 @@ packages:
     resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
     dependencies:
       loose-envify: 1.4.0
-    dev: false
 
   /webidl-conversions/3.0.1:
     resolution: {integrity: sha1-JFNCdeKnvGvnvIZhHMFq4KVlSHE=}

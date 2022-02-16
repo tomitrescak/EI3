@@ -5,7 +5,6 @@ import {
   makeObservable,
   observable,
 } from "mobx";
-import { field } from "semantic-ui-mobx";
 import {
   NodeModelListener,
   PortModelAlignment,
@@ -32,7 +31,7 @@ export interface HierarchicEntityDao extends ParametricEntityDao {
 export abstract class HierarchicEntity extends ParametricEntity {
   ei: Ei;
 
-  @field private _parent: string;
+  @observable private _parent: string;
   private _parentLink: EntityLinkModel;
   private parents: IObservableArray<HierarchicEntity>;
   points: PointDao[];

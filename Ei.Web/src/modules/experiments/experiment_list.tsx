@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Label, List } from "semantic-ui-react";
 import { AccordionContent, AccordionTitle } from "../components/accordion";
+import { AccordionButton } from "../components/hierarchic_entity_view";
 import { Ei } from "../ei/ei_model";
 
 interface Props {
@@ -25,17 +26,27 @@ export const ExperimentList = observer((props: Props) => {
           content={ei.Experiments.length}
         />{" "}
         Experiments
+        <AccordionButton
+          floated="right"
+          icon="plus"
+          compact
+          color="green"
+          onClick={ei.createExperiment}
+        />
       </AccordionTitle>
       <AccordionContent active={active}>
         <List>
-          <List.Item
-            as={Link}
-            to={`/${ei.Name.toUrlName()}/experiment/default/general/1?ei=${
-              ei.Id
-            }`}
-          >
-            General
-          </List.Item>
+          {ei.Experiments.map((e, ix) => (
+            <List.Item
+              key={e.Id + ix}
+              as={Link}
+              to={`/ei/${ei.Name.toUrlName()}/experiment/${
+                e.Name || "None"
+              }?ei=${ei.Id}&id=${e.Id || "none"}`}
+            >
+              {e.Name || "None"}
+            </List.Item>
+          ))}
         </List>
       </AccordionContent>
     </>

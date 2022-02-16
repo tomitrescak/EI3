@@ -1,5 +1,17 @@
-import { FormState } from 'semantic-ui-mobx';
+export type ComponentDao = {
+  [index: string]: any;
+  Id: string;
+  $type: string;
+};
 
-export class Experiment extends FormState {
+export type GameObjectDao = {
+  Id: string;
+  Name: string;
+  Components: ComponentDao[];
+};
 
-}
+export type ExperimentDao = {
+  Id: string;
+  Name: string;
+  GameObjects: GameObjectDao[];
+};

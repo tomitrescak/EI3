@@ -1,15 +1,17 @@
 import React from "react";
 
-import { Form, Input, Select } from "semantic-ui-mobx";
 import { Header, Message } from "semantic-ui-react";
 
 import { GroupsEditor } from "../core/group_editor";
 import { useAppContext } from "../../config/context";
 import styled from "@emotion/styled";
 import { useQuery } from "../../helpers/client_helpers";
+import { Formix, Input, Select } from "../Form";
 
-const Pane = styled(Form)`
+const Pane = styled.div`
   padding: 12px;
+  width: 100%;
+  label: AuthorisationPane;
 `;
 
 export const AuthorisationEditor = () => {
@@ -29,18 +31,21 @@ export const AuthorisationEditor = () => {
   }
 
   return (
-    <Pane>
-      <Input owner={authorisation.fields.User} label="User" />
-      <Select
-        owner={authorisation.fields.Organisation}
-        label="Organisation"
-        options={ei.removableOrganisationsOptions}
-      />
-      <Input owner={authorisation.fields.Password} label="Password" />
+    <Formix initialValues={authorisation}>
+      <Pane>
+        <Input name="User" label="User" />
+        <Select
+          name="Organisation"
+          label="Organisation"
+          selection
+          options={ei.removableOrganisationsOptions}
+        />
+        <Input name="Password" label="Password" />
 
-      <Header as="h4" content="Role Assignments" icon="users" dividing />
+        <Header as="h4" content="Role Assignments" icon="users" dividing />
 
-      <GroupsEditor groups={authorisation.Groups} ei={ei} />
-    </Pane>
+        <GroupsEditor groups={authorisation.Groups} ei={ei} />
+      </Pane>
+    </Formix>
   );
 };

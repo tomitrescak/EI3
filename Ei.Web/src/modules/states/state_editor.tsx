@@ -1,13 +1,13 @@
 import React from "react";
 
 import { observer } from "mobx-react";
-import { Checkbox, Form, Input } from "semantic-ui-mobx";
 import { Header } from "semantic-ui-react";
 
 import { AccessEditor } from "../access/access_editor";
 import { EntityEditor } from "../core/entity_view";
 import { useAppContext } from "../../config/context";
 import { useQuery } from "../../helpers/client_helpers";
+import { Checkbox, Form, Formix, Input } from "../Form";
 
 export const StateEditor = observer(() => {
   const context = useAppContext();
@@ -28,31 +28,33 @@ export const StateEditor = observer(() => {
   }
 
   return (
-    <Form>
-      <EntityEditor entity={state} />
-      <Input owner={state.fields.Timeout} label="Timeout" type="number" />
-      <Checkbox owner={state.fields.IsOpen} label="Open" />
-      <Checkbox owner={state.fields.IsStart} label="Start State" />
-      <Checkbox owner={state.fields.IsEnd} label="End State" />
+    <Formix initialValues={state}>
+      <>
+        <EntityEditor entity={state} />
+        <Input name={"Timeout"} label="Timeout" type="number" />
+        <Checkbox name={"IsOpen"} label="Open" />
+        <Checkbox name={"IsStart"} label="Start State" />
+        <Checkbox name={"IsEnd"} label="End State" />
 
-      <Header as="h4" icon="legal" content="Entry Rules" dividing />
-      <AccessEditor
-        ei={ei}
-        access={state.EntryRules}
-        name={"state_entry_" + state.Id}
-        workflow={workflow}
-      />
+        <Header as="h4" icon="legal" content="Entry Rules" dividing />
+        <AccessEditor
+          ei={ei}
+          access={state.EntryRules}
+          name={"state_entry_" + state.Id}
+          workflow={workflow}
+        />
 
-      <Header as="h4" icon="legal" content="Exit Rules" />
-      <AccessEditor
-        ei={ei}
-        access={state.ExitRules}
-        name={"state_exit_" + state.Id}
-        workflow={workflow}
-      />
+        <Header as="h4" icon="legal" content="Exit Rules" />
+        <AccessEditor
+          ei={ei}
+          access={state.ExitRules}
+          name={"state_exit_" + state.Id}
+          workflow={workflow}
+        />
 
-      <Header as="h4" icon="unhide" content="Visual Properties" />
-      <Checkbox owner={state.fields.ShowRules} label="Show Rules" />
-    </Form>
+        <Header as="h4" icon="unhide" content="Visual Properties" />
+        <Checkbox name={"ShowRules"} label="Show Rules" />
+      </>
+    </Formix>
   );
 });

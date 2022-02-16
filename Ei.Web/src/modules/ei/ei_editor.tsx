@@ -1,7 +1,6 @@
 import React from "react";
 
 import { observer } from "mobx-react";
-import { Form, Select } from "semantic-ui-mobx";
 import { Header, Message } from "semantic-ui-react";
 
 import { EntityEditor } from "../core/entity_view";
@@ -9,9 +8,12 @@ import { CodeEditor } from "../core/monaco_editor";
 import { PropertyView } from "../properties/property_view";
 import styled from "@emotion/styled";
 import { useAppContext } from "../../config/context";
+import { Form, Formix, Select } from "../Form";
 
-const EditorForm = styled(Form)`
+const EditorForm = styled.div`
   padding: 12px;
+  width: 100%;
+  label: EditorForm;
 `;
 
 export const EiEditor = observer(() => {
@@ -29,20 +31,24 @@ export const EiEditor = observer(() => {
   }
 
   return (
-    <EditorForm>
-      <EntityEditor entity={ei} />
+    <div className="ui form">
+      <Formix initialValues={ei}>
+        <EditorForm>
+          <EntityEditor entity={ei} />
 
-      <Select
-        label="Main Workflow"
-        options={ei.workflowOptions}
-        owner={ei.fields.MainWorkflow}
-      />
+          <Select
+            label="Main Workflow"
+            options={ei.workflowOptions}
+            name={"MainWorkflow"}
+          />
 
-      <Header as="h5" content="Expressions" dividing icon="code" />
+          <Header as="h5" content="Expressions" dividing icon="code" />
 
-      <CodeEditor update={update} value={value} i={ei.Properties} />
+          <CodeEditor update={update} value={value} i={ei.Properties} />
 
-      <PropertyView owner={ei} types={ei.types} />
-    </EditorForm>
+          <PropertyView owner={ei} types={ei.types} />
+        </EditorForm>
+      </Formix>
+    </div>
   );
 });

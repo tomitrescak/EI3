@@ -1,17 +1,19 @@
-import { IObservableArray, observable } from 'mobx';
-import { field, FieldCollection } from 'semantic-ui-mobx';
+import { IObservableArray, makeObservable, observable } from "mobx";
 
-import { Group } from './group_model';
-import { ParametricEntity, ParametricEntityDao } from './parametric_entity_model';
+import { Group } from "./group_model";
+import {
+  ParametricEntity,
+  ParametricEntityDao,
+} from "./parametric_entity_model";
 
 // #region ############### Action ####################
 export interface ActionDao extends ParametricEntityDao {
   $type?: string;
 }
 
-export class Action extends ParametricEntity { 
-  Icon = '';
-  $type = '';
+export class Action extends ParametricEntity {
+  Icon = "";
+  $type = "";
 
   constructor(action: Partial<ActionDao>) {
     super(action);
@@ -20,7 +22,7 @@ export class Action extends ParametricEntity {
 
   get json(): ActionDao {
     return {
-      ...super.json
+      ...super.json,
     };
   }
 }
@@ -31,24 +33,26 @@ export interface ActionJoinWorkflowDao extends ActionDao {
   WorkflowId: string;
 }
 
-export class ActionJoinWorkflow extends Action { 
-  @field WorkflowId: string;
+export class ActionJoinWorkflow extends Action {
+  @observable WorkflowId: string;
 
-  Icon = '📁';
+  Icon = "📁";
 
   constructor(action: Partial<ActionJoinWorkflowDao>) {
     super(action);
     this.WorkflowId = action.WorkflowId;
 
-    this.$type = 'ActionJoinWorkflowDao';
+    this.$type = "ActionJoinWorkflowDao";
+
+    makeObservable(this);
   }
 
   get json() {
     return {
-      $type: 'ActionJoinWorkflowDao',
+      $type: "ActionJoinWorkflowDao",
       ...super.json,
-      WorkflowId: this.WorkflowId
-    }
+      WorkflowId: this.WorkflowId,
+    };
   }
 }
 // #endregion
@@ -59,46 +63,48 @@ export interface ActionMessageDao extends ActionDao {
   NotifyGroups: Group[];
 }
 
-export class ActionMessage extends Action { 
-  NotifyAgents: FieldCollection<string>;
+export class ActionMessage extends Action {
+  NotifyAgents: IObservableArray<string>;
   NotifyGroups: IObservableArray<Group>;
 
-  Icon = '✉️';
+  Icon = "✉️";
 
   constructor(action: Partial<ActionMessageDao>) {
     super(action);
-    this.NotifyAgents = new FieldCollection((action.NotifyAgents || []));
-    this.NotifyGroups = observable((action.NotifyGroups || []).map(g => new Group(g)));
+    this.NotifyAgents = observable(action.NotifyAgents || []);
+    this.NotifyGroups = observable(
+      (action.NotifyGroups || []).map((g) => new Group(g))
+    );
 
-    this.$type = 'ActionMessageDao';
+    this.$type = "ActionMessageDao";
   }
 
   get json() {
     return {
-      $type: 'ActionMessageDao',
+      $type: "ActionMessageDao",
       ...super.json,
-      NotifyAgents: this.NotifyAgents.array.map(a => a),
-      NotifyGroups: this.NotifyGroups.map(g => g.json)
-    }
+      NotifyAgents: this.NotifyAgents.map((a) => a),
+      NotifyGroups: this.NotifyGroups.map((g) => g.json),
+    };
   }
 }
 // #endregion
 
 // #region ############### ActionTimeout ####################
-export class ActionTimeout extends Action { 
-  Icon = '🕐';
+export class ActionTimeout extends Action {
+  Icon = "🕐";
 
   constructor(action: Partial<ActionDao>) {
     super(action);
 
-    this.$type = 'ActionTimeoutDao';
+    this.$type = "ActionTimeoutDao";
   }
 
   get json() {
     return {
-      $type: 'ActionTimeoutDao',
+      $type: "ActionTimeoutDao",
       ...super.json,
-    }
+    };
   }
 }
 // #endregion

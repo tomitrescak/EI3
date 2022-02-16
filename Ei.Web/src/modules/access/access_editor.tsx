@@ -2,8 +2,15 @@ import * as React from "react";
 
 import { observer } from "mobx-react";
 
-import { Checkbox, field, Form, FormState, Select } from "semantic-ui-mobx";
-import { Accordion, Button, Icon, Popup, Segment } from "semantic-ui-react";
+import {
+  Accordion,
+  Button,
+  FormButton,
+  FormGroup,
+  Icon,
+  Popup,
+  Segment,
+} from "semantic-ui-react";
 
 import { CodeEditor } from "../core/monaco_editor";
 import { AccessCondition, Postcondition } from "../ei/access_model";
@@ -12,7 +19,8 @@ import { Ei, Organisation, Role } from "../ei/ei_model";
 import { Workflow } from "../ei/workflow_model";
 import { AccordionHandler } from "../../config/context";
 import styled from "@emotion/styled";
-import { makeObservable } from "mobx";
+import { makeObservable, observable } from "mobx";
+import { Checkbox, Formix, Select } from "../Form";
 
 interface AccessProps {
   access: AccessCondition[];
@@ -27,7 +35,7 @@ interface AccessProps {
 const AddButton = styled(Button)`
   margin-top: 12px !important;
 `;
-const FieldRow = styled(Form.Group)`
+const FieldRow = styled(FormGroup)`
   margin: 0px !important;
 `;
 const EditorHolder = styled(Segment)`
@@ -98,12 +106,11 @@ interface AccessConditionProps {
   hideActionCondition: boolean;
 }
 
-class AccessConditionState extends FormState {
-  @field showPrecondition: boolean = false;
-  @field showPostcondition: boolean = false;
+class AccessConditionState {
+  @observable showPrecondition: boolean = false;
+  @observable showPostcondition: boolean = false;
 
   constructor(show: boolean) {
-    super();
     this.showPrecondition = show;
 
     makeObservable(this);
@@ -151,7 +158,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
       ei.Organisations[0];
     const role = ei.Roles.find((o) => o.Id === condition.Role) || ei.Roles[0];
     return (
-      <>
+      <Formix initialValues={condition}>
         <Accordion.Title
           active={handler.isActive(index)}
           index={index}
@@ -169,17 +176,17 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
               <FieldRow>
                 <Select
                   fluid
-                  owner={condition.fields.Organisation}
+                  name={"Organisation"}
                   label="Organisation"
                   options={ei.organisationsOptions}
                 />
                 <Select
                   fluid
-                  owner={condition.fields.Role}
+                  name={"Role"}
                   label="Role"
                   options={ei.roleOptions}
                 />
-                <Form.Button
+                <FormButton
                   label="&nbsp;"
                   type="button"
                   name="removeRule"
@@ -190,47 +197,48 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                 />
               </FieldRow>
             </Segment>
-            {!hidePreconditions && (
-              <Segment tertiary={true} attached as="h5" icon="legal">
-                <Icon name="legal" />
-                <Popup trigger={<span>Precondition</span>} content={<Info />} />
-                <div style={{ float: "right" }}>
-                  <Checkbox
-                    owner={this.accessState.fields.showPrecondition}
-                    label="Show"
-                  />
-                </div>
-              </Segment>
-            )}
-            {!hidePreconditions && this.accessState.showPrecondition && (
-              <EditorHolder secondary attached>
-                <CodeEditor
-                  update={this.actionUpdate}
-                  value={this.actionValue}
-                  height={ei.editorHeight(this.actionValue())}
-                  i={ei.Properties}
-                  w={workflow && workflow.Properties}
-                  o={organisation.Properties}
-                  r={role.Properties}
-                  a={action && action.Properties}
-                />
-              </EditorHolder>
-            )}
-            {!hideActionCondition && (
-              <Segment tertiary attached as="h5" icon="legal">
-                <Icon name="legal" />
-                <Popup
-                  trigger={<span>Postconditions</span>}
-                  content={<Info />}
-                />
-                <div style={{ float: "right" }}>
-                  <Checkbox
-                    owner={this.accessState.fields.showPostcondition}
-                    label="Show All"
-                  />
-                </div>
-              </Segment>
-            )}
+            <Formix initialValues={this.accessState}>
+              <>
+                {!hidePreconditions && (
+                  <Segment tertiary={true} attached as="h5" icon="legal">
+                    <Icon name="legal" />
+                    <Popup
+                      trigger={<span>Precondition</span>}
+                      content={<Info />}
+                    />
+                    <div style={{ float: "right" }}>
+                      <Checkbox name={"showPrecondition"} label="Show" />
+                    </div>
+                  </Segment>
+                )}
+                {!hidePreconditions && this.accessState.showPrecondition && (
+                  <EditorHolder secondary attached>
+                    <CodeEditor
+                      update={this.actionUpdate}
+                      value={this.actionValue}
+                      height={ei.editorHeight(this.actionValue())}
+                      i={ei.Properties}
+                      w={workflow && workflow.Properties}
+                      o={organisation.Properties}
+                      r={role.Properties}
+                      a={action && action.Properties}
+                    />
+                  </EditorHolder>
+                )}
+                {!hideActionCondition && (
+                  <Segment tertiary attached as="h5" icon="legal">
+                    <Icon name="legal" />
+                    <Popup
+                      trigger={<span>Postconditions</span>}
+                      content={<Info />}
+                    />
+                    <div style={{ float: "right" }}>
+                      <Checkbox name={"showPostcondition"} label="Show All" />
+                    </div>
+                  </Segment>
+                )}
+              </>
+            </Formix>
 
             {condition.Postconditions.map((p, i) => (
               <PostconditionView
@@ -262,7 +270,7 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
             </Segment>
           </>
         </Accordion.Content>
-      </>
+      </Formix>
     );
   }
 }

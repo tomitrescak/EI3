@@ -1,5 +1,4 @@
-import { makeObservable } from "mobx";
-import { FormState, requiredField } from "semantic-ui-mobx";
+import { makeObservable, observable } from "mobx";
 
 export interface PropertyDao {
   Name: string;
@@ -7,14 +6,12 @@ export interface PropertyDao {
   Type: string;
 }
 
-export class Property extends FormState {
-  @requiredField Name: string;
-  @requiredField DefaultValue: string;
-  @requiredField Type: string;
+export class Property {
+  @observable Name: string;
+  @observable DefaultValue: string;
+  @observable Type: string;
 
   constructor(model: PropertyDao) {
-    super();
-
     this.Name = model.Name;
     this.DefaultValue =
       model.Type === "string"

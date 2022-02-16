@@ -1,5 +1,10 @@
-import { computed, IObservableArray, makeObservable, observable } from "mobx";
-import { field } from "semantic-ui-mobx";
+import {
+  computed,
+  IObservableArray,
+  makeObservable,
+  observable,
+  toJS,
+} from "mobx";
 import { DropdownItemProps } from "semantic-ui-react";
 import createEngine, { DiagramEngine } from "@projectstorm/react-diagrams";
 
@@ -8,7 +13,7 @@ import { AppContext } from "../../config/context";
 import { Ui } from "../../helpers/client_helpers";
 import { EntityLinkFactory } from "../diagrams/model/entity/entity_link_factory";
 import { EntityNodeFactory } from "../diagrams/model/entity/entity_node_factory";
-import { Experiment } from "../experiments/experiment_model";
+import { ExperimentDao } from "../experiments/experiment_model";
 import { SocketClient } from "../ws/socket_client";
 import { Authorisation, AuthorisationDao } from "./authorisation_model";
 import { Entity } from "./entity_model";
@@ -69,6 +74,7 @@ export class Type extends HierarchicEntity {
 }
 
 export interface EiDao extends ParametricEntityDao {
+  Experiments: ExperimentDao[];
   Expressions: string;
   Organisations: HierarchicEntityDao[];
   Roles: HierarchicEntityDao[];
@@ -91,6 +97,7 @@ export class Ei extends ParametricEntity {
         Organisations: [{ Id: "default", Name: "Default" }],
         Roles: [{ Id: "default", Name: "Citizen" }],
         Types: [],
+        Experiments: [],
         Workflows: [
           {
             Id: "main",
@@ -118,7 +125,7 @@ export class Ei extends ParametricEntity {
 
   engine: DiagramEngine;
 
-  @field MainWorkflow: string;
+  @observable MainWorkflow: string;
   Expressions: string;
 
   Organisations: IObservableArray<Organisation>;
@@ -126,7 +133,7 @@ export class Ei extends ParametricEntity {
   Types: IObservableArray<HierarchicEntity>;
   Workflows: IObservableArray<Workflow>;
   Authorisation: IObservableArray<Authorisation>;
-  Experiments: IObservableArray<Experiment>;
+  Experiments: IObservableArray<ExperimentDao>;
 
   constructor(model: EiDao, public context: AppContext) {
     super(model);
@@ -146,7 +153,6 @@ export class Ei extends ParametricEntity {
 
     linkFactories.registerFactory(new EntityLinkFactory("default"));
     linkFactories.registerFactory(new EntityLinkFactory("link"));
-
     nodeFactories.registerFactory(new EntityNodeFactory());
 
     // this.engine.registerFactoryBank(factoryBank);
@@ -155,7 +161,7 @@ export class Ei extends ParametricEntity {
 
     this.engine.maxNumberPointsPerLink = 1;
 
-    this.Experiments = observable([new Experiment()]);
+    this.Experiments = observable(model.Experiments || []);
 
     this.Expressions = model.Expressions;
     this.MainWorkflow = model.MainWorkflow;
@@ -178,7 +184,7 @@ export class Ei extends ParametricEntity {
       )
     );
 
-    this.addFormListener(() => Ui.history.step());
+    // this.addFormListener(() => Ui.history.step());
 
     makeObservable(this);
   }
@@ -312,7 +318,7 @@ export class Ei extends ParametricEntity {
     e.stopPropagation();
     e.preventDefault();
 
-    Ui.promptText("Name of the new organisation?").then((name) => {
+    Ui.promptText("Name of the new organisation?").then((name: Any) => {
       if (name.value) {
         let org = new Organisation(
           { Name: name.value, Id: name.value.toId() } as any,
@@ -330,6 +336,34 @@ export class Ei extends ParametricEntity {
     });
 
     return false;
+  };
+
+  createExperiment = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    Ui.promptText("Name of the experiment?").then((name) => {
+      if (name.isConfirmed) {
+        this.Experiments.push({
+          Id: Date.now().toString(),
+          Name: name.value,
+          GameObjects: [],
+        });
+        // let org = new Organisation(
+        //   { Name: name.value, Id: name.value.toId() } as any,
+        //   "organisations",
+        //   this.Organisations,
+        //   this
+        // );
+        // if (!this.checkExists(this.Organisations, "Organisation", org)) {
+        //   this.Organisations.push(org);
+        //   this.context.Router.push(org.url);
+        //   Ui.history.step();
+        // }
+      }
+    });
   };
 
   createRole = async (e: React.MouseEvent<HTMLElement>) => {
@@ -399,6 +433,7 @@ export class Ei extends ParametricEntity {
       ...super.json,
       MainWorkflow: this.MainWorkflow,
       Expressions: this.Expressions,
+      Experiments: this.Experiments.map((o) => toJS(o)),
       Organisations: this.Organisations.map((o) => o.json),
       Roles: this.Roles.map((o) => o.json),
       Types: this.Types.map((o) => o.json),

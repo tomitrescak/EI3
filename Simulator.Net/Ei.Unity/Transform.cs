@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace UnityEngine
 {
@@ -19,10 +20,13 @@ namespace UnityEngine
             }
         }
 
+        [JsonIgnore]
         public float X {
             get { return this.position.x; }
             set { this.position = new Vector3(value, this.position.y, this.position.z); }
         }
+
+        [JsonIgnore]
         public float Y {
             get { return this.position.y; }
             set { this.position = new Vector3(this.position.x, value, this.position.z); }

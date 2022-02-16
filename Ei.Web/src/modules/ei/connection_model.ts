@@ -1,5 +1,4 @@
 import { action, IObservableArray, makeObservable, observable } from "mobx";
-import { field } from "semantic-ui-mobx";
 import {
   DefaultNodeModel,
   DiagramModel,
@@ -56,17 +55,17 @@ export class Connection extends Entity {
   Icon = "➡";
 
   @observable selected: boolean = false;
-  @field From: string;
-  @field To: string;
+  @observable From: string;
+  @observable To: string;
   Access: IObservableArray<AccessCondition>;
   Effects: IObservableArray<AccessCondition>;
-  @field ActionId: string;
-  @field AllowLoops: number;
+  @observable ActionId: string;
+  @observable AllowLoops: number;
 
-  @field RotateLabel: boolean;
-  @field SourcePort: string;
-  @field TargetPort: string;
-  @field ActionDisplay: ActionDisplayType;
+  @observable RotateLabel: boolean;
+  @observable SourcePort: string;
+  @observable TargetPort: string;
+  @observable ActionDisplay: ActionDisplayType;
 
   link: WorkflowLinkModel;
   fromJoint: FreeJoint;

@@ -60,18 +60,18 @@ export const Components = observer(() => {
         style={{ borderRadius: "0px" }}
       >
         <Menu.Item>
-          <Link to={`/${eiId}/${eiName}`}>Ei</Link>
+          <Link to={`/ei/${eiName}?ei=${eiId}`}>{ei.Name}</Link>
         </Menu.Item>
         <Menu.Menu position="right">
-          <Menu.Item
+          {/* <Menu.Item
             icon="play"
             title="Compile and Run the Institution"
             onClick={() => {
               context.ei.run(context.client);
               history.push(`/ei/${ei.Name.toUrlName()}/execution?ei=${ei.Id}`);
             }}
-          />
-          <Menu.Item
+          /> */}
+          {/* <Menu.Item
             icon="reply"
             onClick={context.Ui.history.undo}
             title="Undo"
@@ -80,7 +80,7 @@ export const Components = observer(() => {
             icon="mail forward"
             onClick={context.Ui.history.redo}
             title="Redo"
-          />
+          /> */}
           {store.compiling ? (
             <Menu.Item title="Compiling">
               <Loader active inline size="tiny" />

@@ -198,7 +198,7 @@ export const EiLayout = ({ Editor, Main }: Props) => {
       </LeftPane>
       <MiddleLayout Main={Main} />
       {Editor ? (
-        <PropertyPane>
+        <PropertyPane className="ui form">
           <Editor />
         </PropertyPane>
       ) : null}

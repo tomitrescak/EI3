@@ -27,6 +27,7 @@ import { TransitionEditor } from "./modules/transitions/transitions_editor";
 import { ConnectionEditor } from "./modules/connections/connection_editor";
 import { WorkflowEditor } from "./modules/workflow/workflow_editor";
 import { observer } from "mobx-react-lite";
+import { ExperimentEditor } from "./modules/experiments/experiment_editor";
 
 configure({ enforceActions: "never" });
 
@@ -144,23 +145,24 @@ const App = () => {
                 <EiLayout Main={WorkflowView} Editor={WorkflowEditor} />
               )}
             />
+
             <Route
               exact
               path="/ei/:eiName/experiment/:experimentName?"
-              render={() => <EiLayout Main={ExecutionView} />}
+              render={() => <EiLayout Main={ExperimentEditor} />}
             />
-            <Route
+            {/* <Route
               exact
               path="/ei/:eiName/execution"
               render={() => <EiLayout Main={ExecutionView} />}
-            />
+            /> */}
             <Route
               exact
               path="/ei/:eiName"
               render={() => <EiLayout Main={EiEditor} />}
             />
 
-            <Route
+            {/* <Route
               path="/ei/:eiName/execution"
               render={() => (
                 <EiLayout
@@ -168,7 +170,7 @@ const App = () => {
                   Editor={() => <div></div>}
                 />
               )}
-            />
+            /> */}
           </Switch>
         </EiContainer>
       </Route>

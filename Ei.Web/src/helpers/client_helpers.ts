@@ -111,7 +111,7 @@ export const Ui = {
     prompt: string,
     placeholder = "",
     validate = (val: string) => val !== ""
-  ) {
+  ): Promise<{ value: string; isConfirmed: boolean }> {
     return swal.fire({
       title: prompt,
       input: "text",

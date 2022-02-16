@@ -1,6 +1,5 @@
 import { PortModelAlignment } from "@projectstorm/react-diagrams-core";
 import { action, IObservableArray, makeObservable, observable } from "mobx";
-import { field, FormState } from "semantic-ui-mobx";
 
 import { Router, Ui } from "../../helpers/client_helpers";
 import { WorkflowPortModel } from "../diagrams/model/workflow/workflow_port_model";
@@ -17,7 +16,7 @@ export interface TransitionDao extends EntityDao {
 export class Transition extends PositionModel {
   Icon = "chevron right";
   $type: string;
-  @field Horizontal: boolean;
+  @observable Horizontal: boolean;
 
   constructor(transition: Partial<TransitionDao>, workflow: Workflow, ei: Ei) {
     super(transition, workflow, ei);
@@ -68,15 +67,15 @@ export interface TransitionSplitDao extends TransitionDao {
   Names: string[][];
 }
 
-export class SplitInfo extends FormState {
+export class SplitInfo {
   stateId: string;
-  @field name: string;
+  @observable name: string;
 
   constructor(stateId: string, name: string) {
-    super();
-
     this.stateId = stateId;
     this.name = name;
+
+    makeObservable(this);
   }
 }
 
@@ -85,7 +84,7 @@ let id = 0;
 export class TransitionSplit extends Transition {
   Icon = "⑃";
 
-  @field Shallow: boolean;
+  @observable Shallow: boolean;
   Names: IObservableArray<SplitInfo>;
   uid = id++;
 
@@ -115,6 +114,8 @@ export class TransitionSplit extends Transition {
     );
 
     this.$type = "TransitionSplitDao";
+
+    makeObservable(this);
   }
 
   get json() {

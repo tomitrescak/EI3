@@ -5,7 +5,6 @@ import {
   makeObservable,
   observable,
 } from "mobx";
-import { field } from "semantic-ui-mobx";
 import { DiagramModel } from "@projectstorm/react-diagrams";
 import { AppContext } from "../../config/context";
 import swal from "sweetalert2";
@@ -61,8 +60,8 @@ export class Workflow extends ParametricEntity {
   diagram: DiagramModel;
   ei: Ei;
 
-  @field Stateless: boolean;
-  @field Static: boolean;
+  @observable Stateless: boolean;
+  @observable Static: boolean;
   States: IObservableArray<State>;
   Actions: IObservableArray<Action>;
   Transitions: IObservableArray<Transition>;
