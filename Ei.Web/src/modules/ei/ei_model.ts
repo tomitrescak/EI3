@@ -46,8 +46,6 @@ export class Organisation extends HierarchicEntity {
     if (!this.Icon) {
       this.Icon = "🏠";
     }
-
-    makeObservable(this);
   }
 }
 
@@ -125,7 +123,7 @@ export class Ei extends ParametricEntity {
 
   engine: DiagramEngine;
 
-  @observable MainWorkflow: string;
+  MainWorkflow: string;
   Expressions: string;
 
   Organisations: IObservableArray<Organisation>;
@@ -186,22 +184,25 @@ export class Ei extends ParametricEntity {
 
     // this.addFormListener(() => Ui.history.step());
 
-    makeObservable(this);
+    makeObservable(this, {
+      MainWorkflow: observable,
+      types: computed,
+      workflowOptions: computed,
+      organisationsOptions: computed,
+      roleOptions: computed,
+    });
   }
 
-  @computed
   get types(): DropdownItemProps[] {
     return ["int", "float", "string", "bool"]
       .concat(this.Types.map((t) => t.Name))
       .map((i) => ({ text: i, value: i }));
   }
 
-  @computed
   get workflowOptions(): DropdownItemProps[] {
     return this.Workflows.map((w) => ({ text: w.Name, value: w.Id }));
   }
 
-  @computed
   get organisationsOptions(): DropdownItemProps[] {
     return this.Organisations.map((w) => ({ text: w.Name, value: w.Id }));
   }
@@ -212,7 +213,6 @@ export class Ei extends ParametricEntity {
     );
   }
 
-  @computed
   get roleOptions(): DropdownItemProps[] {
     return this.Roles.map((w) => ({ text: w.Name, value: w.Id }));
   }

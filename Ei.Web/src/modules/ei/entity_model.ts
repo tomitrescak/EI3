@@ -18,10 +18,11 @@ export function entitySort(a: Entity, b: Entity): number {
 }
 
 export class Entity extends FormNodeStore {
+  [index: string]: any;
   Id: string;
-  @observable Icon: string;
-  @observable Name: string;
-  @observable Description: string;
+  Icon: string;
+  Name: string;
+  Description: string;
 
   allowEditIcon = false;
 
@@ -41,7 +42,11 @@ export class Entity extends FormNodeStore {
     this.position.x = model.x || this.randomPosition();
     this.position.y = model.y || this.randomPosition();
 
-    makeObservable(this);
+    makeObservable(this, {
+      Icon: observable,
+      Name: observable,
+      Description: observable,
+    });
   }
 
   deselect() {

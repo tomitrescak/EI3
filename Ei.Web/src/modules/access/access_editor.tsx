@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { observer } from "mobx-react";
+import { Observer, observer } from "mobx-react";
 
 import {
   Accordion,
@@ -107,17 +107,20 @@ interface AccessConditionProps {
 }
 
 class AccessConditionState {
-  @observable showPrecondition: boolean = false;
-  @observable showPostcondition: boolean = false;
+  showPrecondition: boolean = false;
+  showPostcondition: boolean = false;
 
   constructor(show: boolean) {
     this.showPrecondition = show;
 
-    makeObservable(this);
+    makeObservable(this, {
+      showPrecondition: observable,
+      showPostcondition: observable,
+    });
   }
 }
 
-@observer
+
 export class AccessConditionEditor extends React.Component<AccessConditionProps> {
   accessState: AccessConditionState;
 
@@ -302,7 +305,6 @@ interface PostconditionProps {
   hideActionCondition: boolean;
 }
 
-@observer
 export class PostconditionView extends React.Component<PostconditionProps> {
   actionUpdate = (value: any) => {
     this.props.p.Action = value;
@@ -330,60 +332,64 @@ export class PostconditionView extends React.Component<PostconditionProps> {
     } = this.props;
 
     return (
-      <>
-        {!hideActionCondition &&
-          (showAll || p.Condition || (!p.Condition && !p.Action)) && (
-            <>
-              <HeaderHolder secondary attached>
-                Condition
-              </HeaderHolder>
-              <EditorHolder secondary attached>
-                <CodeEditor
-                  update={this.conditionUpdate}
-                  value={this.conditionValue}
-                  height={ei.editorHeight(this.conditionValue())}
-                  i={ei.Properties}
-                  w={workflow && workflow.Properties}
-                  o={organisation.Properties}
-                  r={role.Properties}
-                  a={action && action.Properties}
-                />
-              </EditorHolder>
-            </>
-          )}
-        {(!hideActionCondition ||
-          showAll ||
-          p.Action ||
-          (!p.Condition && !p.Action)) && (
+      <Observer>
+        {() => (
           <>
+            {!hideActionCondition &&
+              (showAll || p.Condition || (!p.Condition && !p.Action)) && (
+                <>
+                  <HeaderHolder secondary attached>
+                    Condition
+                  </HeaderHolder>
+                  <EditorHolder secondary attached>
+                    <CodeEditor
+                      update={this.conditionUpdate}
+                      value={this.conditionValue}
+                      height={ei.editorHeight(this.conditionValue())}
+                      i={ei.Properties}
+                      w={workflow && workflow.Properties}
+                      o={organisation.Properties}
+                      r={role.Properties}
+                      a={action && action.Properties}
+                    />
+                  </EditorHolder>
+                </>
+              )}
+            {(!hideActionCondition ||
+              showAll ||
+              p.Action ||
+              (!p.Condition && !p.Action)) && (
+              <>
+                <HeaderHolder secondary attached>
+                  Action
+                </HeaderHolder>
+                <EditorHolder secondary attached>
+                  <CodeEditor
+                    update={this.actionUpdate}
+                    value={this.actionValue}
+                    height={ei.editorHeight(this.actionValue())}
+                    i={ei.Properties}
+                    w={workflow && workflow.Properties}
+                    o={organisation.Properties}
+                    r={role.Properties}
+                    a={action && action.Properties}
+                  />
+                </EditorHolder>
+              </>
+            )}
             <HeaderHolder secondary attached>
-              Action
-            </HeaderHolder>
-            <EditorHolder secondary attached>
-              <CodeEditor
-                update={this.actionUpdate}
-                value={this.actionValue}
-                height={ei.editorHeight(this.actionValue())}
-                i={ei.Properties}
-                w={workflow && workflow.Properties}
-                o={organisation.Properties}
-                r={role.Properties}
-                a={action && action.Properties}
+              <Button
+                type="button"
+                content="Remove Postcondition"
+                name="addInput"
+                color="red"
+                onClick={remove}
+                icon="trash"
               />
-            </EditorHolder>
+            </HeaderHolder>
           </>
         )}
-        <HeaderHolder secondary attached>
-          <Button
-            type="button"
-            content="Remove Postcondition"
-            name="addInput"
-            color="red"
-            onClick={remove}
-            icon="trash"
-          />
-        </HeaderHolder>
-      </>
+      </Observer>
     );
   }
 }

@@ -1,6 +1,6 @@
 import { DiagramListener, DiagramModel } from "@projectstorm/react-diagrams";
 
-import { observable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { AppContext } from "../../../../config/context";
 import { HierarchicEntity } from "../../../ei/hierarchic_entity_model";
 import { EntityLinkModel } from "./entity_link_model";
@@ -8,10 +8,14 @@ import { EntityPortModel } from "./entity_port_model";
 
 export class EntityDiagramModel extends DiagramModel {
   store: AppContext;
-  @observable version = 0;
+  version = 0;
 
   constructor() {
     super();
+
+    makeObservable(this, {
+      version: observable,
+    });
 
     this.registerListener({
       nodesUpdated: (e) => {

@@ -26,48 +26,46 @@ export const NestedAccordion = styled(Accordion)`
   margin: 0px !important;
 `;
 
-@observer
-export class WorkflowList extends React.Component<Props> {
-  render() {
-    const { active, index, ei, handleClick } = this.props;
-    const handler = ei.context.createAccordionHandler("workflows");
+export let WorkflowList = (props: Props) => {
+  const { active, index, ei, handleClick } = props;
+  const handler = ei.context.createAccordionHandler("workflows");
 
-    return (
-      <>
-        <AccordionTitle active={active} index={index} onClick={handleClick}>
-          <Label
-            size="tiny"
-            color="blue"
-            circular
-            content={ei.Workflows.length}
-          />{" "}
-          Workflows
-          <AccordionButton
-            floated="right"
-            icon="plus"
-            compact
-            color="green"
-            onClick={ei.createWorkflow}
-          />
-        </AccordionTitle>
-        <Accordion.Content active={active} style={{ padding: 0 }}>
-          <NestedAccordion>
-            {ei.Workflows.map((workflowItem) => (
-              <WorkflowDetail
-                key={workflowItem.Id}
-                index={workflowItem.Id.hashCode()}
-                handleClick={handler.handleClick}
-                workflow={workflowItem}
-                active={handler.isActive(workflowItem.Id.hashCode())}
-                ei={ei}
-              />
-            ))}
-          </NestedAccordion>
-        </Accordion.Content>
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <AccordionTitle active={active} index={index} onClick={handleClick}>
+        <Label
+          size="tiny"
+          color="blue"
+          circular
+          content={ei.Workflows.length}
+        />{" "}
+        Workflows
+        <AccordionButton
+          floated="right"
+          icon="plus"
+          compact
+          color="green"
+          onClick={ei.createWorkflow}
+        />
+      </AccordionTitle>
+      <Accordion.Content active={active} style={{ padding: 0 }}>
+        <NestedAccordion>
+          {ei.Workflows.map((workflowItem) => (
+            <WorkflowDetail
+              key={workflowItem.Id}
+              index={workflowItem.Id.hashCode()}
+              handleClick={handler.handleClick}
+              workflow={workflowItem}
+              active={handler.isActive(workflowItem.Id.hashCode())}
+              ei={ei}
+            />
+          ))}
+        </NestedAccordion>
+      </Accordion.Content>
+    </>
+  );
+};
+WorkflowList = observer(WorkflowList);
 
 interface DetailProps {
   ei: Ei;

@@ -7,9 +7,9 @@ export interface PropertyDao {
 }
 
 export class Property {
-  @observable Name: string;
-  @observable DefaultValue: string;
-  @observable Type: string;
+  Name: string;
+  DefaultValue: string;
+  Type: string;
 
   constructor(model: PropertyDao) {
     this.Name = model.Name;
@@ -19,7 +19,11 @@ export class Property {
         : model.DefaultValue;
     this.Type = model.Type;
 
-    makeObservable(this);
+    makeObservable(this, {
+      Name: observable,
+      DefaultValue: observable,
+      Type: observable,
+    });
   }
 
   get json() {

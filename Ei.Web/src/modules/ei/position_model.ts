@@ -20,8 +20,6 @@ export abstract class PositionModel extends Entity {
         isSelected ? this.select() : this.deselect();
       },
     } as NodeModelListener);
-
-    makeObservable(this);
   }
 
   abstract select(): void;

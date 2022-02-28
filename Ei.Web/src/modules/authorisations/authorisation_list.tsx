@@ -16,50 +16,48 @@ interface Props {
   handleClick: any;
 }
 
-@observer
-export class AuthorisationList extends React.Component<Props> {
-  render() {
-    const { active, index, ei, handleClick } = this.props;
+export let AuthorisationList = (props: Props) => {
+  const { active, index, ei, handleClick } = props;
 
-    return (
-      <>
-        <AccordionTitle active={active} index={index} onClick={handleClick}>
-          <Label
-            size="tiny"
-            color="blue"
-            circular
-            content={ei.Authorisation.length}
-          />{" "}
-          Authorisations
-          <AccordionButton
-            floated="right"
-            icon="plus"
-            compact
-            color="green"
-            onClick={ei.createAuthorisation}
-          />
-        </AccordionTitle>
-        <AccordionContent active={active}>
-          <NestedAccordion>
-            {ei.Authorisation.map((authorisation, authIndex) => (
-              <List.Item
-                as={Link}
-                to={`/ei/${ei.Name.toUrlName()}/authorisation/?id=${authIndex}&ei=${
-                  ei.Id
-                }`}
-                key={index}
-              >
-                <Icon name={authorisation.Organisation ? "users" : "user"} />
-                {authorisation.Organisation
-                  ? ei.organisationName(authorisation.Organisation)
-                  : authorisation.User
-                  ? ei.roleName(authorisation.User)
-                  : "<empty>"}
-              </List.Item>
-            ))}
-          </NestedAccordion>
-        </AccordionContent>
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <AccordionTitle active={active} index={index} onClick={handleClick}>
+        <Label
+          size="tiny"
+          color="blue"
+          circular
+          content={ei.Authorisation.length}
+        />{" "}
+        Authorisations
+        <AccordionButton
+          floated="right"
+          icon="plus"
+          compact
+          color="green"
+          onClick={ei.createAuthorisation}
+        />
+      </AccordionTitle>
+      <AccordionContent active={active}>
+        <NestedAccordion>
+          {ei.Authorisation.map((authorisation, authIndex) => (
+            <List.Item
+              as={Link}
+              to={`/ei/${ei.Name.toUrlName()}/authorisation/?id=${authIndex}&ei=${
+                ei.Id
+              }`}
+              key={index}
+            >
+              <Icon name={authorisation.Organisation ? "users" : "user"} />
+              {authorisation.Organisation
+                ? ei.organisationName(authorisation.Organisation)
+                : authorisation.User
+                ? ei.roleName(authorisation.User)
+                : "<empty>"}
+            </List.Item>
+          ))}
+        </NestedAccordion>
+      </AccordionContent>
+    </>
+  );
+};
+AuthorisationList = observer(AuthorisationList);

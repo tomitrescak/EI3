@@ -1,16 +1,21 @@
 import { DefaultLinkModel } from "@projectstorm/react-diagrams";
 
-import { action } from "mobx";
+import { action, makeObservable } from "mobx";
 
 import { HierarchicEntity } from "../../../ei/hierarchic_entity_model";
 import { EntityDiagramModel } from "./entity_diagram_model";
 
 export class EntityLinkModel extends DefaultLinkModel {
-  // constructor(child: HierarchicEntity, parent: string) {
-  //   super('default', parent + '->' + child.Id);
-  // }
+  constructor() {
+    super();
 
-  @action safeRemove(model: EntityDiagramModel) {
+    makeObservable(this, {
+      safeRemove: action,
+      safeRemoveParent: action,
+    });
+  }
+
+  safeRemove(model: EntityDiagramModel) {
     if (this.sourcePort) {
       this.sourcePort.removeLink(this);
     }
@@ -27,7 +32,7 @@ export class EntityLinkModel extends DefaultLinkModel {
     // }
   }
 
-  @action safeRemoveParent() {
+  safeRemoveParent() {
     if (this.targetPort) {
       let port =
         this.targetPort.getName() === "top" ? this.targetPort : this.sourcePort;

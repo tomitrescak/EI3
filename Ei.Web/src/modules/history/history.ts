@@ -13,9 +13,10 @@ class Step {
 
   constructor(deltas: any[]) {
     this.deltas = deltas;
+
+    makeObservable(this, { undo: action, redo: action });
   }
 
-  @action
   undo(ei: EiDao) {
     let result = ei;
     for (let delta of this.deltas.reverse()) {
@@ -25,7 +26,6 @@ class Step {
     return result;
   }
 
-  @action
   redo(ei: EiDao) {
     let result = ei;
     this.deltas.forEach((delta) => (result = patcher.patch(result, delta)));
@@ -34,7 +34,7 @@ class Step {
 }
 
 export class WorkHistory {
-  @observable version = 0;
+  version = 0;
   ei: Ei;
   context: AppContext;
 
@@ -44,7 +44,7 @@ export class WorkHistory {
   timeout: any;
 
   constructor() {
-    makeObservable(this);
+    makeObservable(this, { version: observable });
   }
 
   startHistory(ei: Ei, context: AppContext) {

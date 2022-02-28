@@ -6,14 +6,17 @@ export interface GroupDao {
 }
 
 export class Group {
-  @observable OrganisationId: string;
-  @observable RoleId: string;
+  OrganisationId: string;
+  RoleId: string;
 
   constructor(group: GroupDao) {
     this.OrganisationId = group.OrganisationId;
     this.RoleId = group.RoleId;
 
-    makeObservable(this);
+    makeObservable(this, {
+      OrganisationId: observable,
+      RoleId: observable,
+    });
   }
 
   get json() {

@@ -12,11 +12,12 @@ export interface ActionDao extends ParametricEntityDao {
 }
 
 export class Action extends ParametricEntity {
-  Icon = "";
   $type = "";
 
   constructor(action: Partial<ActionDao>) {
     super(action);
+
+    this.Icon = "";
     this.$type = action.$type;
   }
 
@@ -34,17 +35,19 @@ export interface ActionJoinWorkflowDao extends ActionDao {
 }
 
 export class ActionJoinWorkflow extends Action {
-  @observable WorkflowId: string;
-
-  Icon = "📁";
+  WorkflowId: string;
 
   constructor(action: Partial<ActionJoinWorkflowDao>) {
     super(action);
+
+    this.Icon = "📁";
     this.WorkflowId = action.WorkflowId;
 
     this.$type = "ActionJoinWorkflowDao";
 
-    makeObservable(this);
+    makeObservable(this, {
+      WorkflowId: observable,
+    });
   }
 
   get json() {
@@ -67,10 +70,10 @@ export class ActionMessage extends Action {
   NotifyAgents: IObservableArray<string>;
   NotifyGroups: IObservableArray<Group>;
 
-  Icon = "✉️";
-
   constructor(action: Partial<ActionMessageDao>) {
     super(action);
+
+    this.Icon = "✉️";
     this.NotifyAgents = observable(action.NotifyAgents || []);
     this.NotifyGroups = observable(
       (action.NotifyGroups || []).map((g) => new Group(g))
@@ -92,11 +95,10 @@ export class ActionMessage extends Action {
 
 // #region ############### ActionTimeout ####################
 export class ActionTimeout extends Action {
-  Icon = "🕐";
-
   constructor(action: Partial<ActionDao>) {
     super(action);
 
+    this.Icon = "🕐";
     this.$type = "ActionTimeoutDao";
   }
 

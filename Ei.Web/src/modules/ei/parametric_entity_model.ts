@@ -18,7 +18,9 @@ export class ParametricEntity extends Entity {
         .map((p) => new Property(p))
         .sort((a, b) => (a.Name < b.Name ? -1 : 1))
     );
-    makeObservable(this);
+    makeObservable(this, {
+      Properties: observable,
+    });
   }
 
   get json(): ParametricEntityDao {

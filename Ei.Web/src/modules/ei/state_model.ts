@@ -20,20 +20,18 @@ export interface StateDao extends EntityDao {
 }
 
 export class State extends PositionModel {
-  Icon = "⚪️";
-
-  @observable IsOpen: boolean;
-  @observable Timeout: number;
-  @observable IsStart: boolean;
-  @observable IsEnd: boolean;
-  @observable ShowRules: boolean;
+  IsOpen: boolean;
+  Timeout: number;
+  IsStart: boolean;
+  IsEnd: boolean;
+  ShowRules: boolean;
   EntryRules: IObservableArray<AccessCondition>;
   ExitRules: IObservableArray<AccessCondition>;
 
-  workflow: Workflow;
-
   constructor(state: StateDao, workflow: Workflow, ei: Ei) {
     super(state, workflow, ei);
+
+    this.Icon = "⚪️";
 
     this.IsOpen = state.IsOpen;
     this.Timeout = state.Timeout;
@@ -86,10 +84,17 @@ export class State extends PositionModel {
     }
 
     // this.addFormListener(() => Ui.history.step());
-    makeObservable(this);
+    makeObservable(this, {
+      IsOpen: observable,
+      Timeout: observable,
+      IsStart: observable,
+      IsEnd: observable,
+      ShowRules: observable,
+      removeItem: action,
+    });
   }
 
-  @action removeItem() {
+  removeItem() {
     // adjust all children
     for (let connection of this.workflow.Connections) {
       if (connection.From === this.Id || connection.To === this.Id) {

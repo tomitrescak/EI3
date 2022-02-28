@@ -29,28 +29,33 @@ export class AppContext {
   Ui: typeof Ui;
   Router: typeof Router;
 
-  @observable previewImage = "";
-  @observable saving = false;
-  @observable compiledCode = "";
-  @observable compiling = false;
-  @observable ei: Ei;
+  previewImage = "";
+  saving = false;
+  compiledCode = "";
+  compiling = false;
+  ei: Ei;
   messages = observable([] as string[]);
   errors = observable([] as CompilationError[]);
-  storedHandlers: Object;
+  storedHandlers: any;
 
   handlers: { [index: string]: AccordionHandler } = {};
   selectedEntity: Entity;
   engine: DiagramEngine;
 
   constructor(_cache = true) {
-    console.log("New context");
     this.serverUrl = socketUrl;
     this.client = new SocketClient(this.serverUrl, this);
 
     this.Ui = { ...Ui };
     this.Router = Router;
 
-    makeObservable(this);
+    makeObservable(this, {
+      previewImage: observable,
+      saving: observable,
+      compiledCode: observable,
+      compiling: observable,
+      ei: observable,
+    });
   }
 
   assignRouter(history: History) {

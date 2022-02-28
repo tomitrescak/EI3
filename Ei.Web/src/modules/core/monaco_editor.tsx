@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { IObservableArray } from "mobx";
-import { observer } from "mobx-react";
+import { Observer, observer } from "mobx-react";
 import Editor, { OnMount } from "@monaco-editor/react";
 import { Property } from "../ei/property_model";
 import styled from "@emotion/styled";
@@ -23,7 +23,6 @@ const EditorContainer = styled.div`
   }
 `;
 
-@observer
 export class CodeEditor extends React.Component<Props> {
   monaco: any;
   previous: any;
@@ -115,24 +114,33 @@ export class CodeEditor extends React.Component<Props> {
 
     const { value } = this.props;
     return (
-      <EditorContainer ref={(node) => (this.holder = node)}>
-        <Editor
-          height={this.props.height || 200}
-          language="csharp"
-          options={{
-            lineNumbers: "off",
-            automaticLayout: true,
-            minimap: { enabled: false },
-            quickSuggestions: { other: true, comments: true, strings: true },
-            quickSuggestionsDelay: 10,
-          }}
-          value={value()}
-          onChange={this.update}
-          onMount={this.editorMounted}
-          // editorWillMount={}
-          // editorDidMount={this.bindEditor}
-        />
-      </EditorContainer>
+      <Observer>
+        {() => (
+          <EditorContainer ref={(node) => (this.holder = node)}>
+            <Editor
+              height={this.props.height || 200}
+              language="csharp"
+              options={{
+                // lineNumbers: "on",
+                automaticLayout: true,
+                theme: "vs-dark",
+                minimap: { enabled: false },
+                quickSuggestions: {
+                  other: true,
+                  comments: true,
+                  strings: true,
+                },
+                quickSuggestionsDelay: 10,
+              }}
+              value={value()}
+              onChange={this.update}
+              onMount={this.editorMounted}
+              // editorWillMount={}
+              // editorDidMount={this.bindEditor}
+            />
+          </EditorContainer>
+        )}
+      </Observer>
     );
   }
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { observable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { AppContext } from "../../config/context";
 
 enum SocketState {
@@ -80,8 +80,8 @@ let uid: number = 0;
 export class SocketClient {
   static loadingComponent = () => <div>Loading ...</div>;
 
-  @observable state: SocketState;
-  @observable error: string;
+  state: SocketState;
+  error: string;
 
   connectionId: string;
   url: string;
@@ -100,6 +100,11 @@ export class SocketClient {
     this.url = url;
     // this.messageHandler = messageHandler;
     this.errorHandler = errorHandler;
+
+    makeObservable(this, {
+      state: observable,
+      error: observable,
+    });
   }
 
   async close() {

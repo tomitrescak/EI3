@@ -31,7 +31,7 @@ export interface HierarchicEntityDao extends ParametricEntityDao {
 export abstract class HierarchicEntity extends ParametricEntity {
   ei: Ei;
 
-  @observable private _parent: string;
+  private _parent: string;
   private _parentLink: EntityLinkModel;
   private parents: IObservableArray<HierarchicEntity>;
   points: PointDao[];
@@ -75,14 +75,18 @@ export abstract class HierarchicEntity extends ParametricEntity {
       // this.update();
     }
 
-    makeObservable(this);
+    makeObservable(this, {
+      _parent: observable,
+      ParentId: computed,
+      setParentId: action,
+      removeItem: action,
+    });
   }
 
   set parentLink(value: EntityLinkModel) {
     this._parentLink = value;
   }
 
-  @computed
   get ParentId() {
     return this._parent;
   }
@@ -93,11 +97,10 @@ export abstract class HierarchicEntity extends ParametricEntity {
     }/${this.Name.toUrlName()}?ei=${this.ei.Id}&id=${this.Id}`.toLowerCase();
   }
 
-  @action setParentId(parent: string) {
+  setParentId(parent: string) {
     this._parent = parent;
   }
 
-  @action
   removeItem() {
     // remove from collection
     this.setParentId(null);

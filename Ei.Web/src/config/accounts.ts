@@ -9,9 +9,9 @@
 //   namespace App { export type User = ClientUserModel; }
 // }
 
-// export const profileData = `
-//   name
-// `;
+export const profileData = `
+  name
+`;
 
 // export class ClientUserModel extends UserModel {
 //   context?: App.Context;

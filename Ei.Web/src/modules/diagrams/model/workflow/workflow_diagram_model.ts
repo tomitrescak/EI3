@@ -7,7 +7,7 @@ import { WorkflowLinkModel } from "./workflow_link_model";
 import { WorkflowPortModel } from "./workflow_port_model";
 
 export class WorkflowDiagramModel extends DiagramModel {
-  @observable version = 0;
+  version = 0;
 
   constructor(context: AppContext) {
     super();
@@ -123,6 +123,6 @@ export class WorkflowDiagramModel extends DiagramModel {
 
     this.registerListener(listener);
 
-    makeObservable(this);
+    makeObservable(this, { version: observable });
   }
 }

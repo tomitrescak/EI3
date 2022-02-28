@@ -13,20 +13,19 @@ import { AppContext, Context, useAppContext } from "./config/context";
 import { EiContainer } from "./modules/ei/ei_container";
 import { EiLayout } from "./modules/ei/ei_layout";
 import { EiEditor } from "./modules/ei/ei_editor";
-import { ExecutionView } from "./modules/execution/execution_view";
 import { AuthorisationEditor } from "./modules/authorisations/authorisation_editor";
 import { EntitiesView } from "./modules/diagrams/entities_view";
 // import { supabase } from "./config/supabase";
 import { configure } from "mobx";
 import { HierarchicEntityEditor } from "./modules/diagrams/hierarchic_entity_editor";
-import Account from "./auth/account";
+// import Account from "./auth/account";
 import { WorkflowView } from "./modules/workflow/workflow_view";
 import { ActionView } from "./modules/actions/action_view";
 import { StateEditor } from "./modules/states/state_editor";
 import { TransitionEditor } from "./modules/transitions/transitions_editor";
 import { ConnectionEditor } from "./modules/connections/connection_editor";
 import { WorkflowEditor } from "./modules/workflow/workflow_editor";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { ExperimentEditor } from "./modules/experiments/experiment_editor";
 
 configure({ enforceActions: "never" });
@@ -178,7 +177,24 @@ const App = () => {
   );
 };
 
-const ReactiveContext = observer(() => {
+// const ReactiveContext1 = observer(() => {
+//   const context = React.useMemo(() => new AppContext(), []);
+
+//   // this subscribes to undo stack
+//   console.log("Rendering Version: " + context.Ui.history.version);
+
+//   // subscribe
+//   return (
+//     <Context.Provider value={context}>
+//       <Router>
+//         <SemanticToastContainer />
+//         <App />
+//       </Router>
+//     </Context.Provider>
+//   );
+// });
+
+export const ReactiveContext = observer(() => {
   const context = React.useMemo(() => new AppContext(), []);
 
   // this subscribes to undo stack
@@ -195,10 +211,14 @@ const ReactiveContext = observer(() => {
   );
 });
 
-export const render = () => {
-  // render application
-  ReactDOM.render(<ReactiveContext />, document.querySelector("#root"));
-};
+// export const render = () => {
+//   // render application
+//   ReactDOM.render(<ReactiveContext />, document.querySelector("#root"));
+// };
 
 // set stateful modules
 // setStatefulModules((name) => name.match(/store|context|apollo/) != null);
+
+// const App1 = () => <div>wewewe</div>;
+
+export default ReactiveContext;

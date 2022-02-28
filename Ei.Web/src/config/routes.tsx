@@ -1,4 +1,4 @@
-// import * as React from "react";
+import * as React from "react";
 
 // import { ActionView } from "../modules/actions/action_view";
 // import { AuthorisationEditor } from "../modules/authorisations/authorisation_editor";

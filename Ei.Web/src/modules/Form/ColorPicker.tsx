@@ -1,13 +1,13 @@
-import { observer } from 'mobx-react';
-import React from 'react';
-import { SketchPicker } from 'react-color';
-import { Form } from 'semantic-ui-react';
+import { observer } from "mobx-react";
+import React from "react";
+// import { SketchPicker } from 'react-color';
+import { Form } from "semantic-ui-react";
 
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
-import { ErrorLabel } from './FormComponents';
-import { useField } from './library/formHooks';
-import { FieldInputProps } from './library/types';
+import { ErrorLabel } from "./FormComponents";
+import { useField } from "./library/formHooks";
+import { FieldInputProps } from "./library/types";
 
 const Swatch = styled.div`
   padding: 5px;
@@ -45,7 +45,7 @@ type Props = {
 export class ColorPickerControl extends React.Component<Props> {
   state = {
     displayColorPicker: false,
-    hex: this.props.field.value
+    hex: this.props.field.value,
   };
 
   handleClick = () => {
@@ -56,7 +56,7 @@ export class ColorPickerControl extends React.Component<Props> {
     this.setState({ displayColorPicker: false });
 
     this.props.field.onChange({
-      target: { value: this.state.hex, name: this.props.field.name }
+      target: { value: this.state.hex, name: this.props.field.name },
     } as Any);
   };
 
@@ -75,7 +75,7 @@ export class ColorPickerControl extends React.Component<Props> {
         {this.state.displayColorPicker ? (
           <PopOver>
             <Cover onClick={this.handleClose} />
-            <SketchPicker color={this.state.hex} onChange={this.handleChange} />
+            {/* <SketchPicker color={this.state.hex} onChange={this.handleChange} /> */}
           </PopOver>
         ) : null}
       </>
@@ -111,7 +111,9 @@ export const ColorPicker = observer(
       >
         {label && <label htmlFor={id || props.name}>{label}</label>}
         <ColorPickerControl field={field} />
-        {meta.touched && meta.error ? <ErrorLabel message={meta.error} /> : null}
+        {meta.touched && meta.error ? (
+          <ErrorLabel message={meta.error} />
+        ) : null}
       </Form.Field>
     );
   }

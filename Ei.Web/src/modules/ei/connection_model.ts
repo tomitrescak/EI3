@@ -52,20 +52,18 @@ export enum ActionDisplayType {
 }
 
 export class Connection extends Entity {
-  Icon = "➡";
-
-  @observable selected: boolean = false;
-  @observable From: string;
-  @observable To: string;
+  selected: boolean = false;
+  From: string;
+  To: string;
   Access: IObservableArray<AccessCondition>;
   Effects: IObservableArray<AccessCondition>;
-  @observable ActionId: string;
-  @observable AllowLoops: number;
+  ActionId: string;
+  AllowLoops: number;
 
-  @observable RotateLabel: boolean;
-  @observable SourcePort: string;
-  @observable TargetPort: string;
-  @observable ActionDisplay: ActionDisplayType;
+  RotateLabel: boolean;
+  SourcePort: string;
+  TargetPort: string;
+  ActionDisplay: ActionDisplayType;
 
   link: WorkflowLinkModel;
   fromJoint: FreeJoint;
@@ -82,6 +80,7 @@ export class Connection extends Entity {
   ) {
     super(connection);
 
+    this.Icon = "➡";
     this.From = connection.Join[0] || "";
     this.To = connection.Join[1] || "";
 
@@ -120,7 +119,18 @@ export class Connection extends Entity {
 
     this.update(null);
 
-    makeObservable(this);
+    makeObservable(this, {
+      selected: observable,
+      From: observable,
+      To: observable,
+      ActionId: observable,
+      RotateLabel: observable,
+      AllowLoops: observable,
+      SourcePort: observable,
+      TargetPort: observable,
+      ActionDisplay: observable,
+      checkSplit: action,
+    });
   }
 
   get fromElementType() {
@@ -276,7 +286,6 @@ export class Connection extends Entity {
     this.checkSplit();
   }
 
-  @action
   checkSplit(removed = false) {
     const fromPosition = this.workflow.findPosition(this.From);
     if (

@@ -9,9 +9,9 @@ export interface AuthorisationDao {
   Groups: GroupDao[];
 }
 export class Authorisation {
-  @observable Organisation: string;
-  @observable User: string;
-  @observable Password: string;
+  Organisation: string;
+  User: string;
+  Password: string;
   Groups: IObservableArray<Group>;
 
   constructor(authorisation: Partial<AuthorisationDao> = {}) {
@@ -22,7 +22,12 @@ export class Authorisation {
       (authorisation.Groups || []).map((g) => new Group(g))
     );
 
-    makeObservable(this);
+    makeObservable(this, {
+      Organisation: observable,
+      User: observable,
+      Password: observable,
+      Groups: observable,
+    });
   }
 
   get json() {

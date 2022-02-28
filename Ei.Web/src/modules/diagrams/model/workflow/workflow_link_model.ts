@@ -11,7 +11,7 @@ import { Workflow } from "../../../ei/workflow_model";
 import { WorkflowDiagramModel } from "./workflow_diagram_model";
 
 export class WorkflowLinkModel extends DefaultLinkModel {
-  @observable selected = false;
+  selected = false;
   connection: Connection;
   workflow: Workflow;
   model: WorkflowDiagramModel;
@@ -30,7 +30,12 @@ export class WorkflowLinkModel extends DefaultLinkModel {
       },
     } as DefaultLinkModelListener);
 
-    makeObservable(this);
+    makeObservable(this, {
+      selected: observable,
+      action: computed,
+      safeRemove: action,
+      safeRemoveLink: action,
+    });
   }
 
   get url() {
@@ -49,7 +54,7 @@ export class WorkflowLinkModel extends DefaultLinkModel {
     );
   }
 
-  @computed get action() {
+  get action() {
     if (this.connection.ActionId) {
       return this.workflow.Actions.find(
         (a) => a.Id === this.connection.ActionId
@@ -58,7 +63,7 @@ export class WorkflowLinkModel extends DefaultLinkModel {
     return null;
   }
 
-  @action safeRemove(model: WorkflowDiagramModel) {
+  safeRemove(model: WorkflowDiagramModel) {
     this.safeRemoveLink();
 
     if (this.sourcePort) {
@@ -70,7 +75,7 @@ export class WorkflowLinkModel extends DefaultLinkModel {
     model.removeLink(this);
   }
 
-  @action safeRemoveLink() {
+  safeRemoveLink() {
     this.workflow.Connections.remove(this.connection);
 
     Router.push(this.workflow.ei.createWorkflowUrl(this.workflow));

@@ -13,8 +13,8 @@ export interface AccessConditionDao {
 }
 
 export class Postcondition {
-  @observable Condition: string;
-  @observable Action: string;
+  Condition: string;
+  Action: string;
 
   constructor(postcondition: PostconditionDao) {
     if (postcondition) {
@@ -22,7 +22,10 @@ export class Postcondition {
       this.Action = postcondition.Action;
     }
 
-    makeObservable(this);
+    makeObservable(this, {
+      Condition: observable,
+      Action: observable,
+    });
   }
 
   get json() {
@@ -34,9 +37,9 @@ export class Postcondition {
 }
 
 export class AccessCondition {
-  @observable Role: string;
-  @observable Organisation: string;
-  @observable Precondition: string;
+  Role: string;
+  Organisation: string;
+  Precondition: string;
   Postconditions: IObservableArray<Postcondition>;
 
   constructor(condition: Partial<AccessConditionDao>) {
@@ -47,7 +50,12 @@ export class AccessCondition {
       (condition.Postconditions || []).map((c) => new Postcondition(c))
     );
 
-    makeObservable(this);
+    makeObservable(this, {
+      Role: observable,
+      Organisation: observable,
+      Precondition: observable,
+      Postconditions: observable,
+    });
   }
 
   get json() {

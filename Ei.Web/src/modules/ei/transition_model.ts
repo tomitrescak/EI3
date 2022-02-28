@@ -16,24 +16,27 @@ export interface TransitionDao extends EntityDao {
 export class Transition extends PositionModel {
   Icon = "chevron right";
   $type: string;
-  @observable Horizontal: boolean;
+  Horizontal: boolean;
 
   constructor(transition: Partial<TransitionDao>, workflow: Workflow, ei: Ei) {
     super(transition, workflow, ei);
     this.$type = transition.$type;
 
     this.Horizontal = transition.Horizontal;
-    makeObservable(this);
+    makeObservable(this, {
+      Horizontal: observable,
+    });
   }
 
   get json() {
     return {
       ...super.json,
       Horizontal: this.Horizontal,
+      removeItem: action,
     };
   }
 
-  @action removeItem() {
+  removeItem() {
     // adjust all children
     for (let connection of this.workflow.Connections) {
       if (connection.From === this.Id || connection.To === this.Id) {
@@ -69,13 +72,15 @@ export interface TransitionSplitDao extends TransitionDao {
 
 export class SplitInfo {
   stateId: string;
-  @observable name: string;
+  name: string;
 
   constructor(stateId: string, name: string) {
     this.stateId = stateId;
     this.name = name;
 
-    makeObservable(this);
+    makeObservable(this, {
+      name: observable,
+    });
   }
 }
 
@@ -84,7 +89,7 @@ let id = 0;
 export class TransitionSplit extends Transition {
   Icon = "⑃";
 
-  @observable Shallow: boolean;
+  Shallow: boolean;
   Names: IObservableArray<SplitInfo>;
   uid = id++;
 
@@ -115,7 +120,9 @@ export class TransitionSplit extends Transition {
 
     this.$type = "TransitionSplitDao";
 
-    makeObservable(this);
+    makeObservable(this, {
+      Shallow: observable,
+    });
   }
 
   get json() {

@@ -30,7 +30,10 @@ function renderAction(action: Action, ei: Ei) {
       return (
         <>
           <Header as="h4" icon="user" content="Notify Agent" dividing />
-          <FieldCollectionEditor collection={am.NotifyAgents} />
+          <FieldCollectionEditor
+            collection={am.NotifyAgents}
+            collectionName="NotifyAgents"
+          />
           <Header as="h4" icon="users" content="Notify Roles" dividing />
           <GroupsEditor groups={am.NotifyGroups} ei={ei} />
           <PropertyView owner={action} types={ei.types} />

@@ -57,11 +57,13 @@ export function optionSort(a: any, b: any): number {
 }
 
 export class Workflow extends ParametricEntity {
+  [index: string]: any;
+
   diagram: DiagramModel;
   ei: Ei;
 
-  @observable Stateless: boolean;
-  @observable Static: boolean;
+  Stateless: boolean;
+  Static: boolean;
   States: IObservableArray<State>;
   Actions: IObservableArray<Action>;
   Transitions: IObservableArray<Transition>;
@@ -118,7 +120,13 @@ export class Workflow extends ParametricEntity {
       (workflow.Connections || []).map((s) => new Connection(s, this, ei))
     );
 
-    makeObservable(this);
+    makeObservable(this, {
+      Stateless: observable,
+      Static: observable,
+      connectionOptions: computed,
+      actionOptions: computed,
+      addConnection: action,
+    });
   }
 
   findPosition(id: string): PositionModel {
@@ -152,7 +160,6 @@ export class Workflow extends ParametricEntity {
     Ui.history.step();
   };
 
-  @computed
   get connectionOptions() {
     return [{ value: "", text: "None" }]
       .concat(
@@ -169,7 +176,6 @@ export class Workflow extends ParametricEntity {
       .sort(optionSort);
   }
 
-  @computed
   get actionOptions() {
     return [{ value: "", text: "None" }].concat(
       this.Actions.map((c) => ({
@@ -182,7 +188,7 @@ export class Workflow extends ParametricEntity {
   createAction = async (e: any) => {
     e.stopPropagation();
 
-    const { value: formValues } = await swal({
+    const { value: formValues } = await swal.fire({
       title: "Creating an Action",
       html: `
         <div style="text-align: left">
@@ -268,7 +274,7 @@ export class Workflow extends ParametricEntity {
   createTransition = async (e: any) => {
     e.stopPropagation();
 
-    const { value: formValues } = await swal({
+    const { value: formValues } = await swal.fire({
       title: "Create a Transition",
       html: `
         <div style="text-align: left">
@@ -329,10 +335,10 @@ export class Workflow extends ParametricEntity {
     this.context.engine.repaintCanvas();
   };
 
-  @action addConnection = async (e: any) => {
+  addConnection = async (e: any) => {
     e.stopPropagation();
 
-    const { value: formValues } = await swal({
+    const { value: formValues } = await swal.fire({
       title: "Creating a Connection",
       html: `
         <div style="text-align: left">

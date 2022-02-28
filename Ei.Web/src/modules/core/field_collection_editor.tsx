@@ -14,44 +14,42 @@ const IoPuts = styled(Input)`
   margin-bottom: 3px !important;
 `;
 
-@observer
-export class FieldCollectionEditor extends React.Component<Props> {
-  remove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const idx = parseInt(e.currentTarget.getAttribute("data-index"), 10);
-    this.props.collection.splice(idx, 1);
-  };
-
-  add = () => {
-    this.props.collection.push("");
-  };
-
-  render() {
-    return (
-      <>
-        {this.props.collection.map((_input, index) => (
-          <IoPuts
-            name={`${this.props.collectionName}[${index}]`}
-            action={{
-              color: "red",
-              icon: "trash",
-              onClick: this.remove,
-              "data-index": index,
-              type: "button",
-              name: "removeInput",
-            }}
-            key={index}
-          />
-        ))}
-
-        <Button
-          type="button"
-          name="addInput"
-          primary
-          onClick={this.add}
-          icon="plus"
-          content={`Add`}
+export let FieldCollectionEditor = (props: Props) => {
+  return (
+    <>
+      {props.collection.map((_input, index) => (
+        <IoPuts
+          name={`${props.collectionName}[${index}]`}
+          action={{
+            color: "red",
+            icon: "trash",
+            onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+              const idx = parseInt(
+                e.currentTarget.getAttribute("data-index"),
+                10
+              );
+              props.collection.splice(idx, 1);
+            },
+            "data-index": index,
+            type: "button",
+            name: "removeInput",
+          }}
+          key={index}
         />
-      </>
-    );
-  }
-}
+      ))}
+
+      <Button
+        type="button"
+        name="addInput"
+        primary
+        onClick={() => {
+          props.collection.push("");
+        }}
+        icon="plus"
+        content={`Add`}
+      />
+    </>
+  );
+};
+
+FieldCollectionEditor = observer(FieldCollectionEditor);

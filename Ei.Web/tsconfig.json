@@ -1,35 +1,25 @@
 {
-    "compilerOptions": {
-        "target": "es2019",
-        "esModuleInterop": true,
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "importHelpers": true,
-        "isolatedModules": false,
-        "jsx": "react",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "skipLibCheck": true,
-        "skipDefaultLibCheck": true,
-        "declaration": false,
-        "strict": true,
-        "strictNullChecks": false,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "removeComments": true,
-        "noEmit": true,
-        "noLib": false,
-        "outDir": "build/",
-        "noEmitHelpers": true,
-        "preserveConstEnums": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "typeRoots": [
-            "node_modules/@types"
-        ]
-    },
-    "exclude": [
-        "node_modules",
-        "dist",
-        "build"
-    ]
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
