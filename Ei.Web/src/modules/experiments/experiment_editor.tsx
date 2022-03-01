@@ -9,12 +9,23 @@ import { Formix } from "../Form";
 import { ExperimentProperties } from "./components/experimentProperties";
 import { timerComponent } from "./components/timerEditor";
 import { transformComponent } from "./components/transformEditor";
-import { GameObjectDao } from "./experiment_model";
+import { ComponentDao, GameObjectDao } from "./experiment_model";
+import { simulationProjectComponent } from "./components/simulationProject";
+import { agentEnvironmentEditor } from "./components/agentEnvironmentEditor";
+import { environmentalObjectEditor } from "./components/environmentalObjectEditor";
+import { delayActionEditor } from "./components/delayActionEditor";
+import { simulationAgentComponent } from "./components/simulationAgentEditor";
+import { randomDecisionReasoner } from "./components/randomDecisionReasoner";
+import { environmentalActuator } from "./components/environmentalActuatorEditor";
+import { sensorEditor } from "./components/sensorEditor";
+import { linearNavigationEditor } from "./components/linearNavigationEditor";
+import { toJS } from "mobx";
+import { ExperimentCanvas } from "./components/experiment_canvas";
 
 const ListHeader = styled(List.Header)`
   padding: 4px 16px;
 
-  background: #cecece;
+  background: #aeaeae;
 
   &.secondary {
     background: #dedede;
@@ -42,7 +53,54 @@ const ListItem = styled(List.Item)`
   label: ListItem;
 `;
 
-const componentOptions = [transformComponent, timerComponent];
+type ComponentOption = {
+  text: string;
+  globalDependencies?: ComponentOption[];
+  componentDependencies?: ComponentOption[];
+  type: string;
+  editor: React.FC<any>;
+  defaultValue: () => Any;
+};
+
+const componentOptions: ComponentOption[] = [
+  transformComponent,
+  timerComponent,
+  simulationProjectComponent,
+  agentEnvironmentEditor,
+  environmentalObjectEditor,
+  delayActionEditor,
+  simulationAgentComponent,
+  environmentalActuator,
+  randomDecisionReasoner,
+  sensorEditor,
+  linearNavigationEditor,
+].sort((a, b) => a.text.localeCompare(b.text));
+
+function typeFirst(obj: any) {
+  if (obj == null || typeof obj !== "object") {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((m) => typeFirst(m));
+  }
+
+  let result: any = {};
+
+  // type must be first
+  if (obj.$type) {
+    result.$type = obj.$type;
+  }
+
+  for (let key of Object.keys(obj)) {
+    if (key === "$type") {
+      continue;
+    }
+    result[key] = typeFirst(obj[key]);
+  }
+
+  return result;
+}
 
 export const ExperimentEditor = () => {
   const context = useAppContext();
@@ -80,12 +138,21 @@ export const ExperimentEditor = () => {
       >
         <Observer>{() => <Menu.Item content={experiment.Name} />}</Observer>
 
-        <Menu.Item icon="play" />
+        <Menu.Item
+          icon="play"
+          onClick={() => {
+            // console.log(typeFirst(toJS(experiment)));
+            context.ei.run(
+              context.client,
+              JSON.stringify(typeFirst(toJS(experiment)), null, 2)
+            );
+          }}
+        />
       </Menu>
 
-      <div style={{ flex: 1, overflow: "auto" }}>
+      <div style={{ flex: 1, position: "relative" }}>
         <SplitPane>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "100%", overflow: "auto" }}>
             <List>
               <ListHeader content="Administration" />
               <ListItem
@@ -119,6 +186,7 @@ export const ExperimentEditor = () => {
                       experiment.GameObjects.push({
                         Id: Date.now().toString(),
                         Name: modal.value,
+                        Icon: null,
                         Components: [transformComponent.defaultValue()],
                       });
                     }
@@ -145,23 +213,18 @@ export const ExperimentEditor = () => {
             </List>
           </div>
           <div style={{ background: "blue", width: "100%", overflow: "auto" }}>
-            Content <br />
-            Content <br />
-            Content <br />
+            <ExperimentCanvas experiment={experiment} state={state} />
           </div>
-          <div style={{ width: "100%", background: "white" }}>
+          <div style={{ width: "100%", background: "white", overflow: "auto" }}>
             <List className="ui form">
-              <ListHeader icon="list" content="Properties" />
               <Observer>
                 {() => (
                   <>
                     {state.selectedGameObject ? (
                       <Formix initialValues={state.selectedGameObject}>
                         <>
+                          <ListHeader icon="cog" content="Components" />
                           <ExperimentProperties />
-                          {state.selectedGameObject.Components && (
-                            <ListHeader icon="cog" content="Components" />
-                          )}
 
                           {state.selectedGameObject.Components && (
                             <>
@@ -179,13 +242,7 @@ export const ExperimentEditor = () => {
                                     );
                                   }
                                   return (
-                                    <div
-                                      key={c.Id}
-                                      style={{
-                                        borderBottom: "1px dashed #dedede",
-                                        paddingBottom: 4,
-                                      }}
-                                    >
+                                    <div key={c.Id}>
                                       <ListHeader
                                         className="secondary"
                                         style={{ paddingRight: 8 }}
@@ -214,8 +271,48 @@ export const ExperimentEditor = () => {
                                       </ListHeader>
                                       <List.Item>
                                         <currentComponent.editor
-                                          component={c}
+                                          component={c as any}
                                         />
+                                        {/* Check all dependencies */}
+                                        {(
+                                          currentComponent.globalDependencies ||
+                                          []
+                                        )
+                                          .filter((f) =>
+                                            experiment.GameObjects.every((g) =>
+                                              g.Components.every(
+                                                (c) => c.$type !== f.type
+                                              )
+                                            )
+                                          )
+                                          .map((t, i) => (
+                                            <div style={{ padding: 8 }}>
+                                              <Message
+                                                visible
+                                                error
+                                                header="Missing Global Dependency"
+                                                content={t.text}
+                                                key={i}
+                                              />
+                                            </div>
+                                          ))}
+                                        {(
+                                          currentComponent.componentDependencies ||
+                                          []
+                                        )
+                                          .filter((f) =>
+                                            state.selectedGameObject.Components.every(
+                                              (c) => c.$type !== f.type
+                                            )
+                                          )
+                                          .map((t, i) => (
+                                            <Message
+                                              error
+                                              header="Missing Component"
+                                              content={t.text}
+                                              key={i}
+                                            />
+                                          ))}
                                       </List.Item>
                                     </div>
                                   );

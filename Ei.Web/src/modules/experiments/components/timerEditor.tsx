@@ -7,6 +7,7 @@ export const TimerEditor = ({ component }: { component: ComponentDao }) => (
   <Formix initialValues={component}>
     <ExperimentPane>
       <Input
+        size="mini"
         type="number"
         name="DayLengthInSeconds"
         label="Day Length in Seconds"

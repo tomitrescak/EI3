@@ -1,5 +1,6 @@
 ﻿using Ei.Core.Runtime;
 using Ei.Logs;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace Ei.Simulation.Behaviours.Environment.Objects
         [NonSerialized]
         public Governor Owner;
 
+        [JsonIgnore]
         public string Name { get => this.gameObject.name; } 
 
         public string Icon;

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Ei.Logs;
 using Ei.Simulation.Core;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Ei.Simulation.Behaviours
@@ -16,7 +17,10 @@ namespace Ei.Simulation.Behaviours
         private DateTime startTime;
         private TaskCompletionSource<bool> tsc;
 
+        [JsonIgnore]
         public float SpeedPxPerSecond;
+
+        [JsonIgnore]
         public bool Navigating { get; private set; }
 
         public void Start()

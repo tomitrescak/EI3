@@ -7,6 +7,7 @@ export type ComponentDao = {
 export type GameObjectDao = {
   Id: string;
   Name: string;
+  Icon: string;
   Components: ComponentDao[];
 };
 

@@ -274,10 +274,10 @@ export class Ei extends ParametricEntity {
     this.context.compiling = true;
   }
 
-  run(client: SocketClient) {
+  run(client: SocketClient, source: string) {
     client.send({
       query: "RunInstitution",
-      variables: ["source"],
+      variables: [source],
       receiver: (resultString: string) => {
         const result = JSON.parse(resultString);
 

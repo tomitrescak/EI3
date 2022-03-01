@@ -398,8 +398,43 @@ namespace Ei.Server
                 this.gameEngine.Stop();
             }
 
+            //var file = File.ReadAllText("./ei.json");
+            //var s = JsonConvert.DeserializeObject<Scene>(file, new JsonSerializerSettings
+            //{
+            //    TypeNameHandling = TypeNameHandling.All
+            //});
+
+            Scene scene;
+            if (projectSource != null)
+            {
+                scene = JsonConvert.DeserializeObject<Scene>(projectSource, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+
+                var found = false;
+                foreach (var go in scene.GameObjects)
+                {
+                    foreach (var cmp in go.Components) {
+                        if (cmp is SimulationProject)
+                        {
+                            found = true;
+                            (cmp as SimulationProject).Ei = this.currentEi;
+                        }
+                    }
+                }
+                if (!found)
+                {
+                    throw new Exception("You need to have a 'SimulationProject' component in your project");
+                }
+            }
+            else
+            {
+                scene = PlanningAgent();
+
+            }
+
             // var scene = JsonConvert.DeserializeObject(projectSource, typeof(Scene)) as Scene;
-            var scene = PlanningAgent();
 
             //string output = JsonConvert.SerializeObject(scene);
             //File.WriteAllText("./ei.json", output);

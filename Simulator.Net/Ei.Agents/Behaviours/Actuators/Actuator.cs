@@ -2,6 +2,7 @@
 using Ei.Core.Runtime.Planning;
 using Ei.Core.Runtime.Planning.Costs;
 using Ei.Logs;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,8 +30,10 @@ namespace Ei.Simulation.Behaviours.Actuators
         private Queue<ActionItem> actionQueue;
         private bool processing;
 
+        [JsonIgnore]
         public bool ShouldProcess => this.processing == false && this.actionQueue.Count > 0;
 
+        [JsonIgnore]
         public bool IsProcessing => processing;
 
         public Actuator()

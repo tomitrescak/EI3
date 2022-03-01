@@ -2,31 +2,24 @@ import styled from "@emotion/styled";
 import React from "react";
 import { Formix, Input } from "../../Form";
 import { ComponentDao } from "../experiment_model";
-import { UniqueId } from "./experimentCommon";
+import { ExperimentPane, UniqueId } from "./experimentCommon";
 
-const Line = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 2px 8px;
-  background: #efefef;
-  .field {
-    width: 60px;
-    margin-right: 30px !important;
-    margin-bottom: 0px !important;
-
-    :last-of-type {
-      margin-right: 0px;
-    }
-  }
-`;
+// const Line = styled.div`
+//   display: flex;
+//   align-items: center;
+//   padding: 2px 8px;
+//   background: #efefef;
+// `;
 
 export const TransformEditor = ({ component }: { component: ComponentDao }) => (
   <Formix initialValues={component}>
-    <Line>
-      <Input type="number" name="position.x" label="X" fluid />
-      <Input type="number" name="position.y" label="Y" />
-      <Input type="number" name="position.z" label="Z" />
-    </Line>
+    <ExperimentPane>
+      <div className="inline">
+        <Input size="mini" name="position.x" label="X" fluid />
+        <Input size="mini" name="position.y" label="Y" fluid />
+        <Input size="mini" name="position.z" label="Z" fluid />
+      </div>
+    </ExperimentPane>
   </Formix>
 );
 
@@ -38,9 +31,9 @@ export const transformComponent = {
     Id: UniqueId(),
     $type: transformComponent.type,
     position: {
-      x: 0,
-      y: 0,
-      z: 0,
+      x: "0",
+      y: "0",
+      z: "0",
     },
   }),
 };

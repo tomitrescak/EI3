@@ -35,6 +35,8 @@ namespace UnityEngine
         [JsonIgnore]
         public readonly ActionDelegate UpdateAction;
 
+        public string Id;
+
         public MonoBehaviour() {
             var initMethod = this.GetType().GetMethod("Init");
             if (initMethod != null) {
