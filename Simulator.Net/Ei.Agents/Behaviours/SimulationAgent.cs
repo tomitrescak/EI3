@@ -244,7 +244,7 @@ namespace Ei.Simulation.Behaviours
             this.Governor = governor;
 
             if (result != InstitutionCodes.Ok) {
-                Log.Error(this.gameObject.name, $"[ERROR] Could not connect to insitutiton:  {result.ToString()}");
+                Log.Error(this.Name, "Agent", $"[ERROR] Could not connect to insitutiton:  {result.ToString()}");
                 this.gameObject.Enabled = false;
                 return;
             }

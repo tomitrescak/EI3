@@ -188,7 +188,7 @@ namespace Ei.Core.Ontology
                 }
             }
             catch (Exception ex) {
-                Log.Warning(agent.Name, "Warning exiting workflow: " + ex.Message);
+                Log.Warning(agent.Name, "Institution", "Warning exiting workflow: " + ex.Message);
 
             }
             return ActionInfo.OkButDoNotContinue;

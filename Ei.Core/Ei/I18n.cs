@@ -31,8 +31,8 @@ namespace Ei.Core
 
     public static class Logger
     {
-        public static void Info(string source, InstitutionCodes code, params object[] parameters) {
-            if (EiLog.IsInfo) EiLog.Info(source, I18N.Get(code, parameters));
+        public static void Info(string agent, string component, InstitutionCodes code, params object[] parameters) {
+            if (EiLog.IsInfo) EiLog.Info(agent, component, I18N.Get(code, parameters));
         }
     }
 }

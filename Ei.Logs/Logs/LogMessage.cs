@@ -6,7 +6,8 @@ namespace Ei.Logs
     {
         public int Level { get; set; }
         public string Message { get; set; }
-        public string Source { get; set; }
+        public string Agent { get; set; }
+        public string Component { get; set; }
         public string Code { get; set; }
         public string[] Parameters { get; set; }
 

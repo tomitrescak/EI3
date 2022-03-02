@@ -63,7 +63,7 @@ namespace Ei.Core.Ontology
 
             private void Timedout(object sender, ElapsedEventArgs elapsedEventArgs) {
                 var workflow = state.workflow.GetInstance(this.Id);
-                if (Log.IsInfo) Logger.Info("State", InstitutionCodes.TimeOut, workflow.Id, workflow.InstanceId.ToString(), this.Id.ToString());
+                if (Log.IsInfo) Logger.Info(null, "State", InstitutionCodes.TimeOut, workflow.Id, workflow.InstanceId.ToString(), this.Id.ToString());
 
                 // find timeout connection
                 var connection = state.Outs.FirstOrDefault(w => w.Action is ActionTimeout);

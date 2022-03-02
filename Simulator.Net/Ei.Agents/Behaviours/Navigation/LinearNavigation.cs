@@ -38,17 +38,17 @@ namespace Ei.Simulation.Behaviours
 
             if (this.SpeedPxPerSecond == 0)
             {
-                Log.Error(this.gameObject.name, "Agent immobile as his speed is set to 0");
+                Log.Error(this.gameObject.name, "Navigation", "Agent immobile as his speed is set to 0");
             }
         }
 
         public override Task<bool> MoveToDestination(float x, float y) {
             
             this.Navigating = true;
-            Log.Debug(this.gameObject.name + " Navigation", $"Moving to destination [{x}, {y}] at {this.SpeedKmH} km/h and {this.SpeedPxPerSecond} px/sec");
+            Log.Debug(this.gameObject.name, "Navigation", $"Moving to destination [{x}, {y}] at {this.SpeedKmH} km/h and {this.SpeedPxPerSecond} px/sec");
 
             if (this.SpeedPxPerSecond == 0) {
-                Log.Warning(this.gameObject.name + " Navigation", "Agent cannot move as its speed is 0");
+                Log.Warning(this.gameObject.name, "Navigation", "Agent cannot move as its speed is 0");
                 return Task.FromResult(false);
             }
 
@@ -79,7 +79,7 @@ namespace Ei.Simulation.Behaviours
             // Debug.WriteLine($"{xDelta} {yDelta}");
 
             if (xDelta < 0.001 && yDelta < 0.001) {
-                Log.Debug(this.gameObject.name + " Navigation", $"Moved to destination [{this.destinationX}, {this.destinationY}]");
+                Log.Debug(this.gameObject.name, "Navigation", $"Moved to destination [{this.destinationX}, {this.destinationY}]");
 
                 this.tsc.TrySetResult(true);
                 this.tsc = null;
@@ -89,7 +89,7 @@ namespace Ei.Simulation.Behaviours
             } else {
                 this.tween.Update(Time.deltaTime);
 
-                Log.Debug(this.gameObject.name + " Navigation", $"Moved to position [{this.transform.X}, {this.transform.Y}]");
+                Log.Debug(this.gameObject.name, "Navigation", $"Moved to position [{this.transform.X}, {this.transform.Y}]");
             }
         }
     }

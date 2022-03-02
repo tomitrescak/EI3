@@ -58,7 +58,7 @@ namespace Ei.Simulation.Behaviours.Actuators
         {
             if (this.gameObject.GameEngine.IsRunning == false)
             {
-                Log.Warning(agent.Name + " Actuator", "Game Engine Not Running: Ignoring Action");
+                Log.Warning(agent.Name, "Actuator", "Game Engine Not Running: Ignoring Action");
                 return false;
             }
 

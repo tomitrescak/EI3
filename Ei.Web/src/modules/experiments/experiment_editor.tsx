@@ -21,6 +21,7 @@ import { sensorEditor } from "./components/sensorEditor";
 import { linearNavigationEditor } from "./components/linearNavigationEditor";
 import { toJS } from "mobx";
 import { ExperimentCanvas } from "./components/experiment_canvas";
+import { LogMessage } from "./components/experimentCommon";
 
 const ListHeader = styled(List.Header)`
   padding: 4px 16px;
@@ -102,13 +103,65 @@ function typeFirst(obj: any) {
   return result;
 }
 
+const MAX_MESSAGES = 200;
+
 export const ExperimentEditor = () => {
   const context = useAppContext();
   const { id } = useQuery();
   const experiment = context.ei.Experiments.find((e) => e.Id === id);
+  const allMessages = React.useRef([]);
+
   const state = useLocalObservable(() => ({
     selectedGameObject: null as GameObjectDao,
+    isAgent: false,
+    select(go: GameObjectDao) {
+      this.selectedGameObject = go;
+      if (
+        go.Components &&
+        go.Components.some((c) => c.$type === simulationAgentComponent.type)
+      ) {
+        this.isAgent = true;
+        context.messages
+          .replace(allMessages.current.filter((m) => m.agent === go.Name))
+          .slice(-MAX_MESSAGES);
+      } else {
+        this.isAgent = false;
+        context.messages.replace(allMessages.current.slice(-MAX_MESSAGES));
+      }
+    },
   }));
+
+  // this thing monitors the institution
+  React.useEffect(() => {
+    const id = context.client.send({
+      query: "MonitorInstitution",
+      isSubscription: true,
+      receiver: (data: LogMessage) => {
+        if (data.agent != null) {
+          let agent = experiment.GameObjects.find(
+            (go) => go.Name === data.agent
+          );
+          if (data.component === "Navigation") {
+            let position = data.message.match(/\[(.*),(.*)\]/);
+            agent.Components[0].position.x = position[1];
+            agent.Components[0].position.y = position[2];
+          }
+        }
+
+        allMessages.current.push(data);
+
+        if (!state.isAgent || data.agent === state.selectedGameObject.Name) {
+          context.messages.push(data);
+          if (context.messages.length > MAX_MESSAGES) {
+            context.messages.unshift();
+          }
+        }
+      },
+    });
+    return () => {
+      context.client.unsubscribe("MonitorInstitution", id);
+    };
+  }, []);
 
   if (experiment.GameObjects == null) {
     experiment.GameObjects = [];
@@ -141,6 +194,9 @@ export const ExperimentEditor = () => {
         <Menu.Item
           icon="play"
           onClick={() => {
+            allMessages.current = [];
+            context.messages.clear();
+
             // console.log(typeFirst(toJS(experiment)));
             context.ei.run(
               context.client,
@@ -163,7 +219,7 @@ export const ExperimentEditor = () => {
                     ? "active"
                     : ""
                 }
-                onClick={() => (state.selectedGameObject = experiment as any)}
+                onClick={() => state.select(experiment as any)}
               />
               <ListHeader
                 style={{
@@ -202,7 +258,7 @@ export const ExperimentEditor = () => {
                         className={
                           state.selectedGameObject === go ? "active" : ""
                         }
-                        onClick={() => (state.selectedGameObject = go)}
+                        onClick={() => state.select(go)}
                       >
                         {go.Name}
                       </ListItem>

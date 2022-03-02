@@ -48,10 +48,13 @@ namespace Ei.Simulation.Behaviours
         }
 
 
-        protected virtual void FindPlan(PlannerSession item, string logName)
+        const string LogComponent = "PlanManager";
+
+
+        protected virtual void FindPlan(PlannerSession item, string agent)
         {
             var groupString = string.Join(",", item.agent.Governor.Groups.Select(g => g.Organisation.Id + "|" + g.Role.Id).ToArray());
-            Log.Debug(logName, "Generating plan for: " + string.Join(";", item.goal.Select(w => w.ToString()).ToArray()));
+            Log.Debug(agent, LogComponent, "Generating plan for: " + string.Join(";", item.goal.Select(w => w.ToString()).ToArray()));
             this.PlanningStarted?.Invoke(this, item);
 
 
@@ -68,7 +71,7 @@ namespace Ei.Simulation.Behaviours
                 if (plan != null)
                 {
                     var planString = string.Join(" -> ", plan.Select(p => p.Arc != null ? p.Arc.Action != null ? $"({p.Arc.Id}) {p.Arc.Action.Id}" : p.Arc.Id : "[No Arc]").ToArray());
-                    Log.Info(logName, string.Format("Plan with length {0} generated in {1} seconds: {2} ", plan == null ? 0 : plan.Count, (sw.ElapsedMilliseconds / 1000), planString));
+                    Log.Info(agent, LogComponent, string.Format("Plan with length {0} generated in {1} seconds: {2} ", plan == null ? 0 : plan.Count, (sw.ElapsedMilliseconds / 1000), planString));
                     
                     this.PlanFound?.Invoke(this, plan);
                     sw.Stop();
@@ -84,7 +87,7 @@ namespace Ei.Simulation.Behaviours
             catch (PlanException ex)
             {
                 this.PlanFailed?.Invoke(this, ex);
-                Log.Error(logName, "Plan search failed: " + ex.Message);
+                Log.Error(agent, LogComponent, "Plan search failed: " + ex.Message);
                 item.task.TrySetResult(null);
             }
             finally
@@ -108,7 +111,7 @@ namespace Ei.Simulation.Behaviours
                 var item = sessions.Dequeue ();
                 
 
-                string logName = item.agent.Name + " Planner";
+                string logName = item.agent.Name;
 
                 // TODO: Dangerous! Should not happen ...
                 if (item.agent.Governor.Workflow == null)
@@ -119,7 +122,7 @@ namespace Ei.Simulation.Behaviours
                 // make sure that agent is in the parent workflow
                 while (item.agent.Governor.Workflow.Parent != null)
                 {
-                    Log.Info(logName, "Exiting workflow due to planning ...");
+                    Log.Info(logName, "PlanManager", "Exiting workflow due to planning ...");
                     item.agent.Governor.ExitWorkflow();
                 }
 
@@ -159,9 +162,9 @@ namespace Ei.Simulation.Behaviours
             
         }
 
-        private bool FailPlan(SimulationAgent agent, string logName, string message)
+        private bool FailPlan(SimulationAgent agent, string agentName, string message)
         {
-            Log.Error(logName, "Plan Execution Failed: " + message);
+            Log.Error(agentName, LogComponent, "Plan Execution Failed: " + message);
 
             this.PlanExecutionFailed?.Invoke(this, agent, message);
 
@@ -174,7 +177,7 @@ namespace Ei.Simulation.Behaviours
         public async Task<bool> ExecutePlan(SimulationAgent agent, List<AStarNode> plan)
         {
             
-            var logName = agent.Name + " PlanManager";
+            var agentName = agent.Name;
             var planFinished = false;
 
             //lock (locker)
@@ -189,13 +192,13 @@ namespace Ei.Simulation.Behaviours
                     // check if the engine stopped
                     if (!agent.gameObject.GameEngine.IsRunning)
                     {
-                        Log.Warning(logName, "Stopping the plan as game engine is not running");
+                        Log.Warning(agentName, LogComponent, "Stopping the plan as game engine is not running");
                         break;
                     }
                     var planItem = plan[i];
 
                     this.PlanItemStarted?.Invoke(this, agent, plan, i);
-                    Log.Success(logName, $"Starting Plan Item {i} -  {planItem.Arc.Action}");
+                    Log.Success(agentName, LogComponent, $"Starting Plan Item {i} -  {planItem.Arc.Action}");
 
                     // skip plan items with no arcs
                     if (planItem.Arc == null) {
@@ -210,7 +213,7 @@ namespace Ei.Simulation.Behaviours
                             var actionInfo = agent.Governor.Move(planItem.Arc.To.Id);
                             if (actionInfo.IsNotOk)
                             {
-                                return this.FailPlan(agent, logName, "Could not move to the new state");
+                                return this.FailPlan(agent, agentName, "Could not move to the new state");
                             }
                         }
                         // this.PlanItemFinished?.Invoke(this, agent, plan, i);
@@ -226,12 +229,12 @@ namespace Ei.Simulation.Behaviours
                             var result = agent.Governor.ExitWorkflow();
                             if (result.IsNotOk)
                             {
-                                return this.FailPlan(agent, logName, "Could not exit workflow");
+                                return this.FailPlan(agent, agentName, "Could not exit workflow");
                             }
                         }
                         catch (InstitutionException ex)
                         {
-                            return this.FailPlan(agent, logName, ex.Message);
+                            return this.FailPlan(agent, agentName, ex.Message);
                         }
                     }
                     else if (planItem.Arc.Action is ActionMessage ||
@@ -247,12 +250,12 @@ namespace Ei.Simulation.Behaviours
                             var result = await this.actuator.ExecutePlanItem(agent, planItem); 
                             if (result == false)
                             {
-                                this.FailPlan(agent, logName, "Action Failed");
+                                this.FailPlan(agent, agentName, "Action Failed");
                                 return false;
                             }
                         } catch (Exception ex)
                         {
-                            return this.FailPlan(agent, logName, "Action Failed - " + ex.Message);
+                            return this.FailPlan(agent, agentName, "Action Failed - " + ex.Message);
                         }
 
 
@@ -323,7 +326,7 @@ namespace Ei.Simulation.Behaviours
 
 
                     // plan item finished successfully
-                    Log.Debug(logName, $"Finished Plan Item {i} -  {planItem.Arc.Action}");
+                    Log.Debug(agentName, LogComponent, $"Finished Plan Item {i} -  {planItem.Arc.Action}");
                     this.PlanItemFinished?.Invoke(this, agent, plan, i);
 
                     // we may have finished the plan
@@ -340,7 +343,7 @@ namespace Ei.Simulation.Behaviours
                     return true;
                 } else
                 {
-                    return this.FailPlan(agent, logName, "No reason given");
+                    return this.FailPlan(agent, agentName, "No reason given");
                 }
                 
             }

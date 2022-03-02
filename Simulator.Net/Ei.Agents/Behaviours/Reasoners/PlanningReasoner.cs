@@ -71,7 +71,7 @@ namespace Ei.Simulation.Behaviours.Reasoners
 
             if (plan == null)
             {
-                Log.Warning(this.agent.Governor.Name + " Planning", "could not find the plan ...");
+                Log.Warning(this.agent.Governor.Name, "Planning", "could not find the plan ...");
             }
             else
             {

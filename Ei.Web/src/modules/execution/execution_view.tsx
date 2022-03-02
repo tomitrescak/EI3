@@ -1,9 +1,9 @@
 // import * as jsPDF from "jspdf";
-import * as PIXI from "pixi.js";
+// import * as PIXI from "pixi.js";
 import * as React from "react";
 
 import { observable } from "mobx";
-import { Line } from "react-chartjs-2";
+// import { Line } from "react-chartjs-2";
 
 // class EnvironmentObject {
 //   name: string;

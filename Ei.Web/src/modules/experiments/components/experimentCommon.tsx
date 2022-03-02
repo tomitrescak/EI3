@@ -85,3 +85,12 @@ export const ExperimentPane = styled.div`
 
 let id = 0;
 export const UniqueId = () => (Date.now() + id++).toString();
+
+export type LogMessage = {
+  agent: string;
+  code: string;
+  component: string;
+  level: number;
+  message: string;
+  parameters: any;
+};

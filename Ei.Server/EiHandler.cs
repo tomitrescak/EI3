@@ -273,6 +273,9 @@ namespace Ei.Server
             // add two gameobjects with feeding
 
             var feedGo = new GameObject("Feed_1");
+
+            feedGo.AddComponent<Transform>();
+
             feedGo.transform.X = 100;
             feedGo.transform.Y = 100;
 
@@ -282,6 +285,7 @@ namespace Ei.Server
             scene.GameObjects.Add(feedGo);
 
             feedGo = new GameObject("Feed_2");
+            feedGo.AddComponent<Transform>();
             feedGo.transform.X = 200;
             feedGo.transform.Y = 300;
 
@@ -394,7 +398,7 @@ namespace Ei.Server
 
             if (this.gameEngine != null)
             {
-                Log.Info("Game Engine", "Stopping previous instance of the game");
+                Log.Info(null, "Game Engine", "Stopping previous instance of the game");
                 this.gameEngine.Stop();
             }
 
@@ -495,7 +499,7 @@ namespace Ei.Server
 
         public async Task MonitorInstitution(long queryId)
         {
-            Console.Write("Monitoring Institution");
+            Console.WriteLine("Monitoring Institution");
 
             this.socketLog.QueryId = queryId;
 

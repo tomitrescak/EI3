@@ -178,7 +178,7 @@ namespace Ei.Simulation.Simulator
                 while (true) {
                     if (cancelSource.Token.IsCancellationRequested)
                     {
-                        Log.Warning("Game Engine", "Stopping Game Engine ...");
+                        Log.Warning(null, "Game Engine", "Stopping Game Engine ...");
                         break;
                     }
                     this.ProcessFrame();

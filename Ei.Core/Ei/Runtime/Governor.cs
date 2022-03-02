@@ -540,7 +540,7 @@ namespace Ei.Core.Runtime
         }
 
         public void LogAction(InstitutionCodes code, params string[] parameters) {
-            if (Log.IsInfo) Logger.Info(this.Name, code, parameters);
+            if (Log.IsInfo) Logger.Info(this.Name, "Institution", code, parameters);
         }
 
         private IActionInfo FindClone(string cloneName, out Governor clone) {

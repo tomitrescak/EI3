@@ -12,7 +12,10 @@ export const ExperimentCanvas = ({
   state,
 }: {
   experiment: ExperimentDao;
-  state: { selectedGameObject: GameObjectDao };
+  state: {
+    select(go: GameObjectDao): void;
+    selectedGameObject: GameObjectDao;
+  };
 }) => {
   // find environment definition
   let go = experiment.GameObjects.find((g) =>
@@ -47,6 +50,7 @@ export const ExperimentCanvas = ({
                   <image
                     style={{
                       cursor: "pointer",
+                      transition: "all 0.1s",
                       outline:
                         state.selectedGameObject === go
                           ? "dashed 4px salmon"
@@ -62,7 +66,7 @@ export const ExperimentCanvas = ({
                     color="white"
                     height="32"
                     width="32"
-                    onClick={() => (state.selectedGameObject = go)}
+                    onClick={() => state.select(go)}
                   />
                 )}
               </Observer>

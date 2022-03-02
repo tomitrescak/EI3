@@ -53,7 +53,7 @@ namespace Ei.Simulation.Behaviours
         public virtual void NotifyAgentParameterChanged(string name, string parameterName, object value)
         {
             // Debug.WriteLine("{0} = {1}", parameterName, value);
-            Log.Info(name, string.Format("{0} = {1}", parameterName, value));
+            Log.Info(name, "Institution", string.Format("{0} = {1}", parameterName, value));
 
             //if (parameterName.StartsWith("a."))
             //{
@@ -76,7 +76,7 @@ namespace Ei.Simulation.Behaviours
 
         public virtual void Blocked()
         {
-            Log.Info(this.owner.Name, "Blocked");
+            Log.Info(this.owner.Name, "Institution", "Blocked");
         }
 
         public virtual void NotifyActivity(string name, string workflowId, int workflowInstanceId, string agentName, string activityId,

@@ -23,7 +23,7 @@ namespace UnityEngine
 
         public GameObject() {
             this.Components = new List<MonoBehaviour>();
-            this.AddComponent<Transform>();
+            // this.AddComponent<Transform>();
             this.Enabled = true;
         }
 

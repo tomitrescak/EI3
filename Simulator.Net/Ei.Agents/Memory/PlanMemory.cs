@@ -51,7 +51,7 @@ namespace Ei.Planning.Memory
                     p.StartWorkflowId == agentPosition.Workflow.Id &&
                     goals.All(g => p.Goals.Any(pg => pg.Fulfils(g)))
                 );
-                Log.Debug("Memory", "Found Plan: " + plan == null ? "NONE" : "YES");
+                Log.Debug(agent.Name, "Planning", "Found Plan: " + plan == null ? "NONE" : "YES");
                 if (plan != null) {
                     return plan.RetrieveMemoryPlan(agent, agentPosition);
                 }

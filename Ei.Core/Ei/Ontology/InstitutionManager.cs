@@ -46,7 +46,7 @@ namespace Ei.Core.Ontology
             this.MainWorkflow = this.Ei.CreateWorkflow(this.Ei.MainWorkflowId, null);
             this.agents = new List<Governor>();
 
-            if (Log.IsInfo) Logger.Info("Manager", InstitutionCodes.InstitutionStarted, this.Ei.Name);
+            if (Log.IsInfo) Logger.Info("", "Manager", InstitutionCodes.InstitutionStarted, this.Ei.Name);
 
             return true;
         }

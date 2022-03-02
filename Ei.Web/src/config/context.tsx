@@ -8,6 +8,7 @@ import { Ei } from "../modules/ei/ei_model";
 import { Entity } from "../modules/ei/entity_model";
 import type { History } from "history";
 import { DiagramEngine } from "@projectstorm/react-diagrams-core";
+import { LogMessage } from "../modules/experiments/components/experimentCommon";
 
 // const socketUrl = 'ws://10.211.55.4:5000/wd';
 const socketUrl = "ws://localhost:5000/wd";
@@ -34,7 +35,7 @@ export class AppContext {
   compiledCode = "";
   compiling = false;
   ei: Ei;
-  messages = observable([] as string[]);
+  messages = observable([] as LogMessage[]);
   errors = observable([] as CompilationError[]);
   storedHandlers: any;
 

@@ -30,36 +30,55 @@ const Pane = styled.div`
 // const ActivePane = style(pane, { display: "block" });
 // const HiddenPane = style(pane);
 
-export const Messages = () => {
+const Table = styled.table`
+  width: 100%;
+  th {
+    background: green;
+    color: white;
+    position: sticky;
+    text-align: left;
+    top: -8px; /* Don't forget this, required for the stickiness */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  }
+`;
+export const Messages = observer(() => {
   const context = useAppContext();
+  const ref = React.useRef<HTMLDivElement>(null);
+
   React.useEffect(() => {
-    const id = context.client.send({
-      query: "MonitorInstitution",
-      isSubscription: true,
-      receiver: (data: any) => {
-        console.log(data);
-      },
-    });
-    return () => {
-      context.client.unsubscribe("MonitorInstitution", id);
-    };
-  }, []);
+    if (ref.current) {
+      ref.current!.parentElement.scrollTop = ref.current!.scrollHeight;
+    }
+    console.log("Scrolling to: " + ref.current!.scrollHeight);
+  });
+
   return (
-    <Observer>
-      {() =>
-        context.messages.length ? (
-          <List>
-            {context.messages.map((m, i) => (
-              <List.Item key={i}>{m}</List.Item>
-            ))}
-          </List>
-        ) : (
-          <div>No Message</div>
-        )
-      }
-    </Observer>
+    <div ref={ref}>
+      <Table style={{ position: "relative" }}>
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Component</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {context.messages.length ? (
+            context.messages.map((m, i) => (
+              <tr key={i}>
+                <td>{m.agent}</td>
+                <td>{m.component}</td>
+                <td>{m.message}</td>
+              </tr>
+            ))
+          ) : (
+            <div>No Message</div>
+          )}
+        </tbody>
+      </Table>
+    </div>
   );
-};
+});
 
 Messages.displayName = "MessagesView";
 

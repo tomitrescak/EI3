@@ -89,7 +89,7 @@ namespace Ei.Core.Ontology.Actions
 
             this.Workflows.Add(newWorkflow.InstanceId);
 
-            if (Log.IsInfo) Logger.Info(newWorkflow.Name, InstitutionCodes.WorkflowStarted,
+            if (Log.IsInfo) Logger.Info(null, "Workflow", InstitutionCodes.WorkflowStarted,
                 newWorkflow.Name,
                 newWorkflow.Id,
                 newWorkflow.ToString());

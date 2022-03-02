@@ -39,9 +39,9 @@ namespace Ei.Logs
         //    LogMessage(0, message);
         //}
 
-        public static void Debug(string source, string message)
+        public static void Debug(string agent, string component, string message)
         {
-            LogMessage(0, message, source);
+            LogMessage(0, message, agent, component);
         }
 
         //public static void Info(string message)
@@ -54,9 +54,9 @@ namespace Ei.Logs
 //            LogMessage(1, source, code.ToString(), parameters);
 //        }
 
-        public static void Info(string source, string message)
+        public static void Info(string agent, string component, string message)
         {
-            LogMessage(1, message, source);
+            LogMessage(1, message, agent, component);
         }
 
         //        public static void Info(Enum code, params string[] parameters)
@@ -69,9 +69,9 @@ namespace Ei.Logs
         //    LogMessage(2, message);
         //}
 
-        public static void Warning(string source, string message)
+        public static void Warning(string agent, string component, string message)
         {
-            LogMessage(2, message, source);
+            LogMessage(2, message, agent, component);
         }
 
         //public static void Error(string message)
@@ -79,17 +79,17 @@ namespace Ei.Logs
         //    LogMessage(3, message);
         //}
 
-        public static void Error(string source, string message)
+        public static void Error(string agent, string component, string message)
         {
-            LogMessage(3, message, source);
+            LogMessage(3, message, agent, component);
         }
 
-        public static void Success(string source, string message)
+        public static void Success(string agent, string component, string message)
         {
-            LogMessage(4, message, source);
+            LogMessage(4, message, agent, component);
         }
 
-        private static void LogMessage(int level, string message, string source = null)
+        private static void LogMessage(int level, string message, string agent = null, string component = null)
         {
             // return;
             if (level < (int) LogLevel) return; // ignore messages below specified log level
@@ -99,18 +99,19 @@ namespace Ei.Logs
                 log.Log(new LogMessage
                 {
                     Message = message,
-                    Source = source,
+                    Agent = agent,
+                    Component = component,
                     Level = level
                 });
             }
 
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine(source + " :" + message);
+            System.Diagnostics.Debug.WriteLine(agent + "/" + component + " :" + message);
 #endif
 
         }
 
-        private static void LogMessage(int level, string source, string code, params string[] parameters)
+        private static void LogMessage(int level, string agent, string component, string code, params string[] parameters)
         {
             // return;
             if (level < (int)LogLevel) return; // ignore messages below specified log level
@@ -121,7 +122,8 @@ namespace Ei.Logs
                 {
                     Code = code,
                     Parameters = parameters,
-                    Source = source
+                    Agent = agent,
+                    Component = component
                 });
             }
         }

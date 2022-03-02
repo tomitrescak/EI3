@@ -28,6 +28,8 @@ import { WorkflowEditor } from "./modules/workflow/workflow_editor";
 import { observer } from "mobx-react";
 import { ExperimentEditor } from "./modules/experiments/experiment_editor";
 
+import "react-semantic-toasts/styles/react-semantic-alert.css";
+
 configure({ enforceActions: "never" });
 
 const App = () => {

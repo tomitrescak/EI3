@@ -12,9 +12,11 @@ namespace Ei.Logs
         {
             var color = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            
 
-            Console.Write($"[{message.Source.PadLeft(22, ' ')}] ");
+            var agent = message.Agent != null ? message.Agent : "";
+            var component = message.Component != null ? message.Component : "";
+
+            Console.Write($"[{agent}{"".PadLeft(25 - agent.Length - component.Length)}{component}] ");
 
             Console.ForegroundColor = color;
             if (message.Level == 0)

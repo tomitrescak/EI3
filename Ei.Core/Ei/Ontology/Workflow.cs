@@ -101,7 +101,7 @@ namespace Ei.Core.Ontology
                     this.state.GetInstance(this.InstanceId).EnterPosition();
 
                     // log state change
-                    if (Log.IsInfo) Logger.Info(this.workflow.Id, InstitutionCodes.WorkflowChangedState,
+                    if (Log.IsInfo) Logger.Info(null, "Workflow", InstitutionCodes.WorkflowChangedState,
                         this.state.Id,
                         this.workflow.Id,
                         this.InstanceId.ToString());
@@ -181,7 +181,7 @@ namespace Ei.Core.Ontology
 
             public void NotifyParameterChanged(string parameterName, object newValue) {
                 // log the result
-                if (Log.IsInfo) Logger.Info(this.Id, InstitutionCodes.WorkflowParameterChanged, this.Id, this.InstanceId.ToString(), parameterName, newValue.ToString());
+                if (Log.IsInfo) Logger.Info(null, "Workflow", InstitutionCodes.WorkflowParameterChanged, this.Id, this.InstanceId.ToString(), parameterName, newValue.ToString());
 
                 // notify all agents
                 for (int i = this.agents.Count - 1; i >= 0; i--) {
@@ -269,7 +269,7 @@ namespace Ei.Core.Ontology
                     }
                 }
 
-                if (Log.IsDebug) Log.Debug("Workflow " + this.Name, string.Join("\n", this.positions.Select(w => w.Value + ": " + w.Key).ToArray()));
+                if (Log.IsDebug) Log.Debug(null, "Workflow", string.Join("\n", this.positions.Select(w => w.Value + ": " + w.Key).ToArray()));
 
                 // initialise distance matrix
 

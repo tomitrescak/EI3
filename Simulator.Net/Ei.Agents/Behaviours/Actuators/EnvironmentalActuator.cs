@@ -48,7 +48,7 @@ namespace Ei.Simulation.Behaviours.Actuators
         {
             if (this.gameObject.GameEngine.IsRunning == false)
             {
-                Log.Warning(agent.Name + " E.Actuator", "Not executing the plan item as engine is not running");
+                Log.Warning(agent.Name, "Actuator", "Not executing the plan item as engine is not running");
                 return false;
             }
 
@@ -59,7 +59,7 @@ namespace Ei.Simulation.Behaviours.Actuators
             var item = this.environment.NoLocationInfo(actionId);
             if (item != null)
             {
-                Log.Debug(agent.Name + " Actuator", "Waiting: " + item.Duration);
+                Log.Debug(agent.Name, "Actuator", "Waiting: " + item.Duration);
                 // only wait for specific interval
                 await Task.Delay((int) item.Duration);
                 return base.PerformAction(agent, planItem);
@@ -88,7 +88,7 @@ namespace Ei.Simulation.Behaviours.Actuators
                 var moved = await this.navigation.MoveToDestination(obj.transform.X, obj.transform.Y);
                 if (!moved)
                 {
-                    Log.Warning(agent.Name + " Actuator", "Failed moving to the destination");
+                    Log.Warning(agent.Name, "Actuator", "Failed moving to the destination");
                     return false;
                 }
                 
@@ -97,9 +97,9 @@ namespace Ei.Simulation.Behaviours.Actuators
                 // check if the action provides parameters
                 if (action != null)
                 {
-                    Log.Debug(agent.Name + " Actuator", $"Started interaction with '{obj.Name}'");
+                    Log.Debug(agent.Name, "Actuator", $"Started interaction with '{obj.Name}'");
                     await obj.Use(agent, actionId);
-                    Log.Debug(agent.Name + " Actuator", $"Finished interaction with '{obj.Name}'");
+                    Log.Debug(agent.Name, "Actuator", $"Finished interaction with '{obj.Name}'");
                     
                     return base.PerformAction(agent, planItem, action.Parameters);
                 } else
