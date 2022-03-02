@@ -1,4 +1,6 @@
 import { makeObservable, observable } from "mobx";
+import React from "react";
+import { Point } from "../diagrams/model/diagram_common";
 import { FormNodeStore } from "../diagrams/model/form_state_model";
 
 export interface EntityDao {
@@ -18,13 +20,33 @@ export function entitySort(a: Entity, b: Entity): number {
 }
 
 export class Entity extends FormNodeStore {
-  [index: string]: any;
+  // [index: string]: any;
   Id: string;
   Icon: string;
   Name: string;
   Description: string;
 
+  height = 60;
+
   allowEditIcon = false;
+
+  get size() {
+    return this.Name.length * 8 + 30;
+  }
+
+  topPort(pos?: Point) {
+    return {
+      x: (pos?.x || this.position.x) + this.size / 2 - 2,
+      y: (pos?.y || this.position.y) + 0,
+    };
+  }
+
+  bottomPort(pos?: Point) {
+    return {
+      x: (pos?.x || this.position.x) + this.size / 2 - 2,
+      y: (pos?.y || this.position.y) + this.height,
+    };
+  }
 
   constructor(model: Partial<EntityDao>, allowEditIcon = false) {
     super(model.Id);

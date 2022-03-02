@@ -15,11 +15,11 @@ export abstract class PositionModel extends Entity {
     this.workflow = workflow;
 
     // add listeners
-    this.registerListener({
-      selectionChanged: ({ isSelected }) => {
-        isSelected ? this.select() : this.deselect();
-      },
-    } as NodeModelListener);
+    // this.registerListener({
+    //   selectionChanged: ({ isSelected }) => {
+    //     isSelected ? this.select() : this.deselect();
+    //   },
+    // } as NodeModelListener);
   }
 
   abstract select(): void;

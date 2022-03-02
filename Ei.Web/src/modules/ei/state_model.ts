@@ -49,39 +49,39 @@ export class State extends PositionModel {
 
     // add ports
 
-    this.addPort(
-      new WorkflowPortModel(workflow, "east", PortModelAlignment.RIGHT)
-    );
-    this.addPort(
-      new WorkflowPortModel(workflow, "west", PortModelAlignment.LEFT)
-    );
-    this.addPort(
-      new WorkflowPortModel(workflow, "north", PortModelAlignment.TOP)
-    );
-    this.addPort(
-      new WorkflowPortModel(workflow, "south", PortModelAlignment.BOTTOM)
-    );
+    // this.addPort(
+    //   new WorkflowPortModel(workflow, "east", PortModelAlignment.RIGHT)
+    // );
+    // this.addPort(
+    //   new WorkflowPortModel(workflow, "west", PortModelAlignment.LEFT)
+    // );
+    // this.addPort(
+    //   new WorkflowPortModel(workflow, "north", PortModelAlignment.TOP)
+    // );
+    // this.addPort(
+    //   new WorkflowPortModel(workflow, "south", PortModelAlignment.BOTTOM)
+    // );
 
-    this.addPort(
-      new WorkflowPortModel(workflow, "northeast", PortModelAlignment.RIGHT)
-    );
-    this.addPort(
-      new WorkflowPortModel(workflow, "southwest", PortModelAlignment.LEFT)
-    );
-    this.addPort(
-      new WorkflowPortModel(workflow, "northwest", PortModelAlignment.LEFT)
-    );
-    this.addPort(
-      new WorkflowPortModel(workflow, "southeast", PortModelAlignment.RIGHT)
-    );
+    // this.addPort(
+    //   new WorkflowPortModel(workflow, "northeast", PortModelAlignment.RIGHT)
+    // );
+    // this.addPort(
+    //   new WorkflowPortModel(workflow, "southwest", PortModelAlignment.LEFT)
+    // );
+    // this.addPort(
+    //   new WorkflowPortModel(workflow, "northwest", PortModelAlignment.LEFT)
+    // );
+    // this.addPort(
+    //   new WorkflowPortModel(workflow, "southeast", PortModelAlignment.RIGHT)
+    // );
 
-    if (
-      this.ei.context.Router.router.location.pathname.toLowerCase() ==
-      this.url.toLowerCase()
-    ) {
-      this.setSelected(true);
-      ei.context.selectedEntity = this;
-    }
+    // if (
+    //   this.ei.context.Router.router.location.pathname.toLowerCase() ==
+    //   this.url.toLowerCase()
+    // ) {
+    //   // this.setSelected(true);
+    //   ei.context.selectedEntity = this;
+    // }
 
     // this.addFormListener(() => Ui.history.step());
     makeObservable(this, {

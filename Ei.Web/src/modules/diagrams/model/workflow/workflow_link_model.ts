@@ -1,34 +1,30 @@
 import {
-  DefaultLinkModel,
-  DefaultLinkModelListener,
-} from "@projectstorm/react-diagrams";
-
-import { action, computed, makeObservable, observable } from "mobx";
+  action,
+  computed,
+  IObservableArray,
+  makeObservable,
+  observable,
+} from "mobx";
 import { Router } from "../../../../helpers/client_helpers";
 
 import { Connection } from "../../../ei/connection_model";
 import { Workflow } from "../../../ei/workflow_model";
 import { WorkflowDiagramModel } from "./workflow_diagram_model";
+import type { Point } from "../diagram_common";
 
-export class WorkflowLinkModel extends DefaultLinkModel {
+export class WorkflowLinkModel {
+  id: string;
   selected = false;
   connection: Connection;
   workflow: Workflow;
   model: WorkflowDiagramModel;
 
+  points: IObservableArray<Point> = observable([]);
+
   constructor(connection: Connection, workflow: Workflow) {
-    super({
-      type: "default",
-      id: connection.Id,
-    });
+    this.id = connection.Id;
     this.connection = connection;
     this.workflow = workflow;
-
-    this.registerListener({
-      selectionChanged: ({ isSelected }) => {
-        isSelected ? this.select() : false;
-      },
-    } as DefaultLinkModelListener);
 
     makeObservable(this, {
       selected: observable,

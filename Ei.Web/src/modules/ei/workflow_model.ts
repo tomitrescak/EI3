@@ -116,9 +116,11 @@ export class Workflow extends ParametricEntity {
       })
     );
 
-    this.Connections = observable(
-      (workflow.Connections || []).map((s) => new Connection(s, this, ei))
-    );
+    this.Connections = observable([]);
+
+    // this.Connections = observable(
+    //   (workflow.Connections || []).map((s) => new Connection(s, this, ei))
+    // );
 
     makeObservable(this, {
       Stateless: observable,
@@ -265,8 +267,8 @@ export class Workflow extends ParametricEntity {
       );
     }
 
-    this.context.engine.getModel().addNode(this.States[this.States.length - 1]);
-    this.context.engine.repaintCanvas();
+    // this.context.engine.getModel().addNode(this.States[this.States.length - 1]);
+    // this.context.engine.repaintCanvas();
 
     Ui.history.step();
   };
@@ -329,10 +331,10 @@ export class Workflow extends ParametricEntity {
 
     Ui.history.step();
 
-    this.context.engine
-      .getModel()
-      .addNode(this.Transitions[this.Transitions.length - 1]);
-    this.context.engine.repaintCanvas();
+    // this.context.engine
+    //   .getModel()
+    //   .addNode(this.Transitions[this.Transitions.length - 1]);
+    // this.context.engine.repaintCanvas();
   };
 
   addConnection = async (e: any) => {
@@ -359,14 +361,14 @@ export class Workflow extends ParametricEntity {
 
     const connection = this.createConnection(formValues[0]);
     connection.link = new WorkflowLinkModel(connection, this);
-    connection.update(this.context.engine.getModel());
+    // connection.update(this.context.engine.getModel());
 
     this.Connections.push(connection);
 
-    const model = this.context.engine.getModel();
-    model.addLink(connection.link);
+    // const model = this.context.engine.getModel();
+    // model.addLink(connection.link);
 
-    this.context.engine.repaintCanvas();
+    // this.context.engine.repaintCanvas();
   };
 
   createConnection = (name: string) => {

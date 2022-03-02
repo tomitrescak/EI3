@@ -1,6 +1,5 @@
 import React from "react";
 
-import { PortWidget } from "@projectstorm/react-diagrams";
 import { TransitionJoin } from "../../../ei/transition_model";
 import { Port } from "./widget_transition_join";
 

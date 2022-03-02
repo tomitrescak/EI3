@@ -1,14 +1,8 @@
 import React from "react";
 
-import { DiagramEngine } from "@projectstorm/react-diagrams";
-
-import { CanvasWidget as DiagramWidget } from "@projectstorm/react-canvas-core";
-
 import styled from "@emotion/styled";
 
-interface Props {
-  engine: DiagramEngine;
-}
+interface Props {}
 
 export const Container = styled.div<{ color: string; background: string }>`
   svg {
@@ -113,7 +107,7 @@ export class DiagramView extends React.Component<Props> {
         background={"rgb(60, 60, 60)"}
         color={"rgba(255,255,255, 0.05)"}
       >
-        <DiagramWidget engine={this.props.engine} />
+        {this.props.children}
       </Container>
     );
   }

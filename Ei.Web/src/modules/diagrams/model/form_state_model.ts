@@ -1,14 +1,17 @@
-import * as SRD from "@projectstorm/react-diagrams";
-
-export class FormNodeStore extends SRD.NodeModel {
+export class FormNodeStore {
   validationMessage: string;
   __isChecked: boolean;
 
+  position = {
+    x: 0,
+    y: 0,
+  };
+
   constructor(id: string) {
-    super({
-      id,
-      type: "default",
-    });
+    // super({
+    //   id,
+    //   type: "default",
+    // });
   }
 
   // getPart(origin: any, key: string) {

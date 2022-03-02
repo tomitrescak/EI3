@@ -109,12 +109,7 @@ export class Connection extends Entity {
 
     this.link = new WorkflowLinkModel(this, workflow);
     if (connection.LinkPoints && connection.LinkPoints.length) {
-      this.link.setPoints(
-        connection.LinkPoints.map(
-          (p) =>
-            new PointModel({ link: this.link, position: new Point(p.x, p.y) })
-        )
-      );
+      this.link.points.replace(connection.LinkPoints);
     }
 
     this.update(null);

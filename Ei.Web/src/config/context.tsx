@@ -7,7 +7,6 @@ import { makeObservable, observable } from "mobx";
 import { Ei } from "../modules/ei/ei_model";
 import { Entity } from "../modules/ei/entity_model";
 import type { History } from "history";
-import { DiagramEngine } from "@projectstorm/react-diagrams-core";
 import { LogMessage } from "../modules/experiments/components/experimentCommon";
 
 // const socketUrl = 'ws://10.211.55.4:5000/wd';
@@ -41,7 +40,6 @@ export class AppContext {
 
   handlers: { [index: string]: AccordionHandler } = {};
   selectedEntity: Entity;
-  engine: DiagramEngine;
 
   constructor(_cache = true) {
     this.serverUrl = socketUrl;

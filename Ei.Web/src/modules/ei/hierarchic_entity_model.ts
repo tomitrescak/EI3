@@ -30,9 +30,12 @@ export interface HierarchicEntityDao extends ParametricEntityDao {
 
 export abstract class HierarchicEntity extends ParametricEntity {
   ei: Ei;
+  ParentId: string;
+  selected: boolean;
 
-  private _parent: string;
-  private _parentLink: EntityLinkModel;
+  connection: React.MutableRefObject<SVGLineElement>;
+
+  // private _parentLink: EntityLinkModel;
   private parents: IObservableArray<HierarchicEntity>;
   points: PointDao[];
 
@@ -53,18 +56,22 @@ export abstract class HierarchicEntity extends ParametricEntity {
     this.points = model && model.LinkPoints;
 
     // add ports
-    this.addPort(new EntityPortModel("top", PortModelAlignment.TOP));
-    this.addPort(new EntityPortModel("bottom", PortModelAlignment.BOTTOM));
+    // this.addPort(new EntityPortModel("top", PortModelAlignment.TOP));
+    // this.addPort(new EntityPortModel("bottom", PortModelAlignment.BOTTOM));
 
-    // add listeners
-    this.registerListener({
-      selectionChanged: ({ isSelected }) => {
-        isSelected ? this.select() : this.deselect();
-      },
-    } as NodeModelListener);
+    // // add listeners
+    // this.registerListener({
+    //   selectionChanged: ({ isSelected }) => {
+    //     isSelected ? this.select() : this.deselect();
+    //   },
+    // } as NodeModelListener);
 
-    if (this.ei.context.Router.router.location.pathname == this.url) {
-      this.setSelected(true);
+    if (
+      this.ei.context.Router.router.location.pathname +
+        this.ei.context.Router.router.location.search ==
+      this.url
+    ) {
+      this.selected = true;
       ei.context.selectedEntity = this;
     }
 
@@ -76,20 +83,17 @@ export abstract class HierarchicEntity extends ParametricEntity {
     }
 
     makeObservable(this, {
-      _parent: observable,
-      ParentId: computed,
+      // _parent: observable,
+      ParentId: observable,
+      selected: observable,
       setParentId: action,
       removeItem: action,
     });
   }
 
-  set parentLink(value: EntityLinkModel) {
-    this._parentLink = value;
-  }
-
-  get ParentId() {
-    return this._parent;
-  }
+  // set parentLink(value: EntityLinkModel) {
+  //   this._parentLink = value;
+  // }
 
   get url() {
     return `/ei/${this.ei.Name.toUrlName()}/${
@@ -98,7 +102,7 @@ export abstract class HierarchicEntity extends ParametricEntity {
   }
 
   setParentId(parent: string) {
-    this._parent = parent;
+    this.ParentId = parent;
   }
 
   removeItem() {
@@ -114,6 +118,40 @@ export abstract class HierarchicEntity extends ParametricEntity {
     }
 
     Ui.history.step();
+  }
+
+  updateConnection(entities: HierarchicEntity[], p: { x: number; y: number }) {
+    let parent = entities.find((e) => e.Id === this.ParentId);
+
+    // update all child connection
+
+    let children = entities.filter((e) => e.ParentId === this.Id);
+
+    for (let ent of children) {
+      if (ent.connection) {
+        ent.connection.current.setAttribute(
+          "d",
+          `M ${this.bottomPort(p).x} ${this.bottomPort(p).y} C ${
+            this.bottomPort(p).x
+          } ${this.bottomPort(p).y + 50}, ${ent.topPort().x} ${
+            ent.topPort().y - 50
+          }, ${ent.topPort().x} ${ent.topPort().y}`
+        );
+      }
+    }
+
+    // update parent connection
+
+    if (parent && this.connection.current) {
+      this.connection.current.setAttribute(
+        "d",
+        `M ${parent.bottomPort().x} ${parent.bottomPort().y} C ${
+          parent.bottomPort().x
+        } ${parent.bottomPort().y + 50}, ${this.topPort(p).x} ${
+          this.topPort(p).y - 50
+        }, ${this.topPort(p).x} ${this.topPort(p).y}`
+      );
+    }
   }
 
   async remove(): Promise<void> {
@@ -141,11 +179,11 @@ export abstract class HierarchicEntity extends ParametricEntity {
     return {
       ...super.json,
       Parent: this.ParentId,
-      LinkPoints: this._parentLink
-        ? this._parentLink
-            .getPoints()
-            .map((p) => ({ x: p.getX(), y: p.getY() }))
-        : [],
+      // LinkPoints: this._parentLink
+      //   ? this._parentLink
+      //       .getPoints()
+      //       .map((p) => ({ x: p.getX(), y: p.getY() }))
+      //   : [],
     };
   }
 

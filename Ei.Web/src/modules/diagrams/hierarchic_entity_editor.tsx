@@ -12,6 +12,7 @@ import { HierarchicEntity } from "../ei/hierarchic_entity_model";
 import { PropertyView } from "../properties/property_view";
 import { useAppContext } from "../../config/context";
 import { useQuery } from "../../helpers/client_helpers";
+import { Select } from "../Form";
 
 interface Props {
   collection: (ei: Ei) => IObservableArray<HierarchicEntity>;
@@ -58,16 +59,13 @@ export const HierarchicEntityEditor = observer((props: Props) => {
   let context = useAppContext();
   const { id } = useQuery();
 
-  console.log(id);
-
   if (!id) {
     return null;
   }
 
   let ei = context.ei;
-  let entity = props
-    .collection(ei)
-    .find((o) => o.Id.toLowerCase() === id.toLowerCase());
+  let entities = props.collection(ei);
+  let entity = entities.find((o) => o.Id.toLowerCase() === id.toLowerCase());
 
   // React.useEffect(() => {
   //   if (
@@ -98,14 +96,14 @@ export const HierarchicEntityEditor = observer((props: Props) => {
 
   return (
     <>
-      <EntityEditor entity={entity} />
+      <EntityEditor entity={entity} entities={entities} />
 
       {/*<Select label="Parent" options={organisations} owner={getField(organisation, 'Parent')} placeholder="No Parent"  />*/}
-      {parent && (
+      {/* {parent && (
         <div>
           <b>Parent: </b> {parent}
         </div>
-      )}
+      )} */}
       <PropertyView owner={entity} types={ei.types} />
 
       <Button

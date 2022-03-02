@@ -77,6 +77,10 @@ export const HierarchicEntityView = observer(
               .map((entity) => (
                 <List.Item
                   as={Link}
+                  // onClick={() => {
+                  //   collection.forEach((e) => (e.selected = false));
+                  //   entity.selected = true;
+                  // }}
                   active={entity.url === location.pathname}
                   to={entity.url}
                   key={entity.Id}

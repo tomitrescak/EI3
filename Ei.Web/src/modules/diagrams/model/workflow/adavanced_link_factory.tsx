@@ -1,12 +1,5 @@
-import {
-  DefaultLinkWidget,
-  PointModel,
-  LinkWidget,
-  DefaultLinkFactory,
-} from "@projectstorm/react-diagrams";
 import { observer, Observer } from "mobx-react";
-import React from "react";
-import { useLocation } from "react-router";
+
 import { ActionDisplayType } from "../../../ei/connection_model";
 import { WorkflowLinkModel } from "./workflow_link_model";
 
@@ -456,7 +449,7 @@ export const AdvancedLinkWidget = (props: any) => {
   return <AdvancedLinkWidget1 {...props} selected={selected} />;
 };
 
-export class AdvancedLinkWidget1 extends DefaultLinkWidget {
+export class AdvancedLinkWidget1 {
   generateArrow(point: PointModel, previousPoint: PointModel): JSX.Element {
     return (
       <CustomLinkArrowWidget
@@ -529,23 +522,6 @@ export class AdvancedLinkWidget1 extends DefaultLinkWidget {
           <PostConditionLabels link={link} />
         )}
       </>
-    );
-  }
-}
-
-export class AdvancedLinkFactory extends DefaultLinkFactory {
-  constructor() {
-    super("default");
-  }
-
-  generateModel(): WorkflowLinkModel {
-    return null;
-    // return new WorkflowLinkModel();
-  }
-
-  generateReactWidget(event: any): JSX.Element {
-    return (
-      <AdvancedLinkWidget link={event.model} diagramEngine={this.engine} />
     );
   }
 }

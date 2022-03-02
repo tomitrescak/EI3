@@ -1,7 +1,5 @@
 import React from "react";
 
-import { NodeModel, PortWidget } from "@projectstorm/react-diagrams";
-
 import { FreeJoint } from "../../../ei/connection_model";
 import styled from "@emotion/styled";
 

@@ -6,13 +6,11 @@ import {
   toJS,
 } from "mobx";
 import { DropdownItemProps } from "semantic-ui-react";
-import createEngine, { DiagramEngine } from "@projectstorm/react-diagrams";
 
 import { AppContext } from "../../config/context";
 
 import { Ui } from "../../helpers/client_helpers";
-import { EntityLinkFactory } from "../diagrams/model/entity/entity_link_factory";
-import { EntityNodeFactory } from "../diagrams/model/entity/entity_node_factory";
+
 import { ExperimentDao } from "../experiments/experiment_model";
 import { SocketClient } from "../ws/socket_client";
 import { Authorisation, AuthorisationDao } from "./authorisation_model";
@@ -121,8 +119,6 @@ export class Ei extends ParametricEntity {
     );
   }
 
-  engine: DiagramEngine;
-
   MainWorkflow: string;
   Expressions: string;
 
@@ -137,27 +133,12 @@ export class Ei extends ParametricEntity {
     super(model);
 
     this.context = context;
-    this.engine = createEngine();
-
-    let nodeFactories = this.engine.getNodeFactories();
-    let linkFactories = this.engine.getLinkFactories();
-
-    // layerFactories.registerFactory(new LinkLayerFactory());
-    // layerFactories.registerFactory(new NodeLayerFactory());
-
-    // nodeFactories.registerFactory(new DefaultNodeFactory());
-    // linkFactories.registerFactory(new DefaultLinkFactory());
-    // labelFactories.registerFactory(new DefaultLabelFactory());
-
-    linkFactories.registerFactory(new EntityLinkFactory("default"));
-    linkFactories.registerFactory(new EntityLinkFactory("link"));
-    nodeFactories.registerFactory(new EntityNodeFactory());
 
     // this.engine.registerFactoryBank(factoryBank);
 
     //this.engine.registerNodeFactory(new WorkflowNodeFactory());
 
-    this.engine.maxNumberPointsPerLink = 1;
+    // this.engine.maxNumberPointsPerLink = 1;
 
     this.Experiments = observable(model.Experiments || []);
 
@@ -228,13 +209,10 @@ export class Ei extends ParametricEntity {
     type?: "action" | "connection" | "transition" | "state",
     id?: string
   ) {
-    let url = `/ei/${this.Name.toUrlName()}/${
-      this.Id
-    }/workflows/${workflow.Name.toUrlName()}/${workflow.Id}`;
+    let url = `/ei/${this.Name.toUrlName()}/workflows/${workflow.Id}${
+      type ? `/${type}` : ""
+    }?ei=${this.Id}&w=${workflow.Name.toUrlName()}${id ? `&id=${id}` : ""}`;
 
-    if (type) {
-      url = url + `/${type}/${id}`;
-    }
     return url.toLowerCase();
   }
 
