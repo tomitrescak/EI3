@@ -5,7 +5,6 @@ import {
   makeObservable,
   observable,
 } from "mobx";
-import { DiagramModel } from "@projectstorm/react-diagrams";
 import { AppContext } from "../../config/context";
 import swal from "sweetalert2";
 
@@ -59,7 +58,6 @@ export function optionSort(a: any, b: any): number {
 export class Workflow extends ParametricEntity {
   [index: string]: any;
 
-  diagram: DiagramModel;
   ei: Ei;
 
   Stateless: boolean;

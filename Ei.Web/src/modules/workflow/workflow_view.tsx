@@ -1,16 +1,3 @@
-import React from "react";
-
-import { observer } from "mobx-react";
-import createEngine, { DiagramEngine } from "@projectstorm/react-diagrams";
-
-import { DiagramListener } from "@projectstorm/react-canvas-core";
-
-import { DiagramView } from "../diagrams/diagram_view";
-import { WorkflowDiagramModel } from "../diagrams/model/workflow/workflow_diagram_model";
-import { WorkflowNodeFactory } from "../diagrams/model/workflow/workflow_node_factory";
-
-import { useAppContext } from "../../config/context";
-import { WorkflowLinkModel } from "../diagrams/model/workflow/workflow_link_model";
 import { useQuery } from "../../helpers/client_helpers";
 
 import { WorkflowEditor } from "../diagrams/workflow_view";

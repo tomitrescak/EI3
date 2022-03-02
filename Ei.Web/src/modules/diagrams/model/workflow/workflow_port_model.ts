@@ -1,15 +1,13 @@
 import * as _ from "lodash";
-import * as SRD from "@projectstorm/react-diagrams";
 
 import { Workflow } from "../../../ei/workflow_model";
 import { WorkflowLinkModel } from "./workflow_link_model";
-import { PortModelAlignment } from "@projectstorm/react-diagrams";
 
-export class WorkflowPortModel extends SRD.PortModel {
+export class WorkflowPortModel {
   // position: string | 'left' | 'right';
   workflow: Workflow;
 
-  constructor(workflow: Workflow, pos: string, alignment: PortModelAlignment) {
+  constructor(workflow: Workflow, pos: string, alignment: any) {
     super({
       name: pos,
       alignment,

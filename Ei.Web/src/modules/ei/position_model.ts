@@ -1,5 +1,3 @@
-import { NodeModelListener } from "@projectstorm/react-diagrams-core";
-import { makeObservable, observable } from "mobx";
 import { Ei } from "./ei_model";
 import { Entity, EntityDao } from "./entity_model";
 import { Workflow } from "./workflow_model";

@@ -1,6 +1,5 @@
 import React from "react";
 
-import { PortWidget } from "@projectstorm/react-diagrams";
 import { TransitionJoin } from "../../../ei/transition_model";
 import styled from "@emotion/styled";
 
@@ -29,6 +28,9 @@ export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
   let labelSize = (node.Name || node.Id).length * 8 + 8;
   labelSize = labelSize < width ? width : labelSize;
 
+  const selected =
+    node.selected || node.url === location.pathname + location.search;
+
   return (
     <div
       className="Entity-node"
@@ -48,7 +50,7 @@ export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
         <g id="Layer_1" />
         <g id="Layer_2">
           <rect
-            fill={node.isSelected() ? "salmon" : "black"}
+            fill={selected ? "salmon" : "black"}
             width={labelSize}
             height={height}
             y={0}
@@ -65,7 +67,7 @@ export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
               fill: "white",
               textAlign: "center",
               width: "200px",
-              fontWeight: node.isSelected() ? "bold" : "normal",
+              fontWeight: selected ? "bold" : "normal",
             }}
             textAnchor="middle"
             dominantBaseline="central"
@@ -74,7 +76,7 @@ export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
           </text>
         </g>
       </svg>
-      <PortWidget
+      {/* <PortWidget
         style={{
           position: "absolute",
           zIndex: 10,
@@ -121,7 +123,7 @@ export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
         engine={node.ei.engine}
       >
         <Port />
-      </PortWidget>
+      </PortWidget> */}
     </div>
   );
 };

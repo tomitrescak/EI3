@@ -1,7 +1,6 @@
 import React from "react";
 
 import { observer } from "mobx-react";
-import { PortWidget } from "@projectstorm/react-diagrams";
 import { State } from "../../../ei/state_model";
 import styled from "@emotion/styled";
 import { useHistory, useLocation } from "react-router-dom";

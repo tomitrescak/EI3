@@ -1,8 +1,6 @@
-import { PortModelAlignment } from "@projectstorm/react-diagrams-core";
 import { action, IObservableArray, makeObservable, observable } from "mobx";
 
 import { Router, Ui } from "../../helpers/client_helpers";
-import { WorkflowPortModel } from "../diagrams/model/workflow/workflow_port_model";
 import { AccessCondition, AccessConditionDao } from "./access_model";
 import { Ei } from "./ei_model";
 import { EntityDao } from "./entity_model";

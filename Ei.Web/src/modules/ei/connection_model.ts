@@ -1,11 +1,4 @@
 import { action, IObservableArray, makeObservable, observable } from "mobx";
-import {
-  DefaultNodeModel,
-  DiagramModel,
-  PointModel,
-  PortModelAlignment,
-} from "@projectstorm/react-diagrams";
-import { Point } from "@projectstorm/geometry";
 
 import { WorkflowLinkModel } from "../diagrams/model/workflow/workflow_link_model";
 import { WorkflowPortModel } from "../diagrams/model/workflow/workflow_port_model";
@@ -32,16 +25,14 @@ export interface ConnectionDao extends EntityDao {
   ActionDisplay: ActionDisplayType;
 }
 
-export class FreeJoint extends DefaultNodeModel {
+export class FreeJoint {
   ei: Ei;
 
   constructor(workflow: Workflow) {
-    super();
-
     this.ei = workflow.ei;
-    this.addPort(
-      new WorkflowPortModel(workflow, "left", PortModelAlignment.LEFT) as any
-    );
+    // this.addPort(
+    //   new WorkflowPortModel(workflow, "left", PortModelAlignment.LEFT) as any
+    // );
   }
 }
 

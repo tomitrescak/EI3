@@ -1,17 +1,5 @@
-import {
-  action,
-  computed,
-  IObservableArray,
-  makeObservable,
-  observable,
-} from "mobx";
-import {
-  NodeModelListener,
-  PortModelAlignment,
-} from "@projectstorm/react-diagrams";
+import { action, IObservableArray, makeObservable, observable } from "mobx";
 import { Ui } from "../../helpers/client_helpers";
-import { EntityLinkModel } from "../diagrams/model/entity/entity_link_model";
-import { EntityPortModel } from "../diagrams/model/entity/entity_port_model";
 import { Ei } from "./ei_model";
 import {
   ParametricEntity,
