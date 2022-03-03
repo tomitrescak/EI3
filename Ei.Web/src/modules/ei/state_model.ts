@@ -27,6 +27,7 @@ export class State extends PositionModel {
   ShowRules: boolean;
   EntryRules: IObservableArray<AccessCondition>;
   ExitRules: IObservableArray<AccessCondition>;
+  active: boolean;
 
   ports = {
     east: () => ({
@@ -156,6 +157,7 @@ export class State extends PositionModel {
       IsStart: observable,
       IsEnd: observable,
       ShowRules: observable,
+      active: observable,
       removeItem: action,
     });
   }

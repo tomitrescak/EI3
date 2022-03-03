@@ -40,6 +40,7 @@ namespace Ei.Core.Ontology.Actions
                 InstitutionCodes.ActionPerformed,
                 agent.Name,
                 this.Id,
+                connection.Id,
                 parameters.ToString()
             );
 

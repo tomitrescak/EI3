@@ -22,6 +22,7 @@ import { linearNavigationEditor } from "./components/linearNavigationEditor";
 import { toJS } from "mobx";
 import { ExperimentCanvas } from "./components/experiment_canvas";
 import { LogMessage } from "./components/experimentCommon";
+import { WorkflowEditor } from "../diagrams/workflow_view";
 
 const ListHeader = styled(List.Header)`
   padding: 4px 16px;
@@ -114,6 +115,7 @@ export const ExperimentEditor = () => {
   const state = useLocalObservable(() => ({
     selectedGameObject: null as GameObjectDao,
     isAgent: false,
+    agentPositions: {},
     select(go: GameObjectDao) {
       this.selectedGameObject = go;
       if (
@@ -145,6 +147,37 @@ export const ExperimentEditor = () => {
             let position = data.message.match(/\[(.*),(.*)\]/);
             agent.Components[0].position.x = position[1];
             agent.Components[0].position.y = position[2];
+          }
+          if (data.component === "Institution") {
+            let match = data.message.match(
+              /moved to '(\w+)' in workflow '(\w+)'/
+            );
+            if (match) {
+              state.agentPositions[agent.Name] = {
+                state: match[1],
+                workflow: match[2],
+              };
+              // mark all states as not visited
+              let workflow = context.ei.Workflows.find(
+                (w) => w.Id === match[2]
+              );
+              workflow.States.forEach((s) => (s.active = false));
+              workflow.States.find((s) => s.Id === match[1]).active = true;
+            } else {
+              match = data.message.match(
+                /performed action '(\w+)' in connection '(\w+)'/
+              );
+              if (match) {
+                if (state.agentPositions[agent.Name]) {
+                  let workflow = context.ei.Workflows.find(
+                    (w) => w.Id === state.agentPositions[agent.Name].workflow
+                  );
+                  workflow.Connections.forEach((s) => (s.active = false));
+                  workflow.Connections.find((s) => s.Id === match[2]).active =
+                    true;
+                }
+              }
+            }
           }
         }
 
@@ -268,8 +301,54 @@ export const ExperimentEditor = () => {
               </Observer>
             </List>
           </div>
-          <div style={{ background: "blue", width: "100%", overflow: "auto" }}>
-            <ExperimentCanvas experiment={experiment} state={state} />
+          <div
+            style={{ width: "100%", overflow: "auto", position: "relative" }}
+          >
+            <SplitPane split="horizontal">
+              <div style={{ width: "100%" }}>
+                <Menu
+                  inverted
+                  color="blue"
+                  style={{ borderRadius: 0, margin: 0 }}
+                >
+                  <Menu.Item content="Simulation" />
+                </Menu>
+                <ExperimentCanvas experiment={experiment} state={state} />
+              </div>
+              <div style={{ width: "100%" }}>
+                <Menu
+                  color="blue"
+                  inverted
+                  style={{ borderRadius: 0, margin: 0 }}
+                >
+                  <Menu.Item content="Workflow" />
+                </Menu>
+                <div>
+                  <Observer>
+                    {() => {
+                      let activeAgent = state.isAgent
+                        ? state.selectedGameObject
+                        : null;
+                      if (!activeAgent) {
+                        return (
+                          <Message>
+                            Please select an agent to see its position within
+                            the workflow
+                          </Message>
+                        );
+                      }
+                      let position = state.agentPositions[activeAgent.Name];
+                      if (!position) {
+                        return (
+                          <Message>Agent did not join any workflow</Message>
+                        );
+                      }
+                      return <WorkflowEditor workflowId={position.workflow} />;
+                    }}
+                  </Observer>
+                </div>
+              </div>
+            </SplitPane>
           </div>
           <div style={{ width: "100%", background: "white", overflow: "auto" }}>
             <List className="ui form">

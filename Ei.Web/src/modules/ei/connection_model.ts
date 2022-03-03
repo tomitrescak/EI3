@@ -83,6 +83,7 @@ export class Connection extends Entity {
   toRef: React.MutableRefObject<SVGPathElement>;
   actionWidth: number;
   actionHeight: number;
+  active: boolean;
 
   ports = {
     left: (width: number, height: number) => {
@@ -152,6 +153,7 @@ export class Connection extends Entity {
     // this.update(null);
 
     makeObservable(this, {
+      active: observable,
       selected: observable,
       From: observable,
       To: observable,

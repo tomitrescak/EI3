@@ -69,6 +69,10 @@ export const StateWidget = observer(
         height={height}
         x={node.position.x}
         y={node.position.y}
+        style={{
+          outline: node.active ? "dashed 4px green" : undefined,
+          transition: "all 0.3s",
+        }}
         cursor="pointer"
         onMouseDown={(evt) => {
           node.handleDrag(evt, svgRef, history);

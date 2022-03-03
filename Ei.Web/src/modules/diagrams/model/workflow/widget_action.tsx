@@ -415,11 +415,14 @@ const ActionRect = observer(
           // }}
         >
           <rect
-            fill={selected ? "salmon" : "grey"}
+            fill={selected ? "salmon" : connection.active ? "green" : "grey"}
             rx={size}
             ry={size}
             width={width}
             height={height}
+            style={{
+              transition: "all 0.3s",
+            }}
           />
           {children}
 
@@ -464,10 +467,13 @@ const ActionRect = observer(
 
             <path
               ref={fromRef}
-              stroke="silver"
+              stroke={connection.active ? "green" : "silver"}
               strokeWidth={3}
               fill="transparent"
               d={anchors.from.path}
+              style={{
+                transition: "all 0.3s",
+              }}
             />
 
             {/* <CustomLinkArrowWidget
@@ -498,10 +504,13 @@ const ActionRect = observer(
 
             <path
               ref={toRef}
-              stroke="silver"
+              stroke={connection.active ? "green" : "silver"}
               strokeWidth={3}
               fill="transparent"
               d={anchors.to.path}
+              style={{
+                transition: "all 0.3s",
+              }}
             />
             <CustomLinkArrowWidget
               point={anchors.to.end}

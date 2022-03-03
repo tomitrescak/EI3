@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 interface Props {}
 
 export const Container = styled.div<{ color: string; background: string }>`
+  flex: 1;
   svg {
     overflow: visible !important;
   }
