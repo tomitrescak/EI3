@@ -9,7 +9,6 @@ import { AppContext } from "../../config/context";
 import swal from "sweetalert2";
 
 import { Ui } from "../../helpers/client_helpers";
-import { WorkflowLinkModel } from "../diagrams/model/workflow/workflow_link_model";
 import { AccessCondition, AccessConditionDao } from "./access_model";
 import {
   Action,
@@ -114,11 +113,9 @@ export class Workflow extends ParametricEntity {
       })
     );
 
-    this.Connections = observable([]);
-
-    // this.Connections = observable(
-    //   (workflow.Connections || []).map((s) => new Connection(s, this, ei))
-    // );
+    this.Connections = observable(
+      (workflow.Connections || []).map((s) => new Connection(s, this, ei))
+    );
 
     makeObservable(this, {
       Stateless: observable,
@@ -358,7 +355,8 @@ export class Workflow extends ParametricEntity {
     }
 
     const connection = this.createConnection(formValues[0]);
-    connection.link = new WorkflowLinkModel(connection, this);
+
+    // connection.link = new WorkflowLinkModel(connection, this);
     // connection.update(this.context.engine.getModel());
 
     this.Connections.push(connection);
@@ -375,12 +373,7 @@ export class Workflow extends ParametricEntity {
     while (this.Connections.some((c) => c.Id === id)) {
       id = "c" + ++idx;
     }
-    return new Connection(
-      { Id: id, Join: [], Name: name },
-      this,
-      this.ei,
-      false
-    );
+    return new Connection({ Id: id, Join: [], Name: name }, this, this.ei);
   };
 
   get json(): WorkflowDao {

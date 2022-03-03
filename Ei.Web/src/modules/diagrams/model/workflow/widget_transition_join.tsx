@@ -1,6 +1,10 @@
 import React from "react";
 
-import { TransitionJoin } from "../../../ei/transition_model";
+import {
+  transitionHeight,
+  TransitionJoin,
+  transitionWidth,
+} from "../../../ei/transition_model";
 import styled from "@emotion/styled";
 
 export interface StateJoinNodeWidgetProps {
@@ -8,9 +12,6 @@ export interface StateJoinNodeWidgetProps {
 }
 
 // export interface EntityNodeWidgetState {}
-
-const height = 20;
-const width = 80;
 
 export const Port = styled.div`
   width: 16px;
@@ -26,7 +27,7 @@ export const Port = styled.div`
 
 export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
   let labelSize = (node.Name || node.Id).length * 8 + 8;
-  labelSize = labelSize < width ? width : labelSize;
+  labelSize = labelSize < transitionWidth ? transitionWidth : labelSize;
 
   const selected =
     node.selected || node.url === location.pathname + location.search;
@@ -37,14 +38,14 @@ export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
       style={{
         position: "relative",
         width: labelSize,
-        height,
+        height: transitionHeight,
       }}
     >
       <svg
         width={labelSize}
-        height={height}
-        transform={`rotate(${node.Horizontal ? 0 : 90} ${width / 2} ${
-          height / 2
+        height={transitionHeight}
+        transform={`rotate(${node.Horizontal ? 0 : 90} ${transitionWidth / 2} ${
+          transitionHeight / 2
         })`}
       >
         <g id="Layer_1" />
@@ -52,7 +53,7 @@ export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
           <rect
             fill={selected ? "salmon" : "black"}
             width={labelSize}
-            height={height}
+            height={transitionHeight}
             y={0}
             style={{ opacity: 1 }}
             rx={5}

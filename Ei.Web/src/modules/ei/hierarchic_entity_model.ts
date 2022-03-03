@@ -1,5 +1,6 @@
 import { action, IObservableArray, makeObservable, observable } from "mobx";
 import { Ui } from "../../helpers/client_helpers";
+import { Point } from "../diagrams/model/diagram_common";
 import { Ei } from "./ei_model";
 import {
   ParametricEntity,
@@ -28,6 +29,7 @@ export abstract class HierarchicEntity extends ParametricEntity {
   points: PointDao[];
 
   route: string;
+  height = 60;
 
   constructor(
     model: HierarchicEntityDao,
@@ -87,6 +89,20 @@ export abstract class HierarchicEntity extends ParametricEntity {
     return `/ei/${this.ei.Name.toUrlName()}/${
       this.route
     }/${this.Name.toUrlName()}?ei=${this.ei.Id}&id=${this.Id}`.toLowerCase();
+  }
+
+  topPort(pos?: Point) {
+    return {
+      x: (pos?.x || this.position.x) + this.size / 2 - 2,
+      y: (pos?.y || this.position.y) + 0,
+    };
+  }
+
+  bottomPort(pos?: Point) {
+    return {
+      x: (pos?.x || this.position.x) + this.size / 2 - 2,
+      y: (pos?.y || this.position.y) + this.height,
+    };
   }
 
   setParentId(parent: string) {

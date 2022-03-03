@@ -12,7 +12,6 @@ import { HierarchicEntity } from "../ei/hierarchic_entity_model";
 import { PropertyView } from "../properties/property_view";
 import { useAppContext } from "../../config/context";
 import { useQuery } from "../../helpers/client_helpers";
-import { Select } from "../Form";
 
 interface Props {
   collection: (ei: Ei) => IObservableArray<HierarchicEntity>;

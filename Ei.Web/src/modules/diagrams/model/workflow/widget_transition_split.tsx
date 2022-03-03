@@ -1,11 +1,11 @@
 import React from "react";
 
-import { TransitionJoin } from "../../../ei/transition_model";
+import { TransitionSplit } from "../../../ei/transition_model";
 import { Port } from "./widget_transition_join";
 
-export interface StateJoinNodeWidgetProps {
-  node: TransitionJoin;
-}
+export type StateJoinNodeWidgetProps = {
+  node: TransitionSplit;
+};
 
 // export interface EntityNodeWidgetState {}
 
@@ -35,7 +35,7 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
         <g id="Layer_1" />
         <g id="Layer_2">
           <rect
-            fill={node.isSelected() ? "salmon" : "black"}
+            fill={node.selected ? "salmon" : "black"}
             width={labelSize}
             height={height}
             y={0}
@@ -52,7 +52,7 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
               fill: "white",
               textAlign: "center",
               width: "200px",
-              fontWeight: node.isSelected() ? "bold" : "normal",
+              // fontWeight: node.selected ? "bold" : "normal",
             }}
             textAnchor="middle"
             dominantBaseline="central"
@@ -61,7 +61,7 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
           </text>
         </g>
       </svg>
-      <PortWidget
+      {/* <PortWidget
         style={{
           position: "absolute",
           zIndex: 10,
@@ -72,8 +72,8 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
         engine={node.ei.engine}
       >
         <Port />
-      </PortWidget>
-      <PortWidget
+      </PortWidget> */}
+      {/* <PortWidget
         style={{
           position: "absolute",
           zIndex: 10,
@@ -84,8 +84,8 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
         engine={node.ei.engine}
       >
         <Port />
-      </PortWidget>
-      <PortWidget
+      </PortWidget> */}
+      {/* <PortWidget
         style={{
           position: "absolute",
           zIndex: 10,
@@ -108,7 +108,7 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
         engine={node.ei.engine}
       >
         <Port />
-      </PortWidget>
+      </PortWidget> */}
     </div>
   );
 };

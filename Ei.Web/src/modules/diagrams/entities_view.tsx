@@ -41,13 +41,7 @@ export const EntitiesView = observer((props: Props) => {
         height="100%"
       >
         {entities.map((e, i) => (
-          <EntityView
-            key={e.Id}
-            svgRef={svgRef}
-            e={e}
-            ents={entities}
-            drag={drag}
-          />
+          <EntityView key={e.Id} svgRef={svgRef} e={e} ents={entities} />
         ))}
       </svg>
     </DiagramView>
@@ -58,12 +52,10 @@ function EntityView({
   svgRef,
   e,
   ents,
-  drag,
 }: {
   svgRef: React.MutableRefObject<SVGSVGElement>;
   e: HierarchicEntity;
   ents: HierarchicEntity[];
-  drag: Function;
 }) {
   const lineRef = React.useRef<SVGLineElement>(null);
   const history = useHistory();
@@ -83,7 +75,19 @@ function EntityView({
             key={e.Id}
             x={e.position.x}
             y={e.position.y}
-            onMouseDown={(evt) => drag(svgRef.current, e, evt, ents)}
+            onMouseDown={(evt) =>
+              drag(
+                svgRef.current,
+                evt,
+                (p) => {
+                  e.position.x = p.x;
+                  e.position.y = p.y;
+                },
+                (p) => {
+                  e.updateConnection(ents, p);
+                }
+              )
+            }
             onClick={action(() => {
               // ents.forEach((e) => (e.selected = false));
               // e.selected = true;

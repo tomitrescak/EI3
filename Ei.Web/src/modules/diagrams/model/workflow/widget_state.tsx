@@ -12,8 +12,6 @@ export interface StateNodeWidgetProps {
 
 // export interface EntityNodeWidgetState {}
 
-const size = 15;
-
 export const Port = styled.div`
   width: 12px;
   height: 12px;
@@ -29,13 +27,10 @@ export const Port = styled.div`
 export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
   // const history = useHistory();
 
-  let currentSize = node.IsEnd ? size + 2 : size;
   let stroke = node.IsEnd ? 8 : 2;
-  let text = (node.Timeout ? "⏱ " : "") + (node.Name || node.Id);
-  let labelSize = text.length * 8 + 8;
-  let width = labelSize < currentSize * 2 ? currentSize * 2 : labelSize;
-  let height = size * 2;
-  let labelX = labelSize < currentSize * 2 ? (width - labelSize) / 2 : 0;
+  let { currentSize, width, height, text, labelSize } = node;
+
+  let labelX = node.labelSize < currentSize * 2 ? (width - labelSize) / 2 : 0;
 
   const location = useLocation();
   const history = useHistory();
@@ -76,6 +71,55 @@ export const StateWidget = observer(({ node }: StateNodeWidgetProps) => {
         history.push(node.url);
       })}
     >
+      {/* <circle
+        fill="gold"
+        cx={node.ports.east().x}
+        cy={node.ports.east().y}
+        r={6}
+      />
+      <circle
+        fill="gold"
+        cx={node.ports.west().x}
+        cy={node.ports.west().y}
+        r={6}
+      />
+      <circle
+        fill="gold"
+        cx={node.ports.north().x}
+        cy={node.ports.north().y}
+        r={6}
+      />
+      <circle
+        fill="gold"
+        cx={node.ports.south().x}
+        cy={node.ports.south().y}
+        r={6}
+      />
+      <circle
+        fill="gold"
+        cx={node.ports.southEast().x}
+        cy={node.ports.southEast().y}
+        r={6}
+      />
+      <circle
+        fill="gold"
+        cx={node.ports.southWest().x}
+        cy={node.ports.southWest().y}
+        r={6}
+      />
+      <circle
+        fill="gold"
+        cx={node.ports.northEast().x}
+        cy={node.ports.northEast().y}
+        r={6}
+      />
+      <circle
+        fill="gold"
+        cx={node.ports.northWest().x}
+        cy={node.ports.northWest().y}
+        r={6}
+      /> */}
+
       {node.ShowRules && rules.length && (
         <g id="Layer_1">
           <rect

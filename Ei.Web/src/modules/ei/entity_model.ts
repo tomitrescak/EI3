@@ -26,26 +26,10 @@ export class Entity extends FormNodeStore {
   Name: string;
   Description: string;
 
-  height = 60;
-
   allowEditIcon = false;
 
   get size() {
     return this.Name.length * 8 + 30;
-  }
-
-  topPort(pos?: Point) {
-    return {
-      x: (pos?.x || this.position.x) + this.size / 2 - 2,
-      y: (pos?.y || this.position.y) + 0,
-    };
-  }
-
-  bottomPort(pos?: Point) {
-    return {
-      x: (pos?.x || this.position.x) + this.size / 2 - 2,
-      y: (pos?.y || this.position.y) + this.height,
-    };
   }
 
   constructor(model: Partial<EntityDao>, allowEditIcon = false) {

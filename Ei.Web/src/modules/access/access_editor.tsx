@@ -19,7 +19,7 @@ import { Ei, Organisation, Role } from "../ei/ei_model";
 import { Workflow } from "../ei/workflow_model";
 import { AccordionHandler } from "../../config/context";
 import styled from "@emotion/styled";
-import { makeObservable, observable } from "mobx";
+import { makeObservable, observable, observe } from "mobx";
 import { Checkbox, Formix, Select } from "../Form";
 
 interface AccessProps {
@@ -120,48 +120,39 @@ class AccessConditionState {
   }
 }
 
+export const AccessConditionEditor = observer((props: AccessConditionProps) => {
+  const accessState: AccessConditionState = React.useMemo(() => {
+    return new AccessConditionState(!!props.condition.Precondition);
+  }, [props.condition]);
 
-export class AccessConditionEditor extends React.Component<AccessConditionProps> {
-  accessState: AccessConditionState;
-
-  remove() {
-    /**/
-  }
-
-  componentWillMount() {
-    this.accessState = new AccessConditionState(
-      !!this.props.condition.Precondition
-    );
-  }
-
-  actionUpdate = (value: any) => {
-    this.props.condition.Precondition = value;
+  const actionUpdate = (value: any) => {
+    props.condition.Precondition = value;
   };
 
-  actionValue = () => this.props.condition.Precondition;
+  const actionValue = () => props.condition.Precondition;
 
   // componentWillUpdate(nextProps: AccessConditionProps) {
-  //   this.accessState.showPrecondition = !!nextProps.condition.Precondition;
+  //   accessState.showPrecondition = !!nextProps.condition.Precondition;
   // }
 
-  render() {
-    const {
-      condition,
-      ei,
-      remove,
-      handler,
-      index,
-      workflow,
-      action,
-      hideActionCondition,
-      hidePreconditions,
-    } = this.props;
-    const organisation =
-      ei.Organisations.find((o) => o.Id === condition.Organisation) ||
-      ei.Organisations[0];
-    const role = ei.Roles.find((o) => o.Id === condition.Role) || ei.Roles[0];
-    return (
-      <Formix initialValues={condition}>
+  const {
+    condition,
+    ei,
+    remove,
+    handler,
+    index,
+    workflow,
+    action,
+    hideActionCondition,
+    hidePreconditions,
+  } = props;
+  const organisation =
+    ei.Organisations.find((o) => o.Id === condition.Organisation) ||
+    ei.Organisations[0];
+  const role = ei.Roles.find((o) => o.Id === condition.Role) || ei.Roles[0];
+  return (
+    <Formix initialValues={condition}>
+      <>
         <Accordion.Title
           active={handler.isActive(index)}
           index={index}
@@ -181,11 +172,13 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                   fluid
                   name={"Organisation"}
                   label="Organisation"
+                  selection
                   options={ei.organisationsOptions}
                 />
                 <Select
                   fluid
                   name={"Role"}
+                  selection
                   label="Role"
                   options={ei.roleOptions}
                 />
@@ -196,11 +189,10 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                   color="red"
                   onClick={remove}
                   icon="trash"
-                  content={`Rule`}
                 />
               </FieldRow>
             </Segment>
-            <Formix initialValues={this.accessState}>
+            <Formix initialValues={accessState}>
               <>
                 {!hidePreconditions && (
                   <Segment tertiary={true} attached as="h5" icon="legal">
@@ -214,20 +206,25 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
                     </div>
                   </Segment>
                 )}
-                {!hidePreconditions && this.accessState.showPrecondition && (
-                  <EditorHolder secondary attached>
-                    <CodeEditor
-                      update={this.actionUpdate}
-                      value={this.actionValue}
-                      height={ei.editorHeight(this.actionValue())}
-                      i={ei.Properties}
-                      w={workflow && workflow.Properties}
-                      o={organisation.Properties}
-                      r={role.Properties}
-                      a={action && action.Properties}
-                    />
-                  </EditorHolder>
-                )}
+                <Observer>
+                  {() =>
+                    !hidePreconditions &&
+                    accessState.showPrecondition && (
+                      <EditorHolder secondary attached>
+                        <CodeEditor
+                          update={actionUpdate}
+                          value={actionValue}
+                          height={ei.editorHeight(actionValue())}
+                          i={ei.Properties}
+                          w={workflow && workflow.Properties}
+                          o={organisation.Properties}
+                          r={role.Properties}
+                          a={action && action.Properties}
+                        />
+                      </EditorHolder>
+                    )
+                  }
+                </Observer>
                 {!hideActionCondition && (
                   <Segment tertiary attached as="h5" icon="legal">
                     <Icon name="legal" />
@@ -243,21 +240,27 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
               </>
             </Formix>
 
-            {condition.Postconditions.map((p, i) => (
-              <PostconditionView
-                key={i}
-                p={p}
-                i={i}
-                ei={ei}
-                workflow={this.props.workflow}
-                organisation={organisation}
-                role={role}
-                action={this.props.action}
-                remove={() => condition.Postconditions.splice(i, 1)}
-                showAll={this.accessState.showPostcondition}
-                hideActionCondition={hideActionCondition}
-              />
-            ))}
+            <Observer>
+              {() => (
+                <>
+                  {condition.Postconditions.map((p, i) => (
+                    <PostconditionView
+                      key={i}
+                      p={p}
+                      i={i}
+                      ei={ei}
+                      workflow={props.workflow}
+                      organisation={organisation}
+                      role={role}
+                      action={props.action}
+                      remove={() => condition.Postconditions.splice(i, 1)}
+                      showAll={accessState.showPostcondition}
+                      hideActionCondition={hideActionCondition}
+                    />
+                  ))}
+                </>
+              )}
+            </Observer>
             <Segment attached="bottom" tertiary>
               <Button
                 type="button"
@@ -273,10 +276,10 @@ export class AccessConditionEditor extends React.Component<AccessConditionProps>
             </Segment>
           </>
         </Accordion.Content>
-      </Formix>
-    );
-  }
-}
+      </>
+    </Formix>
+  );
+});
 
 const Info = () => (
   <div>
@@ -305,69 +308,46 @@ interface PostconditionProps {
   hideActionCondition: boolean;
 }
 
-export class PostconditionView extends React.Component<PostconditionProps> {
-  actionUpdate = (value: any) => {
-    this.props.p.Action = value;
+export const PostconditionView = observer((props: PostconditionProps) => {
+  const actionUpdate = (value: any) => {
+    props.p.Action = value;
   };
 
-  actionValue = () => this.props.p.Action;
+  const actionValue = () => props.p.Action;
 
-  conditionUpdate = (value: any) => {
-    this.props.p.Condition = value;
+  const conditionUpdate = (value: any) => {
+    props.p.Condition = value;
   };
 
-  conditionValue = () => this.props.p.Condition;
+  const conditionValue = () => props.p.Condition;
 
-  render() {
-    const {
-      p,
-      remove,
-      showAll,
-      ei,
-      workflow,
-      role,
-      organisation,
-      action,
-      hideActionCondition,
-    } = this.props;
+  const {
+    p,
+    remove,
+    showAll,
+    ei,
+    workflow,
+    role,
+    organisation,
+    action,
+    hideActionCondition,
+  } = props;
 
-    return (
-      <Observer>
-        {() => (
-          <>
-            {!hideActionCondition &&
-              (showAll || p.Condition || (!p.Condition && !p.Action)) && (
-                <>
-                  <HeaderHolder secondary attached>
-                    Condition
-                  </HeaderHolder>
-                  <EditorHolder secondary attached>
-                    <CodeEditor
-                      update={this.conditionUpdate}
-                      value={this.conditionValue}
-                      height={ei.editorHeight(this.conditionValue())}
-                      i={ei.Properties}
-                      w={workflow && workflow.Properties}
-                      o={organisation.Properties}
-                      r={role.Properties}
-                      a={action && action.Properties}
-                    />
-                  </EditorHolder>
-                </>
-              )}
-            {(!hideActionCondition ||
-              showAll ||
-              p.Action ||
-              (!p.Condition && !p.Action)) && (
+  return (
+    <Observer>
+      {() => (
+        <>
+          {!hideActionCondition &&
+            (showAll || p.Condition || (!p.Condition && !p.Action)) && (
               <>
                 <HeaderHolder secondary attached>
-                  Action
+                  Condition
                 </HeaderHolder>
                 <EditorHolder secondary attached>
                   <CodeEditor
-                    update={this.actionUpdate}
-                    value={this.actionValue}
-                    height={ei.editorHeight(this.actionValue())}
+                    update={conditionUpdate}
+                    value={conditionValue}
+                    height={ei.editorHeight(conditionValue())}
                     i={ei.Properties}
                     w={workflow && workflow.Properties}
                     o={organisation.Properties}
@@ -377,19 +357,40 @@ export class PostconditionView extends React.Component<PostconditionProps> {
                 </EditorHolder>
               </>
             )}
-            <HeaderHolder secondary attached>
-              <Button
-                type="button"
-                content="Remove Postcondition"
-                name="addInput"
-                color="red"
-                onClick={remove}
-                icon="trash"
-              />
-            </HeaderHolder>
-          </>
-        )}
-      </Observer>
-    );
-  }
-}
+          {(!hideActionCondition ||
+            showAll ||
+            p.Action ||
+            (!p.Condition && !p.Action)) && (
+            <>
+              <HeaderHolder secondary attached>
+                Action
+              </HeaderHolder>
+              <EditorHolder secondary attached>
+                <CodeEditor
+                  update={actionUpdate}
+                  value={actionValue}
+                  height={ei.editorHeight(actionValue())}
+                  i={ei.Properties}
+                  w={workflow && workflow.Properties}
+                  o={organisation.Properties}
+                  r={role.Properties}
+                  a={action && action.Properties}
+                />
+              </EditorHolder>
+            </>
+          )}
+          <HeaderHolder secondary attached>
+            <Button
+              type="button"
+              content="Remove Postcondition"
+              name="addInput"
+              color="red"
+              onClick={remove}
+              icon="trash"
+            />
+          </HeaderHolder>
+        </>
+      )}
+    </Observer>
+  );
+});

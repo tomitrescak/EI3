@@ -17,6 +17,8 @@ export interface StateDao extends EntityDao {
   ExitRules?: AccessConditionDao[];
 }
 
+const size = 15;
+
 export class State extends PositionModel {
   IsOpen: boolean;
   Timeout: number;
@@ -25,6 +27,71 @@ export class State extends PositionModel {
   ShowRules: boolean;
   EntryRules: IObservableArray<AccessCondition>;
   ExitRules: IObservableArray<AccessCondition>;
+
+  ports = {
+    southEast: () => ({
+      x: 3 * (this.width / 4), // simplified equation
+      y: (3 * this.height) / 4,
+      orientation: "southEast",
+    }),
+    northEast: () => ({
+      x: 3 * (this.width / 4), // simplified equation
+      y: this.height / 4,
+      orientation: "northEast",
+    }),
+    east: () => ({
+      x: this.width,
+      y: this.height / 2,
+      orientation: "east",
+    }),
+    north: () => ({
+      x: this.width / 2,
+      y: -4,
+      orientation: "north",
+    }),
+    northWest: () => ({
+      x: this.width / 4, // simplified equation
+      y: this.height / 4,
+      orientation: "northWest",
+    }),
+    south: () => ({
+      x: this.width / 2,
+      y: this.height,
+      orientation: "south",
+    }),
+    southWest: () => ({
+      x: this.width / 4, // simplified equation
+      y: (this.height * 3) / 4,
+      orientation: "southWest",
+    }),
+    west: () => ({
+      x: 0,
+      y: this.height / 2,
+      orientation: "west",
+    }),
+  };
+
+  get currentSize() {
+    return this.IsEnd ? size + 2 : size;
+  }
+
+  get text() {
+    return (this.Timeout ? "⏱ " : "") + (this.Name || this.Id);
+  }
+
+  get labelSize() {
+    return this.text.length * 8 + 8;
+  }
+
+  get width() {
+    return this.labelSize < this.currentSize * 2
+      ? this.currentSize * 2
+      : this.labelSize;
+  }
+
+  get height() {
+    return size * 2;
+  }
 
   constructor(state: StateDao, workflow: Workflow, ei: Ei) {
     super(state, workflow, ei);

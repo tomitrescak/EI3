@@ -8,11 +8,11 @@ export type Point = {
 
 export function drag(
   svg: SVGSVGElement,
-  entity: Entity,
   evt: React.MouseEvent<SVGGraphicsElement>,
-  entities?: any[]
+  commit: (p: Point) => void,
+  update?: (p: Point) => void
 ) {
-  // evt.preventDefault();
+  evt.preventDefault();
 
   let xStart = parseFloat(evt.currentTarget.getAttribute("x"));
   let yStart = parseFloat(evt.currentTarget.getAttribute("y"));
@@ -32,8 +32,8 @@ export function drag(
     target.setAttribute("x", p.x.toString());
     target.setAttribute("y", p.y.toString());
 
-    if (entity instanceof HierarchicEntity) {
-      entity.updateConnection(entities, p);
+    if (update) {
+      update(p);
     }
   }
 
@@ -41,8 +41,9 @@ export function drag(
     document.removeEventListener("mousemove", move as any);
     document.removeEventListener("mouseup", stopDrag);
 
-    entity.position.x = parseFloat(target.getAttribute("x"));
-    entity.position.y = parseFloat(target.getAttribute("y"));
+    if (commit) {
+      commit(p);
+    }
   }
 
   document.addEventListener("mousemove", move as any);

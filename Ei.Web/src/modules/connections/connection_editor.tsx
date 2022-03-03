@@ -36,13 +36,13 @@ const emptyOptions: DropdownItemProps[] = [];
 
 const statePositionOptions = [
   { text: "North", value: "north" },
-  { text: "NorthEast", value: "northeast" },
+  { text: "NorthEast", value: "northEast" },
   { text: "East", value: "east" },
-  { text: "South East", value: "southeast" },
+  { text: "South East", value: "southEast" },
   { text: "South", value: "south" },
-  { text: "South West", value: "southwest" },
+  { text: "South West", value: "southWest" },
   { text: "West", value: "west" },
-  { text: "North West", value: "northwest" },
+  { text: "North West", value: "northWest" },
 ];
 
 const joinToOptions = [
@@ -69,109 +69,51 @@ const splitToOptions = [
   // { text: "Disconnect", value: "" },
 ];
 
+const actionOrientations = [
+  { text: "Top/Bottom", value: "TopBottom" },
+  { text: "Left/Right", value: "LeftRight" },
+  // { text: "Disconnect", value: "" },
+];
+
 export const ConnectionEditor = observer(() => {
   const context = useAppContext();
 
   const changeSourcePort = action((_e: any, { value }: any) => {
-    const workflow = connection.workflow;
-    const link = connection.link;
-
     connection.SourcePort = value;
-
-    const fromPosition = workflow.findPosition(connection.From);
-    link.getSourcePort().removeLink(link);
-    link.setSourcePort(fromPosition.getPort(value));
-
-    // connection.workflow.Connections.remove(connection);
-    // connection.workflow.Connections.push(connection);
-
-    context.engine.repaintCanvas();
-
     Ui.history.step();
   });
 
   const changeSourcePosition = action((_e: any, { value }: any) => {
-    const workflow = connection.workflow;
-    const link = connection.link;
-
-    // remove old joints
-
-    link.getSourcePort().removeLink(link);
-
     const fromPosition = workflow.findPosition(value);
     if (fromPosition) {
-      const port =
-        fromPosition.getPorts()[Object.keys(fromPosition.getPorts())[0]];
-      connection.SourcePort = port.getName();
-      link.setSourcePort(port);
+      const port = Object.keys(fromPosition)[0];
 
+      connection.SourcePort = port;
       connection.From = value;
     } else {
       connection.From = "";
       connection.SourcePort = null;
     }
-
-    const model = context.engine.getModel();
-    connection.update(model);
-
-    // connection.workflow.Connections.remove(connection);
-    // connection.workflow.Connections.push(connection);
-
-    context.engine.repaintCanvas();
-
     Ui.history.step();
   });
 
   const changeTargetPort = action((_e: any, { value }: any) => {
-    const workflow = connection.workflow;
-    const link = connection.link;
-
     connection.TargetPort = value;
-
-    const toPosition = workflow.findPosition(connection.To);
-    link.getTargetPort().removeLink(link);
-    link.setTargetPort(toPosition.getPort(value));
-
-    // connection.workflow.Connections.remove(connection);
-    // connection.workflow.Connections.push(connection);
-
-    context.engine.repaintCanvas();
-
     Ui.history.step();
   });
 
   const changeTargetPosition = action((_e: any, { value }: any) => {
-    const workflow = connection.workflow;
-    const link = connection.link;
-
-    link.getTargetPort().removeLink(link);
-
-    const parent = link.getTargetPort().getParent();
-
-    // if it is a free widget remove it
-    if (value != "") {
-      let freeJoint = parent as State;
-      if (freeJoint.IsOpen) {
-        context.engine.getModel().removeNode(freeJoint);
-      }
-    }
-
     const toPosition = workflow.findPosition(value);
     if (toPosition) {
-      let port = toPosition.getPorts()[Object.keys(toPosition.getPorts())[0]];
-      connection.TargetPort = port.getName();
-      link.setTargetPort(port);
+      const port = Object.keys(toPosition)[0];
 
+      connection.TargetPort = port;
       connection.To = value;
     } else {
       connection.To = "";
       connection.TargetPort = null;
     }
 
-    const model = context.engine.getModel();
-    connection.update(model);
-
-    context.engine.repaintCanvas();
     Ui.history.step();
   });
 
@@ -274,12 +216,14 @@ export const ConnectionEditor = observer(() => {
                 fluid
                 label="From"
                 search
+                selection
                 options={workflow.connectionOptions}
                 onChange={changeSourcePosition}
               />
               <Select
                 name={"SourcePort"}
                 fluid
+                selection
                 width={7}
                 label="Port"
                 search
@@ -291,6 +235,7 @@ export const ConnectionEditor = observer(() => {
               <Select
                 name={"To"}
                 fluid
+                selection
                 width={9}
                 label="To"
                 search
@@ -300,6 +245,7 @@ export const ConnectionEditor = observer(() => {
               <Select
                 name={"TargetPort"}
                 fluid
+                selection
                 width={7}
                 label="Port"
                 search
@@ -310,9 +256,11 @@ export const ConnectionEditor = observer(() => {
             <Select
               name={"ActionId"}
               label="Action"
+              selection
               search
               options={workflow.actionOptions}
             />
+
             <Input name={"AllowLoops"} type="number" label="Allowed Loops" />
           </Accordion.Content>
 
@@ -330,13 +278,19 @@ export const ConnectionEditor = observer(() => {
             </Header>
           </Accordion.Title>
           <Accordion.Content active={handler.isActive(1)}>
-            <Label label="Display Type" />
+            <Select
+              name={"ActionConnection"}
+              label="Action Connections"
+              selection
+              options={actionOrientations}
+            />
+
             <SUIForm.Group>
-              <Radio
+              {/* <Radio
                 name={"ActionDisplay"}
                 label="Icon Only"
                 value={ActionDisplayType.IconOnly}
-              />
+              /> */}
               <Radio
                 name={"ActionDisplay"}
                 label="Icon and Text"

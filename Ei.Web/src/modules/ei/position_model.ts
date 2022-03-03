@@ -6,6 +6,8 @@ export abstract class PositionModel extends Entity {
   ei: Ei;
   workflow: Workflow;
 
+  ports = {};
+
   constructor(entity: Partial<EntityDao>, workflow: Workflow, ei: Ei) {
     super(entity);
 
@@ -20,5 +22,5 @@ export abstract class PositionModel extends Entity {
     // } as NodeModelListener);
   }
 
-  abstract select(): void;
+  // abstract select(): void;
 }
