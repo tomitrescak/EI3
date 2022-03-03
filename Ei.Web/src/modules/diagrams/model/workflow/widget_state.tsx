@@ -71,68 +71,7 @@ export const StateWidget = observer(
         y={node.position.y}
         cursor="pointer"
         onMouseDown={(evt) => {
-          evt.preventDefault();
-
-          drag(
-            svgRef.current,
-            evt,
-            (p) => {
-              node.position = p;
-            },
-            (p) => {
-              let fromStateConnections = node.workflow.Connections.filter(
-                (c) => c.From === node.Id
-              );
-              for (let connection of fromStateConnections) {
-                if (connection.fromRef.current) {
-                  connection.fromRef.current.setAttribute(
-                    "d",
-                    createPath(
-                      p,
-                      node.ports[connection.SourcePort](),
-                      connection.ActionPosition,
-                      connection.ports[
-                        connection.ActionConnection == "LeftRight"
-                          ? "left"
-                          : "top"
-                      ](connection.actionWidth, connection.actionHeight),
-                      false
-                    )
-                  );
-                }
-              }
-              let toStateConnections = node.workflow.Connections.filter(
-                (c) => c.To === node.Id
-              );
-
-              for (let connection of toStateConnections) {
-                const point = adjust(p, node.ports[connection.TargetPort]());
-
-                if (connection.arrowRef?.current) {
-                  connection.arrowRef.current.setAttribute(
-                    "transform",
-                    `translate(${point.x},${point.y})`
-                  );
-                }
-                if (connection.toRef.current) {
-                  connection.toRef.current.setAttribute(
-                    "d",
-                    createPath(
-                      connection.ActionPosition,
-                      connection.ports[
-                        connection.ActionConnection == "LeftRight"
-                          ? "right"
-                          : "bottom"
-                      ](connection.actionWidth, connection.actionHeight),
-                      p,
-                      node.ports[connection.TargetPort]()
-                    )
-                  );
-                }
-              }
-            },
-            () => history.push(node.url)
-          );
+          node.handleDrag(evt, svgRef, history);
         }}
       >
         {/* <circle

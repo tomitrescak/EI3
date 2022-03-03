@@ -8,27 +8,31 @@ import { Workflow } from "./workflow_model";
 
 export interface TransitionDao extends EntityDao {
   $type?: string;
-  Horizontal: boolean;
+  Vertical: boolean;
 }
 
 export const transitionHeight = 20;
 export const transitionWidth = 80;
 
 export class Transition extends PositionModel {
-  Icon = "chevron right";
   $type: string;
-  Horizontal: boolean;
-  selected: boolean;
+  Vertical: boolean;
 
   constructor(transition: Partial<TransitionDao>, workflow: Workflow, ei: Ei) {
     super(transition, workflow, ei);
+    this.Icon = "chevron right";
     this.$type = transition.$type;
 
-    this.Horizontal = transition.Horizontal;
+    this.Vertical = transition.Vertical;
     makeObservable(this, {
-      Horizontal: observable,
-      selected: observable,
+      Vertical: observable,
     });
+  }
+
+  get url() {
+    return this.ei
+      .createWorkflowUrl(this.workflow, "transition", this.Id)
+      .toLowerCase();
   }
 
   get labelSize() {
@@ -40,7 +44,7 @@ export class Transition extends PositionModel {
   get json() {
     return {
       ...super.json,
-      Horizontal: this.Horizontal,
+      Vertical: this.Vertical,
       removeItem: action,
     };
   }
@@ -96,28 +100,40 @@ export class SplitInfo {
 let id = 0;
 
 export class TransitionSplit extends Transition {
-  Icon = "⑃";
-
   Shallow: boolean;
   Names: IObservableArray<SplitInfo>;
   uid = id++;
 
   ports = {
+    input: () => ({
+      orientation: this.Vertical ? "west" : "north",
+      x: !this.Vertical
+        ? this.labelSize / 2
+        : this.labelSize / 2 - transitionHeight / 2,
+      y: !this.Vertical ? -5 : transitionHeight / 2,
+    }),
     split1: () => ({
-      x: this.Horizontal ? 5 : this.labelSize / 2 + 7,
-      y: this.Horizontal ? transitionHeight - 3 : -20,
+      orientation: this.Vertical ? "east" : "south",
+      x: !this.Vertical ? 5 : this.labelSize / 2 + transitionHeight / 2,
+      y: !this.Vertical
+        ? transitionHeight
+        : transitionHeight / 2 - this.labelSize / 2,
     }),
     split2: () => ({
-      x: this.Horizontal ? this.labelSize / 2 - 7 : this.labelSize / 2 + 7,
-      y: this.Horizontal ? transitionHeight - 3 : 3,
+      orientation: this.Vertical ? "east" : "south",
+      x: !this.Vertical
+        ? this.labelSize / 2
+        : this.labelSize / 2 + transitionHeight / 2,
+      y: !this.Vertical ? transitionHeight : transitionHeight / 2,
     }),
     split3: () => ({
-      x: this.Horizontal ? this.labelSize - 20 : this.labelSize / 2 + 7,
-      y: this.Horizontal ? transitionHeight - 3 : transitionHeight + 5,
-    }),
-    input: () => ({
-      x: this.Horizontal ? this.labelSize / 2 - 7 : this.labelSize / 2 - 20,
-      y: this.Horizontal ? -10 : 3,
+      orientation: this.Vertical ? "east" : "south",
+      x: !this.Vertical
+        ? this.labelSize - 5
+        : this.labelSize / 2 + transitionHeight / 2,
+      y: !this.Vertical
+        ? transitionHeight
+        : this.labelSize / 2 + transitionHeight / 2,
     }),
   };
 
@@ -127,6 +143,8 @@ export class TransitionSplit extends Transition {
     ei: Ei
   ) {
     super(transition, workflow, ei);
+
+    this.Icon = "⑃";
 
     this.Names = observable(
       (transition.Names || []).map((n) => new SplitInfo(n[0], n[1]))
@@ -164,29 +182,39 @@ export class TransitionSplit extends Transition {
 }
 
 export class TransitionJoin extends Transition {
-  Icon = "⑂";
-
   ports = {
     join1: () => ({
-      x: this.Horizontal ? 5 : this.labelSize / 2 - 20,
-      y: this.Horizontal ? -10 : -20,
+      orientation: this.Vertical ? "west" : "north",
+      x: this.Vertical ? this.labelSize / 2 - transitionHeight / 2 : 6,
+      y: this.Vertical ? transitionHeight / 2 - this.labelSize / 2 + 6 : 0,
     }),
     join2: () => ({
-      x: this.Horizontal ? this.labelSize / 2 - 7 : this.labelSize / 2 - 20,
-      y: this.Horizontal ? -10 : 3,
+      orientation: this.Vertical ? "west" : "north",
+      x: this.Vertical
+        ? this.labelSize / 2 - transitionHeight / 2
+        : this.labelSize / 2,
+      y: this.Vertical ? transitionHeight / 2 : 0,
     }),
     join3: () => ({
-      x: this.Horizontal ? this.labelSize - 20 : this.labelSize / 2 - 20,
-      y: this.Horizontal ? -10 : transitionHeight + 5,
+      orientation: this.Vertical ? "west" : "north",
+      x: this.Vertical
+        ? this.labelSize / 2 - transitionHeight / 2
+        : this.labelSize - 6,
+      y: this.Vertical ? transitionHeight / 2 + this.labelSize / 2 - 6 : 0,
     }),
     yield: () => ({
-      x: this.Horizontal ? this.labelSize / 2 - 7 : this.labelSize / 2 + 7,
-      y: this.Horizontal ? transitionHeight - 3 : 3,
+      orientation: this.Vertical ? "east" : "south",
+      x: this.Vertical
+        ? this.labelSize / 2 + transitionHeight / 2
+        : this.labelSize / 2,
+      y: this.Vertical ? transitionHeight / 2 : transitionHeight,
     }),
   };
 
   constructor(transition: Partial<TransitionDao>, workflow: Workflow, ei: Ei) {
     super(transition, workflow, ei);
+
+    this.Icon = "⑂";
 
     // this.addPort(
     //   new WorkflowPortModel(workflow, "yield", PortModelAlignment.BOTTOM)

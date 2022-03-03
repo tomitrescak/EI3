@@ -1,16 +1,18 @@
 import React from "react";
 
 import { observer } from "mobx-react";
-import { Header } from "semantic-ui-react";
+import { Button, Header } from "semantic-ui-react";
 
 import { AccessEditor } from "../access/access_editor";
 import { EntityEditor } from "../core/entity_view";
 import { useAppContext } from "../../config/context";
-import { useQuery } from "../../helpers/client_helpers";
+import { Ui, useQuery } from "../../helpers/client_helpers";
 import { Checkbox, Form, Formix, Input } from "../Form";
+import { useHistory } from "react-router-dom";
 
 export const StateEditor = observer(() => {
   const context = useAppContext();
+  const history = useHistory();
   const { id, w: workflowId } = useQuery<{ id: string; w: string }>();
   let ei = context.ei;
 
@@ -54,6 +56,19 @@ export const StateEditor = observer(() => {
 
         <Header as="h4" icon="unhide" content="Visual Properties" />
         <Checkbox name={"ShowRules"} label="Show Rules" />
+
+        <Button
+          icon="trash"
+          color="red"
+          content="Delete State"
+          onClick={async () => {
+            if (await Ui.confirmDialogAsync()) {
+              workflow.States.remove(state);
+
+              history.push(ei.createWorkflowUrl(workflow));
+            }
+          }}
+        />
       </>
     </Formix>
   );

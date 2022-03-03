@@ -1,4 +1,10 @@
-import { action, IObservableArray, makeObservable, observable } from "mobx";
+import {
+  action,
+  computed,
+  IObservableArray,
+  makeObservable,
+  observable,
+} from "mobx";
 import React from "react";
 
 import { AccessCondition, AccessConditionDao } from "./access_model";
@@ -54,7 +60,16 @@ export class Connection extends Entity {
   AllowLoops: number;
 
   RotateLabel: boolean;
-  SourcePort: string;
+  _SourcePort: string;
+
+  get SourcePort() {
+    return this._SourcePort;
+  }
+
+  set SourcePort(value: string) {
+    this._SourcePort = value;
+  }
+
   TargetPort: string;
   ActionDisplay: ActionDisplayType;
   ActionConnection: "TopBottom" | "LeftRight";
@@ -114,7 +129,7 @@ export class Connection extends Entity {
     this.ActionConnection = connection.ActionConnection || "LeftRight";
 
     this.ActionPosition = connection.ActionPosition;
-    if (this.ActionPosition.x == null) {
+    if (this.ActionPosition?.x == null) {
       this.ActionPosition = { x: 0, y: 0 };
     }
 
@@ -145,7 +160,8 @@ export class Connection extends Entity {
       ActionId: observable,
       RotateLabel: observable,
       AllowLoops: observable,
-      SourcePort: observable,
+      _SourcePort: observable,
+      SourcePort: computed,
       TargetPort: observable,
       ActionDisplay: observable,
       ActionPosition: observable,

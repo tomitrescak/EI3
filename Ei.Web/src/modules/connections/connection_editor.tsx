@@ -71,6 +71,7 @@ const splitToOptions = [
 
 const actionOrientations = [
   { text: "Top/Bottom", value: "TopBottom" },
+  { text: "Bottom/Top", value: "Bottom" },
   { text: "Left/Right", value: "LeftRight" },
   // { text: "Disconnect", value: "" },
 ];
@@ -86,7 +87,7 @@ export const ConnectionEditor = observer(() => {
   const changeSourcePosition = action((_e: any, { value }: any) => {
     const fromPosition = workflow.findPosition(value);
     if (fromPosition) {
-      const port = Object.keys(fromPosition)[0];
+      const port = Object.keys(fromPosition.ports)[0];
 
       connection.SourcePort = port;
       connection.From = value;
@@ -105,7 +106,7 @@ export const ConnectionEditor = observer(() => {
   const changeTargetPosition = action((_e: any, { value }: any) => {
     const toPosition = workflow.findPosition(value);
     if (toPosition) {
-      const port = Object.keys(toPosition)[0];
+      const port = Object.keys(toPosition.ports)[0];
 
       connection.TargetPort = port;
       connection.To = value;

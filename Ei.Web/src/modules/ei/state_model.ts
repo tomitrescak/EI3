@@ -29,6 +29,11 @@ export class State extends PositionModel {
   ExitRules: IObservableArray<AccessCondition>;
 
   ports = {
+    east: () => ({
+      x: this.width,
+      y: this.height / 2,
+      orientation: "east",
+    }),
     southEast: () => ({
       x: 3 * (this.width / 4), // simplified equation
       y: (3 * this.height) / 4,
@@ -39,11 +44,7 @@ export class State extends PositionModel {
       y: this.height / 4,
       orientation: "northEast",
     }),
-    east: () => ({
-      x: this.width,
-      y: this.height / 2,
-      orientation: "east",
-    }),
+
     north: () => ({
       x: this.width / 2,
       y: -4,

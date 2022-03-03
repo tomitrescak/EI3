@@ -1,10 +1,17 @@
+import { observer } from "mobx-react";
 import React from "react";
+import { useHistory, useLocation } from "react-router-dom";
 
-import { TransitionSplit } from "../../../ei/transition_model";
+import {
+  transitionHeight,
+  TransitionSplit,
+  transitionWidth,
+} from "../../../ei/transition_model";
 import { Port } from "./widget_transition_join";
 
 export type StateJoinNodeWidgetProps = {
   node: TransitionSplit;
+  svgRef: React.MutableRefObject<SVGSVGElement>;
 };
 
 // export interface EntityNodeWidgetState {}
@@ -12,36 +19,61 @@ export type StateJoinNodeWidgetProps = {
 const height = 20;
 const width = 80;
 
-export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
-  let labelSize = (node.Name || node.Id).length * 8 + 8;
-  labelSize = labelSize < width ? width : labelSize;
+export const TransitionSplitWidget = observer(
+  ({ node, svgRef }: StateJoinNodeWidgetProps) => {
+    let history = useHistory();
+    let location = useLocation();
+    let labelSize = (node.Name || node.Id).length * 8 + 8;
+    labelSize = labelSize < width ? width : labelSize;
 
-  return (
-    <div
-      className="Entity-node"
-      style={{
-        position: "relative",
-        width: labelSize,
-        height,
-      }}
-    >
+    const selected = node.url === location.pathname + location.search;
+
+    return (
       <svg
         width={labelSize}
         height={height}
-        transform={`rotate(${node.Horizontal ? 0 : 90} ${width / 2} ${
-          height / 2
-        })`}
+        x={node.position.x}
+        y={node.position.y}
+        cursor="pointer"
+        onMouseDown={(evt) => {
+          node.handleDrag(evt, svgRef, history);
+        }}
       >
-        <g id="Layer_1" />
-        <g id="Layer_2">
+        {/* <circle
+          fill="orange"
+          cx={node.ports.split1().x}
+          cy={node.ports.split1().y}
+          r={6}
+        />
+        <circle
+          fill="red"
+          cx={node.ports.split2().x}
+          cy={node.ports.split2().y}
+          r={6}
+        />
+        <circle
+          fill="green"
+          cx={node.ports.split3().x}
+          cy={node.ports.split3().y}
+          r={6}
+        />
+        <circle
+          fill="blue"
+          cx={node.ports.input().x}
+          cy={node.ports.input().y}
+          r={6}
+        /> */}
+        <g
+          style={{
+            transformOrigin: "center",
+          }}
+          transform={`rotate(${node.Vertical ? -90 : 0})`}
+        >
           <rect
-            fill={node.selected ? "salmon" : "black"}
+            fill={selected ? "salmon" : "black"}
             width={labelSize}
-            height={height}
-            y={0}
+            height={transitionHeight}
             style={{ opacity: 1 }}
-            rx={5}
-            ry={5}
           />
           <text
             x={labelSize / 2}
@@ -61,7 +93,16 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
           </text>
         </g>
       </svg>
-      {/* <PortWidget
+    );
+  }
+);
+
+export let TransitionSplitWidgetFactory = React.createFactory(
+  TransitionSplitWidget
+);
+
+{
+  /* <PortWidget
         style={{
           position: "absolute",
           zIndex: 10,
@@ -72,8 +113,10 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
         engine={node.ei.engine}
       >
         <Port />
-      </PortWidget> */}
-      {/* <PortWidget
+      </PortWidget> */
+}
+{
+  /* <PortWidget
         style={{
           position: "absolute",
           zIndex: 10,
@@ -84,8 +127,10 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
         engine={node.ei.engine}
       >
         <Port />
-      </PortWidget> */}
-      {/* <PortWidget
+      </PortWidget> */
+}
+{
+  /* <PortWidget
         style={{
           position: "absolute",
           zIndex: 10,
@@ -108,11 +153,5 @@ export const TransitionSplitWidget = ({ node }: StateJoinNodeWidgetProps) => {
         engine={node.ei.engine}
       >
         <Port />
-      </PortWidget> */}
-    </div>
-  );
-};
-
-export let TransitionSplitWidgetFactory = React.createFactory(
-  TransitionSplitWidget
-);
+      </PortWidget> */
+}

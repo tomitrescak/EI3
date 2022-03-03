@@ -22,7 +22,10 @@ String.prototype.toId = function (this: string) {
   } while (result.indexOf("  ") >= 0);
 
   let parts = result.split(" ");
-  result = parts.map((w) => w[0].toUpperCase() + w.substring(1)).join("");
+  result = parts
+    .map((w) => w[0].toUpperCase() + w.substring(1))
+    .join("")
+    .toLowerCase();
 
   return result;
 };

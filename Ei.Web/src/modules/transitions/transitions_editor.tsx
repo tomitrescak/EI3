@@ -3,12 +3,13 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import styled from "@emotion/styled";
 
-import { FormGroup, Header } from "semantic-ui-react";
+import { Button, FormGroup, Header } from "semantic-ui-react";
 import { EntityEditor } from "../core/entity_view";
 import { Transition, TransitionSplit } from "../ei/transition_model";
 import { useAppContext } from "../../config/context";
-import { useQuery } from "../../helpers/client_helpers";
+import { Ui, useQuery } from "../../helpers/client_helpers";
 import { Checkbox, Form, Formix, Input } from "../Form";
+import { useHistory } from "react-router-dom";
 
 export const StateInput = styled(Input)`
   opacity: 0.9 !important;
@@ -22,6 +23,8 @@ export const TransitionEditor = observer(() => {
   //     props.id
   //   );
   // }
+
+  const history = useHistory();
 
   function renderTransition(transition: Transition) {
     if (transition.$type === "TransitionSplitDao") {
@@ -47,11 +50,11 @@ export const TransitionEditor = observer(() => {
   const { id, w: workflowId } = useQuery<{ id: string; w: string }>();
   let ei = useAppContext().ei;
 
-  let workflow = ei.Workflows.find((w) => w.Id === workflowId);
+  let workflow = ei.Workflows.find((w) => w.Id.toLowerCase() === workflowId);
   if (!workflow) {
     return <div>Workflow does not exist: {workflowId} </div>;
   }
-  let transition = workflow.Transitions.find((a) => a.Id === id);
+  let transition = workflow.Transitions.find((a) => a.Id.toLowerCase() === id);
   if (!transition) {
     return <div>Transition does not exist: {id} </div>;
   }
@@ -64,7 +67,20 @@ export const TransitionEditor = observer(() => {
         {renderTransition(transition)}
 
         <Header as="h4" icon="unhide" content="Visual Properties" />
-        <Checkbox name="Horizontal" label="Horizontal" />
+        <Checkbox name="Vertical" label="Vertical" />
+
+        <Button
+          icon="trash"
+          color="red"
+          content="Delete Transition"
+          onClick={async () => {
+            if (await Ui.confirmDialogAsync()) {
+              workflow.Transitions.remove(transition);
+
+              history.push(ei.createWorkflowUrl(workflow));
+            }
+          }}
+        />
       </>
     </Formix>
   );

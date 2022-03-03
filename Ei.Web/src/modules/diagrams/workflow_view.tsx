@@ -42,12 +42,17 @@ export const WorkflowEditor = observer((props: Props) => {
         ))}
         {workflow.Transitions.filter((t) => t instanceof TransitionJoin).map(
           (p) => (
-            <TransitionJoinWidget node={p as TransitionJoin} svgRef={svgRef} />
+            <TransitionJoinWidget
+              key={p.Id}
+              node={p as TransitionJoin}
+              svgRef={svgRef}
+            />
           )
         )}
         {workflow.Transitions.filter((t) => t instanceof TransitionSplit).map(
           (p) => (
             <TransitionSplitWidget
+              key={p.Id}
               node={p as TransitionSplit}
               svgRef={svgRef}
             />

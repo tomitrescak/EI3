@@ -6,9 +6,12 @@ import {
   transitionWidth,
 } from "../../../ei/transition_model";
 import styled from "@emotion/styled";
+import { observer } from "mobx-react";
+import { useHistory, useLocation } from "react-router-dom";
 
 export interface StateJoinNodeWidgetProps {
   node: TransitionJoin;
+  svgRef: React.MutableRefObject<SVGSVGElement>;
 }
 
 // export interface EntityNodeWidgetState {}
@@ -25,36 +28,60 @@ export const Port = styled.div`
   }
 `;
 
-export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
-  let labelSize = (node.Name || node.Id).length * 8 + 8;
-  labelSize = labelSize < transitionWidth ? transitionWidth : labelSize;
+export const TransitionJoinWidget = observer(
+  ({ node, svgRef }: StateJoinNodeWidgetProps) => {
+    let history = useHistory();
+    let location = useLocation();
+    let labelSize = (node.Name || node.Id).length * 8 + 8;
+    labelSize = labelSize < transitionWidth ? transitionWidth : labelSize;
 
-  const selected =
-    node.selected || node.url === location.pathname + location.search;
+    const selected = node.url === location.pathname + location.search;
 
-  return (
-    <div
-      className="Entity-node"
-      style={{
-        position: "relative",
-        width: labelSize,
-        height: transitionHeight,
-      }}
-    >
+    return (
       <svg
         width={labelSize}
         height={transitionHeight}
-        transform={`rotate(${node.Horizontal ? 0 : 90} ${transitionWidth / 2} ${
-          transitionHeight / 2
-        })`}
+        x={node.position.x}
+        y={node.position.y}
+        cursor="pointer"
+        onMouseDown={(evt) => {
+          node.handleDrag(evt, svgRef, history);
+        }}
       >
-        <g id="Layer_1" />
-        <g id="Layer_2">
+        {/* <circle
+          fill="gold"
+          cx={node.ports.join1().x}
+          cy={node.ports.join1().y}
+          r={6}
+        />
+        <circle
+          fill="gold"
+          cx={node.ports.join2().x}
+          cy={node.ports.join2().y}
+          r={6}
+        />
+        <circle
+          fill="gold"
+          cx={node.ports.join3().x}
+          cy={node.ports.join3().y}
+          r={6}
+        />
+        <circle
+          fill="gold"
+          cx={node.ports.yield().x}
+          cy={node.ports.yield().y}
+          r={6}
+        /> */}
+        <g
+          style={{
+            transformOrigin: "center",
+          }}
+          transform={`rotate(${node.Vertical ? -90 : 0})`}
+        >
           <rect
             fill={selected ? "salmon" : "black"}
             width={labelSize}
             height={transitionHeight}
-            y={0}
             style={{ opacity: 1 }}
             rx={5}
             ry={5}
@@ -77,7 +104,15 @@ export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
           </text>
         </g>
       </svg>
-      {/* <PortWidget
+    );
+  }
+);
+
+export let TransitionJoinWidgetFactory =
+  React.createFactory(TransitionJoinWidget);
+
+{
+  /* <PortWidget
         style={{
           position: "absolute",
           zIndex: 10,
@@ -124,10 +159,5 @@ export const TransitionJoinWidget = ({ node }: StateJoinNodeWidgetProps) => {
         engine={node.ei.engine}
       >
         <Port />
-      </PortWidget> */}
-    </div>
-  );
-};
-
-export let TransitionJoinWidgetFactory =
-  React.createFactory(TransitionJoinWidget);
+      </PortWidget> */
+}

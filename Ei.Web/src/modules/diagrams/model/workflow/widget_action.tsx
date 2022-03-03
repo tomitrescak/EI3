@@ -34,6 +34,8 @@ function orientation(port: Port) {
       return { x: port.x + 30, y: port.y + 30 };
     case "southWest":
       return { x: port.x - 30, y: port.y + 30 };
+    default:
+      throw new Error("Not supported: " + port.orientation);
   }
 }
 
@@ -121,28 +123,30 @@ function createPathObject(
 
 function createAnchors(connection: Connection, width: number, height: number) {
   return {
-    from: connection.fromPosition
-      ? createPathObject(
-          connection.fromPosition.position,
-          connection.fromPosition.ports[connection.SourcePort](),
-          connection.ActionPosition,
-          connection.ports[
-            connection.ActionConnection == "LeftRight" ? "left" : "top"
-          ](width, height),
-          false
-        )
-      : null,
-    to: connection.toPosition
-      ? createPathObject(
-          connection.ActionPosition,
-          connection.ports[
-            connection.ActionConnection == "LeftRight" ? "right" : "bottom"
-          ](width, height),
-          connection.toPosition.position,
-          connection.toPosition.ports[connection.TargetPort](),
-          true
-        )
-      : null,
+    from:
+      connection.fromPosition && connection.SourcePort
+        ? createPathObject(
+            connection.fromPosition.position,
+            connection.fromPosition.ports[connection.SourcePort](),
+            connection.ActionPosition,
+            connection.ports[
+              connection.ActionConnection == "LeftRight" ? "left" : "top"
+            ](width, height),
+            false
+          )
+        : null,
+    to:
+      connection.toPosition && connection.TargetPort
+        ? createPathObject(
+            connection.ActionPosition,
+            connection.ports[
+              connection.ActionConnection == "LeftRight" ? "right" : "bottom"
+            ](width, height),
+            connection.toPosition.position,
+            connection.toPosition.ports[connection.TargetPort](),
+            true
+          )
+        : null,
   };
 }
 
