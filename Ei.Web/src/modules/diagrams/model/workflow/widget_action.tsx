@@ -1,5 +1,6 @@
 import { observer, Observer } from "mobx-react";
 import React from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { ActionDisplayType, Connection } from "../../../ei/connection_model";
 import { Entity } from "../../../ei/entity_model";
 import { PointDao } from "../../../ei/hierarchic_entity_model";
@@ -36,7 +37,11 @@ function orientation(port: Port) {
   }
 }
 
-function adjust(point: PointDao | null, position: Port, offset?: PointDao) {
+export function adjust(
+  point: PointDao | null,
+  position: Port,
+  offset?: PointDao
+) {
   if (point == null) {
     return position;
   }
@@ -68,7 +73,13 @@ function offset(port: Port) {
   }
 }
 
-function createPath(
+function constructPath(from: Port, to: Port) {
+  return `M ${from.x} ${from.y} C ${orientation(from).x} ${
+    orientation(from).y
+  }, ${orientation(to).x} ${orientation(to).y}, ${to.x} ${to.y}`;
+}
+
+export function createPath(
   positionFrom: PointDao | null,
   portFrom: Port,
   positionTo: PointDao | null,
@@ -78,29 +89,33 @@ function createPath(
   const from = adjust(positionFrom, portFrom);
   const to = adjust(positionTo, portTo, withOffset ? offset(portTo) : null);
 
-  return `M ${from.x} ${from.y} C ${orientation(from).x} ${
-    orientation(from).y
-  }, ${orientation(to).x} ${orientation(to).y}, ${to.x} ${to.y}`;
+  return constructPath(from, to);
 }
 
 function createPathObject(
   positionFrom: PointDao | null,
   portFrom: Port,
   positionTo: PointDao | null,
-  portTo: Port
+  portTo: Port,
+  withOffset = true
 ) {
   const from = adjust(positionFrom, portFrom);
   const to = adjust(positionTo, portTo);
+  const toOffset = adjust(
+    positionTo,
+    portTo,
+    withOffset ? offset(portTo) : null
+  );
 
   return {
-    fromX: from.x,
-    fromY: from.y,
-    startHandleX: orientation(from).x,
-    startHandleY: orientation(from).y,
-    endHandleX: orientation(to).x,
-    endHandleY: orientation(to).y,
-    toX: to.x,
-    toY: to.y,
+    start: {
+      x: from.x,
+      y: from.y,
+    },
+    startHandle: { x: orientation(from).x, y: orientation(from).y },
+    endHandle: { x: orientation(to).x, y: orientation(to).y },
+    end: { x: to.x, y: to.y },
+    path: constructPath(from, toOffset),
   };
 }
 
@@ -113,28 +128,34 @@ function createAnchors(connection: Connection, width: number, height: number) {
           connection.ActionPosition,
           connection.ports[
             connection.ActionConnection == "LeftRight" ? "left" : "top"
-          ](width, height)
+          ](width, height),
+          false
         )
       : null,
     to: connection.toPosition
       ? createPathObject(
-          connection.toPosition.position,
-          connection.toPosition.ports[connection.TargetPort](),
           connection.ActionPosition,
           connection.ports[
             connection.ActionConnection == "LeftRight" ? "right" : "bottom"
-          ](width, height)
+          ](width, height),
+          connection.toPosition.position,
+          connection.toPosition.ports[connection.TargetPort](),
+          true
         )
       : null,
   };
 }
 
 const CustomLinkArrowWidget = (props: {
+  connection: Connection;
   point: PointDao;
   previousPoint: PointDao;
   color: string;
 }) => {
   const { point, previousPoint } = props;
+  const ref = React.useRef<SVGGElement>();
+
+  props.connection.arrowRef = ref;
 
   const angle =
     90 +
@@ -144,6 +165,7 @@ const CustomLinkArrowWidget = (props: {
   //translate(50, -10),
   return (
     <g
+      ref={ref}
       className="arrow"
       transform={"translate(" + point.x + ", " + point.y + ")"}
     >
@@ -156,129 +178,126 @@ const CustomLinkArrowWidget = (props: {
   );
 };
 
-const PreConditionLabels = ({
-  link,
-  width,
-  height,
-}: {
-  link: Connection;
-  width: number;
-  height: number;
-}) => {
-  const connection = link;
+const PreConditionLabels = observer(
+  ({
+    link,
+    height,
+    width,
+  }: {
+    link: Connection;
+    height: number;
+    width: number;
+  }) => {
+    const connection = link;
 
-  const position = connection.fromPosition
-    ? adjust(
-        connection.fromPosition.position,
-        connection.fromPosition.ports[connection.SourcePort]()
-      )
-    : adjust(
-        connection.ActionPosition,
-        connection.ports[
-          connection.ActionConnection == "LeftRight" ? "left" : "top"
-        ](width, height)
-      );
+    // collect roles
 
-  // collect roles
-
-  return (
-    <Observer>
-      {() => {
-        let allowedRoles = [];
-        for (let access of connection.Access) {
-          if (access.Precondition) {
-            allowedRoles.push(
-              link.workflow.ei.Roles.find((r) => r.Id === access.Role).Icon
-            );
-          }
-        }
-        if (allowedRoles.length === 0) {
-          return null;
-        }
-
-        return (
-          <g>
-            {allowedRoles.map((r, i) => (
-              <text
-                key={i}
-                x={position.x}
-                y={position.y}
-                fill="white"
-                textAnchor="middle"
-                dominantBaseline="central"
-                style={{ fontSize: "20px" }}
-              >
-                {r}
-              </text>
-            ))}
-          </g>
-        );
-      }}
-    </Observer>
-  );
-};
-
-const PostConditionLabels = ({ link }: { link: Connection }) => {
-  const connection = link;
-
-  // collect roles
-
-  return (
-    <Observer>
-      {() => {
-        let allowedRoles = [];
-        for (let access of connection.Access) {
-          if (access.Postconditions.length) {
-            let role = link.workflow.ei.Roles.find((r) => r.Id === access.Role);
-            if (role) {
-              allowedRoles.push(role.Icon);
-            } else {
-              link.workflow.ei.context.warn(
-                `Role '${access.Role}' does not exist in precondition for link '${link.connection.Id}'`
+    return (
+      <Observer>
+        {() => {
+          let allowedRoles = [];
+          for (let access of connection.Access) {
+            if (access.Precondition) {
+              allowedRoles.push(
+                link.workflow.ei.Roles.find((r) => r.Id === access.Role)
+                  ?.Icon || `Deleted ${access.Role}`
               );
             }
           }
-        }
-        if (allowedRoles.length === 0) {
-          return null;
-        }
+          if (allowedRoles.length === 0) {
+            return null;
+          }
 
-        let points = link.getPoints().map((p) => new Point(p.getX(), p.getY()));
-        let vector = points[points.length - 1].vector(
-          points[points.length - 2]
-        );
-        let position = vector
-          .normalised()
-          .multiply(30)
-          .add(points[points.length - 1]);
-        let angle = 0;
-        // if (link.connection.RotateLabel) {
-        //   angle = this.lastAngle(points);
-        // }
-        return (
-          <g
-            id="Layer_3"
-            transform={`rotate(${angle} ${position.x} ${position.y})`}
-          >
-            {allowedRoles.map((r, i) => (
-              <text
-                key={i}
-                x={position.x + i * 22}
-                y={position.y + 12}
-                fill="white"
-                textAnchor="middle"
-                dominantBaseline="central"
-                style={{ fontSize: "20px" }}
-              >
-                {r}
-              </text>
-            ))}
-          </g>
-        );
-      }}
-    </Observer>
-  );
-};
+          const position =
+            connection.ActionConnection === "LeftRight"
+              ? { x: (allowedRoles.length - 1) * -22 - 16, y: height / 2 }
+              : { x: width / 2, y: -16 };
+
+          return (
+            <g>
+              {allowedRoles.map((r, i) => (
+                <text
+                  key={i}
+                  x={position.x + i * 22}
+                  y={position.y}
+                  fill="white"
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  style={{ fontSize: "20px" }}
+                >
+                  {r}
+                </text>
+              ))}
+            </g>
+          );
+        }}
+      </Observer>
+    );
+  }
+);
+
+const PostConditionLabels = observer(
+  ({
+    link,
+    height,
+    width,
+  }: {
+    link: Connection;
+    height: number;
+    width: number;
+  }) => {
+    const connection = link;
+
+    // collect roles
+
+    return (
+      <Observer>
+        {() => {
+          let allowedRoles = [];
+          for (let access of connection.Access) {
+            if (access.Postconditions.length) {
+              let role = link.workflow.ei.Roles.find(
+                (r) => r.Id === access.Role
+              );
+              if (role) {
+                allowedRoles.push(role.Icon);
+              } else {
+                allowedRoles.push(`Deleted: ${role.Icon}`);
+              }
+            }
+          }
+          if (allowedRoles.length === 0) {
+            return null;
+          }
+
+          const position =
+            connection.ActionConnection === "LeftRight"
+              ? { x: width + 16, y: height / 2 }
+              : { x: width / 2, y: height + 16 };
+
+          // }
+          return (
+            <g>
+              {allowedRoles.map((r, i) => (
+                <text
+                  key={i}
+                  x={position.x + i * 22}
+                  y={position.y}
+                  fill="white"
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  style={{ fontSize: "20px" }}
+                >
+                  {r}
+                </text>
+              ))}
+            </g>
+          );
+        }}
+      </Observer>
+    );
+  }
+);
 
 const ActionRect = observer(
   ({
@@ -301,22 +320,12 @@ const ActionRect = observer(
   }>) => {
     const fromRef = React.useRef<SVGPathElement>(null);
     const toRef = React.useRef<SVGPathElement>(null);
+    const anchors = createAnchors(connection, width, height);
+    const history = useHistory();
+    const location = useLocation();
 
-    const firstArrowPosition = connection.toPosition
-      ? adjust(
-          connection.ActionPosition,
-          connection.ports[
-            connection.ActionConnection == "LeftRight" ? "left" : "top"
-          ](width, height)
-        )
-      : null;
-
-    const secondArrowPosition = connection.toPosition
-      ? adjust(
-          connection.toPosition.position,
-          connection.toPosition.ports[connection.TargetPort]()
-        )
-      : null;
+    connection.actionWidth = width;
+    connection.actionHeight = height;
 
     // const partsFrom = createPathObject(
     //   connection.fromPosition,
@@ -335,6 +344,11 @@ const ActionRect = observer(
     //   ](width, height)
     // );
 
+    const selected = location.pathname + location.search === connection.url;
+
+    connection.fromRef = fromRef;
+    connection.toRef = toRef;
+
     return (
       <>
         <svg
@@ -344,7 +358,8 @@ const ActionRect = observer(
           cursor="pointer"
           x={x}
           y={y}
-          onMouseDown={(evt) =>
+          onMouseDown={(evt) => {
+            evt.preventDefault();
             drag(
               svgRef.current,
               evt,
@@ -383,18 +398,41 @@ const ActionRect = observer(
                     )
                   );
                 }
-              }
-            )
-          }
+              },
+              () => history.push(connection.url)
+            );
+          }}
           // onClick={() => {
           //   // ents.forEach((e) => (e.selected = false));
           //   // e.selected = true;
           //   history.push(e.url);
           // }}
         >
-          <rect fill="grey" rx={size} ry={size} width={width} height={height} />
+          <rect
+            fill={selected ? "salmon" : "grey"}
+            rx={size}
+            ry={size}
+            width={width}
+            height={height}
+          />
           {children}
+
+          {connection.ActionDisplay === ActionDisplayType.IconAndText && (
+            <>
+              <PreConditionLabels
+                link={connection}
+                height={height}
+                width={width}
+              />
+              <PostConditionLabels
+                link={connection}
+                height={height}
+                width={width}
+              />
+            </>
+          )}
         </svg>
+
         {connection.From && (
           <>
             {/* <circle
@@ -423,15 +461,7 @@ const ActionRect = observer(
               stroke="silver"
               strokeWidth={3}
               fill="transparent"
-              d={createPath(
-                connection.fromPosition.position,
-                connection.fromPosition.ports[connection.SourcePort](),
-                connection.ActionPosition,
-                connection.ports[
-                  connection.ActionConnection == "LeftRight" ? "left" : "top"
-                ](width, height),
-                false
-              )}
+              d={anchors.from.path}
             />
 
             {/* <CustomLinkArrowWidget
@@ -465,21 +495,13 @@ const ActionRect = observer(
               stroke="silver"
               strokeWidth={3}
               fill="transparent"
-              d={createPath(
-                connection.ActionPosition,
-                connection.ports[
-                  connection.ActionConnection == "LeftRight"
-                    ? "right"
-                    : "bottom"
-                ](width, height),
-                connection.toPosition.position,
-                connection.toPosition.ports[connection.TargetPort]()
-              )}
+              d={anchors.to.path}
             />
             <CustomLinkArrowWidget
-              point={secondArrowPosition}
-              previousPoint={orientation(secondArrowPosition)}
+              point={anchors.to.end}
+              previousPoint={anchors.to.endHandle}
               color="silver"
+              connection={connection}
             />
           </>
         )}

@@ -10,7 +10,8 @@ export function drag(
   svg: SVGSVGElement,
   evt: React.MouseEvent<SVGGraphicsElement>,
   commit: (p: Point) => void,
-  update?: (p: Point) => void
+  update?: (p: Point) => void,
+  click?: () => void
 ) {
   evt.preventDefault();
 
@@ -22,8 +23,11 @@ export function drag(
 
   let m = svg.getScreenCTM();
   let p = svg.createSVGPoint();
+  let moved = false;
 
   function move(e: React.MouseEvent<SVGElement>) {
+    moved = true;
+
     p.x = xStart + (e.clientX - xPos) / m.a;
     p.y = yStart + (e.clientY - yPos) / m.a;
 
@@ -41,8 +45,11 @@ export function drag(
     document.removeEventListener("mousemove", move as any);
     document.removeEventListener("mouseup", stopDrag);
 
-    if (commit) {
+    if (moved && commit) {
       commit(p);
+    }
+    if (!moved && click) {
+      click();
     }
   }
 

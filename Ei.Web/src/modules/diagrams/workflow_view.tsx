@@ -33,21 +33,24 @@ export const WorkflowEditor = observer((props: Props) => {
       <svg
         ref={svgRef}
         xmlns="http://www.w3.org/2000/svg"
-        viewBox={`-400 0 800 800`}
+        viewBox={`0 0 800 800`}
         width="100%"
         height="100%"
       >
         {workflow.States.map((s) => (
-          <StateWidget key={s.Id} node={s} />
+          <StateWidget key={s.Id} node={s} svgRef={svgRef} />
         ))}
         {workflow.Transitions.filter((t) => t instanceof TransitionJoin).map(
           (p) => (
-            <TransitionJoinWidget node={p as TransitionJoin} />
+            <TransitionJoinWidget node={p as TransitionJoin} svgRef={svgRef} />
           )
         )}
         {workflow.Transitions.filter((t) => t instanceof TransitionSplit).map(
           (p) => (
-            <TransitionSplitWidget node={p as TransitionSplit} />
+            <TransitionSplitWidget
+              node={p as TransitionSplit}
+              svgRef={svgRef}
+            />
           )
         )}
         {workflow.Connections.map((c) => (

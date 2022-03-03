@@ -1,3 +1,5 @@
+import { makeObservable, observable } from "mobx";
+
 export class FormNodeStore {
   validationMessage: string;
   __isChecked: boolean;
@@ -12,6 +14,10 @@ export class FormNodeStore {
     //   id,
     //   type: "default",
     // });
+
+    makeObservable(this, {
+      position: observable,
+    });
   }
 
   // getPart(origin: any, key: string) {

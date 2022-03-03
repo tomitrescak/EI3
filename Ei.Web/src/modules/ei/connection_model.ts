@@ -1,4 +1,5 @@
 import { action, IObservableArray, makeObservable, observable } from "mobx";
+import React from "react";
 
 import { AccessCondition, AccessConditionDao } from "./access_model";
 import { Ei } from "./ei_model";
@@ -66,6 +67,12 @@ export class Connection extends Entity {
   workflow: Workflow;
   dao: Partial<ConnectionDao>;
 
+  arrowRef: React.MutableRefObject<SVGGElement>;
+  fromRef: React.MutableRefObject<SVGPathElement>;
+  toRef: React.MutableRefObject<SVGPathElement>;
+  actionWidth: number;
+  actionHeight: number;
+
   ports = {
     left: (width: number, height: number) => {
       return { x: 0, y: height / 2, orientation: "west" };
@@ -81,7 +88,11 @@ export class Connection extends Entity {
     },
   };
 
-  constructor(connection: Partial<ConnectionDao>, workflow: Workflow, _ei: Ei) {
+  constructor(
+    connection: Partial<ConnectionDao>,
+    workflow: Workflow,
+    private ei: Ei
+  ) {
     super(connection);
 
     this.Icon = "➡";
@@ -158,6 +169,12 @@ export class Connection extends Entity {
       return "TransitionJoin";
     }
     return null;
+  }
+
+  get url() {
+    return `/ei/${this.ei.Name.toUrlName()}/workflows/${this.workflow.Name.toUrlName()}/connection/${this.Name.toUrlName()}?ei=${
+      this.ei.Id
+    }&id=${this.Id.toUrlName()}&w=${this.workflow.Id}`.toLowerCase();
   }
 
   get fromElementType() {
