@@ -76,11 +76,24 @@ const actionOrientations = [
   // { text: "Disconnect", value: "" },
 ];
 
+const actionPortOptions = [
+  { text: "Left", value: "left" },
+  { text: "Right", value: "right" },
+  { text: "Top", value: "top" },
+  { text: "Bottom", value: "bottom" },
+  // { text: "Disconnect", value: "" },
+];
+
 export const ConnectionEditor = observer(() => {
   const context = useAppContext();
 
   const changeSourcePort = action((_e: any, { value }: any) => {
     connection.SourcePort = value;
+    Ui.history.step();
+  });
+
+  const changeSourceActionPort = action((_e: any, { value }: any) => {
+    connection.SourceActionPort = value;
     Ui.history.step();
   });
 
@@ -95,6 +108,11 @@ export const ConnectionEditor = observer(() => {
       connection.From = "";
       connection.SourcePort = null;
     }
+    Ui.history.step();
+  });
+
+  const changeTargetActionPort = action((_e: any, { value }: any) => {
+    connection.TargetActionPort = value;
     Ui.history.step();
   });
 
@@ -213,7 +231,7 @@ export const ConnectionEditor = observer(() => {
             <SUIForm.Group>
               <Select
                 name={"From"}
-                width={9}
+                width={6}
                 fluid
                 label="From"
                 search
@@ -222,10 +240,20 @@ export const ConnectionEditor = observer(() => {
                 onChange={changeSourcePosition}
               />
               <Select
+                name={"SourceActionPort"}
+                width={5}
+                fluid
+                label="Action Port"
+                search
+                selection
+                options={actionPortOptions}
+                onChange={changeSourceActionPort}
+              />
+              <Select
                 name={"SourcePort"}
                 fluid
                 selection
-                width={7}
+                width={5}
                 label="Port"
                 search
                 options={fromOptions}
@@ -237,17 +265,27 @@ export const ConnectionEditor = observer(() => {
                 name={"To"}
                 fluid
                 selection
-                width={9}
+                width={6}
                 label="To"
                 search
                 options={workflow.connectionOptions}
                 onChange={changeTargetPosition}
               />
               <Select
+                name={"TargetActionPort"}
+                width={5}
+                fluid
+                label="Action Port"
+                search
+                selection
+                options={actionPortOptions}
+                onChange={changeTargetActionPort}
+              />
+              <Select
                 name={"TargetPort"}
                 fluid
                 selection
-                width={7}
+                width={5}
                 label="Port"
                 search
                 options={toOptions}

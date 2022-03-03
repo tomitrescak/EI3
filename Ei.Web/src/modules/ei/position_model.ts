@@ -46,9 +46,10 @@ export abstract class PositionModel extends Entity {
                 p,
                 node.ports[connection.SourcePort](),
                 connection.ActionPosition,
-                connection.ports[
-                  connection.ActionConnection == "LeftRight" ? "left" : "top"
-                ](connection.actionWidth, connection.actionHeight),
+                connection.ports[connection.SourceActionPort || "left"](
+                  connection.actionWidth,
+                  connection.actionHeight
+                ),
                 false
               )
             );
@@ -72,11 +73,10 @@ export abstract class PositionModel extends Entity {
               "d",
               createPath(
                 connection.ActionPosition,
-                connection.ports[
-                  connection.ActionConnection == "LeftRight"
-                    ? "right"
-                    : "bottom"
-                ](connection.actionWidth, connection.actionHeight),
+                connection.ports[connection.TargetActionPort || "right"](
+                  connection.actionWidth,
+                  connection.actionHeight
+                ),
                 p,
                 node.ports[connection.TargetPort]()
               )

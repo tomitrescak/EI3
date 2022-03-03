@@ -27,9 +27,11 @@ export interface ConnectionDao extends EntityDao {
   // FreeFrom: PointDao;
   // FreeTo: PointDao;
   SourcePort: string;
+  SourceActionPort: string;
   TargetPort: string;
+  TargetActionPort: string;
   RotateLabel: boolean;
-  ActionConnection: "TopBottom" | "LeftRight";
+  // ActionConnection: "TopBottom" | "LeftRight";
   ActionDisplay: ActionDisplayType;
 }
 
@@ -60,19 +62,13 @@ export class Connection extends Entity {
   AllowLoops: number;
 
   RotateLabel: boolean;
-  _SourcePort: string;
-
-  get SourcePort() {
-    return this._SourcePort;
-  }
-
-  set SourcePort(value: string) {
-    this._SourcePort = value;
-  }
+  SourcePort: string;
+  SourceActionPort: string;
 
   TargetPort: string;
+  TargetActionPort: string;
   ActionDisplay: ActionDisplayType;
-  ActionConnection: "TopBottom" | "LeftRight";
+  // ActionConnection: "TopBottom" | "LeftRight";
   Points: IObservableArray<PointDao>;
   ActionPosition: PointDao;
 
@@ -126,7 +122,7 @@ export class Connection extends Entity {
     this.RotateLabel = connection.RotateLabel;
     this.ActionDisplay =
       connection.ActionDisplay || ActionDisplayType.IconAndText;
-    this.ActionConnection = connection.ActionConnection || "LeftRight";
+    // this.ActionConnection = connection.ActionConnection || "LeftRight";
 
     this.ActionPosition = connection.ActionPosition;
     if (this.ActionPosition?.x == null) {
@@ -134,7 +130,9 @@ export class Connection extends Entity {
     }
 
     this.SourcePort = connection.SourcePort;
+    this.SourceActionPort = connection.SourceActionPort;
     this.TargetPort = connection.TargetPort;
+    this.TargetActionPort = connection.TargetActionPort;
 
     this.Points = observable(connection.LinkPoints || []);
 
@@ -160,12 +158,14 @@ export class Connection extends Entity {
       ActionId: observable,
       RotateLabel: observable,
       AllowLoops: observable,
-      _SourcePort: observable,
-      SourcePort: computed,
+      SourcePort: observable,
+      SourceActionPort: observable,
+      // SourcePort: computed,
       TargetPort: observable,
+      TargetActionPort: observable,
       ActionDisplay: observable,
       ActionPosition: observable,
-      ActionConnection: observable,
+      // ActionConnection: observable,
       checkSplit: action,
     });
   }
@@ -389,7 +389,8 @@ export class Connection extends Entity {
       ActionId: this.ActionId,
       AllowLoops: this.AllowLoops,
       ActionPosition: { x: this.ActionPosition.x, y: this.ActionPosition.y },
-      ActionConnection: this.ActionConnection,
+
+      // ActionConnection: this.ActionConnection,
       // FreeFrom: this.fromJoint
       //   ? { x: this.fromJoint.getX(), y: this.fromJoint.getY() }
       //   : null,
@@ -397,8 +398,10 @@ export class Connection extends Entity {
       //   ? { x: this.toJoint.getX(), y: this.toJoint.getY() }
       //   : null,
       LinkPoints: this.Points.map((p) => ({ x: p.x, y: p.y })),
+      SourceActionPort: this.SourceActionPort,
       SourcePort: this.SourcePort,
       TargetPort: this.TargetPort,
+      TargetActionPort: this.TargetActionPort,
       RotateLabel: this.RotateLabel,
       ActionDisplay: this.ActionDisplay,
     };

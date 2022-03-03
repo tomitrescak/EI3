@@ -129,9 +129,10 @@ function createAnchors(connection: Connection, width: number, height: number) {
             connection.fromPosition.position,
             connection.fromPosition.ports[connection.SourcePort](),
             connection.ActionPosition,
-            connection.ports[
-              connection.ActionConnection == "LeftRight" ? "left" : "top"
-            ](width, height),
+            connection.ports[connection.SourceActionPort || "left"](
+              width,
+              height
+            ),
             false
           )
         : null,
@@ -139,9 +140,10 @@ function createAnchors(connection: Connection, width: number, height: number) {
       connection.toPosition && connection.TargetPort
         ? createPathObject(
             connection.ActionPosition,
-            connection.ports[
-              connection.ActionConnection == "LeftRight" ? "right" : "bottom"
-            ](width, height),
+            connection.ports[connection.TargetActionPort || "right"](
+              width,
+              height
+            ),
             connection.toPosition.position,
             connection.toPosition.ports[connection.TargetPort](),
             true
@@ -212,8 +214,9 @@ const PreConditionLabels = observer(
             return null;
           }
 
+          // TODO: Solve all positions
           const position =
-            connection.ActionConnection === "LeftRight"
+            connection.SourceActionPort === "left"
               ? { x: (allowedRoles.length - 1) * -22 - 16, y: height / 2 }
               : { x: width / 2, y: -16 };
 
@@ -274,8 +277,9 @@ const PostConditionLabels = observer(
             return null;
           }
 
+          // TODO: Solve the rest
           const position =
-            connection.ActionConnection === "LeftRight"
+            connection.SourceActionPort === "left"
               ? { x: width + 16, y: height / 2 }
               : { x: width / 2, y: height + 16 };
 
@@ -378,11 +382,10 @@ const ActionRect = observer(
                       connection.fromPosition.position,
                       connection.fromPosition.ports[connection.SourcePort](),
                       p,
-                      connection.ports[
-                        connection.ActionConnection == "LeftRight"
-                          ? "left"
-                          : "top"
-                      ](width, height),
+                      connection.ports[connection.SourceActionPort || "left"](
+                        width,
+                        height
+                      ),
                       false
                     )
                   );
@@ -392,11 +395,10 @@ const ActionRect = observer(
                     "d",
                     createPath(
                       p,
-                      connection.ports[
-                        connection.ActionConnection == "LeftRight"
-                          ? "right"
-                          : "bottom"
-                      ](width, height),
+                      connection.ports[connection.TargetActionPort || "right"](
+                        width,
+                        height
+                      ),
                       connection.toPosition.position,
                       connection.toPosition.ports[connection.TargetPort]()
                     )

@@ -4,11 +4,6 @@ specifiers:
   '@emotion/react': ^11.4.1
   '@emotion/styled': ^11.3.0
   '@monaco-editor/react': ^4.2.2
-  '@projectstorm/geometry': ^6.7.0
-  '@projectstorm/react-canvas-core': ^6.7.0
-  '@projectstorm/react-diagrams': ^6.6.1
-  '@projectstorm/react-diagrams-core': ^6.7.0
-  '@projectstorm/react-diagrams-defaults': ^6.7.0
   '@types/chart.js': ^2.7.18
   '@types/mocha': ^9.0.0
   '@types/node': ^9.4.2
@@ -17,7 +12,6 @@ specifiers:
   '@types/react-datepicker': ^4.3.4
   '@types/react-router-dom': ^5.1.8
   '@vitejs/plugin-react': ^1.2.0
-  dagre: ^0.8.5
   date-fns: ^2.28.0
   expect: ^27.2.5
   jsondiffpatch: ^0.2.5
@@ -25,8 +19,6 @@ specifiers:
   mobx: ^6.3.3
   mobx-react: ^7.2.0
   monaco-editor: ^0.32.1
-  pathfinding: ^0.4.18
-  paths-js: ^0.4.11
   react: ^17.0.2
   react-datepicker: ^4.6.0
   react-dom: ^17.0.2
@@ -49,21 +41,13 @@ dependencies:
   '@emotion/react': 11.7.1_a0c521d4794c7ad97f5f4c1c4a7d5818
   '@emotion/styled': 11.6.0_6051c8b70bfa52211d6f419a3c4413f0
   '@monaco-editor/react': 4.3.1_e62f1489d5efe674a41c3f8d6971effe
-  '@projectstorm/geometry': 6.7.0
-  '@projectstorm/react-canvas-core': 6.7.0_lodash@4.17.21+react@17.0.2
-  '@projectstorm/react-diagrams': 6.7.0_dfc96c7fc3886999782400df95a7cf8b
-  '@projectstorm/react-diagrams-core': 6.7.0_2fa0e16b5ce67bad5d78e456a4923f82
-  '@projectstorm/react-diagrams-defaults': 6.7.0_bd40b77a943042f003ffcd1229003979
   '@vitejs/plugin-react': 1.2.0
-  dagre: 0.8.5
   date-fns: 2.28.0
   jsondiffpatch: 0.2.5
   lodash: 4.17.21
   mobx: 6.3.13
   mobx-react: 7.2.1_96b0034b8b6bfac1b4cc60715db17f02
   monaco-editor: 0.32.1
-  pathfinding: 0.4.18
-  paths-js: 0.4.11
   react: 17.0.2
   react-datepicker: 4.6.0_react-dom@17.0.2+react@17.0.2
   react-dom: 17.0.2_react@17.0.2
@@ -566,92 +550,6 @@ packages:
   /@popperjs/core/2.11.2:
     resolution: {integrity: sha512-92FRmppjjqz29VMJ2dn+xdyXZBrMlE42AV6Kq6BwjWV7CNUW1hs2FtxSNLQE+gJhaZ6AAmYuO9y8dshhcBl7vA==}
 
-  /@projectstorm/geometry/6.7.0:
-    resolution: {integrity: sha512-zNFe1gbAk5Vt0nDO0/pKVHp8ukIKWZb0JJ9UdhqPtt1AazoZ5SwbltHXgjpZ2jgyKlLjfB0ne1aRzRkW14qQVg==}
-    dev: false
-
-  /@projectstorm/react-canvas-core/6.7.0_lodash@4.17.21+react@17.0.2:
-    resolution: {integrity: sha512-/2T4B9sKTTNUQBjkad0hWHl0pM3e6HGQ9hcKUby9ZXq3qHuZhNxuCTPKdwwbOwH4AxhjRrkigW9CvAg+tbjURQ==}
-    peerDependencies:
-      lodash: 4.*
-      react: 16.* || 17.*
-    dependencies:
-      '@projectstorm/geometry': 6.7.0
-      lodash: 4.17.21
-      react: 17.0.2
-    dev: false
-
-  /@projectstorm/react-diagrams-core/6.7.0_2fa0e16b5ce67bad5d78e456a4923f82:
-    resolution: {integrity: sha512-9GUBBwaAzDalsn7rms/zw7lb9NIbzi7kYzD7gyggQHtyEdjIlVesAV8z1AmdD0w+sF13YRFGof/XA1nQKzBZgw==}
-    peerDependencies:
-      lodash: 4.*
-      react: 16.* || 17.*
-      resize-observer-polyfill: ^1.5.1
-    dependencies:
-      '@projectstorm/geometry': 6.7.0
-      '@projectstorm/react-canvas-core': 6.7.0_lodash@4.17.21+react@17.0.2
-      lodash: 4.17.21
-      react: 17.0.2
-      resize-observer-polyfill: 1.5.1
-    dev: false
-
-  /@projectstorm/react-diagrams-defaults/6.7.0_bd40b77a943042f003ffcd1229003979:
-    resolution: {integrity: sha512-H1Kj16vKKU7hIIai9EfePNn7LZALFdM7q0ARiYISGkPaYGSrH4sRQ8Fyo+w7p2gpaXYkVu8Z2zmVGuISbI22lw==}
-    peerDependencies:
-      '@emotion/react': ^11.*
-      '@emotion/styled': ^11.*
-      lodash: 4.*
-      react: 16.* || 17.*
-    dependencies:
-      '@emotion/react': 11.7.1_a0c521d4794c7ad97f5f4c1c4a7d5818
-      '@emotion/styled': 11.6.0_6051c8b70bfa52211d6f419a3c4413f0
-      '@projectstorm/react-diagrams-core': 6.7.0_2fa0e16b5ce67bad5d78e456a4923f82
-      lodash: 4.17.21
-      react: 17.0.2
-    transitivePeerDependencies:
-      - resize-observer-polyfill
-    dev: false
-
-  /@projectstorm/react-diagrams-routing/6.7.0_dfc96c7fc3886999782400df95a7cf8b:
-    resolution: {integrity: sha512-2i4aGPW9BsUqJKUQvPlokQ+BN2JFtY/DZfdqOiptr4wZjVWwjYvFBACzDG44I96nu92vG3k+ad4Zfx9fBJKY9w==}
-    peerDependencies:
-      dagre: ^0.8.5
-      lodash: 4.*
-      pathfinding: ^0.4.18
-      paths-js: ^0.4.11
-      react: 16.* || 17.*
-    dependencies:
-      '@projectstorm/geometry': 6.7.0
-      '@projectstorm/react-diagrams-core': 6.7.0_2fa0e16b5ce67bad5d78e456a4923f82
-      '@projectstorm/react-diagrams-defaults': 6.7.0_bd40b77a943042f003ffcd1229003979
-      dagre: 0.8.5
-      lodash: 4.17.21
-      pathfinding: 0.4.18
-      paths-js: 0.4.11
-      react: 17.0.2
-    transitivePeerDependencies:
-      - '@emotion/react'
-      - '@emotion/styled'
-      - resize-observer-polyfill
-    dev: false
-
-  /@projectstorm/react-diagrams/6.7.0_dfc96c7fc3886999782400df95a7cf8b:
-    resolution: {integrity: sha512-bxbjuLJDnBjRqriqbswxChlDgDDK0SdxtZDy8UrP5nOhsiBiX2C+6NZvzI4abijN4070dUTMpmPVKjHC4X+Z0w==}
-    dependencies:
-      '@projectstorm/react-diagrams-core': 6.7.0_2fa0e16b5ce67bad5d78e456a4923f82
-      '@projectstorm/react-diagrams-defaults': 6.7.0_bd40b77a943042f003ffcd1229003979
-      '@projectstorm/react-diagrams-routing': 6.7.0_dfc96c7fc3886999782400df95a7cf8b
-    transitivePeerDependencies:
-      - '@emotion/react'
-      - '@emotion/styled'
-      - dagre
-      - lodash
-      - pathfinding
-      - paths-js
-      - react
-      - resize-observer-polyfill
-    dev: false
-
   /@rollup/pluginutils/4.1.2:
     resolution: {integrity: sha512-ROn4qvkxP9SyPeHaf7uQC/GPFY6L/OWy9+bd9AwcjOAWQwxRscoEyAUD8qCY5o5iL4jqQwoLk2kaTKJPb/HwzQ==}
     engines: {node: '>= 8.0.0'}
@@ -968,13 +866,6 @@ packages:
 
   /csstype/3.0.10:
     resolution: {integrity: sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA==}
-
-  /dagre/0.8.5:
-    resolution: {integrity: sha512-/aTqmnRta7x7MCCpExk7HQL2O4owCT2h8NT//9I1OQ9vt29Pa0BzSAkR5lwFUcQ7491yVi/3CXU9jQ5o0Mn2Sw==}
-    dependencies:
-      graphlib: 2.1.8
-      lodash: 4.17.21
-    dev: false
 
   /date-fns/2.28.0:
     resolution: {integrity: sha512-8d35hViGYx/QH0icHYCeLmsLmMUheMmTyV9Fcm6gvNwdw31yXXH+O85sOBJ+OLnLQMKZowvpKb6FgMIQjcpvQw==}
@@ -1306,12 +1197,6 @@ packages:
     resolution: {integrity: sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==}
     dev: true
 
-  /graphlib/2.1.8:
-    resolution: {integrity: sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==}
-    dependencies:
-      lodash: 4.17.21
-    dev: false
-
   /has-ansi/0.1.0:
     resolution: {integrity: sha1-hPJlqujA5qiKEtcCKJS3VoiUxi4=}
     engines: {node: '>=0.10.0'}
@@ -1347,10 +1232,6 @@ packages:
       hast-util-parse-selector: 2.2.5
       property-information: 5.6.0
       space-separated-tokens: 1.1.5
-    dev: false
-
-  /heap/0.2.5:
-    resolution: {integrity: sha1-cTtlWQ68xA/L7q9V6FFpQJKzmvE=}
     dev: false
 
   /highlight.js/9.12.0:
@@ -1662,17 +1543,6 @@ packages:
   /path-type/4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
-    dev: false
-
-  /pathfinding/0.4.18:
-    resolution: {integrity: sha1-qZkPb6IrfvGW5WUbBJFlQDoEX+g=}
-    dependencies:
-      heap: 0.2.5
-    dev: false
-
-  /paths-js/0.4.11:
-    resolution: {integrity: sha512-3mqcLomDBXOo7Fo+UlaenG6f71bk1ZezPQy2JCmYHy2W2k5VKpP+Jbin9H0bjXynelTbglCqdFhSEkeIkKTYUA==}
-    engines: {node: '>=0.11.0'}
     dev: false
 
   /picocolors/1.0.0:
