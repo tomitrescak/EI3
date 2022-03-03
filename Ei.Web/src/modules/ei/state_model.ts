@@ -193,7 +193,7 @@ export class State extends PositionModel {
 
   get url() {
     return this.ei
-      .createWorkflowUrl(this.workflow, "state", this.Id)
+      .createWorkflowUrl(this.workflow, "state", this.Id, this.Name.toUrlName())
       .toLowerCase();
   }
 

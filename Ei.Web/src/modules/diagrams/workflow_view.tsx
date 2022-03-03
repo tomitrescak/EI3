@@ -29,7 +29,7 @@ export const WorkflowEditor = observer((props: Props) => {
   console.log(workflow.Connections);
 
   return (
-    <DiagramView>
+    <DiagramView name={`Diagram-Workflow-${props.workflowId}`}>
       <svg
         ref={svgRef}
         xmlns="http://www.w3.org/2000/svg"

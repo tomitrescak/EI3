@@ -73,7 +73,7 @@ const App = () => {
                 <EiLayout
                   Main={() => (
                     <EntitiesView
-                      type="organisations"
+                      // type="organisations"
                       entities={(ei) => ei.Organisations}
                     />
                   )}
@@ -91,7 +91,10 @@ const App = () => {
               render={() => (
                 <EiLayout
                   Main={() => (
-                    <EntitiesView type="roles" entities={(ei) => ei.Roles} />
+                    <EntitiesView
+                      // type="roles"
+                      entities={(ei) => ei.Roles}
+                    />
                   )}
                   Editor={() => (
                     <HierarchicEntityEditor collection={(ei) => ei.Roles} />
@@ -104,7 +107,10 @@ const App = () => {
               render={() => (
                 <EiLayout
                   Main={() => (
-                    <EntitiesView type="types" entities={(ei) => ei.Types} />
+                    <EntitiesView
+                      // type="types"
+                      entities={(ei) => ei.Types}
+                    />
                   )}
                   Editor={() => (
                     <HierarchicEntityEditor collection={(ei) => ei.Types} />

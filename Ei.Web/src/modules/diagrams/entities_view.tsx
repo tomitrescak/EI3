@@ -32,7 +32,7 @@ export const EntitiesView = observer((props: Props) => {
   // );
 
   return (
-    <DiagramView>
+    <DiagramView name={`Diagram-Entity`}>
       <svg
         ref={svgRef}
         xmlns="http://www.w3.org/2000/svg"

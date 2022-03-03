@@ -207,11 +207,12 @@ export class Ei extends ParametricEntity {
   createWorkflowUrl(
     workflow: Workflow,
     type?: "action" | "connection" | "transition" | "state",
-    id?: string
+    id?: string,
+    name?: string
   ) {
     let url = `/ei/${this.Name.toUrlName()}/workflows/${workflow.Id}${
-      type ? `/${type}` : ""
-    }?ei=${this.Id}&w=${workflow.Name.toUrlName()}${id ? `&id=${id}` : ""}`;
+      type ? `/${type}${name ? `/${name}` : ""}` : ""
+    }?ei=${this.Id}${id ? `&id=${id}` : ""}&w=${workflow.Name.toUrlName()}`;
 
     return url.toLowerCase();
   }

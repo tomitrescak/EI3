@@ -331,16 +331,24 @@ export const ExperimentEditor = () => {
                         : null;
                       if (!activeAgent) {
                         return (
-                          <Message>
-                            Please select an agent to see its position within
-                            the workflow
-                          </Message>
+                          <Message
+                            style={{ margin: 16 }}
+                            icon="info"
+                            positive
+                            content="Please select an agent to see its position within
+                          the workflow"
+                          />
                         );
                       }
                       let position = state.agentPositions[activeAgent.Name];
                       if (!position) {
                         return (
-                          <Message>Agent did not join any workflow</Message>
+                          <Message
+                            style={{ margin: 16 }}
+                            icon="info"
+                            content="Agent did not join any workflow"
+                            positive
+                          />
                         );
                       }
                       return <WorkflowEditor workflowId={position.workflow} />;

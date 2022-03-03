@@ -1,6 +1,6 @@
 import { Observer } from "mobx-react";
 import { Message } from "semantic-ui-react";
-import { Container } from "../../diagrams/diagram_view";
+import { Container, DiagramView } from "../../diagrams/diagram_view";
 import type { ExperimentDao, GameObjectDao } from "../experiment_model";
 import {
   agentEnvironmentEditor,
@@ -35,7 +35,7 @@ export const ExperimentCanvas = ({
   ) as AgentEnvironment;
 
   return (
-    <Container background={"rgb(60, 60, 60)"} color={"rgba(255,255,255, 0.05)"}>
+    <DiagramView name="experimentSimulation">
       <Observer>
         {() => (
           <svg
@@ -74,6 +74,6 @@ export const ExperimentCanvas = ({
           </svg>
         )}
       </Observer>
-    </Container>
+    </DiagramView>
   );
 };

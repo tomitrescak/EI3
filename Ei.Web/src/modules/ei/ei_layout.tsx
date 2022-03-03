@@ -187,6 +187,23 @@ const MiddleLayout = ({ Main }: Props) => (
 );
 
 export const EiLayout = ({ Editor, Main }: Props) => {
+  if (Editor) {
+    return (
+      <ApplicationPanes
+        split="vertical"
+        minSize={[290, undefined, 10]}
+        defaultSizes={[150, 400, Editor ? 150 : 0]}
+      >
+        <LeftPane>
+          <Components />
+        </LeftPane>
+        <MiddleLayout Main={Main} />
+        <PropertyPane className="ui form">
+          <Editor />
+        </PropertyPane>
+      </ApplicationPanes>
+    );
+  }
   return (
     <ApplicationPanes
       split="vertical"
@@ -197,11 +214,6 @@ export const EiLayout = ({ Editor, Main }: Props) => {
         <Components />
       </LeftPane>
       <MiddleLayout Main={Main} />
-      {Editor ? (
-        <PropertyPane className="ui form">
-          <Editor />
-        </PropertyPane>
-      ) : null}
     </ApplicationPanes>
   );
 };
