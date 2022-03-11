@@ -12,7 +12,6 @@ namespace Ei.Simulation.Behaviours.Reasoners
 {
     public class PlanningReasoner : Reasoner
     {
-        private PlanManager planManager;
         private Actuator actuator;
         private SimulationAgent agent;
         private GoalState[][] freeTimeGoals;

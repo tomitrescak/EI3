@@ -1,14 +1,14 @@
-import { Router, Ui } from "../helpers/client_helpers";
-import { SocketClient } from "../modules/ws/socket_client";
+import { makeObservable, observable } from 'mobx';
+import React from 'react';
 
-import "../helpers/class_helpers";
-import React from "react";
-import { makeObservable, observable } from "mobx";
-import { Ei } from "../modules/ei/ei_model";
-import { Entity } from "../modules/ei/entity_model";
+import '../helpers/class_helpers';
+import { Router, Ui } from '../helpers/client_helpers';
+import { Ei } from '../modules/ei/ei_model';
+import { Entity } from '../modules/ei/entity_model';
+import { LogMessage } from '../modules/experiments/components/experimentCommon';
+import { SocketClient } from '../modules/ws/socket_client';
+
 import type { History } from "history";
-import { LogMessage } from "../modules/experiments/components/experimentCommon";
-
 // const socketUrl = 'ws://10.211.55.4:5000/wd';
 const socketUrl = "ws://localhost:5000/wd";
 
@@ -36,6 +36,7 @@ export class AppContext {
   ei: Ei;
   messages = observable([] as LogMessage[]);
   errors = observable([] as CompilationError[]);
+  agentConnections = observable({});
   storedHandlers: any;
 
   handlers: { [index: string]: AccordionHandler } = {};
@@ -69,31 +70,31 @@ export class AppContext {
     console.warn(message);
   }
 
-  selectWorkflowElement(
-    wid: string,
-    collection: string,
-    id: string,
-    subSelection: string = null
-  ) {
-    let workflow = this.ei.Workflows.find((w) => w.Id === wid);
-    if (!workflow) {
-      return;
-    }
-    let entity: Entity = workflow[collection].find((a: Entity) => a.Id === id);
-    if (!entity) {
-      return;
-    }
-    if (subSelection) {
-      entity = entity[subSelection];
-    }
-    if (this.selectedEntity) {
-      this.selectedEntity.setSelected(false);
-    }
-    if (!entity.isSelected()) {
-      entity.setSelected(true);
-      this.selectedEntity = entity;
-    }
-  }
+  // selectWorkflowElement(
+  //   wid: string,
+  //   collection: string,
+  //   id: string,
+  //   subSelection: string = null
+  // ) {
+  //   let workflow = this.ei.Workflows.find((w) => w.Id === wid);
+  //   if (!workflow) {
+  //     return;
+  //   }
+  //   let entity: Entity = workflow[collection].find((a: Entity) => a.Id === id);
+  //   if (!entity) {
+  //     return;
+  //   }
+  //   if (subSelection) {
+  //     entity = entity[subSelection];
+  //   }
+  //   if (this.selectedEntity) {
+  //     this.selectedEntity.setSelected(false);
+  //   }
+  //   if (!entity.isSelected()) {
+  //     entity.setSelected(true);
+  //     this.selectedEntity = entity;
+  //   }
+  // }
 
   createAccordionHandler(id: string, openedNodes: number[] = []) {
     // we store all in local storage

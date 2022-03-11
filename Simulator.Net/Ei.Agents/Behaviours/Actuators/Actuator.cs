@@ -62,7 +62,7 @@ namespace Ei.Simulation.Behaviours.Actuators
                 return false;
             }
 
-            var result = agent.Governor.PerformAction(planItem.Arc.Action.Id, parameters);
+            var result = agent.Governor.PerformAction(planItem.Arc.Id, planItem.Arc.Action.Id, parameters);
             if (result.IsOk)
             {
                 return true;

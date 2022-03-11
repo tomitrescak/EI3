@@ -9,6 +9,10 @@ namespace Ei.Simulation.Behaviours.Reasoners
 {
     public abstract class Reasoner : MonoBehaviour
     {
+        protected PlanManager planManager;
+
+        public PlanManager PlanManager => this.planManager;
+        
         public abstract void Reason();
     }
 }

@@ -1,6 +1,3 @@
-import { Entity } from "../../ei/entity_model";
-import { HierarchicEntity } from "../../ei/hierarchic_entity_model";
-
 export type Point = {
   x: number;
   y: number;
@@ -14,6 +11,8 @@ export function drag(
   click?: () => void
 ) {
   evt.preventDefault();
+
+  svg.setAttribute("data-mouse-down", "yes");
 
   let xStart = parseFloat(evt.currentTarget.getAttribute("x"));
   let yStart = parseFloat(evt.currentTarget.getAttribute("y"));
@@ -44,6 +43,8 @@ export function drag(
   function stopDrag() {
     document.removeEventListener("mousemove", move as any);
     document.removeEventListener("mouseup", stopDrag);
+
+    svg.setAttribute("data-mouse-down", "no");
 
     if (moved && commit) {
       commit(p);

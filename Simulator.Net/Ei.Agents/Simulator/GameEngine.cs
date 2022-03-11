@@ -31,6 +31,8 @@ namespace Ei.Simulation.Simulator
         public Dictionary<Type, List<MonoBehaviour>> Behaviours { get; private set; }
         public List<StatisticTrait> StatisticData { get; private set; }
 
+        public Scene Scene => this.scene;
+
 
         public GameEngine(Scene scene) {
             GameEngine.Instance = this;
@@ -152,7 +154,7 @@ namespace Ei.Simulation.Simulator
         /// <returns>Created GameObject</returns>
         public GameObject Instantiate(GameObject agent, bool init = true) {
             lock (locker) {
-                agent.Enabled = true;
+                // agent.Enabled = true;
 
                 if (init)
                 {

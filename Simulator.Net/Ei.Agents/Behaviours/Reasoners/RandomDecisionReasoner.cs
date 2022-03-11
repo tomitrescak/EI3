@@ -12,7 +12,6 @@ namespace Ei.Simulation.Behaviours.Reasoners
 {
     public class RandomDecisionReasoner : Reasoner
     {
-        PlanManager planManager;
         Actuator actuator;
         SimulationAgent agent;
 

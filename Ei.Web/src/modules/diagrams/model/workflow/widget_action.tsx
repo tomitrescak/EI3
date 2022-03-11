@@ -1,11 +1,11 @@
-import { observer, Observer } from "mobx-react";
-import React from "react";
-import { useHistory, useLocation } from "react-router-dom";
-import { ActionDisplayType, Connection } from "../../../ei/connection_model";
-import { Entity } from "../../../ei/entity_model";
-import { PointDao } from "../../../ei/hierarchic_entity_model";
-import { Workflow } from "../../../ei/workflow_model";
-import { drag } from "../diagram_common";
+import { observer, Observer } from 'mobx-react';
+import React from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
+
+import { ActionDisplayType, Connection } from '../../../ei/connection_model';
+import { PointDao } from '../../../ei/hierarchic_entity_model';
+import { Workflow } from '../../../ei/workflow_model';
+import { drag } from '../diagram_common';
 
 const maxLength = 200;
 const size = 8;
@@ -368,6 +368,7 @@ const ActionRect = observer(
           y={y}
           onMouseDown={(evt) => {
             evt.preventDefault();
+            evt.stopPropagation();
             drag(
               svgRef.current,
               evt,
@@ -421,7 +422,7 @@ const ActionRect = observer(
             width={width}
             height={height}
             style={{
-              transition: "all 0.3s",
+              transition: "fill 0.3s",
             }}
           />
           {children}
@@ -472,7 +473,7 @@ const ActionRect = observer(
               fill="transparent"
               d={anchors.from.path}
               style={{
-                transition: "all 0.3s",
+                transition: "stroke 0.3s",
               }}
             />
 
@@ -509,7 +510,7 @@ const ActionRect = observer(
               fill="transparent"
               d={anchors.to.path}
               style={{
-                transition: "all 0.3s",
+                transition: "stroke 0.3s",
               }}
             />
             <CustomLinkArrowWidget

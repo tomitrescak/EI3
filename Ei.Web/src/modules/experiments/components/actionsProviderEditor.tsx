@@ -8,7 +8,7 @@ import { agentEnvironmentEditor } from './agentEnvironmentEditor';
 import { delayActionEditor } from './delayActionEditor';
 import { ExperimentPane, UniqueId } from './experimentCommon';
 
-type ActionsProviderDao = ComponentDao & {
+export type ActionsProviderDao = ComponentDao & {
   Actions: Array<{
     Id: string;
     Parameters: Array<{

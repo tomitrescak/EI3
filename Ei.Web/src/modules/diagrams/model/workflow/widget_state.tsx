@@ -1,12 +1,10 @@
-import React from "react";
+import { observer } from 'mobx-react';
+import React from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
-import { observer } from "mobx-react";
-import { State } from "../../../ei/state_model";
-import styled from "@emotion/styled";
-import { useHistory, useLocation } from "react-router-dom";
-import { action } from "mobx";
-import { drag } from "../diagram_common";
-import { adjust, createPath } from "./widget_action";
+import styled from '@emotion/styled';
+
+import { State } from '../../../ei/state_model';
 
 export interface StateNodeWidgetProps {
   node: State;
@@ -71,7 +69,7 @@ export const StateWidget = observer(
         y={node.position.y}
         style={{
           outline: node.active ? "dashed 4px green" : undefined,
-          transition: "all 0.3s",
+          transition: "outline 0.3s",
         }}
         cursor="pointer"
         onMouseDown={(evt) => {

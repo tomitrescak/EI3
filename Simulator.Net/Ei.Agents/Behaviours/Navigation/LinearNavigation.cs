@@ -42,6 +42,11 @@ namespace Ei.Simulation.Behaviours
             }
         }
 
+        public override void StopNavigation()
+        {
+            this.tsc?.TrySetCanceled();
+        }
+
         public override Task<bool> MoveToDestination(float x, float y) {
             
             this.Navigating = true;
@@ -69,7 +74,7 @@ namespace Ei.Simulation.Behaviours
 
 
         public void Update() {
-            if (this.tsc == null) {
+            if (this.tsc == null || this.tsc.Task.IsCanceled) {
                 return;
             }
 

@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
 import { useAppContext } from '../../config/context';
 import { Ui, useQuery } from '../../helpers/client_helpers';
 import { WorkflowEditor } from '../diagrams/workflow_view';
-import { Formix } from '../Form';
+import { Checkbox, Formix } from '../Form';
 import { ComponentEditor } from './componentEditor';
 import { actionsProviderEditor, ComponentOption } from './components/actionsProviderEditor';
 import { agentEnvironmentEditor } from './components/agentEnvironmentEditor';
@@ -19,6 +19,7 @@ import { ExperimentCanvas } from './components/experiment_canvas';
 import { LogMessage } from './components/experimentCommon';
 import { ExperimentProperties } from './components/experimentProperties';
 import { linearNavigationEditor } from './components/linearNavigationEditor';
+import { manualDecisionReasoner } from './components/manualDecisionReasoner';
 import { randomDecisionReasoner } from './components/randomDecisionReasoner';
 import { sensorEditor } from './components/sensorEditor';
 import { simulationAgentComponent } from './components/simulationAgentEditor';
@@ -64,6 +65,7 @@ const componentOptions: ComponentOption[] = [
   simulationAgentComponent,
   environmentalActuator,
   randomDecisionReasoner,
+  manualDecisionReasoner,
   sensorEditor,
   linearNavigationEditor,
   actionsProviderEditor,
@@ -134,6 +136,15 @@ export const ExperimentEditor = () => {
           let agent = experiment.GameObjects.find(
             (go) => go.Name === data.agent
           );
+          if (
+            data.component === "Reasoner" &&
+            data.message === "Available Connections"
+          ) {
+            if (context.agentConnections[agent.Id] == null) {
+              context.agentConnections[agent.Id] = [];
+            }
+            context.agentConnections[agent.Id] = data.parameters;
+          }
           if (data.component === "Navigation") {
             let position = data.message.match(/\[(.*),(.*)\]/);
             agent.Components[0].position.x = position[1];
@@ -334,12 +345,13 @@ export const ExperimentEditor = () => {
                       let position = state.agentPositions[activeAgent.Name];
                       if (!position) {
                         return (
-                          <Message
-                            style={{ margin: 16 }}
-                            icon="info"
-                            content="Agent did not join any workflow"
-                            positive
-                          />
+                          <div style={{ padding: 16 }}>
+                            <Message
+                              icon="info"
+                              content="Agent did not join any workflow"
+                              positive
+                            />
+                          </div>
                         );
                       }
                       return <WorkflowEditor workflowId={position.workflow} />;
@@ -357,7 +369,20 @@ export const ExperimentEditor = () => {
                     {state.selectedGameObject ? (
                       <Formix initialValues={state.selectedGameObject}>
                         <>
-                          <ListHeader icon="cog" content="Components" />
+                          <ListHeader
+                            icon="cog"
+                            content={
+                              <span
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Checkbox name="Enabled" />
+                                &nbsp;&nbsp;Components
+                              </span>
+                            }
+                          />
                           <ExperimentProperties />
 
                           {state.selectedGameObject.Components && (
@@ -416,6 +441,35 @@ export const ExperimentEditor = () => {
                                     state.selectedGameObject.Components.push(
                                       cmp.defaultValue()
                                     );
+                                  }}
+                                />
+                                <Button
+                                  style={{ marginTop: 8 }}
+                                  color="green"
+                                  icon="clone"
+                                  content="Duplicate"
+                                  onClick={() => {
+                                    const obj = toJS(state.selectedGameObject);
+                                    let name = obj.Name;
+                                    let match = name.match(/(_(\d+$))/);
+                                    let i = 1;
+                                    if (match) {
+                                      name = name.replace(match[0], "");
+                                      i = parseInt(match[2]) + 1;
+                                    }
+                                    while (
+                                      experiment.GameObjects.find(
+                                        (g) => g.Name === obj.Name
+                                      )
+                                    ) {
+                                      obj.Name = name + "_" + i++;
+                                    }
+
+                                    experiment.GameObjects.push(obj);
+                                    state.selectedGameObject =
+                                      experiment.GameObjects[
+                                        experiment.GameObjects.length - 1
+                                      ];
                                   }}
                                 />
                                 <Button

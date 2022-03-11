@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 
 interface Props {}
 
@@ -123,6 +123,10 @@ export const DiagramView = (props: React.PropsWithChildren<DiagramProps>) => {
     });
 
     svgContainer.addEventListener("mousemove", function (e) {
+      if (svgImage.getAttribute("data-mouse-down") == "yes") {
+        isPanning = false;
+      }
+
       if (isPanning) {
         endPoint = { x: e.x, y: e.y };
         var dx = (startPoint.x - endPoint.x) / scale;

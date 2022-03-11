@@ -99,7 +99,7 @@ namespace Ei.Tests.Steps
 
             var result = string.IsNullOrEmpty(cloneName) ?
                 agent.Object.PerformAction(activityName, parameters) :
-                agent.Object.PerformAction(cloneName, activityName, parameters);
+                agent.Object.ClonePerformAction(cloneName, activityName, parameters);
 
             Assert.Equal(InstitutionCodes.Failed, result.Code);
         }
@@ -116,7 +116,7 @@ namespace Ei.Tests.Steps
 
             var result = string.IsNullOrEmpty(cloneName) ?
                 agent.Object.PerformAction(activityName, parameters) :
-                agent.Object.PerformAction(cloneName, activityName, parameters);
+                agent.Object.ClonePerformAction(cloneName, activityName, parameters);
              
             Assert.True(result.IsAcceptable);  
             //Assert.Equal(InstitutionCodes.Ok, result.Code);

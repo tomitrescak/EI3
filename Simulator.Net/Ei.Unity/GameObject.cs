@@ -27,7 +27,9 @@ namespace UnityEngine
             this.Enabled = true;
         }
 
-        public GameObject(string name): this() {
+        public GameObject(string name): this()
+        {
+            this.Enabled = true;
             this.name = name;
         }
 

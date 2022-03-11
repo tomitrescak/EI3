@@ -331,28 +331,29 @@ namespace Ei.Core.Runtime
             return connection.Pass(this, parameters);
         }
 
-        public IActionInfo PerformAction(string cloneName, string actionId, VariableInstance[] parameters) {
+        public IActionInfo ClonePerformAction(string cloneName, string actionId, VariableInstance[] parameters) {
             var result = this.FindClone(cloneName, out Governor clone);
             return result.IsOk ? clone.PerformAction(actionId, parameters) : result;
         }
 
         static VariableInstance[] emptyParameters = new VariableInstance[0];
 
-        public IActionInfo PerformAction(string activityId, VariableInstance[] parameters = null) {
+        public IActionInfo PerformAction(string connectionId, string activityId, VariableInstance[] parameters = null)
+        {
             var workflow = this.Workflow;
 
+            var connection = this.Workflow.Connections.FirstOrDefault(w => w.Id == connectionId);
+            if (connection == null) {
+                return new ActionInfo(InstitutionCodes.Failed, string.Format("Connection '{0}' does not exist!", connectionId));
+            }
+            
             // find actions
             var action = this.Workflow.Actions.FirstOrDefault(w => w.Id == activityId);
             if (action == null) {
                 return new ActionInfo(InstitutionCodes.Failed, string.Format("Action '{0}' does not exist!", activityId));
             }
 
-            // otherwise we have to find a feasible connection
-            // check if Action can be performed
-            var connections = this.FindConnection(activityId);
-            if (connections.Length == 0) {
-                return ActionInfo.FailedPreconditions;
-            }
+            
 
             // if (Log.IsInfo) Log.Info(this.Name, "Performing " + activityId);
 
@@ -364,7 +365,7 @@ namespace Ei.Core.Runtime
             var parsedParameters = action.ParseParameters(parameters);
 
             // perform this Action
-            var result = connections[0].Pass(this, parsedParameters);
+            var result = connection.Pass(this, parsedParameters);
 
             if (!result.IsAcceptable) {
                 this.LogAction(
@@ -380,6 +381,16 @@ namespace Ei.Core.Runtime
                 this.NotifyActivity(workflow, this.Name, activityId, parsedParameters);
             }
             return result;
+        }
+
+        public IActionInfo PerformAction(string activityId, VariableInstance[] parameters = null) {
+            // otherwise we have to find a feasible connection
+            // check if Action can be performed
+            var connections = this.FindConnection(activityId);
+            if (connections.Length == 0) {
+                return ActionInfo.FailedPreconditions;
+            }
+            return this.PerformAction(connections[0].Id, activityId, parameters);
         }
 
         public IActionInfo PerformAction(ActionBase action, ParameterState parameters = null) {

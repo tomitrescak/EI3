@@ -22,7 +22,10 @@ using Ei.Simulation.Behaviours.Environment.Objects;
 using Ei.Simulation.Behaviours.Reasoners;
 using System.Linq;
 using System.Diagnostics;
+using Ei.Core.Runtime;
+using Ei.Core.Runtime.Planning;
 using Ei.Simulation.Behaviours.Environment.Actions;
+using Newtonsoft.Json.Linq;
 
 namespace Ei.Server
 {
@@ -80,6 +83,8 @@ namespace Ei.Server
         }
 
         private Institution currentEi;
+
+        
         // private SimulationProject project;
         private GameEngine gameEngine;
         private SocketLog socketLog;
@@ -369,6 +374,23 @@ namespace Ei.Server
             return scene;
         }
 
+        private SimulationProject FindSimulationProject(Scene scene)
+        {
+            
+            foreach (var go in scene.GameObjects)
+            {
+                foreach (var cmp in go.Components) {
+                    if (cmp is SimulationProject)
+                    {
+
+                        return cmp as SimulationProject;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public void Run(string projectSource)
         {
             Console.WriteLine("Running Project");
@@ -419,21 +441,12 @@ namespace Ei.Server
                     TypeNameHandling = TypeNameHandling.All
                 });
 
-                var found = false;
-                foreach (var go in scene.GameObjects)
-                {
-                    foreach (var cmp in go.Components) {
-                        if (cmp is SimulationProject)
-                        {
-                            found = true;
-                            (cmp as SimulationProject).Ei = this.currentEi;
-                        }
-                    }
-                }
-                if (!found)
+                var project = this.FindSimulationProject(scene);
+                if (project == null)
                 {
                     throw new Exception("You need to have a 'SimulationProject' component in your project");
                 }
+                project.Ei = this.currentEi;
             }
             else
             {
@@ -498,6 +511,70 @@ namespace Ei.Server
             //            {
             //                Console.Write(ex.Message);
             //            }
+        }
+        
+        public async Task AgentAction(long queryId, string agentName, string workflowId, string connectionId, string actionId, JArray parameterNames, JArray parameterValues)
+        {
+            if (this.currentEi == null)
+            {
+                return;
+            }
+
+            var project = this.FindSimulationProject(this.gameEngine.Scene);
+            var governor = project.Manager.Agents.Find(g => g.Name == agentName);
+
+            if (governor == null)
+            {
+                throw new Exception("Agent not found!");
+            }
+
+            // parse the passed parameters
+            var parsedParameterNames = parameterNames.ToObject<string[]>();
+            var parserParameterValues = parameterValues.ToObject<string[]>();
+            var parameterInstances = new VariableInstance[parsedParameterNames.Length];
+            for (int i = 0; i < parsedParameterNames.Length; i++)
+            {
+                parameterInstances[i] = new VariableInstance(parsedParameterNames[i], parserParameterValues[i]);
+            }
+            // perform the action
+            governor.PerformAction(connectionId, actionId, parameterInstances);
+
+        }
+        
+        public async Task UiAction(long queryId, string agentName, string workflowId, string connectionId, string actionId, JArray parameterNames, JArray parameterValues)
+        {
+            if (this.currentEi == null)
+            {
+                return;
+            }
+
+            var project = this.FindSimulationProject(this.gameEngine.Scene);
+            var governor = project.Manager.Agents.Find(g => g.Name == agentName);
+
+            if (governor == null)
+            {
+                throw new Exception("Agent not found!");
+            }
+
+            // parse the passed parameters
+            var parserParameterValues = parameterValues.ToObject<string[]>();
+
+            var workflow = this.currentEi.Workflows.First(w => w.Id == workflowId);
+            var connection = workflow.Connections.First(c => c.Id == connectionId);
+            
+            var planNode = new AStarNode(connection);
+            if (parserParameterValues.Length > 0)
+            {
+                planNode.CostData = parserParameterValues[0];
+            }
+
+            var agent = this.gameEngine.GameObjects.First(g => g.name == agentName);
+            var simulationAgent = agent.GetComponent<SimulationAgent>();
+            
+            var actuator = agent.Components.First(c => c is Actuator) as Actuator;
+            var reasoner = agent.Components.First(c => c is Reasoner) as Reasoner;
+
+            actuator.Enqueue(planNode, simulationAgent, reasoner.PlanManager);
         }
 
         public async Task MonitorInstitution(long queryId)

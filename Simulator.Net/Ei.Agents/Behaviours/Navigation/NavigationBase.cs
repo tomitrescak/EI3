@@ -19,6 +19,8 @@ namespace Ei.Simulation.Behaviours
             this.MoveToDestination(position.x, position.y);
         }
 
+        public abstract void StopNavigation();
+
         public abstract Task<bool> MoveToDestination(float x, float y);
     }
 }

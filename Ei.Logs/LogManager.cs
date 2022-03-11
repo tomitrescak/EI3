@@ -54,9 +54,9 @@ namespace Ei.Logs
 //            LogMessage(1, source, code.ToString(), parameters);
 //        }
 
-        public static void Info(string agent, string component, string message)
+        public static void Info(string agent, string component, string message, params string[] parameters)
         {
-            LogMessage(1, message, agent, component);
+            LogMessage(1, message, agent, component, parameters);
         }
 
         //        public static void Info(Enum code, params string[] parameters)
@@ -89,7 +89,7 @@ namespace Ei.Logs
             LogMessage(4, message, agent, component);
         }
 
-        private static void LogMessage(int level, string message, string agent = null, string component = null)
+        private static void LogMessage(int level, string message, string agent, string component, params string[] parameters )
         {
             // return;
             if (level < (int) LogLevel) return; // ignore messages below specified log level
@@ -101,6 +101,7 @@ namespace Ei.Logs
                     Message = message,
                     Agent = agent,
                     Component = component,
+                    Parameters = parameters,
                     Level = level
                 });
             }
@@ -111,22 +112,22 @@ namespace Ei.Logs
 
         }
 
-        private static void LogMessage(int level, string agent, string component, string code, params string[] parameters)
-        {
-            // return;
-            if (level < (int)LogLevel) return; // ignore messages below specified log level
-
-            foreach (var log in logs)
-            {
-                log.Log(new LogMessage
-                {
-                    Code = code,
-                    Parameters = parameters,
-                    Agent = agent,
-                    Component = component
-                });
-            }
-        }
+        // private static void LogMessage(int level, string agent, string component, string code, params string[] parameters)
+        // {
+        //     // return;
+        //     if (level < (int)LogLevel) return; // ignore messages below specified log level
+        //
+        //     foreach (var log in logs)
+        //     {
+        //         log.Log(new LogMessage
+        //         {
+        //             Code = code,
+        //             Parameters = parameters,
+        //             Agent = agent,
+        //             Component = component
+        //         });
+        //     }
+        // }
 
     }
 }

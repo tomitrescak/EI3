@@ -36,6 +36,8 @@ namespace Ei.Core.Ontology
 
         public int ConnectedAgents { get { return this.agents.Count; } }
 
+        public List<Governor> Agents => this.agents;
+
         //public List<Governor> Agents => this.agents; 
 
         public bool Start(Institution ei)
