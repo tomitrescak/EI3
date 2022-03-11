@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ei.Logs;
+using Log=Ei.Logs.Log;
 using Ei.Core.Ontology;
 using System.Diagnostics;
 

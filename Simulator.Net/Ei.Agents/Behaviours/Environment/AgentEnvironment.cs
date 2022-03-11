@@ -25,8 +25,8 @@ namespace Ei.Simulation.Behaviours
         private int normalisationFactor = 10;
         
         private readonly Dictionary<string, Dictionary<string, double>> distances;
-        private readonly Dictionary<string, List<EnvironmentObject>> actions;
-        private readonly List<EnvironmentObject> objects;
+        private readonly Dictionary<string, List<ActionsProvider>> actions;
+        private readonly List<ActionsProvider> objects;
         
         //private readonly Queue<System.Action> actionQueue;
         //private readonly AutoResetEvent actionStop;
@@ -40,7 +40,7 @@ namespace Ei.Simulation.Behaviours
         public Dictionary<string, Dictionary<string, double>> Distances { get { return distances; } }
 
         [JsonIgnore]
-        public Dictionary<string, List<EnvironmentObject>> Actions
+        public Dictionary<string, List<ActionsProvider>> Actions
         {
             get
             {
@@ -48,14 +48,14 @@ namespace Ei.Simulation.Behaviours
             }
         }
 
-        [JsonIgnore]
-        public List<EnvironmentObject> Objects
-        {
-            get
-            {
-                return objects;
-            }
-        }
+        // [JsonIgnore]
+        // public List<ActionsProvider> Objects
+        // {
+        //     get
+        //     {
+        //         return objects;
+        //     }
+        // }
 
         protected Dictionary<string, NoLocationAction> ActionsWithNoLocation { get; private set; }
 
@@ -71,8 +71,8 @@ namespace Ei.Simulation.Behaviours
         {
             this.Definition = new AgentEnvironmentDefinition();
             this.distances = new Dictionary<string, Dictionary<string, double>>();
-            this.actions = new Dictionary<string, List<EnvironmentObject>>();
-            this.objects = new List<EnvironmentObject>();
+            this.actions = new Dictionary<string, List<ActionsProvider>>();
+            this.objects = new List<ActionsProvider>();
             //this.objectMappings = new Dictionary<EnvironmentObject, GameObject>(); 
             //this.actionQueue = new Queue<System.Action>(1000);
             //this.actionStop = new AutoResetEvent(false);
@@ -230,16 +230,50 @@ namespace Ei.Simulation.Behaviours
         //    this.AddObject(data);
         //}
 
-        public void AddObject(EnvironmentObject edx)
+        public void AddObject(ActionsProvider edx)
         {
             // rememebr all objects
 
-            if (this.Objects.Any(o => o.Name == edx.Name)) {
+            if (this.objects.Any(o => o.Name == edx.Name)) {
                 throw new Exception("You cannot have two environment objects with the same name: " + edx.Name);
             }
 
             this.objects.Add(edx);
+            
+            // update distances to other objects
+            
+            this.UpdateDistanceMatrix(edx);
+            
+            // remember all actions
 
+            foreach (var action in edx.Actions)
+            {
+                if (!this.actions.ContainsKey(action.Id))
+                {
+                    this.actions.Add(action.Id, new List<ActionsProvider>());
+                }
+                this.actions[action.Id].Add(edx);
+            }
+
+
+            // create the new gameobject
+
+
+            // instantiate new simobject
+            //var agent = new GameObject(edx.Id);
+            //agent.transform.position = new Vector3(edx.X, edx.Y, 0);
+
+            //// add simobject
+            //var sim = agent.AddComponent<SimObject>();
+            //sim.Icon = edx.Definition.Image;
+
+            //this.objectMappings.Add(edx, agent);
+
+            //Instantiate(agent);
+        }
+
+        public void UpdateDistanceMatrix(ActionsProvider edx)
+        {
             // prepare distance record
 
             if (!this.distances.ContainsKey(edx.Name))
@@ -261,33 +295,6 @@ namespace Ei.Simulation.Behaviours
                     this.distances[edx.Name][edy.Name] = this.Distance(edx.transform.X, edx.transform.Y, edy.transform.X, edy.transform.Y);
                 }
             }
-
-            // remember all actions
-
-            foreach (var action in edx.Actions)
-            {
-                if (!this.actions.ContainsKey(action.Id))
-                {
-                    this.actions.Add(action.Id, new List<EnvironmentObject>());
-                }
-                this.actions[action.Id].Add(edx);
-            }
-
-
-            // create the new gameobject
-
-
-            // instantiate new simobject
-            //var agent = new GameObject(edx.Id);
-            //agent.transform.position = new Vector3(edx.X, edx.Y, 0);
-
-            //// add simobject
-            //var sim = agent.AddComponent<SimObject>();
-            //sim.Icon = edx.Definition.Image;
-
-            //this.objectMappings.Add(edx, agent);
-
-            //Instantiate(agent);
         }
 
         public double Distance(float x1, float y1, float x2, float y2)
@@ -327,7 +334,7 @@ namespace Ei.Simulation.Behaviours
         //    }
         //}
 
-        public void RemoveObject(EnvironmentObject obj)
+        public void RemoveObject(ActionsProvider obj)
         {
             // remove from objects
 
@@ -341,7 +348,7 @@ namespace Ei.Simulation.Behaviours
             }
         }
 
-        public bool TryGetValue(string itemId, out EnvironmentObject environmentData)
+        public bool TryGetValue(string itemId, out ActionsProvider environmentData)
         {
             try
             {

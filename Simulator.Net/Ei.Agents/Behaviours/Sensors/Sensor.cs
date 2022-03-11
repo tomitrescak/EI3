@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ei.Simulation.Behaviours.Environment;
 using UnityEngine;
 
 namespace Ei.Simulation.Behaviours.Sensors
@@ -21,7 +22,7 @@ namespace Ei.Simulation.Behaviours.Sensors
             }
         }
 
-        public List<EnvironmentObject> FindActionObjects(string action)
+        public List<ActionsProvider> FindActionObjects(string action)
         {
             if (!this.environment.Actions.ContainsKey(action)) 
             {

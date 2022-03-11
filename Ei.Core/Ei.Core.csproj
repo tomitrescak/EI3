@@ -1,7 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\Ei.Logs\Ei.Logs.csproj" />
-    <ProjectReference Include="..\Ei.Logs\Ei.Logs.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Ei\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Ei\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Ei\**" />
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>

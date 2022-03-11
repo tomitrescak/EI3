@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 
 export const ExperimentPane = styled.div`
   padding: 0px 8px;
@@ -11,7 +11,6 @@ export const ExperimentPane = styled.div`
     border-radius: 6px;
     margin: 4px 0px;
     padding: 4px;
-    overflow: hidden;
     width: 100%auto;
   }
 

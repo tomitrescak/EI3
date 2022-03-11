@@ -24,4 +24,13 @@
     <ProjectReference Include="..\Ei.Projects.Physiology.Stores\Ei.Projects.Physiology.Stores.csproj" />
     <ProjectReference Include="..\Simulator.Net\Ei.Unity\Ei.Integration.Unity.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Compilers\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Compilers\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Compilers\**" />
+  </ItemGroup>
 </Project>

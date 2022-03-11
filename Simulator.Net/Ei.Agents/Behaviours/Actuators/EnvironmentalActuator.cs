@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ei.Simulation.Behaviours.Environment;
 
 namespace Ei.Simulation.Behaviours.Actuators
 {
@@ -82,7 +83,7 @@ namespace Ei.Simulation.Behaviours.Actuators
             // find this object in the environment
             // move to its location
             // interact with it and wait for interaction to finish
-            if (this.environment.TryGetValue(itemId, out EnvironmentObject obj))
+            if (this.environment.TryGetValue(itemId, out ActionsProvider obj))
             {
                 // travel to the new destination
                 var moved = await this.navigation.MoveToDestination(obj.transform.X, obj.transform.Y);

@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Ei.Simulation.Behaviours.Environment.Objects
+namespace Ei.Simulation.Behaviours.Environment.Actions
 {
-    public abstract class ObjectAction: MonoBehaviour
+    public abstract class Interaction: MonoBehaviour
     {
         public int Index;
 
@@ -21,6 +21,6 @@ namespace Ei.Simulation.Behaviours.Environment.Objects
         //[JsonIgnore]
         //public virtual Func<EnvironmentAction, Task<bool>> AfterAll { get; }
 
-        public abstract Task<bool> UseObject(SimulationAgent agent, EnvironmentAction action);
+        public abstract Task<bool> UseObject(GameObject owner, SimulationAgent agent, EnvironmentAction action);
     }
 }

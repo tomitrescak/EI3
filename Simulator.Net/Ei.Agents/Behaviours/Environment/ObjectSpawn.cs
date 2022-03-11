@@ -56,7 +56,9 @@ namespace Ei.Simulation.Behaviours.Environment
                     // add simobject
                     var sim = agent.AddComponent<EnvironmentObject>();
                     sim.Icon = def.Image;
-                    sim.Actions = def.Actions;
+
+                    var actionsProvider = agent.AddComponent<ActionsProvider>();
+                    actionsProvider.Actions = def.Actions;
                     
 
                     // initialise actions

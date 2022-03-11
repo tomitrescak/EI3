@@ -22,6 +22,7 @@ using Ei.Simulation.Behaviours.Environment.Objects;
 using Ei.Simulation.Behaviours.Reasoners;
 using System.Linq;
 using System.Diagnostics;
+using Ei.Simulation.Behaviours.Environment.Actions;
 
 namespace Ei.Server
 {
@@ -120,7 +121,7 @@ namespace Ei.Server
 
             // Serialisation
 
-            Console.WriteLine("Edit EI");
+            // Console.WriteLine("Edit EI");
             var scene = RandomDecisionAgentWithEnvironmentScene();
 
             string output = JsonConvert.SerializeObject(scene, Formatting.Indented, new JsonSerializerSettings
@@ -280,7 +281,8 @@ namespace Ei.Server
             feedGo.transform.Y = 100;
 
             var obj = feedGo.AddComponent<EnvironmentObject>();
-            obj.Actions = new[] { new EnvironmentAction { Id = "Feed" } };
+            var acts = feedGo.AddComponent<ActionsProvider>();
+            acts.Actions = new[] { new EnvironmentAction { Id = "Feed" } };
             feedGo.AddComponent<DelayAction>().DelayMs = 3000;
             scene.GameObjects.Add(feedGo);
 
@@ -289,8 +291,9 @@ namespace Ei.Server
             feedGo.transform.X = 200;
             feedGo.transform.Y = 300;
 
-            obj = feedGo.AddComponent<EnvironmentObject>(); ;
-            obj.Actions = new[] { new EnvironmentAction { Id = "Feed" } };
+            obj = feedGo.AddComponent<EnvironmentObject>();
+            acts = feedGo.AddComponent<ActionsProvider>();
+            acts.Actions = new[] { new EnvironmentAction { Id = "Feed" } };
             feedGo.AddComponent<DelayAction>().DelayMs = 3000;
             scene.GameObjects.Add(feedGo);
 

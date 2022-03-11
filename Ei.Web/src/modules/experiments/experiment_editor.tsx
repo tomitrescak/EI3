@@ -1,37 +1,36 @@
-import styled from "@emotion/styled";
-import { Observer, useLocalObservable } from "mobx-react";
-import React from "react";
-import { SplitPane } from "react-multi-split-pane";
-import { Button, Icon, List, Menu, Message, Select } from "semantic-ui-react";
-import { useAppContext } from "../../config/context";
-import { Ui, useQuery } from "../../helpers/client_helpers";
-import { Formix } from "../Form";
-import { ExperimentProperties } from "./components/experimentProperties";
-import { timerComponent } from "./components/timerEditor";
-import { transformComponent } from "./components/transformEditor";
-import { ComponentDao, GameObjectDao } from "./experiment_model";
-import { simulationProjectComponent } from "./components/simulationProject";
-import { agentEnvironmentEditor } from "./components/agentEnvironmentEditor";
-import { environmentalObjectEditor } from "./components/environmentalObjectEditor";
-import { delayActionEditor } from "./components/delayActionEditor";
-import { simulationAgentComponent } from "./components/simulationAgentEditor";
-import { randomDecisionReasoner } from "./components/randomDecisionReasoner";
-import { environmentalActuator } from "./components/environmentalActuatorEditor";
-import { sensorEditor } from "./components/sensorEditor";
-import { linearNavigationEditor } from "./components/linearNavigationEditor";
-import { toJS } from "mobx";
-import { ExperimentCanvas } from "./components/experiment_canvas";
-import { LogMessage } from "./components/experimentCommon";
-import { WorkflowEditor } from "../diagrams/workflow_view";
+import { toJS } from 'mobx';
+import { Observer, useLocalObservable } from 'mobx-react';
+import React from 'react';
+import { SplitPane } from 'react-multi-split-pane';
+import { Button, Icon, List, Menu, Message, Select } from 'semantic-ui-react';
+
+import styled from '@emotion/styled';
+
+import { useAppContext } from '../../config/context';
+import { Ui, useQuery } from '../../helpers/client_helpers';
+import { WorkflowEditor } from '../diagrams/workflow_view';
+import { Formix } from '../Form';
+import { ComponentEditor } from './componentEditor';
+import { actionsProviderEditor, ComponentOption } from './components/actionsProviderEditor';
+import { agentEnvironmentEditor } from './components/agentEnvironmentEditor';
+import { environmentalActuator } from './components/environmentalActuatorEditor';
+import { environmentalObjectEditor } from './components/environmentalObjectEditor';
+import { ExperimentCanvas } from './components/experiment_canvas';
+import { LogMessage } from './components/experimentCommon';
+import { ExperimentProperties } from './components/experimentProperties';
+import { linearNavigationEditor } from './components/linearNavigationEditor';
+import { randomDecisionReasoner } from './components/randomDecisionReasoner';
+import { sensorEditor } from './components/sensorEditor';
+import { simulationAgentComponent } from './components/simulationAgentEditor';
+import { simulationProjectComponent } from './components/simulationProject';
+import { timerComponent } from './components/timerEditor';
+import { transformComponent } from './components/transformEditor';
+import { GameObjectDao } from './experiment_model';
 
 const ListHeader = styled(List.Header)`
   padding: 4px 16px;
-
   background: #aeaeae;
 
-  &.secondary {
-    background: #dedede;
-  }
   font-weight: bold;
   width: 100%;
 
@@ -55,27 +54,19 @@ const ListItem = styled(List.Item)`
   label: ListItem;
 `;
 
-type ComponentOption = {
-  text: string;
-  globalDependencies?: ComponentOption[];
-  componentDependencies?: ComponentOption[];
-  type: string;
-  editor: React.FC<any>;
-  defaultValue: () => Any;
-};
-
 const componentOptions: ComponentOption[] = [
   transformComponent,
   timerComponent,
   simulationProjectComponent,
   agentEnvironmentEditor,
   environmentalObjectEditor,
-  delayActionEditor,
+  // delayActionEditor,
   simulationAgentComponent,
   environmentalActuator,
   randomDecisionReasoner,
   sensorEditor,
   linearNavigationEditor,
+  actionsProviderEditor,
 ].sort((a, b) => a.text.localeCompare(b.text));
 
 function typeFirst(obj: any) {
@@ -377,86 +368,20 @@ export const ExperimentEditor = () => {
                                     componentOptions.find(
                                       (o) => o.type === c.$type
                                     );
-                                  if (currentComponent == null) {
-                                    return (
-                                      <div key={c.Id}>
-                                        Component does not exist! {c.$type}
-                                      </div>
-                                    );
-                                  }
+
                                   return (
                                     <div key={c.Id}>
-                                      <ListHeader
-                                        className="secondary"
-                                        style={{ paddingRight: 8 }}
-                                      >
-                                        <div style={{ display: "flex" }}>
-                                          <span style={{ flex: 1 }}>
-                                            {currentComponent.text}
-                                          </span>
-                                          {index > 0 && (
-                                            <Icon
-                                              name="close"
-                                              title="Remove Component"
-                                              style={{
-                                                color: "#999",
-                                                cursor: "pointer",
-                                              }}
-                                              onClick={() =>
-                                                state.selectedGameObject.Components.splice(
-                                                  index,
-                                                  1
-                                                )
-                                              }
-                                            />
-                                          )}
-                                        </div>
-                                      </ListHeader>
-                                      <List.Item>
-                                        <currentComponent.editor
-                                          component={c as any}
-                                        />
-                                        {/* Check all dependencies */}
-                                        {(
-                                          currentComponent.globalDependencies ||
-                                          []
-                                        )
-                                          .filter((f) =>
-                                            experiment.GameObjects.every((g) =>
-                                              g.Components.every(
-                                                (c) => c.$type !== f.type
-                                              )
-                                            )
-                                          )
-                                          .map((t, i) => (
-                                            <div style={{ padding: 8 }}>
-                                              <Message
-                                                visible
-                                                error
-                                                header="Missing Global Dependency"
-                                                content={t.text}
-                                                key={i}
-                                              />
-                                            </div>
-                                          ))}
-                                        {(
-                                          currentComponent.componentDependencies ||
-                                          []
-                                        )
-                                          .filter((f) =>
-                                            state.selectedGameObject.Components.every(
-                                              (c) => c.$type !== f.type
-                                            )
-                                          )
-                                          .map((t, i) => (
-                                            <Message
-                                              error
-                                              header="Missing Component"
-                                              content={t.text}
-                                              key={i}
-                                            />
-                                          ))}
-                                      </List.Item>
+                                      <ComponentEditor
+                                        index={index}
+                                        reorder={false}
+                                        owner={
+                                          state.selectedGameObject.Components
+                                        }
+                                        componentDefinition={c}
+                                        currentComponent={currentComponent}
+                                        gameObject={state.selectedGameObject}
+                                        experiment={experiment}
+                                      />
                                     </div>
                                   );
                                 }

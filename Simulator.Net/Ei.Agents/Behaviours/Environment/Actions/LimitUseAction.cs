@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Ei.Simulation.Behaviours.Environment.Objects
+namespace Ei.Simulation.Behaviours.Environment.Actions
 {
-    public class LimitUseAction: ObjectAction
+    public class LimitUseAction: Interaction
     {
         public struct ActionUse
         {
@@ -33,7 +33,7 @@ namespace Ei.Simulation.Behaviours.Environment.Objects
            
         }
 
-        public override async Task<bool> UseObject(SimulationAgent agent, EnvironmentAction environmentAction)
+        public override async Task<bool> UseObject(GameObject owner, SimulationAgent agent, EnvironmentAction environmentAction)
         {
             var actionId = environmentAction.Id;
             var action = this.actionLimits.FirstOrDefault(w => w.ActionId == actionId);

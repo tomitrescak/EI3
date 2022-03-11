@@ -19,6 +19,7 @@
     <None Remove="Templates\TransitionJoin.mustache" />
     <None Remove="Templates\TransitionSplit.mustache" />
     <None Remove="Templates\Workflow.mustache" />
+    <None Remove="Persistence\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -69,6 +70,14 @@
   <ItemGroup>
     <PackageReference Include="Handlebars.Net" Version="1.9.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Persistence\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Persistence\**" />
   </ItemGroup>
 
 </Project>
